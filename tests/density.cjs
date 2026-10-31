@@ -58,6 +58,10 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
           check(f.top - FORM_HEAD * BT.armySc >= hud - .5, `${f.type} heads under the HUD`); check(f.bottom <= BT.vh - 16 + .5, `${f.type} feet off the bottom`);
           check(f.fill <= .9 + 1e-6, `${f.type} overfills: ${f.fill}`); if (f.n + f.heroes >= 2 * f.R && f.R > 3) check(f.fill >= .85 - 1e-6, `${f.type} fills ${Math.round(f.fill * 100)}%`); });
         const inf = F.find(f => f.type === 'inf'); check(inf.fill >= .85, 'Main block does not fill the field');
+        // ranks at least 1.5 bodies apart, so the rank in front never hides the weapons behind
+        F.forEach(f => { if (f.R > 1) check(f.rowStep >= FORM_SHAPE[f.type].body * 1.5 * BT.armySc - 1e-6, `${f.type} ranks ${f.rowStep} < 1.5 bodies`); });
+        check(BT.WW >= WORLD_W && BT.WW <= WW_MAX, 'Field width ' + BT.WW);
+        const allX = BT.A.flatMap(A => A.groups.flatMap(g => g.spr.map(s => s.sx))); check(Math.min(...allX) >= 10 && Math.max(...allX) <= BT.WW - 10, 'A soldier stands off the field');
         // identities: tight infantry, straight gunner files, staggered archers, wide cavalry
         const by = t => F.find(f => f.type === t); check(by('inf').colStep < by('gun').colStep && by('gun').colStep < by('cav').colStep && by('arc').colStep < by('cav').colStep, 'File spacing by arm');
         check(by('cav').rowStep >= by('inf').rowStep, 'Cavalry rank spacing');
@@ -69,7 +73,7 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
         // guards stand ahead of the front file, not on the ranks
         BT.A[0].groups.forEach(g => (g.heroes || []).forEach(hr => (hr.guards || []).forEach(q => check(q.x > Math.max(...g.spr.map(s => s.sx)) + 2, 'A guard stands on the ranks'))));
         let t1 = performance.now(); for (let i = 0; i < 40; i++) drawBattle(); const frame = (performance.now() - t1) / 40;
-        out[k] = { per: BT.per, scale: +BT.armySc.toFixed(2), band: [Math.round(B.y0), Math.round(B.y1)], soldiers: Object.fromEntries(F.map(f => [f.type, f.n])), fill: Object.fromEntries(F.map(f => [f.type, Math.round(f.fill * 100) + '%'])), spriteSets: _battleArt.size, startMs: Math.round(ms), frameMs: +frame.toFixed(2) };
+        out[k] = { fieldWidth: BT.WW, rankSpacingInBodies: Object.fromEntries(F.filter(f => f.R > 1).map(f => [f.type, +(f.rowStep / (FORM_SHAPE[f.type].body * BT.armySc)).toFixed(2)])), per: BT.per, scale: +BT.armySc.toFixed(2), band: [Math.round(B.y0), Math.round(B.y1)], soldiers: Object.fromEntries(F.map(f => [f.type, f.n])), fill: Object.fromEntries(F.map(f => [f.type, Math.round(f.fill * 100) + '%'])), spriteSets: _battleArt.size, startMs: Math.round(ms), frameMs: +frame.toFixed(2) };
         check(_battleArt.size <= SC2_MAX, `Sprite sets ${_battleArt.size}`);
         closeBattle(); clearModals(); }
       check(out.epic.spriteSets <= out.standard.spriteSets + 8, 'Epic multiplies sprite art');
@@ -122,7 +126,8 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
         const big = F.reduce((m, f) => f.n > m.n ? f : m, F[0]); check(big.fill >= .85, `${name}: biggest block fills ${Math.round(big.fill * 100)}%`);
         const xsF = F.slice().sort((a, b) => b.xMax - a.xMax); for (let i = 1; i < xsF.length; i++) check(xsF[i].xMax < xsF[i - 1].xMin - 4, name + ' blocks overlap');
         const width = Math.max(...F.map(f => f.xMax)) - Math.min(...F.map(f => f.xMin)); check(Math.min(...F.map(f => f.xMin)) >= 10, name + ' runs off the field: ' + Math.min(...F.map(f => f.xMin))); { const E = formStats(1); if (E.length) check(Math.max(...E.map(f => f.xMax)) <= BT.WW - 10, name + ' enemy off the field'); }
-        out[name] = { soldiers: Object.fromEntries(F.map(f => [f.type, f.n])), biggestFill: Math.round(big.fill * 100) + '%', armyWidth: Math.round(width), fit: BT.fit[0] }; closeBattle(); clearModals(); }
+        F.forEach(f => { if (f.R > 1) check(f.rowStep >= FORM_SHAPE[f.type].body * 1.5 * BT.armySc - 1e-6, name + ' ' + f.type + ' ranks too close'); });
+        out[name] = { soldiers: Object.fromEntries(F.map(f => [f.type, f.n])), biggestFill: Math.round(big.fill * 100) + '%', armyWidth: Math.round(width), fieldWidth: BT.WW, filesSqueezed: BT.fit[0].sq }; closeBattle(); clearModals(); }
       // a siege: defenders' gunners on the wall walkway, everyone inside the band
       fresh(); check(startBattle('yamashiro') && BT.siege, 'siege'); const F0 = formStats(0), F1 = formStats(1), B = BT.band;
       F0.concat(F1).forEach(f => check(f.top >= B.y0 - .5 && f.bottom <= B.y1 + .5, 'Siege ranks outside the band'));
@@ -141,9 +146,9 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
       report.devices[`${w}x${h}`] = await p.evaluate(() => {
         fresh(); check(startBattle('hoshi'), 'start'); const F = formStats(0), B = BT.band, hud = hudLimit();
         F.forEach(f => { check(f.top - FORM_HEAD * BT.armySc >= hud - .5 && f.bottom <= BT.vh - 16 + .5, f.type + ' outside the room'); check(f.sep > 8, f.type + ' overlap'); });
-        check(F.find(f => f.type === 'inf').fill >= .85, 'Main block fill');
+        check(F.find(f => f.type === 'inf').fill >= .85, 'Main block fill'); F.forEach(f => { if (f.R > 1) check(f.rowStep >= FORM_SHAPE[f.type].body * 1.5 * BT.armySc - 1e-6, f.type + ' ranks too close'); });
         let t1 = performance.now(); for (let i = 0; i < 30; i++) drawBattle(); const frame = (performance.now() - t1) / 30;
-        return { scale: +BT.armySc.toFixed(2), band: [Math.round(B.y0), Math.round(B.y1)], infFill: Math.round(F.find(f => f.type === 'inf').fill * 100) + '%', frameMs: +frame.toFixed(2) };
+        return { fieldWidth: BT.WW, scale: +BT.armySc.toFixed(2), band: [Math.round(B.y0), Math.round(B.y1)], infFill: Math.round(F.find(f => f.type === 'inf').fill * 100) + '%', frameMs: +frame.toFixed(2) };
       });
       await p.close();
     }

@@ -10,6 +10,13 @@
   },
   "desktop": {
     "standard": {
+      "fieldWidth": 1122,
+      "rankSpacingInBodies": {
+        "inf": 1.81,
+        "arc": 1.81,
+        "gun": 2.1,
+        "cav": 1.71
+      },
       "per": 80,
       "scale": 0.91,
       "band": [
@@ -24,15 +31,22 @@
       },
       "fill": {
         "inf": "88%",
-        "arc": "85%",
+        "arc": "88%",
         "gun": "88%",
         "cav": "88%"
       },
-      "spriteSets": 35,
-      "startMs": 2981,
-      "frameMs": 5.37
+      "spriteSets": 36,
+      "startMs": 3580,
+      "frameMs": 4.56
     },
     "dense": {
+      "fieldWidth": 1413,
+      "rankSpacingInBodies": {
+        "inf": 1.81,
+        "arc": 1.81,
+        "gun": 2.1,
+        "cav": 1.71
+      },
       "per": 56,
       "scale": 0.91,
       "band": [
@@ -51,11 +65,18 @@
         "gun": "88%",
         "cav": "88%"
       },
-      "spriteSets": 37,
-      "startMs": 3766,
-      "frameMs": 4.6
+      "spriteSets": 36,
+      "startMs": 3406,
+      "frameMs": 4.16
     },
     "epic": {
+      "fieldWidth": 1679,
+      "rankSpacingInBodies": {
+        "inf": 1.81,
+        "arc": 1.81,
+        "gun": 2.1,
+        "cav": 1.71
+      },
       "per": 42,
       "scale": 0.91,
       "band": [
@@ -74,9 +95,9 @@
         "gun": "88%",
         "cav": "88%"
       },
-      "spriteSets": 35,
-      "startMs": 2588,
-      "frameMs": 4.65
+      "spriteSets": 41,
+      "startMs": 3490,
+      "frameMs": 3.73
     }
   },
   "deterministic": true,
@@ -110,11 +131,9 @@
         "inf": 48
       },
       "biggestFill": "88%",
-      "armyWidth": 58,
-      "fit": {
-        "tight": 1,
-        "sq": 1
-      }
+      "armyWidth": 167,
+      "fieldWidth": 920,
+      "filesSqueezed": 1
     },
     "gun line": {
       "soldiers": {
@@ -122,11 +141,9 @@
         "gun": 48
       },
       "biggestFill": "88%",
-      "armyWidth": 127,
-      "fit": {
-        "tight": 1,
-        "sq": 1
-      }
+      "armyWidth": 347,
+      "fieldWidth": 1109,
+      "filesSqueezed": 1
     },
     "horse army": {
       "soldiers": {
@@ -134,11 +151,9 @@
         "cav": 48
       },
       "biggestFill": "88%",
-      "armyWidth": 240,
-      "fit": {
-        "tight": 1,
-        "sq": 1
-      }
+      "armyWidth": 491,
+      "fieldWidth": 1300,
+      "filesSqueezed": 1
     },
     "balanced": {
       "soldiers": {
@@ -148,11 +163,9 @@
         "cav": 47
       },
       "biggestFill": "88%",
-      "armyWidth": 322,
-      "fit": {
-        "tight": 0.8,
-        "sq": 0.8281623404797487
-      }
+      "armyWidth": 1058,
+      "fieldWidth": 2434,
+      "filesSqueezed": 1
     },
     "siege": {
       "attackers": {
@@ -162,10 +175,10 @@
         "cav": 20
       },
       "defenders": {
-        "inf": 16,
-        "arc": 16,
+        "inf": 14,
+        "arc": 14,
         "gun": 3,
-        "cav": 16
+        "cav": 14
       },
       "wallGunners": 3,
       "result": "lose"
@@ -173,40 +186,44 @@
   },
   "devices": {
     "390x844": {
+      "fieldWidth": 1277,
       "scale": 1.25,
       "band": [
         130,
         412
       ],
       "infFill": "88%",
-      "frameMs": 4.08
+      "frameMs": 4.58
     },
     "844x390": {
+      "fieldWidth": 1355,
       "scale": 0.85,
       "band": [
         68,
         184
       ],
       "infFill": "88%",
-      "frameMs": 10.24
+      "frameMs": 5.8
     },
     "768x1024": {
+      "fieldWidth": 1528,
       "scale": 1.04,
       "band": [
         94,
         248
       ],
       "infFill": "88%",
-      "frameMs": 2.85
+      "frameMs": 2.8
     },
     "1024x768": {
+      "fieldWidth": 1607,
       "scale": 1.13,
       "band": [
         75,
         242
       ],
       "infFill": "88%",
-      "frameMs": 7.15
+      "frameMs": 5.39
     }
   },
   "resize": {
@@ -216,7 +233,7 @@
         412
       ],
       "infFill": "88%",
-      "infRows": 13
+      "infRows": 8
     },
     "toLandscapePhone": {
       "band": [
@@ -224,7 +241,7 @@
         184
       ],
       "infFill": "88%",
-      "infRows": 13
+      "infRows": 8
     },
     "backToDesktop": {
       "band": [
@@ -232,7 +249,7 @@
         199
       ],
       "infFill": "88%",
-      "infRows": 13
+      "infRows": 8
     },
     "midBattle": "win"
   },
