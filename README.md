@@ -186,6 +186,10 @@ Includes the compact battle HUD, independent hero formations, physically deliver
 
 Logistics P0 adds the **Porter House** (荷運び小屋) under **Build → Fields & Work**, beside the Storehouse. It costs 240G. Assign up to two workers manually; vacancies never auto-fill. Porters collect harvests, supply artisans, and bundle goods on shared trips to local shop shelves. Ordinary workers can still haul without porters. Full piles pause further work and retain completed output in a counted buffer.
 
+Village economy flow lets workers and porters cross fields, Storehouses and Workshops **between road sections**. Other buildings remain obstacles, and visitors keep using roads. Workshops automatically craft useful batches of **1–5**, prioritising Ton'ya orders, shop shortages, the preferred recipe and other useful wares. Every product uses its full recipe: **10 Rice → 5 Mochi Boxes**. Work and Fine Craft improve cycle efficiency.
+
+Porters can combine deliveries to **two shops from one pickup**, within their existing 31-unit load and a small route-detour allowance. Each stop receives its reserved goods; leftovers return to storage. Input/output reservations protect concurrent workers, and old version-1 saves retain their goods. See the [implementation and validation notes](docs/village-economy-flow.md). Run the focused browser checks with `node tests/economy-flow.cjs`.
+
 The Lumber Yard, Iron Mine and Porter House use the established village pixel scale, dark outlines, warm timber and shared shading. The Porter House has a permanent wheelbarrow in front. See the [art direction guide](docs/ART_DIRECTION.md) and [procedural comparison sheet](docs/porter-house-preview.png). Roofs are optional for future buildings; consistency comes from the rendering language and materials.
 
 Saved games keep version 1. Existing local shop stock migrates without losing goods. Procedural artwork is preserved; bounded sprite caches, trimmed transparent margins, and releasing previews reduce canvas memory. See the [design note](docs/logistics-p0-design.txt) and [recorded validation](docs/logistics-p0-validation.md).
