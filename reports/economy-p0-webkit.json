@@ -1,0 +1,5171 @@
+{
+  "version": "P0",
+  "weeks": 52,
+  "seeds": 5,
+  "timeOrder": [
+    "work",
+    "haul-loaded",
+    "walk-empty",
+    "rest",
+    "idle"
+  ],
+  "rows": [
+    {
+      "scenario": "starter",
+      "seed": 1,
+      "gold": 1123,
+      "travellers": 52,
+      "stockout": 17.91044776119403,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 986.1000000001557,
+        "goodsPick": 525.5000000000509,
+        "rest": 440.80000000003173
+      },
+      "worker": [
+        10.650326797387859,
+        21.875816993471005,
+        63.803921568617525,
+        1.5261437908499804,
+        2.143790849673634
+      ],
+      "porter": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "producer": [
+        12.14743589743485,
+        18.85683760683573,
+        65.47008547008865,
+        1.5170940170939116,
+        2.0085470085468735
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 33.6943359375,
+      "saveMs": 0,
+      "canvasStart": 6.242862701416016,
+      "canvasEnd": 14.244197845458984,
+      "caches": {
+        "rig": 682,
+        "tools": 0,
+        "carry": 200,
+        "pile": 52,
+        "products": 0,
+        "portraits": 1,
+        "characters": 0,
+        "portraitURLs": 1,
+        "dolls": 0
+      },
+      "collections": 156,
+      "msPerWeek": 22.71153846153846,
+      "failureExercised": true
+    },
+    {
+      "scenario": "starter",
+      "seed": 2,
+      "gold": 1173,
+      "travellers": 52,
+      "stockout": 12.307692307692308,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "goodsPick": 542.4000000000548,
+        "work": 1021.9000000001638,
+        "rest": 389.6000000000201
+      },
+      "worker": [
+        10.953815261046596,
+        20.311244979926123,
+        65.39156626505068,
+        1.3018741633202198,
+        2.041499330656391
+      ],
+      "porter": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "producer": [
+        10.106837606836853,
+        22.617521367519117,
+        64.03846153846474,
+        1.0470085470084791,
+        2.1901709401708045
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 33.9931640625,
+      "saveMs": 1,
+      "canvasStart": 14.244197845458984,
+      "canvasEnd": 17.24581527709961,
+      "caches": {
+        "rig": 1000,
+        "tools": 0,
+        "carry": 200,
+        "pile": 52,
+        "products": 0,
+        "portraits": 1,
+        "characters": 0,
+        "portraitURLs": 1,
+        "dolls": 0
+      },
+      "collections": 157,
+      "msPerWeek": 13.442307692307692,
+      "failureExercised": true
+    },
+    {
+      "scenario": "starter",
+      "seed": 3,
+      "gold": 1052,
+      "travellers": 52,
+      "stockout": 14.285714285714285,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "goodsPick": 480.2000000000407,
+        "work": 925.0000000001418,
+        "rest": 393.1000000000209
+      },
+      "worker": [
+        11.050569800571719,
+        21.463675213681235,
+        64.04202279201425,
+        1.3639601139603514,
+        2.079772079772447
+      ],
+      "porter": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "producer": [
+        12.179487179486065,
+        17.019230769229033,
+        67.26495726496037,
+        1.5705128205127032,
+        1.9658119658118232
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 33.8359375,
+      "saveMs": 0,
+      "canvasStart": 17.24581527709961,
+      "canvasEnd": 17.408588409423828,
+      "caches": {
+        "rig": 1000,
+        "tools": 0,
+        "carry": 200,
+        "pile": 52,
+        "products": 0,
+        "portraits": 3,
+        "characters": 0,
+        "portraitURLs": 3,
+        "dolls": 0
+      },
+      "collections": 158,
+      "msPerWeek": 11.403846153846153,
+      "failureExercised": true
+    },
+    {
+      "scenario": "starter",
+      "seed": 4,
+      "gold": 1150,
+      "travellers": 52,
+      "stockout": 13.432835820895523,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "goodsPick": 523.0000000000504,
+        "work": 1006.6000000001603,
+        "rest": 316.40000000000344
+      },
+      "worker": [
+        10.847222222224218,
+        21.607638888895224,
+        64.09722222221323,
+        1.201388888889108,
+        2.246527777778194
+      ],
+      "porter": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "producer": [
+        11.292735042734169,
+        21.826923076920963,
+        63.36538461538783,
+        1.5918803418802407,
+        1.9230769230768041
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 34.4267578125,
+      "saveMs": 1,
+      "canvasStart": 17.408588409423828,
+      "canvasEnd": 17.25930404663086,
+      "caches": {
+        "rig": 1000,
+        "tools": 0,
+        "carry": 200,
+        "pile": 52,
+        "products": 0,
+        "portraits": 3,
+        "characters": 0,
+        "portraitURLs": 3,
+        "dolls": 0
+      },
+      "collections": 160,
+      "msPerWeek": 11.01923076923077,
+      "failureExercised": true
+    },
+    {
+      "scenario": "starter",
+      "seed": 5,
+      "gold": 1135,
+      "travellers": 52,
+      "stockout": 10.9375,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "goodsPick": 529.5000000000518,
+        "work": 1017.8000000001629,
+        "rest": 374.7000000000167
+      },
+      "worker": [
+        10.998677248679519,
+        22.377645502652463,
+        63.55820105819123,
+        1.1276455026457184,
+        1.9378306878310647
+      ],
+      "porter": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "producer": [
+        11.74145299145209,
+        22.510683760681616,
+        62.62820512820836,
+        1.0897435897435237,
+        2.029914529914411
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 33.8154296875,
+      "saveMs": 0,
+      "canvasStart": 17.25930404663086,
+      "canvasEnd": 17.25613784790039,
+      "caches": {
+        "rig": 1000,
+        "tools": 0,
+        "carry": 200,
+        "pile": 52,
+        "products": 0,
+        "portraits": 4,
+        "characters": 0,
+        "portraitURLs": 4,
+        "dolls": 0
+      },
+      "collections": 159,
+      "msPerWeek": 9.865384615384615,
+      "failureExercised": true
+    },
+    {
+      "scenario": "small",
+      "seed": 1,
+      "gold": 3111,
+      "travellers": 52,
+      "stockout": 31.147540983606557,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "goodsPick": 572.6000000000616,
+        "work": 812.9000000001163,
+        "craft": 315.8000000000033,
+        "rest": 487.00000000004223
+      },
+      "worker": [
+        10.90811965812246,
+        24.158653846162274,
+        58.44818376067139,
+        1.6693376068379526,
+        4.815705128205919
+      ],
+      "porter": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "producer": [
+        11.700854700854626,
+        24.49145299145603,
+        55.722222222219266,
+        1.8547008547008996,
+        6.2307692307691624
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 34.873046875,
+      "saveMs": 0,
+      "canvasStart": 17.25613784790039,
+      "canvasEnd": 17.40993881225586,
+      "caches": {
+        "rig": 1000,
+        "tools": 2,
+        "carry": 200,
+        "pile": 52,
+        "products": 1,
+        "portraits": 5,
+        "characters": 0,
+        "portraitURLs": 5,
+        "dolls": 0
+      },
+      "collections": 171,
+      "msPerWeek": 19.865384615384617,
+      "failureExercised": true
+    },
+    {
+      "scenario": "small",
+      "seed": 2,
+      "gold": 3806,
+      "travellers": 52,
+      "stockout": 32.28346456692913,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "goodsPick": 579.2000000000631,
+        "work": 697.30000000009,
+        "craft": 368.2000000000152,
+        "rest": 499.100000000045
+      },
+      "worker": [
+        10.89209401709669,
+        24.610042735051078,
+        57.259615384603215,
+        1.8028846153849625,
+        5.435363247864064
+      ],
+      "porter": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "producer": [
+        11.132478632478348,
+        25.354700854703943,
+        55.02136752136484,
+        1.6581196581196864,
+        6.833333333333195
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 34.6767578125,
+      "saveMs": 0,
+      "canvasStart": 17.40993881225586,
+      "canvasEnd": 17.46554183959961,
+      "caches": {
+        "rig": 1000,
+        "tools": 2,
+        "carry": 200,
+        "pile": 52,
+        "products": 1,
+        "portraits": 5,
+        "characters": 0,
+        "portraitURLs": 5,
+        "dolls": 0
+      },
+      "collections": 173,
+      "msPerWeek": 15.615384615384615,
+      "failureExercised": true
+    },
+    {
+      "scenario": "small",
+      "seed": 3,
+      "gold": 3662,
+      "travellers": 52,
+      "stockout": 32.53968253968254,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "goodsPick": 492.5000000000435,
+        "work": 817.8000000001174,
+        "craft": 357.30000000001274,
+        "rest": 501.3000000000455
+      },
+      "worker": [
+        12.056623931627136,
+        23.92361111111927,
+        57.93002136750896,
+        1.6693376068379409,
+        4.420405982906686
+      ],
+      "porter": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "producer": [
+        12.846153846153996,
+        24.547008547011497,
+        55.58547008546702,
+        1.641025641025673,
+        5.380341880341823
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 34.87109375,
+      "saveMs": 0,
+      "canvasStart": 17.46554183959961,
+      "canvasEnd": 17.48659896850586,
+      "caches": {
+        "rig": 1000,
+        "tools": 2,
+        "carry": 200,
+        "pile": 52,
+        "products": 1,
+        "portraits": 6,
+        "characters": 0,
+        "portraitURLs": 6,
+        "dolls": 0
+      },
+      "collections": 173,
+      "msPerWeek": 12.153846153846153,
+      "failureExercised": true
+    },
+    {
+      "scenario": "small",
+      "seed": 4,
+      "gold": 3194,
+      "travellers": 52,
+      "stockout": 30.17241379310345,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "goodsPick": 510.6000000000476,
+        "work": 824.800000000119,
+        "craft": 374.8000000000167,
+        "rest": 509.2000000000473
+      },
+      "worker": [
+        11.941773504276869,
+        21.973824786332514,
+        59.27884615383381,
+        1.6720085470089106,
+        5.133547008547898
+      ],
+      "porter": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "producer": [
+        11.931623931624134,
+        22.45726495726792,
+        57.2692307692275,
+        1.6623931623932326,
+        6.679487179487217
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 34.91796875,
+      "saveMs": 0,
+      "canvasStart": 17.48659896850586,
+      "canvasEnd": 17.52962875366211,
+      "caches": {
+        "rig": 1000,
+        "tools": 2,
+        "carry": 200,
+        "pile": 52,
+        "products": 1,
+        "portraits": 7,
+        "characters": 0,
+        "portraitURLs": 7,
+        "dolls": 0
+      },
+      "collections": 171,
+      "msPerWeek": 14.115384615384615,
+      "failureExercised": true
+    },
+    {
+      "scenario": "small",
+      "seed": 5,
+      "gold": 3643,
+      "travellers": 52,
+      "stockout": 34.61538461538461,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "goodsPick": 496.80000000004446,
+        "work": 825.6000000001192,
+        "craft": 374.6000000000167,
+        "rest": 465.60000000003737
+      },
+      "worker": [
+        11.463675213678167,
+        24.12393162393986,
+        57.76175213673983,
+        1.8269230769234344,
+        4.823717948718706
+      ],
+      "porter": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "producer": [
+        11.44444444444418,
+        26.08974358974673,
+        54.82905982905707,
+        1.6666666666666874,
+        5.970085470085346
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 34.548828125,
+      "saveMs": 0,
+      "canvasStart": 17.52962875366211,
+      "canvasEnd": 17.580860137939453,
+      "caches": {
+        "rig": 1000,
+        "tools": 2,
+        "carry": 200,
+        "pile": 52,
+        "products": 1,
+        "portraits": 8,
+        "characters": 0,
+        "portraitURLs": 8,
+        "dolls": 0
+      },
+      "collections": 171,
+      "msPerWeek": 15.576923076923077,
+      "failureExercised": true
+    },
+    {
+      "scenario": "mature",
+      "seed": 1,
+      "gold": 6530,
+      "travellers": 154,
+      "stockout": 57.10144927536231,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "goodsPick": 1037.1000000001522,
+        "work": 1147.0000000000523,
+        "craft": 329.3000000000064,
+        "rest": 799.2000000001132
+      },
+      "worker": [
+        11.189458689463889,
+        23.21225071225715,
+        58.985042735029026,
+        2.126068376069068,
+        4.487179487180863
+      ],
+      "porter": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "producer": [
+        11.189458689463889,
+        23.21225071225715,
+        58.985042735029026,
+        2.126068376069068,
+        4.487179487180863
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 38.19921875,
+      "saveMs": 0,
+      "canvasStart": 17.580860137939453,
+      "canvasEnd": 17.755756378173828,
+      "caches": {
+        "rig": 1000,
+        "tools": 4,
+        "carry": 200,
+        "pile": 52,
+        "products": 2,
+        "portraits": 9,
+        "characters": 0,
+        "portraitURLs": 9,
+        "dolls": 0
+      },
+      "collections": 230,
+      "msPerWeek": 38.26923076923077,
+      "failureExercised": true
+    },
+    {
+      "scenario": "mature",
+      "seed": 2,
+      "gold": 6673,
+      "travellers": 148,
+      "stockout": 55.73248407643312,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "goodsPick": 938.1000000001447,
+        "work": 1115.3000000000811,
+        "craft": 437.500000000031,
+        "rest": 739.0000000000995
+      },
+      "worker": [
+        11.668447293452688,
+        24.093660968666743,
+        57.512464387451125,
+        1.9853988603994979,
+        4.740028490029958
+      ],
+      "porter": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "producer": [
+        11.668447293452688,
+        24.093660968666743,
+        57.512464387451125,
+        1.9853988603994979,
+        4.740028490029958
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 38.333984375,
+      "saveMs": 1,
+      "canvasStart": 17.755756378173828,
+      "canvasEnd": 17.619495391845703,
+      "caches": {
+        "rig": 1000,
+        "tools": 4,
+        "carry": 200,
+        "pile": 52,
+        "products": 2,
+        "portraits": 10,
+        "characters": 0,
+        "portraitURLs": 10,
+        "dolls": 0
+      },
+      "collections": 227,
+      "msPerWeek": 28.21153846153846,
+      "failureExercised": true
+    },
+    {
+      "scenario": "mature",
+      "seed": 3,
+      "gold": 6114,
+      "travellers": 150,
+      "stockout": 57.478005865102645,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "goodsPick": 1025.5000000001628,
+        "work": 1106.3000000000893,
+        "craft": 384.700000000019,
+        "rest": 787.1000000001104
+      },
+      "worker": [
+        11.805555555560959,
+        22.231125356132065,
+        58.824786324771964,
+        2.1812678062684867,
+        4.95726495726652
+      ],
+      "porter": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "producer": [
+        11.805555555560959,
+        22.231125356132065,
+        58.824786324771964,
+        2.1812678062684867,
+        4.95726495726652
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 38.2001953125,
+      "saveMs": 1,
+      "canvasStart": 17.619495391845703,
+      "canvasEnd": 17.722644805908203,
+      "caches": {
+        "rig": 1000,
+        "tools": 4,
+        "carry": 200,
+        "pile": 52,
+        "products": 2,
+        "portraits": 11,
+        "characters": 0,
+        "portraitURLs": 11,
+        "dolls": 0
+      },
+      "collections": 227,
+      "msPerWeek": 24.615384615384617,
+      "failureExercised": true
+    },
+    {
+      "scenario": "mature",
+      "seed": 4,
+      "gold": 6593,
+      "travellers": 149,
+      "stockout": 56.20689655172414,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 1191.7000000000116,
+        "goodsPick": 858.9000000001267,
+        "craft": 403.6000000000233,
+        "rest": 822.1000000001184
+      },
+      "worker": [
+        12.496438746444516,
+        22.610398860405308,
+        58.33867521366103,
+        2.2471509971516914,
+        4.307336182337444
+      ],
+      "porter": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "producer": [
+        12.496438746444516,
+        22.610398860405308,
+        58.33867521366103,
+        2.2471509971516914,
+        4.307336182337444
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 37.87890625,
+      "saveMs": 0,
+      "canvasStart": 17.722644805908203,
+      "canvasEnd": 17.609539031982422,
+      "caches": {
+        "rig": 1000,
+        "tools": 4,
+        "carry": 200,
+        "pile": 52,
+        "products": 2,
+        "portraits": 11,
+        "characters": 0,
+        "portraitURLs": 11,
+        "dolls": 0
+      },
+      "collections": 221,
+      "msPerWeek": 24.48076923076923,
+      "failureExercised": true
+    },
+    {
+      "scenario": "mature",
+      "seed": 5,
+      "gold": 6519,
+      "travellers": 149,
+      "stockout": 58.01282051282052,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "goodsPick": 837.900000000122,
+        "work": 1085.5000000001082,
+        "craft": 462.7000000000367,
+        "rest": 824.3000000001189
+      },
+      "worker": [
+        12.095797720803263,
+        23.716168091173895,
+        57.165242165228634,
+        2.083333333333982,
+        4.939458689460231
+      ],
+      "porter": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "producer": [
+        12.095797720803263,
+        23.716168091173895,
+        57.165242165228634,
+        2.083333333333982,
+        4.939458689460231
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 38.3798828125,
+      "saveMs": 0,
+      "canvasStart": 17.609539031982422,
+      "canvasEnd": 17.736148834228516,
+      "caches": {
+        "rig": 1000,
+        "tools": 4,
+        "carry": 200,
+        "pile": 52,
+        "products": 2,
+        "portraits": 12,
+        "characters": 0,
+        "portraitURLs": 12,
+        "dolls": 0
+      },
+      "collections": 226,
+      "msPerWeek": 24.21153846153846,
+      "failureExercised": true
+    },
+    {
+      "scenario": "mature_2porters_same",
+      "seed": 1,
+      "gold": 8204,
+      "travellers": 158,
+      "stockout": 58.309037900874635,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "goodsPick": 255.39999999998977,
+        "work": 949.6000000001474,
+        "goodsPause": 124.3999999999972,
+        "craft": 116.19999999999767,
+        "rest": 156.1999999999954
+      },
+      "worker": [
+        20.22222222222511,
+        22.027777777780884,
+        34.22649572648759,
+        17.972222222224627,
+        5.551282051281783
+      ],
+      "porter": [
+        0,
+        43.012820512820305,
+        48.717948717949454,
+        0.13888888888888026,
+        8.13034188034137
+      ],
+      "producer": [
+        20.22222222222511,
+        22.027777777780884,
+        34.22649572648759,
+        17.972222222224627,
+        5.551282051281783
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 38.3955078125,
+      "saveMs": 1,
+      "canvasStart": 17.736148834228516,
+      "canvasEnd": 17.853755950927734,
+      "caches": {
+        "rig": 1000,
+        "tools": 4,
+        "carry": 200,
+        "pile": 52,
+        "products": 2,
+        "portraits": 14,
+        "characters": 0,
+        "portraitURLs": 14,
+        "dolls": 0
+      },
+      "collections": 232,
+      "msPerWeek": 25.807692307692307,
+      "failureExercised": true
+    },
+    {
+      "scenario": "mature_2porters_same",
+      "seed": 2,
+      "gold": 8546,
+      "travellers": 158,
+      "stockout": 59.2375366568915,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 1008.6000000001608,
+        "goodsPause": 79.39999999999976,
+        "goodsPick": 209.2999999999924,
+        "rest": 162.59999999999505,
+        "craft": 162.79999999999504
+      },
+      "worker": [
+        20.66025641025945,
+        21.831196581199876,
+        34.67307692306847,
+        17.55555555555792,
+        5.279914529914272
+      ],
+      "porter": [
+        0,
+        41.31410256410183,
+        52.84188034188144,
+        0.9829059829059141,
+        4.86111111111082
+      ],
+      "producer": [
+        20.66025641025945,
+        21.831196581199876,
+        34.67307692306847,
+        17.55555555555792,
+        5.279914529914272
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 38.275390625,
+      "saveMs": 0,
+      "canvasStart": 17.853755950927734,
+      "canvasEnd": 17.932071685791016,
+      "caches": {
+        "rig": 1000,
+        "tools": 4,
+        "carry": 200,
+        "pile": 52,
+        "products": 2,
+        "portraits": 14,
+        "characters": 0,
+        "portraitURLs": 14,
+        "dolls": 0
+      },
+      "collections": 224,
+      "msPerWeek": 28.653846153846153,
+      "failureExercised": true
+    },
+    {
+      "scenario": "mature_2porters_same",
+      "seed": 3,
+      "gold": 7250,
+      "travellers": 154,
+      "stockout": 56.14617940199336,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "goodsPick": 361.1000000000136,
+        "work": 844.6000000001235,
+        "goodsPause": 73.4000000000001,
+        "craft": 128.59999999999698,
+        "rest": 132.99999999999673
+      },
+      "worker": [
+        20.28632478632749,
+        22.504273504275954,
+        32.92094017093292,
+        18.880341880344297,
+        5.4081196581193245
+      ],
+      "porter": [
+        0,
+        44.636752136752165,
+        47.371794871795345,
+        0,
+        7.991452991452491
+      ],
+      "producer": [
+        20.28632478632749,
+        22.504273504275954,
+        32.92094017093292,
+        18.880341880344297,
+        5.4081196581193245
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 38.080078125,
+      "saveMs": 0,
+      "canvasStart": 17.932071685791016,
+      "canvasEnd": 17.907848358154297,
+      "caches": {
+        "rig": 1000,
+        "tools": 4,
+        "carry": 200,
+        "pile": 52,
+        "products": 2,
+        "portraits": 15,
+        "characters": 0,
+        "portraitURLs": 15,
+        "dolls": 0
+      },
+      "collections": 224,
+      "msPerWeek": 22.96153846153846,
+      "failureExercised": true
+    },
+    {
+      "scenario": "mature_2porters_same",
+      "seed": 4,
+      "gold": 7745,
+      "travellers": 155,
+      "stockout": 55.172413793103445,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 928.0000000001424,
+        "goodsPause": 144.79999999999606,
+        "goodsPick": 228.89999999999128,
+        "rest": 152.29999999999563,
+        "craft": 134.69999999999663
+      },
+      "worker": [
+        20.673076923079805,
+        21.542735042738105,
+        33.94658119657315,
+        18.41452991453232,
+        5.423076923076614
+      ],
+      "porter": [
+        0,
+        39.89316239316142,
+        54.39102564102697,
+        0.9829059829059138,
+        4.732905982905698
+      ],
+      "producer": [
+        20.673076923079805,
+        21.542735042738105,
+        33.94658119657315,
+        18.41452991453232,
+        5.423076923076614
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 38.1630859375,
+      "saveMs": 1,
+      "canvasStart": 17.907848358154297,
+      "canvasEnd": 17.906551361083984,
+      "caches": {
+        "rig": 1000,
+        "tools": 4,
+        "carry": 200,
+        "pile": 52,
+        "products": 2,
+        "portraits": 15,
+        "characters": 0,
+        "portraitURLs": 15,
+        "dolls": 0
+      },
+      "collections": 228,
+      "msPerWeek": 24.98076923076923,
+      "failureExercised": true
+    },
+    {
+      "scenario": "mature_2porters_same",
+      "seed": 5,
+      "gold": 7652,
+      "travellers": 164,
+      "stockout": 55.487804878048784,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 918.2000000001402,
+        "goodsPause": 93.39999999999897,
+        "goodsPick": 325.0000000000054,
+        "craft": 123.89999999999723,
+        "rest": 126.1999999999971
+      },
+      "worker": [
+        19.316239316242047,
+        22.52136752137022,
+        33.90384615383839,
+        18.384615384617913,
+        5.873931623931437
+      ],
+      "porter": [
+        0,
+        43.89957264957226,
+        50.950854700855416,
+        0.4914529914529572,
+        4.658119658119371
+      ],
+      "producer": [
+        19.316239316242047,
+        22.52136752137022,
+        33.90384615383839,
+        18.384615384617913,
+        5.873931623931437
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 38.740234375,
+      "saveMs": 1,
+      "canvasStart": 17.906551361083984,
+      "canvasEnd": 17.799053192138672,
+      "caches": {
+        "rig": 1000,
+        "tools": 4,
+        "carry": 200,
+        "pile": 52,
+        "products": 2,
+        "portraits": 15,
+        "characters": 0,
+        "portraitURLs": 15,
+        "dolls": 0
+      },
+      "collections": 226,
+      "msPerWeek": 29.557692307692307,
+      "failureExercised": true
+    },
+    {
+      "scenario": "mature_2porters_plus2",
+      "seed": 1,
+      "gold": 11092,
+      "travellers": 155,
+      "stockout": 53.392330383480825,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "goodsPick": 454.00000000003473,
+        "work": 949.1000000001472,
+        "goodsPause": 40.60000000000031,
+        "craft": 240.8999999999906,
+        "rest": 111.99999999999791
+      },
+      "worker": [
+        19.209401709405036,
+        22.959401709401877,
+        31.990740740733305,
+        19.309116809120052,
+        6.531339031339736
+      ],
+      "porter": [
+        0,
+        44.743589743589766,
+        47.467948717949184,
+        0,
+        7.788461538461059
+      ],
+      "producer": [
+        19.209401709405036,
+        22.959401709401877,
+        31.990740740733305,
+        19.309116809120052,
+        6.531339031339736
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 39.3369140625,
+      "saveMs": 0,
+      "canvasStart": 17.799053192138672,
+      "canvasEnd": 17.924884796142578,
+      "caches": {
+        "rig": 1000,
+        "tools": 4,
+        "carry": 200,
+        "pile": 52,
+        "products": 2,
+        "portraits": 15,
+        "characters": 0,
+        "portraitURLs": 15,
+        "dolls": 0
+      },
+      "collections": 240,
+      "msPerWeek": 27.192307692307693,
+      "failureExercised": true
+    },
+    {
+      "scenario": "mature_2porters_plus2",
+      "seed": 2,
+      "gold": 10412,
+      "travellers": 159,
+      "stockout": 52.09580838323353,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 1022.700000000164,
+        "goodsPause": 126.59999999999708,
+        "goodsPick": 257.5999999999901,
+        "craft": 273.8999999999938,
+        "rest": 147.6999999999959
+      },
+      "worker": [
+        19.257478632481963,
+        21.8162393162405,
+        32.558760683752844,
+        20.049857549860217,
+        6.317663817664474
+      ],
+      "porter": [
+        0,
+        45.79059829059814,
+        49.54059829059873,
+        0,
+        4.668803418803125
+      ],
+      "producer": [
+        19.257478632481963,
+        21.8162393162405,
+        32.558760683752844,
+        20.049857549860217,
+        6.317663817664474
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 39.271484375,
+      "saveMs": 0,
+      "canvasStart": 17.924884796142578,
+      "canvasEnd": 18.035282135009766,
+      "caches": {
+        "rig": 1000,
+        "tools": 4,
+        "carry": 200,
+        "pile": 52,
+        "products": 2,
+        "portraits": 16,
+        "characters": 0,
+        "portraitURLs": 16,
+        "dolls": 0
+      },
+      "collections": 236,
+      "msPerWeek": 25.442307692307693,
+      "failureExercised": true
+    },
+    {
+      "scenario": "mature_2porters_plus2",
+      "seed": 3,
+      "gold": 12171,
+      "travellers": 154,
+      "stockout": 50.72463768115942,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "goodsPick": 376.8000000000172,
+        "work": 982.2000000001548,
+        "goodsPause": 55.200000000000514,
+        "craft": 225.39999999999148,
+        "rest": 58.50000000000056
+      },
+      "worker": [
+        19.339387464390697,
+        22.83653846153875,
+        30.23682336181742,
+        21.12713675213848,
+        6.460113960114648
+      ],
+      "porter": [
+        0,
+        44.41239316239313,
+        47.78846153846206,
+        0,
+        7.799145299144818
+      ],
+      "producer": [
+        19.339387464390697,
+        22.83653846153875,
+        30.23682336181742,
+        21.12713675213848,
+        6.460113960114648
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 38.9921875,
+      "saveMs": 0,
+      "canvasStart": 18.035282135009766,
+      "canvasEnd": 18.034252166748047,
+      "caches": {
+        "rig": 1000,
+        "tools": 4,
+        "carry": 200,
+        "pile": 52,
+        "products": 2,
+        "portraits": 16,
+        "characters": 0,
+        "portraitURLs": 16,
+        "dolls": 0
+      },
+      "collections": 233,
+      "msPerWeek": 25.153846153846153,
+      "failureExercised": true
+    },
+    {
+      "scenario": "mature_2porters_plus2",
+      "seed": 4,
+      "gold": 10070,
+      "travellers": 157,
+      "stockout": 52.38095238095239,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 1001.9000000001593,
+        "goodsPick": 335.1000000000077,
+        "craft": 331.6000000000069,
+        "rest": 119.99999999999746,
+        "goodsPause": 18.699999999999996
+      },
+      "worker": [
+        18.636039886043577,
+        22.799145299145454,
+        32.18126780626,
+        19.27350427350742,
+        7.110042735043563
+      ],
+      "porter": [
+        0,
+        44.059829059828886,
+        48.77136752136811,
+        0,
+        7.168803418803001
+      ],
+      "producer": [
+        18.636039886043577,
+        22.799145299145454,
+        32.18126780626,
+        19.27350427350742,
+        7.110042735043563
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 39.685546875,
+      "saveMs": 0,
+      "canvasStart": 18.034252166748047,
+      "canvasEnd": 17.997821807861328,
+      "caches": {
+        "rig": 1000,
+        "tools": 4,
+        "carry": 200,
+        "pile": 52,
+        "products": 2,
+        "portraits": 18,
+        "characters": 0,
+        "portraitURLs": 18,
+        "dolls": 0
+      },
+      "collections": 240,
+      "msPerWeek": 28.5,
+      "failureExercised": true
+    },
+    {
+      "scenario": "mature_2porters_plus2",
+      "seed": 5,
+      "gold": 10346,
+      "travellers": 156,
+      "stockout": 51.488095238095234,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 1015.9000000001624,
+        "goodsPause": 64.40000000000062,
+        "goodsPick": 397.2000000000218,
+        "craft": 250.69999999999004,
+        "rest": 153.49999999999557
+      },
+      "worker": [
+        18.785612535616313,
+        22.629985754986315,
+        33.50605413104558,
+        18.988603988607597,
+        6.089743589744194
+      ],
+      "porter": [
+        0,
+        46.44230769230762,
+        49.134615384615735,
+        0,
+        4.423076923076642
+      ],
+      "producer": [
+        18.785612535616313,
+        22.629985754986315,
+        33.50605413104558,
+        18.988603988607597,
+        6.089743589744194
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 39.0537109375,
+      "saveMs": 0,
+      "canvasStart": 17.997821807861328,
+      "canvasEnd": 18.07541275024414,
+      "caches": {
+        "rig": 1000,
+        "tools": 4,
+        "carry": 200,
+        "pile": 52,
+        "products": 2,
+        "portraits": 18,
+        "characters": 0,
+        "portraitURLs": 18,
+        "dolls": 0
+      },
+      "collections": 232,
+      "msPerWeek": 27.01923076923077,
+      "failureExercised": true
+    },
+    {
+      "scenario": "early_duplicates",
+      "seed": 1,
+      "gold": 1520,
+      "travellers": 52,
+      "stockout": 30.973451327433626,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 940.6000000001453,
+        "goodsPick": 464.8000000000372,
+        "rest": 257.89999999999014
+      },
+      "worker": [
+        8.292181069959325,
+        32.119341563794066,
+        57.04046639230944,
+        0.9979423868313769,
+        1.5500685871057864
+      ],
+      "porter": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "producer": [
+        6.111111111110787,
+        32.42521367521171,
+        59.15598290598534,
+        1.0256410256409598,
+        1.2820512820511991
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 34.166015625,
+      "saveMs": 0,
+      "canvasStart": 18.07541275024414,
+      "canvasEnd": 17.990535736083984,
+      "caches": {
+        "rig": 1000,
+        "tools": 4,
+        "carry": 200,
+        "pile": 52,
+        "products": 2,
+        "portraits": 19,
+        "characters": 0,
+        "portraitURLs": 19,
+        "dolls": 0
+      },
+      "collections": 164,
+      "msPerWeek": 14.653846153846153,
+      "failureExercised": true
+    },
+    {
+      "scenario": "early_duplicates",
+      "seed": 2,
+      "gold": 1406,
+      "travellers": 52,
+      "stockout": 37.60683760683761,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 1046.4000000001438,
+        "goodsPick": 286.1999999999966,
+        "rest": 254.19999999998984
+      },
+      "worker": [
+        8.141025641025955,
+        32.738603988611494,
+        56.50997150996345,
+        1.061253561253648,
+        1.5491452991454302
+      ],
+      "porter": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "producer": [
+        8.856837606837079,
+        31.15384615384422,
+        57.393162393165,
+        1.0256410256409678,
+        1.5705128205127312
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 34.0693359375,
+      "saveMs": 0,
+      "canvasStart": 17.990535736083984,
+      "canvasEnd": 18.292354583740234,
+      "caches": {
+        "rig": 1000,
+        "tools": 4,
+        "carry": 200,
+        "pile": 52,
+        "products": 2,
+        "portraits": 20,
+        "characters": 0,
+        "portraitURLs": 20,
+        "dolls": 0
+      },
+      "collections": 164,
+      "msPerWeek": 11.25,
+      "failureExercised": true
+    },
+    {
+      "scenario": "early_duplicates",
+      "seed": 3,
+      "gold": 1499,
+      "travellers": 52,
+      "stockout": 34.74576271186441,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 947.0000000001468,
+        "goodsPick": 414.2000000000257,
+        "rest": 276.2999999999943
+      },
+      "worker": [
+        9.046639231824928,
+        31.91358024692132,
+        56.15569272975828,
+        1.1694101508917434,
+        1.7146776406037338
+      ],
+      "porter": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "producer": [
+        7.286324786324401,
+        34.989316239314824,
+        55.074786324788285,
+        1.0683760683760035,
+        1.5811965811964843
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 34.4208984375,
+      "saveMs": 0,
+      "canvasStart": 18.292354583740234,
+      "canvasEnd": 18.260082244873047,
+      "caches": {
+        "rig": 1000,
+        "tools": 4,
+        "carry": 200,
+        "pile": 52,
+        "products": 2,
+        "portraits": 21,
+        "characters": 0,
+        "portraitURLs": 21,
+        "dolls": 0
+      },
+      "collections": 162,
+      "msPerWeek": 11.076923076923077,
+      "failureExercised": true
+    },
+    {
+      "scenario": "early_duplicates",
+      "seed": 4,
+      "gold": 1536,
+      "travellers": 52,
+      "stockout": 36.15384615384615,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 1027.8000000001607,
+        "goodsPick": 375.7000000000169,
+        "rest": 243.59999999999044
+      },
+      "worker": [
+        9.218106995885371,
+        31.60493827161269,
+        56.48491083675409,
+        0.9876543209877501,
+        1.7043895747601172
+      ],
+      "porter": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "producer": [
+        9.294871794871236,
+        32.211538461536776,
+        55.576923076925475,
+        1.0149572649572098,
+        1.9017094017093001
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 34.140625,
+      "saveMs": 1,
+      "canvasStart": 18.260082244873047,
+      "canvasEnd": 18.261188507080078,
+      "caches": {
+        "rig": 1000,
+        "tools": 4,
+        "carry": 200,
+        "pile": 52,
+        "products": 2,
+        "portraits": 21,
+        "characters": 0,
+        "portraitURLs": 21,
+        "dolls": 0
+      },
+      "collections": 169,
+      "msPerWeek": 10,
+      "failureExercised": true
+    },
+    {
+      "scenario": "early_duplicates",
+      "seed": 5,
+      "gold": 1595,
+      "travellers": 52,
+      "stockout": 32.78688524590164,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 1018.600000000163,
+        "goodsPick": 356.40000000001254,
+        "rest": 243.29999999999046
+      },
+      "worker": [
+        8.473936899863164,
+        33.707133058992895,
+        55.49725651576652,
+        0.8779149519890987,
+        1.4437585733883287
+      ],
+      "porter": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "producer": [
+        8.408119658119155,
+        36.62393162393053,
+        53.055555555557255,
+        0.6837606837606438,
+        1.2286324786324057
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 34.169921875,
+      "saveMs": 0,
+      "canvasStart": 18.261188507080078,
+      "canvasEnd": 18.337749481201172,
+      "caches": {
+        "rig": 1000,
+        "tools": 4,
+        "carry": 200,
+        "pile": 52,
+        "products": 2,
+        "portraits": 21,
+        "characters": 0,
+        "portraitURLs": 21,
+        "dolls": 0
+      },
+      "collections": 165,
+      "msPerWeek": 12.384615384615385,
+      "failureExercised": true
+    },
+    {
+      "scenario": "late",
+      "seed": 1,
+      "gold": 21914,
+      "travellers": 258,
+      "stockout": 58.9648798521257,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 1605.899999999635,
+        "goodsPick": 714.3000000000939,
+        "rest": 96.59999999999879,
+        "goodsPause": 24.60000000000008,
+        "craft": 373.8000000000165
+      },
+      "worker": [
+        14.938271604942502,
+        27.84306742639741,
+        33.41880341879679,
+        17.16999050332676,
+        6.6298670465365435
+      ],
+      "porter": [
+        0,
+        40.73717948717868,
+        53.09829059829176,
+        0,
+        6.164529914529557
+      ],
+      "producer": [
+        14.938271604942502,
+        27.84306742639741,
+        33.41880341879679,
+        17.16999050332676,
+        6.6298670465365435
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 44.4365234375,
+      "saveMs": 1,
+      "canvasStart": 18.337749481201172,
+      "canvasEnd": 17.983417510986328,
+      "caches": {
+        "rig": 1000,
+        "tools": 6,
+        "carry": 200,
+        "pile": 52,
+        "products": 3,
+        "portraits": 21,
+        "characters": 0,
+        "portraitURLs": 21,
+        "dolls": 0
+      },
+      "collections": 295,
+      "msPerWeek": 63.11538461538461,
+      "failureExercised": true
+    },
+    {
+      "scenario": "late",
+      "seed": 2,
+      "gold": 25573,
+      "travellers": 258,
+      "stockout": 57.45098039215686,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 1458.6999999997688,
+        "goodsPause": 109.99999999999802,
+        "goodsPick": 818.6000000001176,
+        "craft": 324.5000000000053,
+        "rest": 76.19999999999995
+      },
+      "worker": [
+        15.074786324790546,
+        28.422364672361116,
+        33.09591642924349,
+        17.204415954418938,
+        6.20251661918591
+      ],
+      "porter": [
+        0,
+        43.70726495726437,
+        52.788461538462364,
+        0,
+        3.5042735042732684
+      ],
+      "producer": [
+        15.074786324790546,
+        28.422364672361116,
+        33.09591642924349,
+        17.204415954418938,
+        6.20251661918591
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 44.390625,
+      "saveMs": 1,
+      "canvasStart": 17.983417510986328,
+      "canvasEnd": 18.278827667236328,
+      "caches": {
+        "rig": 1000,
+        "tools": 6,
+        "carry": 200,
+        "pile": 52,
+        "products": 3,
+        "portraits": 22,
+        "characters": 0,
+        "portraitURLs": 22,
+        "dolls": 0
+      },
+      "collections": 308,
+      "msPerWeek": 58.82692307692308,
+      "failureExercised": true
+    },
+    {
+      "scenario": "late",
+      "seed": 3,
+      "gold": 25440,
+      "travellers": 254,
+      "stockout": 58.95522388059702,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "goodsPick": 720.4000000000952,
+        "work": 1586.8999999996522,
+        "goodsPause": 42.600000000000335,
+        "rest": 93.69999999999895,
+        "craft": 355.60000000001236
+      },
+      "worker": [
+        15.787037037040802,
+        27.955840455837098,
+        33.228869895530124,
+        16.596628679965306,
+        6.431623931626667
+      ],
+      "porter": [
+        0,
+        41.89102564102498,
+        52.33974358974459,
+        0,
+        5.769230769230428
+      ],
+      "producer": [
+        15.787037037040802,
+        27.955840455837098,
+        33.228869895530124,
+        16.596628679965306,
+        6.431623931626667
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 44.1611328125,
+      "saveMs": 0,
+      "canvasStart": 18.278827667236328,
+      "canvasEnd": 18.315258026123047,
+      "caches": {
+        "rig": 1000,
+        "tools": 6,
+        "carry": 200,
+        "pile": 52,
+        "products": 3,
+        "portraits": 23,
+        "characters": 0,
+        "portraitURLs": 23,
+        "dolls": 0
+      },
+      "collections": 305,
+      "msPerWeek": 51.94230769230769,
+      "failureExercised": true
+    },
+    {
+      "scenario": "late",
+      "seed": 4,
+      "gold": 20982,
+      "travellers": 255,
+      "stockout": 61.702127659574465,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 1597.3999999996427,
+        "goodsPause": 101.89999999999849,
+        "goodsPick": 630.6000000000748,
+        "craft": 348.7000000000108,
+        "rest": 99.69999999999861
+      },
+      "worker": [
+        15.531813865151134,
+        27.58072174738532,
+        32.98076923076298,
+        17.586657169993238,
+        6.320037986707335
+      ],
+      "porter": [
+        0,
+        40.89743589743494,
+        54.978632478633706,
+        0.4914529914529561,
+        3.632478632478395
+      ],
+      "producer": [
+        15.531813865151134,
+        27.58072174738532,
+        32.98076923076298,
+        17.586657169993238,
+        6.320037986707335
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 44.650390625,
+      "saveMs": 0,
+      "canvasStart": 18.315258026123047,
+      "canvasEnd": 18.300304412841797,
+      "caches": {
+        "rig": 1000,
+        "tools": 6,
+        "carry": 200,
+        "pile": 52,
+        "products": 3,
+        "portraits": 24,
+        "characters": 0,
+        "portraitURLs": 24,
+        "dolls": 0
+      },
+      "collections": 314,
+      "msPerWeek": 57.46153846153846,
+      "failureExercised": true
+    },
+    {
+      "scenario": "late",
+      "seed": 5,
+      "gold": 25935,
+      "travellers": 245,
+      "stockout": 56.4453125,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 1527.5999999997061,
+        "goodsPause": 144.2999999999961,
+        "goodsPick": 716.8000000000944,
+        "craft": 307.9000000000015,
+        "rest": 95.99999999999882
+      },
+      "worker": [
+        15.548433048437,
+        27.456077872741552,
+        33.150522317182684,
+        17.66025641025913,
+        6.184710351379634
+      ],
+      "porter": [
+        0,
+        44.39102564102516,
+        52.136752136752854,
+        0,
+        3.472222222221988
+      ],
+      "producer": [
+        15.548433048437,
+        27.456077872741552,
+        33.150522317182684,
+        17.66025641025913,
+        6.184710351379634
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 44.96484375,
+      "saveMs": 0,
+      "canvasStart": 18.300304412841797,
+      "canvasEnd": 18.26162338256836,
+      "caches": {
+        "rig": 1000,
+        "tools": 6,
+        "carry": 200,
+        "pile": 52,
+        "products": 3,
+        "portraits": 24,
+        "characters": 0,
+        "portraitURLs": 24,
+        "dolls": 0
+      },
+      "collections": 304,
+      "msPerWeek": 54.71153846153846,
+      "failureExercised": true
+    },
+    {
+      "scenario": "late_second_chain",
+      "seed": 1,
+      "gold": 29136,
+      "travellers": 259,
+      "stockout": 52.91902071563088,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 1644.1999999996,
+        "goodsPick": 1211.9999999999932,
+        "goodsPause": 89.3999999999992,
+        "craft": 637.0000000000763,
+        "rest": 73.80000000000008
+      },
+      "worker": [
+        15.768340455842944,
+        29.04024216523854,
+        32.55341880341356,
+        15.878739316241752,
+        6.759259259263219
+      ],
+      "porter": [
+        0,
+        45.30982905982892,
+        49.14529914529962,
+        0,
+        5.5448717948714625
+      ],
+      "producer": [
+        15.768340455842944,
+        29.04024216523854,
+        32.55341880341356,
+        15.878739316241752,
+        6.759259259263219
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 47.34765625,
+      "saveMs": 1,
+      "canvasStart": 18.26162338256836,
+      "canvasEnd": 18.317432403564453,
+      "caches": {
+        "rig": 1000,
+        "tools": 6,
+        "carry": 200,
+        "pile": 52,
+        "products": 3,
+        "portraits": 24,
+        "characters": 0,
+        "portraitURLs": 24,
+        "dolls": 0
+      },
+      "collections": 337,
+      "msPerWeek": 65.63461538461539,
+      "failureExercised": true
+    },
+    {
+      "scenario": "late_second_chain",
+      "seed": 2,
+      "gold": 28086,
+      "travellers": 242,
+      "stockout": 53.21100917431193,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 1782.0999999994747,
+        "goodsPick": 1204.7999999999997,
+        "goodsPause": 79.99999999999973,
+        "craft": 566.0000000000601,
+        "rest": 70.20000000000029
+      },
+      "worker": [
+        15.81107549857797,
+        29.084757834754193,
+        32.96919515668972,
+        15.412215099717756,
+        6.722756410260347
+      ],
+      "porter": [
+        0,
+        44.62606837606813,
+        49.818376068376644,
+        0,
+        5.555555555555223
+      ],
+      "producer": [
+        15.81107549857797,
+        29.084757834754193,
+        32.96919515668972,
+        15.412215099717756,
+        6.722756410260347
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 47.39453125,
+      "saveMs": 0,
+      "canvasStart": 18.317432403564453,
+      "canvasEnd": 18.377857208251953,
+      "caches": {
+        "rig": 1000,
+        "tools": 6,
+        "carry": 200,
+        "pile": 52,
+        "products": 3,
+        "portraits": 25,
+        "characters": 0,
+        "portraitURLs": 25,
+        "dolls": 0
+      },
+      "collections": 336,
+      "msPerWeek": 68.84615384615384,
+      "failureExercised": true
+    },
+    {
+      "scenario": "late_second_chain",
+      "seed": 3,
+      "gold": 28141,
+      "travellers": 258,
+      "stockout": 52.72727272727272,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "goodsPick": 1094.0000000001005,
+        "work": 1795.8999999994621,
+        "goodsPause": 39.000000000000284,
+        "craft": 708.7000000000926,
+        "rest": 84.39999999999948
+      },
+      "worker": [
+        15.627670940173461,
+        28.891559829056213,
+        33.137464387458806,
+        15.41844729344991,
+        6.924857549861607
+      ],
+      "porter": [
+        0,
+        45.58760683760676,
+        48.76068376068418,
+        0,
+        5.651709401709065
+      ],
+      "producer": [
+        15.627670940173461,
+        28.891559829056213,
+        33.137464387458806,
+        15.41844729344991,
+        6.924857549861607
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 46.2587890625,
+      "saveMs": 0,
+      "canvasStart": 18.377857208251953,
+      "canvasEnd": 18.35245132446289,
+      "caches": {
+        "rig": 1000,
+        "tools": 6,
+        "carry": 200,
+        "pile": 52,
+        "products": 3,
+        "portraits": 25,
+        "characters": 0,
+        "portraitURLs": 25,
+        "dolls": 0
+      },
+      "collections": 334,
+      "msPerWeek": 65.17307692307692,
+      "failureExercised": true
+    },
+    {
+      "scenario": "late_second_chain",
+      "seed": 4,
+      "gold": 27075,
+      "travellers": 249,
+      "stockout": 55.343511450381676,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "goodsPick": 995.0000000001577,
+        "work": 1848.799999999414,
+        "goodsPause": 80.99999999999967,
+        "craft": 699.2000000000904,
+        "rest": 76.09999999999995
+      },
+      "worker": [
+        15.865384615387034,
+        29.303774928771137,
+        32.94248575498028,
+        15.011574074076888,
+        6.876780626784656
+      ],
+      "porter": [
+        0,
+        44.71153846153825,
+        49.56196581196637,
+        0,
+        5.726495726495387
+      ],
+      "producer": [
+        15.865384615387034,
+        29.303774928771137,
+        32.94248575498028,
+        15.011574074076888,
+        6.876780626784656
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 46.2041015625,
+      "saveMs": 1,
+      "canvasStart": 18.35245132446289,
+      "canvasEnd": 18.207569122314453,
+      "caches": {
+        "rig": 1000,
+        "tools": 6,
+        "carry": 200,
+        "pile": 52,
+        "products": 3,
+        "portraits": 25,
+        "characters": 0,
+        "portraitURLs": 25,
+        "dolls": 0
+      },
+      "collections": 341,
+      "msPerWeek": 70.61538461538461,
+      "failureExercised": true
+    },
+    {
+      "scenario": "late_second_chain",
+      "seed": 5,
+      "gold": 28262,
+      "travellers": 253,
+      "stockout": 53.47985347985348,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 1636.0999999996075,
+        "goodsPause": 71.50000000000021,
+        "goodsPick": 1267.5999999999426,
+        "craft": 672.0000000000842,
+        "rest": 113.39999999999783
+      },
+      "worker": [
+        15.957977207979654,
+        28.571937321933987,
+        33.481125356119776,
+        15.47631766382033,
+        6.512642450146261
+      ],
+      "porter": [
+        0,
+        44.4017094017089,
+        52.35042735042808,
+        0,
+        3.2478632478630254
+      ],
+      "producer": [
+        15.957977207979654,
+        28.571937321933987,
+        33.481125356119776,
+        15.47631766382033,
+        6.512642450146261
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 47.0810546875,
+      "saveMs": 0,
+      "canvasStart": 18.207569122314453,
+      "canvasEnd": 18.24575424194336,
+      "caches": {
+        "rig": 1000,
+        "tools": 6,
+        "carry": 200,
+        "pile": 52,
+        "products": 3,
+        "portraits": 26,
+        "characters": 0,
+        "portraitURLs": 26,
+        "dolls": 0
+      },
+      "collections": 334,
+      "msPerWeek": 72.09615384615384,
+      "failureExercised": true
+    },
+    {
+      "scenario": "late_duplicate_shops",
+      "seed": 1,
+      "gold": 24825,
+      "travellers": 261,
+      "stockout": 59.71223021582733,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 1496.4999999997344,
+        "goodsPick": 766.0000000001056,
+        "craft": 416.5000000000262,
+        "rest": 136.19999999999655,
+        "goodsPause": 76.69999999999992
+      },
+      "worker": [
+        14.978632478636635,
+        28.23480531813498,
+        34.32929724595664,
+        15.551994301998121,
+        6.905270655273614
+      ],
+      "porter": [
+        0,
+        40.94017094017018,
+        52.80982905983019,
+        0,
+        6.2499999999996385
+      ],
+      "producer": [
+        14.978632478636635,
+        28.23480531813498,
+        34.32929724595664,
+        15.551994301998121,
+        6.905270655273614
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 45,
+      "saveMs": 1,
+      "canvasStart": 18.24575424194336,
+      "canvasEnd": 18.375301361083984,
+      "caches": {
+        "rig": 1000,
+        "tools": 6,
+        "carry": 200,
+        "pile": 52,
+        "products": 3,
+        "portraits": 28,
+        "characters": 0,
+        "portraitURLs": 28,
+        "dolls": 0
+      },
+      "collections": 306,
+      "msPerWeek": 63.84615384615385,
+      "failureExercised": true
+    },
+    {
+      "scenario": "late_duplicate_shops",
+      "seed": 2,
+      "gold": 24529,
+      "travellers": 268,
+      "stockout": 59.464285714285715,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 1565.4999999996717,
+        "goodsPick": 685.5000000000873,
+        "craft": 485.900000000042,
+        "rest": 109.89999999999803,
+        "goodsPause": 11.499999999999975
+      },
+      "worker": [
+        15.112773029443769,
+        28.548195631525097,
+        33.930436847096466,
+        15.455840455844324,
+        6.952754036090352
+      ],
+      "porter": [
+        0,
+        44.177350427350156,
+        49.79700854700917,
+        0,
+        6.025641025640673
+      ],
+      "producer": [
+        15.112773029443769,
+        28.548195631525097,
+        33.930436847096466,
+        15.455840455844324,
+        6.952754036090352
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 45.033203125,
+      "saveMs": 0,
+      "canvasStart": 18.375301361083984,
+      "canvasEnd": 18.469295501708984,
+      "caches": {
+        "rig": 1000,
+        "tools": 6,
+        "carry": 200,
+        "pile": 52,
+        "products": 3,
+        "portraits": 28,
+        "characters": 0,
+        "portraitURLs": 28,
+        "dolls": 0
+      },
+      "collections": 310,
+      "msPerWeek": 63.76923076923077,
+      "failureExercised": true
+    },
+    {
+      "scenario": "late_duplicate_shops",
+      "seed": 3,
+      "gold": 22946,
+      "travellers": 260,
+      "stockout": 58.01393728222997,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 1623.299999999619,
+        "goodsPick": 620.1000000000724,
+        "craft": 397.30000000002184,
+        "rest": 114.59999999999776,
+        "goodsPause": 50.400000000000446
+      },
+      "worker": [
+        15.396486229823477,
+        27.70061728394727,
+        33.30603038935707,
+        16.7058404558436,
+        6.891025641028594
+      ],
+      "porter": [
+        0,
+        44.54059829059804,
+        49.807692307692896,
+        0,
+        5.651709401709065
+      ],
+      "producer": [
+        15.396486229823477,
+        27.70061728394727,
+        33.30603038935707,
+        16.7058404558436,
+        6.891025641028594
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 44.2666015625,
+      "saveMs": 0,
+      "canvasStart": 18.469295501708984,
+      "canvasEnd": 18.279705047607422,
+      "caches": {
+        "rig": 1000,
+        "tools": 6,
+        "carry": 200,
+        "pile": 52,
+        "products": 3,
+        "portraits": 28,
+        "characters": 0,
+        "portraitURLs": 28,
+        "dolls": 0
+      },
+      "collections": 316,
+      "msPerWeek": 63.03846153846154,
+      "failureExercised": true
+    },
+    {
+      "scenario": "late_duplicate_shops",
+      "seed": 4,
+      "gold": 23373,
+      "travellers": 273,
+      "stockout": 56.02189781021898,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 1555.5999999996807,
+        "goodsPick": 689.5000000000882,
+        "craft": 401.2000000000227,
+        "goodsPause": 39.60000000000029,
+        "rest": 96.2999999999988
+      },
+      "worker": [
+        15.836894586898204,
+        27.886989553652697,
+        33.02706552705896,
+        16.14316239316583,
+        7.105887939224326
+      ],
+      "porter": [
+        0,
+        43.867521367521036,
+        50.20299145299213,
+        0,
+        5.929487179486831
+      ],
+      "producer": [
+        15.836894586898204,
+        27.886989553652697,
+        33.02706552705896,
+        16.14316239316583,
+        7.105887939224326
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 44.8037109375,
+      "saveMs": 1,
+      "canvasStart": 18.279705047607422,
+      "canvasEnd": 18.33639144897461,
+      "caches": {
+        "rig": 1000,
+        "tools": 6,
+        "carry": 200,
+        "pile": 52,
+        "products": 3,
+        "portraits": 28,
+        "characters": 0,
+        "portraitURLs": 28,
+        "dolls": 0
+      },
+      "collections": 310,
+      "msPerWeek": 66.28846153846153,
+      "failureExercised": true
+    },
+    {
+      "scenario": "late_duplicate_shops",
+      "seed": 5,
+      "gold": 25523,
+      "travellers": 259,
+      "stockout": 57.11678832116789,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 1576.199999999662,
+        "goodsPick": 701.800000000091,
+        "craft": 360.2000000000134,
+        "rest": 54.600000000000506,
+        "goodsPause": 47.400000000000404
+      },
+      "worker": [
+        15.283713200383845,
+        28.371320037982954,
+        32.52849002848382,
+        16.901709401712424,
+        6.914767331436962
+      ],
+      "porter": [
+        0,
+        44.42307692307668,
+        49.66880341880401,
+        0,
+        5.908119658119311
+      ],
+      "producer": [
+        15.283713200383845,
+        28.371320037982954,
+        32.52849002848382,
+        16.901709401712424,
+        6.914767331436962
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 44.279296875,
+      "saveMs": 0,
+      "canvasStart": 18.33639144897461,
+      "canvasEnd": 18.427753448486328,
+      "caches": {
+        "rig": 1000,
+        "tools": 6,
+        "carry": 200,
+        "pile": 52,
+        "products": 3,
+        "portraits": 28,
+        "characters": 0,
+        "portraitURLs": 28,
+        "dolls": 0
+      },
+      "collections": 308,
+      "msPerWeek": 58.28846153846154,
+      "failureExercised": true
+    },
+    {
+      "scenario": "demolish_and_roundtrip",
+      "seed": 1,
+      "gold": 6387,
+      "travellers": 164,
+      "stockout": 60.74074074074074,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "goodsPick": 237.0999999999908,
+        "work": 963.3000000001505,
+        "goodsPause": 205.4999999999926,
+        "craft": 237.2999999999908,
+        "rest": 169.49999999999466
+      },
+      "worker": [
+        19.30341880342245,
+        19.004273504277073,
+        38.732905982895616,
+        17.30341880342192,
+        5.65598290598294
+      ],
+      "porter": [
+        0,
+        39.98931623931553,
+        51.720085470086694,
+        0,
+        8.290598290597762
+      ],
+      "producer": [
+        19.30341880342245,
+        19.004273504277073,
+        38.732905982895616,
+        17.30341880342192,
+        5.65598290598294
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 38.212890625,
+      "saveMs": 0,
+      "canvasStart": 18.427753448486328,
+      "canvasEnd": 18.60372543334961,
+      "caches": {
+        "rig": 1000,
+        "tools": 8,
+        "carry": 200,
+        "pile": 52,
+        "products": 3,
+        "portraits": 28,
+        "characters": 0,
+        "portraitURLs": 28,
+        "dolls": 0
+      },
+      "collections": 221,
+      "msPerWeek": 30.75,
+      "failureExercised": true
+    },
+    {
+      "scenario": "demolish_and_roundtrip",
+      "seed": 2,
+      "gold": 6963,
+      "travellers": 163,
+      "stockout": 58.507462686567166,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 965.9000000001511,
+        "goodsPause": 259.59999999999053,
+        "goodsPick": 165.1999999999949,
+        "rest": 203.19999999999274,
+        "craft": 219.7999999999918
+      },
+      "worker": [
+        20.237179487183386,
+        17.73290598290922,
+        38.754273504263125,
+        17.67094017094339,
+        5.6047008547008765
+      ],
+      "porter": [
+        0,
+        39.52991452991348,
+        54.93589743589883,
+        0.4914529914529576,
+        5.042735042734739
+      ],
+      "producer": [
+        20.237179487183386,
+        17.73290598290922,
+        38.754273504263125,
+        17.67094017094339,
+        5.6047008547008765
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 38.5908203125,
+      "saveMs": 0,
+      "canvasStart": 18.60372543334961,
+      "canvasEnd": 18.484745025634766,
+      "caches": {
+        "rig": 1000,
+        "tools": 8,
+        "carry": 200,
+        "pile": 52,
+        "products": 3,
+        "portraits": 28,
+        "characters": 0,
+        "portraitURLs": 28,
+        "dolls": 0
+      },
+      "collections": 224,
+      "msPerWeek": 29.5,
+      "failureExercised": true
+    },
+    {
+      "scenario": "demolish_and_roundtrip",
+      "seed": 3,
+      "gold": 6903,
+      "travellers": 157,
+      "stockout": 59.85663082437276,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "goodsPick": 279.299999999995,
+        "work": 990.7000000001567,
+        "goodsPause": 163.699999999995,
+        "craft": 191.29999999999342,
+        "rest": 52.90000000000048
+      },
+      "worker": [
+        19.21367521367828,
+        22.209401709405103,
+        35.8525641025552,
+        17.335470085472707,
+        5.38888888888872
+      ],
+      "porter": [
+        0,
+        41.41025641025592,
+        50.491452991454,
+        0,
+        8.098290598290088
+      ],
+      "producer": [
+        19.21367521367828,
+        22.209401709405103,
+        35.8525641025552,
+        17.335470085472707,
+        5.38888888888872
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 38.470703125,
+      "saveMs": 0,
+      "canvasStart": 18.484745025634766,
+      "canvasEnd": 18.555164337158203,
+      "caches": {
+        "rig": 1000,
+        "tools": 8,
+        "carry": 200,
+        "pile": 52,
+        "products": 3,
+        "portraits": 28,
+        "characters": 0,
+        "portraitURLs": 28,
+        "dolls": 0
+      },
+      "collections": 223,
+      "msPerWeek": 23.423076923076923,
+      "failureExercised": true
+    },
+    {
+      "scenario": "demolish_and_roundtrip",
+      "seed": 4,
+      "gold": 7523,
+      "travellers": 157,
+      "stockout": 62.61980830670927,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 1032.6000000001563,
+        "goodsPause": 158.79999999999526,
+        "goodsPick": 207.79999999999248,
+        "rest": 191.3999999999934,
+        "craft": 224.29999999999154
+      },
+      "worker": [
+        20.517094017097993,
+        18.128205128208467,
+        38.77991452990413,
+        17.205128205131302,
+        5.369658119658109
+      ],
+      "porter": [
+        0,
+        40.71581196581111,
+        53.589743589744785,
+        0.4914529914529578,
+        5.202991452991141
+      ],
+      "producer": [
+        20.517094017097993,
+        18.128205128208467,
+        38.77991452990413,
+        17.205128205131302,
+        5.369658119658109
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 38.2548828125,
+      "saveMs": 0,
+      "canvasStart": 18.555164337158203,
+      "canvasEnd": 18.635807037353516,
+      "caches": {
+        "rig": 1000,
+        "tools": 8,
+        "carry": 200,
+        "pile": 52,
+        "products": 3,
+        "portraits": 28,
+        "characters": 0,
+        "portraitURLs": 28,
+        "dolls": 0
+      },
+      "collections": 223,
+      "msPerWeek": 23.826923076923077,
+      "failureExercised": true
+    },
+    {
+      "scenario": "demolish_and_roundtrip",
+      "seed": 5,
+      "gold": 6865,
+      "travellers": 158,
+      "stockout": 62.251655629139066,
+      "turnedAway": 0,
+      "emptyByMission": {
+        "work": 1065.8000000001261,
+        "goodsPause": 235.29999999999092,
+        "goodsPick": 200.3999999999929,
+        "rest": 146.49999999999596,
+        "craft": 120.39999999999743
+      },
+      "worker": [
+        19.405982905986367,
+        20.346153846157545,
+        37.78632478631483,
+        17.06410256410543,
+        5.397435897435825
+      ],
+      "porter": [
+        0,
+        42.26495726495661,
+        52.68162393162491,
+        0.24572649572647864,
+        4.807692307692012
+      ],
+      "producer": [
+        19.405982905986367,
+        20.346153846157545,
+        37.78632478631483,
+        17.06410256410543,
+        5.397435897435825
+      ],
+      "overflowLost": 0,
+      "residual": 0,
+      "residualByGood": {},
+      "negatives": 0,
+      "saveKB": 38.302734375,
+      "saveMs": 1,
+      "canvasStart": 18.635807037353516,
+      "canvasEnd": 18.763484954833984,
+      "caches": {
+        "rig": 1000,
+        "tools": 8,
+        "carry": 200,
+        "pile": 52,
+        "products": 3,
+        "portraits": 28,
+        "characters": 0,
+        "portraitURLs": 28,
+        "dolls": 0
+      },
+      "collections": 229,
+      "msPerWeek": 24.21153846153846,
+      "failureExercised": true
+    }
+  ],
+  "summary": [
+    {
+      "scenario": "starter",
+      "gold": 1126.6,
+      "travellers": 52,
+      "stockout": 13.774838035099227,
+      "turnedAway": 0,
+      "overflowLost": 0,
+      "residual": 0,
+      "negatives": 0,
+      "saveKB": 33.953125,
+      "canvasStart": 14.480153656005859,
+      "canvasEnd": 16.682808685302735,
+      "msPerWeek": 13.688461538461539,
+      "collections": 158,
+      "worker": [
+        10.900122265981983,
+        21.527204315725207,
+        64.17858678121738,
+        1.3042024919330757,
+        2.0898841451423458
+      ],
+      "porter": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "producer": [
+        11.493589743588807,
+        20.56623931623729,
+        64.55341880342199,
+        1.3632478632477718,
+        2.0235042735041433
+      ]
+    },
+    {
+      "scenario": "small",
+      "gold": 3483.2,
+      "travellers": 52,
+      "stockout": 32.15169729974126,
+      "turnedAway": 0,
+      "overflowLost": 0,
+      "residual": 0,
+      "negatives": 0,
+      "saveKB": 34.7775390625,
+      "canvasStart": 17.429569244384766,
+      "canvasEnd": 17.494513702392577,
+      "msPerWeek": 15.465384615384616,
+      "collections": 171.8,
+      "worker": [
+        11.452457264960266,
+        23.758012820521,
+        58.13568376067144,
+        1.7280982905986402,
+        4.925747863248655
+      ],
+      "porter": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "producer": [
+        11.811111111111058,
+        24.588034188037227,
+        55.685470085467145,
+        1.6965811965812359,
+        6.218803418803349
+      ]
+    },
+    {
+      "scenario": "mature",
+      "gold": 6485.8,
+      "travellers": 150,
+      "stockout": 56.90633125628854,
+      "turnedAway": 0,
+      "overflowLost": 0,
+      "residual": 0,
+      "negatives": 0,
+      "saveKB": 38.1984375,
+      "canvasStart": 17.657659149169923,
+      "canvasEnd": 17.688716888427734,
+      "msPerWeek": 27.957692307692305,
+      "collections": 226.2,
+      "worker": [
+        11.851139601145062,
+        23.17272079772703,
+        58.16524216522835,
+        2.124643874644545,
+        4.686253561255003
+      ],
+      "porter": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "producer": [
+        11.851139601145062,
+        23.17272079772703,
+        58.16524216522835,
+        2.124643874644545,
+        4.686253561255003
+      ]
+    },
+    {
+      "scenario": "mature_2porters_same",
+      "gold": 7879.4,
+      "travellers": 157.8,
+      "stockout": 56.870594526182344,
+      "turnedAway": 0,
+      "overflowLost": 0,
+      "residual": 0,
+      "negatives": 0,
+      "saveKB": 38.330859375,
+      "canvasStart": 17.86727523803711,
+      "canvasEnd": 17.87985610961914,
+      "msPerWeek": 26.39230769230769,
+      "collections": 226.8,
+      "worker": [
+        20.23162393162678,
+        22.085470085473005,
+        33.9341880341801,
+        18.241452991455418,
+        5.507264957264686
+      ],
+      "porter": [
+        0,
+        42.551282051281596,
+        50.85470085470172,
+        0.5192307692307331,
+        6.074786324785951
+      ],
+      "producer": [
+        20.23162393162678,
+        22.085470085473005,
+        33.9341880341801,
+        18.241452991455418,
+        5.507264957264686
+      ]
+    },
+    {
+      "scenario": "mature_2porters_plus2",
+      "gold": 10818.2,
+      "travellers": 156.2,
+      "stockout": 52.01636481338428,
+      "turnedAway": 0,
+      "overflowLost": 0,
+      "residual": 0,
+      "negatives": 0,
+      "saveKB": 39.26796875,
+      "canvasStart": 17.958258819580077,
+      "canvasEnd": 18.013530731201172,
+      "msPerWeek": 26.661538461538463,
+      "collections": 236.2,
+      "worker": [
+        19.045584045587518,
+        22.60826210826258,
+        32.09472934472183,
+        19.749643874646754,
+        6.501780626781323
+      ],
+      "porter": [
+        0,
+        45.08974358974351,
+        48.540598290598766,
+        0,
+        6.369658119657728
+      ],
+      "producer": [
+        19.045584045587518,
+        22.60826210826258,
+        32.09472934472183,
+        19.749643874646754,
+        6.501780626781323
+      ]
+    },
+    {
+      "scenario": "early_duplicates",
+      "gold": 1511.2,
+      "travellers": 52,
+      "stockout": 34.45335660917669,
+      "turnedAway": 0,
+      "overflowLost": 0,
+      "residual": 0,
+      "negatives": 0,
+      "saveKB": 34.193359375,
+      "canvasStart": 18.175914764404297,
+      "canvasEnd": 18.228382110595703,
+      "msPerWeek": 11.873076923076923,
+      "collections": 164.8,
+      "worker": [
+        8.63437796771175,
+        32.41671942598649,
+        56.337659596910356,
+        1.0188350743907233,
+        1.5924079350006792
+      ],
+      "porter": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "producer": [
+        7.991452991452531,
+        33.48076923076761,
+        56.051282051284275,
+        0.963675213675157,
+        1.512820512820424
+      ]
+    },
+    {
+      "scenario": "late",
+      "gold": 23968.8,
+      "travellers": 254,
+      "stockout": 58.703704856890816,
+      "turnedAway": 0,
+      "overflowLost": 0,
+      "residual": 0,
+      "negatives": 0,
+      "saveKB": 44.520703125,
+      "canvasStart": 18.243111419677735,
+      "canvasEnd": 18.227886199951172,
+      "msPerWeek": 57.21153846153847,
+      "collections": 305.2,
+      "worker": [
+        15.376068376072396,
+        27.8516144349445,
+        33.17497625830321,
+        17.243589743592672,
+        6.353751187087218
+      ],
+      "porter": [
+        0,
+        42.32478632478563,
+        53.06837606837705,
+        0.09829059829059122,
+        4.508547008546728
+      ],
+      "producer": [
+        15.376068376072396,
+        27.8516144349445,
+        33.17497625830321,
+        17.243589743592672,
+        6.353751187087218
+      ]
+    },
+    {
+      "scenario": "late_second_chain",
+      "gold": 28140,
+      "travellers": 252.2,
+      "stockout": 53.53613350949014,
+      "turnedAway": 0,
+      "overflowLost": 0,
+      "residual": 0,
+      "negatives": 0,
+      "saveKB": 46.8572265625,
+      "canvasStart": 18.303386688232422,
+      "canvasEnd": 18.300212860107422,
+      "msPerWeek": 68.4730769230769,
+      "collections": 336.4,
+      "worker": [
+        15.806089743592212,
+        28.978454415950814,
+        33.01673789173243,
+        15.439458689461329,
+        6.759259259263218
+      ],
+      "porter": [
+        0,
+        44.92735042735019,
+        49.92735042735097,
+        0,
+        5.145299145298832
+      ],
+      "producer": [
+        15.806089743592212,
+        28.978454415950814,
+        33.01673789173243,
+        15.439458689461329,
+        6.759259259263218
+      ]
+    },
+    {
+      "scenario": "late_duplicate_shops",
+      "gold": 24239.2,
+      "travellers": 264.2,
+      "stockout": 58.06582786874598,
+      "turnedAway": 0,
+      "overflowLost": 0,
+      "residual": 0,
+      "negatives": 0,
+      "saveKB": 44.6765625,
+      "canvasStart": 18.341289520263672,
+      "canvasEnd": 18.377689361572266,
+      "msPerWeek": 63.04615384615384,
+      "collections": 310,
+      "worker": [
+        15.321699905037185,
+        28.1483855650486,
+        33.424264007590594,
+        16.15170940171286,
+        6.95394112061077
+      ],
+      "porter": [
+        0,
+        43.58974358974322,
+        50.45726495726568,
+        0,
+        5.952991452991103
+      ],
+      "producer": [
+        15.321699905037185,
+        28.1483855650486,
+        33.424264007590594,
+        16.15170940171286,
+        6.95394112061077
+      ]
+    },
+    {
+      "scenario": "demolish_and_roundtrip",
+      "gold": 6928.2,
+      "travellers": 159.8,
+      "stockout": 60.795259637505794,
+      "turnedAway": 0,
+      "overflowLost": 0,
+      "residual": 0,
+      "negatives": 0,
+      "saveKB": 38.36640625,
+      "canvasStart": 18.541439056396484,
+      "canvasEnd": 18.608585357666016,
+      "msPerWeek": 26.342307692307692,
+      "collections": 224,
+      "worker": [
+        19.735470085473697,
+        19.48418803419148,
+        37.98119658118658,
+        17.315811965814948,
+        5.483333333333294
+      ],
+      "porter": [
+        0,
+        40.782051282050524,
+        52.68376068376185,
+        0.2457264957264788,
+        6.2884615384611475
+      ],
+      "producer": [
+        19.735470085473697,
+        19.48418803419148,
+        37.98119658118658,
+        17.315811965814948,
+        5.483333333333294
+      ]
+    }
+  ],
+  "baseline": {
+    "source": "700f57c287a08d02321a7f86383aa4a9ca2436dc",
+    "weeks": 52,
+    "seeds": 5,
+    "summary": [
+      {
+        "scenario": "starter",
+        "gold": 1115.6,
+        "travellers": 52,
+        "stockout": 15.642875322574264,
+        "turnedAway": 0,
+        "overflowLost": 0,
+        "residual": 0,
+        "negatives": 0,
+        "saveKB": 33.871484375,
+        "canvasStart": 34.925391387939456,
+        "canvasEnd": 41.7101692199707,
+        "msPerWeek": 7.125384615385533,
+        "collections": 27.8,
+        "worker": [
+          11.766031628971358,
+          19.142795910617643,
+          65.28720460041109,
+          1.5954759614951861,
+          2.208491898504736
+        ],
+        "porter": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "producer": [
+          12.636752136750971,
+          16.606837606835942,
+          66.95940170940482,
+          1.6431623931622732,
+          2.1538461538460014
+        ]
+      },
+      {
+        "scenario": "small",
+        "gold": 3846.8,
+        "travellers": 52,
+        "stockout": 27.758826043029,
+        "turnedAway": 0,
+        "overflowLost": 0,
+        "residual": 0,
+        "negatives": 0,
+        "saveKB": 34.7796875,
+        "canvasStart": 45.80833206176758,
+        "canvasEnd": 46.44120407104492,
+        "msPerWeek": 8.585384615384438,
+        "collections": 39.2,
+        "worker": [
+          11.370726495729373,
+          25.84775641026527,
+          57.90117521366261,
+          1.928418803419168,
+          2.9519230769235736
+        ],
+        "porter": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "producer": [
+          10.69059829059833,
+          26.082905982909907,
+          58.38888888888472,
+          1.882051282051366,
+          2.9555555555556756
+        ]
+      },
+      {
+        "scenario": "mature",
+        "gold": 6336.6,
+        "travellers": 149.8,
+        "stockout": 53.02126373475103,
+        "turnedAway": 0,
+        "overflowLost": 0.6,
+        "residual": 0,
+        "negatives": 0,
+        "saveKB": 38.356640625,
+        "canvasStart": 47.06748580932617,
+        "canvasEnd": 47.22803421020508,
+        "msPerWeek": 20.666538461539087,
+        "collections": 93.4,
+        "worker": [
+          10.743589743594882,
+          25.436965811971458,
+          58.747507122494625,
+          2.0573361823368916,
+          3.0146011396021435
+        ],
+        "porter": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "producer": [
+          10.743589743594882,
+          25.436965811971458,
+          58.747507122494625,
+          2.0573361823368916,
+          3.0146011396021435
+        ]
+      },
+      {
+        "scenario": "mature_2porters_same",
+        "gold": 6591.6,
+        "travellers": 150,
+        "stockout": 52.9683784036294,
+        "turnedAway": 0,
+        "overflowLost": 0,
+        "residual": 0,
+        "negatives": 0,
+        "saveKB": 38.4212890625,
+        "canvasStart": 47.26276321411133,
+        "canvasEnd": 47.45232009887695,
+        "msPerWeek": 19.350769230769387,
+        "collections": 94,
+        "worker": [
+          10.757834757839898,
+          25.31730769231339,
+          58.79451566950311,
+          2.1773504273511723,
+          2.952991452992436
+        ],
+        "porter": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "producer": [
+          10.757834757839898,
+          25.31730769231339,
+          58.79451566950311,
+          2.1773504273511723,
+          2.952991452992436
+        ]
+      },
+      {
+        "scenario": "mature_2porters_plus2",
+        "gold": 8318,
+        "travellers": 151.2,
+        "stockout": 50.94204361255637,
+        "turnedAway": 0,
+        "overflowLost": 1.6,
+        "residual": 0,
+        "negatives": 0,
+        "saveKB": 39.0951171875,
+        "canvasStart": 48.25236892700195,
+        "canvasEnd": 48.39564895629883,
+        "msPerWeek": 23.033846153847115,
+        "collections": 100,
+        "worker": [
+          11.615995116001436,
+          24.95604395604814,
+          58.12026862025613,
+          2.2420634920643425,
+          3.0656288156299545
+        ],
+        "porter": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "producer": [
+          11.407955292576531,
+          25.299474030247996,
+          58.031886916489846,
+          2.203484549639189,
+          3.057199211046437
+        ]
+      },
+      {
+        "scenario": "early_duplicates",
+        "gold": 1597.6,
+        "travellers": 52,
+        "stockout": 31.9308190495232,
+        "turnedAway": 0,
+        "overflowLost": 0,
+        "residual": 0,
+        "negatives": 0,
+        "saveKB": 34.2568359375,
+        "canvasStart": 45.43434524536133,
+        "canvasEnd": 44.53401565551758,
+        "msPerWeek": 6.458461538461135,
+        "collections": 29.2,
+        "worker": [
+          8.247973797026827,
+          31.710233113347027,
+          56.84488964714207,
+          1.2901586705636248,
+          1.9067447719204633
+        ],
+        "porter": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "producer": [
+          8.341880341879868,
+          32.94444444444281,
+          55.68803418803647,
+          1.2115384615383924,
+          1.8141025641024622
+        ]
+      },
+      {
+        "scenario": "late",
+        "gold": 14083.8,
+        "travellers": 256.4,
+        "stockout": 57.94586260555509,
+        "turnedAway": 0,
+        "overflowLost": 9.8,
+        "residual": 0,
+        "negatives": 0,
+        "saveKB": 44.24453125,
+        "canvasStart": 47.0271614074707,
+        "canvasEnd": 47.7398567199707,
+        "msPerWeek": 57.32807692307699,
+        "collections": 161,
+        "worker": [
+          9.241880341880902,
+          28.538461538444807,
+          57.46260683762357,
+          1.9356837606835273,
+          2.82136752136719
+        ],
+        "porter": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "producer": [
+          9.246963562754361,
+          28.381241565438618,
+          57.58996851103346,
+          1.9527665317138363,
+          2.829059829059719
+        ]
+      },
+      {
+        "scenario": "late_second_chain",
+        "gold": 14706.6,
+        "travellers": 257,
+        "stockout": 58.32468690144831,
+        "turnedAway": 0,
+        "overflowLost": 8.6,
+        "residual": 0,
+        "negatives": 0,
+        "saveKB": 46.582421875,
+        "canvasStart": 48.57573318481445,
+        "canvasEnd": 48.46596145629883,
+        "msPerWeek": 72.3688461538457,
+        "collections": 186.6,
+        "worker": [
+          9.218113083493858,
+          28.708579881625816,
+          57.461867192673495,
+          1.8989151873757337,
+          2.7125246548310873
+        ],
+        "porter": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "producer": [
+          9.110042735040537,
+          28.649038461511143,
+          57.65633903137038,
+          1.8890669515661536,
+          2.6955128205117838
+        ]
+      },
+      {
+        "scenario": "late_duplicate_shops",
+        "gold": 15745.2,
+        "travellers": 268.2,
+        "stockout": 52.88050388179602,
+        "turnedAway": 0,
+        "overflowLost": 9.6,
+        "residual": 0,
+        "negatives": 0,
+        "saveKB": 44.4189453125,
+        "canvasStart": 48.24831008911133,
+        "canvasEnd": 48.60478591918945,
+        "msPerWeek": 60.88884615384203,
+        "collections": 161.4,
+        "worker": [
+          8.969017094018456,
+          30.83760683759072,
+          55.48739316240804,
+          1.9386752136751624,
+          2.7673076923076136
+        ],
+        "porter": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "producer": [
+          8.846378767433528,
+          30.948493027427713,
+          55.48605488080197,
+          1.9433198380568137,
+          2.7757534862799718
+        ]
+      },
+      {
+        "scenario": "demolish_and_roundtrip",
+        "gold": 5915.4,
+        "travellers": 150.6,
+        "stockout": 56.80212729367289,
+        "turnedAway": 0,
+        "overflowLost": 0,
+        "residual": 0,
+        "negatives": 0,
+        "saveKB": 38.1818359375,
+        "canvasStart": 48.40163040161133,
+        "canvasEnd": 48.35969924926758,
+        "msPerWeek": 18.999230769231172,
+        "collections": 92,
+        "worker": [
+          11.022079772085023,
+          23.248219373226128,
+          60.55377492876121,
+          2.043803418804115,
+          3.132122507123534
+        ],
+        "porter": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "producer": [
+          11.022079772085023,
+          23.248219373226128,
+          60.55377492876121,
+          2.043803418804115,
+          3.132122507123534
+        ]
+      }
+    ],
+    "rows": [
+      {
+        "scenario": "starter",
+        "seed": 1,
+        "gold": 1010,
+        "stockout": 22.22222222222222,
+        "travellers": 52,
+        "worker": [
+          11.879084967323278,
+          18.735294117653105,
+          65.75816993463066,
+          1.4150326797388777,
+          2.2124183006540847
+        ],
+        "producer": [
+          12.232905982904885,
+          17.553418803417028,
+          66.53846153846466,
+          1.5277777777776664,
+          2.147435897435748
+        ],
+        "msPerWeek": 13.661538461540589,
+        "saveKB": 33.8564453125,
+        "canvasEnd": 35.33400344848633
+      },
+      {
+        "scenario": "starter",
+        "seed": 2,
+        "gold": 1228,
+        "stockout": 11.267605633802818,
+        "travellers": 52,
+        "worker": [
+          11.656976744189139,
+          17.94573643411448,
+          66.50839793280657,
+          1.750645994832456,
+          2.138242894057351
+        ],
+        "producer": [
+          11.164529914528954,
+          18.611111111109206,
+          66.5598290598322,
+          1.517094017093907,
+          2.147435897435748
+        ],
+        "msPerWeek": 5.778846153846714,
+        "saveKB": 33.9033203125,
+        "canvasEnd": 43.1397590637207
+      },
+      {
+        "scenario": "starter",
+        "seed": 3,
+        "gold": 1167,
+        "stockout": 11.475409836065573,
+        "travellers": 52,
+        "worker": [
+          11.851851851854638,
+          19.682539682545805,
+          64.60978835977866,
+          1.5641534391537635,
+          2.2916666666671337
+        ],
+        "producer": [
+          14.155982905981498,
+          13.82478632478496,
+          68.19444444444751,
+          1.5918803418802185,
+          2.232905982905818
+        ],
+        "msPerWeek": 5.046153846154853,
+        "saveKB": 33.76953125,
+        "canvasEnd": 43.28456497192383
+      },
+      {
+        "scenario": "starter",
+        "seed": 4,
+        "gold": 1133,
+        "stockout": 13.846153846153847,
+        "travellers": 52,
+        "worker": [
+          11.93732193732415,
+          20.62678062678622,
+          63.547008547000075,
+          1.5562678062680713,
+          2.332621082621481
+        ],
+        "producer": [
+          12.86324786324659,
+          14.294871794870332,
+          69.12393162393465,
+          1.5384615384614153,
+          2.1794871794870123
+        ],
+        "msPerWeek": 5.3500000000013435,
+        "saveKB": 33.8447265625,
+        "canvasEnd": 43.61781692504883
+      },
+      {
+        "scenario": "starter",
+        "seed": 5,
+        "gold": 1040,
+        "stockout": 19.402985074626866,
+        "travellers": 52,
+        "worker": [
+          11.504922644165593,
+          18.723628691988605,
+          66.01265822783941,
+          1.6912798874827624,
+          2.0675105485236283
+        ],
+        "producer": [
+          12.767094017092925,
+          18.749999999998185,
+          64.38034188034504,
+          2.0405982905981594,
+          2.06196581196568
+        ],
+        "msPerWeek": 5.790384615384168,
+        "saveKB": 33.9833984375,
+        "canvasEnd": 43.17470169067383
+      },
+      {
+        "scenario": "small",
+        "seed": 1,
+        "gold": 3551,
+        "stockout": 27.11864406779661,
+        "travellers": 52,
+        "worker": [
+          11.786858974361895,
+          26.199252136760865,
+          56.89369658118408,
+          1.8830128205131584,
+          3.2371794871799855
+        ],
+        "producer": [
+          11.841880341880344,
+          26.1581196581232,
+          56.72649572649209,
+          1.816239316239367,
+          3.4572649572650125
+        ],
+        "msPerWeek": 12.274999999998657,
+        "saveKB": 34.888671875,
+        "canvasEnd": 46.54154586791992
+      },
+      {
+        "scenario": "small",
+        "seed": 2,
+        "gold": 3766,
+        "stockout": 27.27272727272727,
+        "travellers": 52,
+        "worker": [
+          10.536858974361458,
+          27.211538461547764,
+          57.52938034186774,
+          2.0325854700858383,
+          2.6896367521372024
+        ],
+        "producer": [
+          9.594017094016957,
+          28.128205128209256,
+          57.538461538457376,
+          2.0427350427351083,
+          2.6965811965812865
+        ],
+        "msPerWeek": 6.953846153846266,
+        "saveKB": 34.7578125,
+        "canvasEnd": 46.3814811706543
+      },
+      {
+        "scenario": "small",
+        "seed": 3,
+        "gold": 3970,
+        "stockout": 28.24427480916031,
+        "travellers": 52,
+        "worker": [
+          12.374465811969145,
+          24.495192307700698,
+          58.16239316238057,
+          1.9364316239319956,
+          3.0315170940176115
+        ],
+        "producer": [
+          11.05555555555572,
+          24.50854700855093,
+          59.69230769230334,
+          1.850427350427462,
+          2.8931623931625627
+        ],
+        "msPerWeek": 7.594230769230098,
+        "saveKB": 34.8330078125,
+        "canvasEnd": 46.69413375854492
+      },
+      {
+        "scenario": "small",
+        "seed": 4,
+        "gold": 4189,
+        "stockout": 25.925925925925924,
+        "travellers": 52,
+        "worker": [
+          10.868055555558213,
+          26.653311965821135,
+          57.87927350426085,
+          1.7815170940174374,
+          2.8178418803423573
+        ],
+        "producer": [
+          9.717948717948644,
+          27.709401709405917,
+          58.15811965811534,
+          1.628205128205189,
+          2.7863247863248954
+        ],
+        "msPerWeek": 7.694230769230321,
+        "saveKB": 34.646484375,
+        "canvasEnd": 46.24979782104492
+      },
+      {
+        "scenario": "small",
+        "seed": 5,
+        "gold": 3758,
+        "stockout": 30.23255813953488,
+        "travellers": 52,
+        "worker": [
+          11.287393162396155,
+          24.67948717949589,
+          59.04113247861984,
+          2.00854700854741,
+          2.9834401709407117
+        ],
+        "producer": [
+          11.243589743589983,
+          23.910256410260214,
+          59.829059829055474,
+          2.072649572649703,
+          2.9444444444446196
+        ],
+        "msPerWeek": 8.40961538461684,
+        "saveKB": 34.7724609375,
+        "canvasEnd": 46.33906173706055
+      },
+      {
+        "scenario": "mature",
+        "seed": 1,
+        "gold": 5999,
+        "stockout": 55.20504731861199,
+        "travellers": 149,
+        "worker": [
+          10.760327635332779,
+          26.032763532768836,
+          58.08582621081404,
+          2.0495014245021306,
+          3.071581196582217
+        ],
+        "producer": [
+          10.760327635332779,
+          26.032763532768836,
+          58.08582621081404,
+          2.0495014245021306,
+          3.071581196582217
+        ],
+        "msPerWeek": 24.888461538461762,
+        "saveKB": 38.220703125,
+        "canvasEnd": 47.08345413208008
+      },
+      {
+        "scenario": "mature",
+        "seed": 2,
+        "gold": 5963,
+        "stockout": 49.8371335504886,
+        "travellers": 150,
+        "worker": [
+          10.762108262113403,
+          25.35790598291165,
+          58.72507122505868,
+          2.209757834758589,
+          2.9451566951576753
+        ],
+        "producer": [
+          10.762108262113403,
+          25.35790598291165,
+          58.72507122505868,
+          2.209757834758589,
+          2.9451566951576753
+        ],
+        "msPerWeek": 20.594230769231217,
+        "saveKB": 38.3271484375,
+        "canvasEnd": 47.23381423950195
+      },
+      {
+        "scenario": "mature",
+        "seed": 3,
+        "gold": 7012,
+        "stockout": 57.05882352941176,
+        "travellers": 149,
+        "worker": [
+          10.888532763537967,
+          24.79344729345324,
+          59.19693732192446,
+          2.031695156695854,
+          3.0893874643884853
+        ],
+        "producer": [
+          10.888532763537967,
+          24.79344729345324,
+          59.19693732192446,
+          2.031695156695854,
+          3.0893874643884853
+        ],
+        "msPerWeek": 19.001923076924868,
+        "saveKB": 38.5244140625,
+        "canvasEnd": 47.43416213989258
+      },
+      {
+        "scenario": "mature",
+        "seed": 4,
+        "gold": 6574,
+        "stockout": 50.98039215686274,
+        "travellers": 149,
+        "worker": [
+          10.97756410256934,
+          25.945512820518097,
+          57.89351851850627,
+          2.0405982905989872,
+          3.1428062678073
+        ],
+        "producer": [
+          10.97756410256934,
+          25.945512820518097,
+          57.89351851850627,
+          2.0405982905989872,
+          3.1428062678073
+        ],
+        "msPerWeek": 19.580769230769455,
+        "saveKB": 38.552734375,
+        "canvasEnd": 47.3018684387207
+      },
+      {
+        "scenario": "mature",
+        "seed": 5,
+        "gold": 6135,
+        "stockout": 52.024922118380054,
+        "travellers": 152,
+        "worker": [
+          10.329415954420924,
+          25.055199430205466,
+          59.83618233616967,
+          1.9551282051288972,
+          2.82407407407504
+        ],
+        "producer": [
+          10.329415954420924,
+          25.055199430205466,
+          59.83618233616967,
+          1.9551282051288972,
+          2.82407407407504
+        ],
+        "msPerWeek": 19.26730769230814,
+        "saveKB": 38.158203125,
+        "canvasEnd": 47.08687210083008
+      },
+      {
+        "scenario": "mature_2porters_same",
+        "seed": 1,
+        "gold": 7180,
+        "stockout": 52.90519877675841,
+        "travellers": 149,
+        "worker": [
+          10.409544159549126,
+          25.683760683766256,
+          58.65562678061447,
+          2.1670227920235403,
+          3.084045584046617
+        ],
+        "producer": [
+          10.409544159549126,
+          25.683760683766256,
+          58.65562678061447,
+          2.1670227920235403,
+          3.084045584046617
+        ],
+        "msPerWeek": 20.438461538459077,
+        "saveKB": 38.412109375,
+        "canvasEnd": 47.51570510864258
+      },
+      {
+        "scenario": "mature_2porters_same",
+        "seed": 2,
+        "gold": 6010,
+        "stockout": 55.9748427672956,
+        "travellers": 150,
+        "worker": [
+          10.73717948718462,
+          26.634615384620368,
+          57.50712250711065,
+          2.143874643875379,
+          2.977207977208969
+        ],
+        "producer": [
+          10.73717948718462,
+          26.634615384620368,
+          57.50712250711065,
+          2.143874643875379,
+          2.977207977208969
+        ],
+        "msPerWeek": 20.192307692308813,
+        "saveKB": 38.478515625,
+        "canvasEnd": 47.52165603637695
+      },
+      {
+        "scenario": "mature_2porters_same",
+        "seed": 3,
+        "gold": 5755,
+        "stockout": 53.5483870967742,
+        "travellers": 151,
+        "worker": [
+          10.582264957270022,
+          24.054487179493623,
+          60.29380341879018,
+          2.4091880341888565,
+          2.6602564102573103
+        ],
+        "producer": [
+          10.582264957270022,
+          24.054487179493623,
+          60.29380341879018,
+          2.4091880341888565,
+          2.6602564102573103
+        ],
+        "msPerWeek": 20.380769230772923,
+        "saveKB": 38.24609375,
+        "canvasEnd": 46.80022048950195
+      },
+      {
+        "scenario": "mature_2porters_same",
+        "seed": 4,
+        "gold": 7602,
+        "stockout": 49.39759036144578,
+        "travellers": 150,
+        "worker": [
+          11.321225071230465,
+          23.842592592598923,
+          59.60826210824868,
+          2.1278490028497172,
+          3.1000712250722318
+        ],
+        "producer": [
+          11.321225071230465,
+          23.842592592598923,
+          59.60826210824868,
+          2.1278490028497172,
+          3.1000712250722318
+        ],
+        "msPerWeek": 18.984615384615047,
+        "saveKB": 38.3662109375,
+        "canvasEnd": 47.38936233520508
+      },
+      {
+        "scenario": "mature_2porters_same",
+        "seed": 5,
+        "gold": 6411,
+        "stockout": 53.01587301587302,
+        "travellers": 150,
+        "worker": [
+          10.738960113965259,
+          26.371082621087783,
+          57.907763532751545,
+          2.0388176638183695,
+          2.943376068377053
+        ],
+        "producer": [
+          10.738960113965259,
+          26.371082621087783,
+          57.907763532751545,
+          2.0388176638183695,
+          2.943376068377053
+        ],
+        "msPerWeek": 16.757692307691077,
+        "saveKB": 38.603515625,
+        "canvasEnd": 48.0346565246582
+      },
+      {
+        "scenario": "mature_2porters_plus2",
+        "seed": 1,
+        "gold": 8655,
+        "stockout": 51.31964809384164,
+        "travellers": 150,
+        "worker": [
+          11.819291819298215,
+          21.677350427356153,
+          60.929487179473,
+          2.3595848595857403,
+          3.21428571428689
+        ],
+        "producer": [
+          11.632149901386605,
+          22.1153846153909,
+          60.69197896119557,
+          2.314266929652362,
+          3.2462195923745565
+        ],
+        "msPerWeek": 22.44423076923312,
+        "saveKB": 38.9384765625,
+        "canvasEnd": 47.32161331176758
+      },
+      {
+        "scenario": "mature_2porters_plus2",
+        "seed": 2,
+        "gold": 7401,
+        "stockout": 52.366863905325445,
+        "travellers": 153,
+        "worker": [
+          11.034798534804562,
+          26.543040293043852,
+          57.113858363846774,
+          2.25885225885313,
+          3.049450549451703
+        ],
+        "producer": [
+          10.779092702175179,
+          26.73405654175303,
+          57.31262327415011,
+          2.20085470085551,
+          2.973372781066157
+        ],
+        "msPerWeek": 22.77115384615228,
+        "saveKB": 39.150390625,
+        "canvasEnd": 48.71016311645508
+      },
+      {
+        "scenario": "mature_2porters_plus2",
+        "seed": 3,
+        "gold": 7836,
+        "stockout": 54.874651810584965,
+        "travellers": 155,
+        "worker": [
+          11.63308913309548,
+          25.100732600736738,
+          58.112026862014446,
+          2.188644688645523,
+          2.9655067155078227
+        ],
+        "producer": [
+          11.676528599611517,
+          24.950690335310576,
+          58.20841551609516,
+          2.1992110453656784,
+          2.9651545036170783
+        ],
+        "msPerWeek": 22.326923076925315,
+        "saveKB": 38.9326171875,
+        "canvasEnd": 48.83314895629883
+      },
+      {
+        "scenario": "mature_2porters_plus2",
+        "seed": 4,
+        "gold": 8103,
+        "stockout": 49.235474006116206,
+        "travellers": 148,
+        "worker": [
+          11.878815628822087,
+          25.718864468868198,
+          57.15506715505501,
+          2.1260683760691803,
+          3.1211843711855214
+        ],
+        "producer": [
+          11.619000657468163,
+          26.09467455621729,
+          57.11867192635217,
+          2.051282051282791,
+          3.1163708086795885
+        ],
+        "msPerWeek": 24.07115384615631,
+        "saveKB": 39.203125,
+        "canvasEnd": 48.36226272583008
+      },
+      {
+        "scenario": "mature_2porters_plus2",
+        "seed": 5,
+        "gold": 9595,
+        "stockout": 46.913580246913575,
+        "travellers": 150,
+        "worker": [
+          11.713980463986841,
+          25.740231990235756,
+          57.290903540891435,
+          2.2771672771681386,
+          2.977716727717834
+        ],
+        "producer": [
+          11.333004602241195,
+          26.602564102568177,
+          56.82774490465623,
+          2.2518080210396016,
+          2.984878369494807
+        ],
+        "msPerWeek": 23.555769230768558,
+        "saveKB": 39.2509765625,
+        "canvasEnd": 48.75105667114258
+      },
+      {
+        "scenario": "early_duplicates",
+        "seed": 1,
+        "gold": 1505,
+        "stockout": 35.53719008264463,
+        "travellers": 52,
+        "worker": [
+          7.991452991453203,
+          33.557692307699654,
+          55.35968660967884,
+          1.1858974358975194,
+          1.9052706552707952
+        ],
+        "producer": [
+          9.444444444443874,
+          32.99145299145147,
+          54.56196581196807,
+          1.0149572649572103,
+          1.9871794871793838
+        ],
+        "msPerWeek": 10.028846153845034,
+        "saveKB": 33.9541015625,
+        "canvasEnd": 45.42448806762695
+      },
+      {
+        "scenario": "early_duplicates",
+        "seed": 2,
+        "gold": 1535,
+        "stockout": 27.184466019417474,
+        "travellers": 52,
+        "worker": [
+          8.808139534884644,
+          30.016149870809507,
+          57.923126614977235,
+          1.3791989664084572,
+          1.8733850129201555
+        ],
+        "producer": [
+          8.290598290597822,
+          32.74572649572484,
+          55.7905982906006,
+          1.4850427350426503,
+          1.6880341880340914
+        ],
+        "msPerWeek": 5.580769230769454,
+        "saveKB": 34.498046875,
+        "canvasEnd": 44.53642654418945
+      },
+      {
+        "scenario": "early_duplicates",
+        "seed": 3,
+        "gold": 1737,
+        "stockout": 34.090909090909086,
+        "travellers": 52,
+        "worker": [
+          7.4722222222225225,
+          33.57986111111895,
+          55.79166666665826,
+          1.3333333333334456,
+          1.8229166666668235
+        ],
+        "producer": [
+          8.685897435896935,
+          32.52136752136586,
+          55.6089743589767,
+          1.5277777777776922,
+          1.655982905982813
+        ],
+        "msPerWeek": 4.948076923077819,
+        "saveKB": 34.0947265625,
+        "canvasEnd": 44.29838943481445
+      },
+      {
+        "scenario": "early_duplicates",
+        "seed": 4,
+        "gold": 1609,
+        "stockout": 29.508196721311474,
+        "travellers": 52,
+        "worker": [
+          8.645404663923896,
+          28.94375857339598,
+          59.06378600822153,
+          1.323731138546125,
+          2.0233196159124756
+        ],
+        "producer": [
+          7.628205128204718,
+          31.591880341878408,
+          57.73504273504526,
+          1.0042735042734454,
+          2.0405982905981745
+        ],
+        "msPerWeek": 6.148076923075468,
+        "saveKB": 34.3681640625,
+        "canvasEnd": 44.2162971496582
+      },
+      {
+        "scenario": "early_duplicates",
+        "seed": 5,
+        "gold": 1602,
+        "stockout": 33.33333333333333,
+        "travellers": 52,
+        "worker": [
+          8.322649572649865,
+          32.453703703711035,
+          56.086182336174474,
+          1.2286324786325769,
+          1.9088319088320669
+        ],
+        "producer": [
+          7.6602564102559905,
+          34.871794871793476,
+          54.74358974359171,
+          1.0256410256409645,
+          1.6987179487178465
+        ],
+        "msPerWeek": 5.586538461537902,
+        "saveKB": 34.369140625,
+        "canvasEnd": 44.19447708129883
+      },
+      {
+        "scenario": "late",
+        "seed": 1,
+        "gold": 13275,
+        "stockout": 57.45967741935484,
+        "travellers": 249,
+        "worker": [
+          9.283119658120334,
+          28.70726495724838,
+          57.17628205129843,
+          1.9348290598288496,
+          2.8985042735039817
+        ],
+        "producer": [
+          9.224021592444124,
+          28.721322537098686,
+          57.2177237966831,
+          1.932073774179008,
+          2.9048582995950802
+        ],
+        "msPerWeek": 58.21923076923178,
+        "saveKB": 44.4365234375,
+        "canvasEnd": 48.0562629699707
+      },
+      {
+        "scenario": "late",
+        "seed": 2,
+        "gold": 12682,
+        "stockout": 57.757009345794394,
+        "travellers": 263,
+        "worker": [
+          8.916666666667302,
+          29.00854700853019,
+          57.2307692307859,
+          1.9262820512818455,
+          2.917735042734759
+        ],
+        "producer": [
+          8.92825011246193,
+          28.6482231218937,
+          57.57984705354379,
+          1.9759334233017876,
+          2.8677462887988163
+        ],
+        "msPerWeek": 55.342307692305226,
+        "saveKB": 44.1044921875,
+        "canvasEnd": 47.59132766723633
+      },
+      {
+        "scenario": "late",
+        "seed": 3,
+        "gold": 14767,
+        "stockout": 55.63636363636364,
+        "travellers": 262,
+        "worker": [
+          9.119658119658427,
+          28.077991452974434,
+          58.075854700872085,
+          1.8685897435894712,
+          2.8579059829055766
+        ],
+        "producer": [
+          9.13967611336131,
+          27.674313990089637,
+          58.38281601440814,
+          1.9152046783624452,
+          2.8879892037784622
+        ],
+        "msPerWeek": 55.27307692307715,
+        "saveKB": 43.759765625,
+        "canvasEnd": 47.23030471801758
+      },
+      {
+        "scenario": "late",
+        "seed": 4,
+        "gold": 16735,
+        "stockout": 57.765151515151516,
+        "travellers": 257,
+        "worker": [
+          9.129273504274273,
+          29.230769230752507,
+          56.97863247864887,
+          1.8942307692305882,
+          2.76709401709374
+        ],
+        "producer": [
+          9.082321187586038,
+          29.55015744488103,
+          56.67678812416806,
+          1.8859649122807256,
+          2.8047683310841327
+        ],
+        "msPerWeek": 60.180769230771915,
+        "saveKB": 45.2275390625,
+        "canvasEnd": 48.06343460083008
+      },
+      {
+        "scenario": "late",
+        "seed": 5,
+        "gold": 12960,
+        "stockout": 61.111111111111114,
+        "travellers": 251,
+        "worker": [
+          9.760683760684172,
+          27.667735042718533,
+          57.85149572651251,
+          2.054487179486882,
+          2.665598290597891
+        ],
+        "producer": [
+          9.86054880791841,
+          27.31219073323004,
+          58.09266756636424,
+          2.0546558704452154,
+          2.679937022042102
+        ],
+        "msPerWeek": 57.62499999999888,
+        "saveKB": 43.6943359375,
+        "canvasEnd": 47.75795364379883
+      },
+      {
+        "scenario": "late_second_chain",
+        "seed": 1,
+        "gold": 17413,
+        "stockout": 55.65529622980251,
+        "travellers": 257,
+        "worker": [
+          8.71219592373085,
+          28.299638395760514,
+          58.47140039451498,
+          1.8088428665341483,
+          2.707922419459499
+        ],
+        "producer": [
+          8.650284900282509,
+          28.070690883162946,
+          58.79095441598674,
+          1.7868589743581371,
+          2.7012108262096604
+        ],
+        "msPerWeek": 72.65384615384784,
+        "saveKB": 45.7275390625,
+        "canvasEnd": 49.20204544067383
+      },
+      {
+        "scenario": "late_second_chain",
+        "seed": 2,
+        "gold": 14233,
+        "stockout": 56.90298507462687,
+        "travellers": 257,
+        "worker": [
+          9.425542406307654,
+          28.74506903349997,
+          57.06936226170677,
+          1.966633793555873,
+          2.793392504929731
+        ],
+        "producer": [
+          9.097222222220188,
+          28.668091168063842,
+          57.557870370401574,
+          1.9524572649564425,
+          2.724358974357938
+        ],
+        "msPerWeek": 71.96153846154014,
+        "saveKB": 47.8837890625,
+        "canvasEnd": 48.78548049926758
+      },
+      {
+        "scenario": "late_second_chain",
+        "seed": 3,
+        "gold": 13853,
+        "stockout": 59.30018416206262,
+        "travellers": 257,
+        "worker": [
+          8.835470085467193,
+          30.239151873735548,
+          56.44066403685447,
+          1.852399737014242,
+          2.632314266928537
+        ],
+        "producer": [
+          8.911146723645167,
+          30.06944444441682,
+          56.541132478663236,
+          1.8367165242158454,
+          2.6415598290589393
+        ],
+        "msPerWeek": 72.54038461537857,
+        "saveKB": 46.7578125,
+        "canvasEnd": 49.39644241333008
+      },
+      {
+        "scenario": "late_second_chain",
+        "seed": 4,
+        "gold": 13481,
+        "stockout": 61.284403669724774,
+        "travellers": 257,
+        "worker": [
+          9.930144641678677,
+          28.800131492409243,
+          56.50641025644673,
+          1.9649901380661146,
+          2.798323471399229
+        ],
+        "producer": [
+          9.699964387462131,
+          29.265491452964977,
+          56.33101851854886,
+          1.939102564101855,
+          2.764423076922187
+        ],
+        "msPerWeek": 73.32692307692028,
+        "saveKB": 46.8173828125,
+        "canvasEnd": 47.73674392700195
+      },
+      {
+        "scenario": "late_second_chain",
+        "seed": 5,
+        "gold": 14553,
+        "stockout": 58.48056537102474,
+        "travellers": 257,
+        "worker": [
+          9.187212360284919,
+          27.458908612723814,
+          58.82149901384454,
+          1.9017094017082916,
+          2.6306706114384424
+        ],
+        "producer": [
+          9.191595441592687,
+          27.171474358947133,
+          59.060719373251494,
+          1.9301994301984875,
+          2.6460113960101936
+        ],
+        "msPerWeek": 71.3615384615416,
+        "saveKB": 45.7255859375,
+        "canvasEnd": 47.2090950012207
+      },
+      {
+        "scenario": "late_duplicate_shops",
+        "seed": 1,
+        "gold": 14115,
+        "stockout": 54.736842105263165,
+        "travellers": 271,
+        "worker": [
+          8.943376068377448,
+          30.903846153830024,
+          55.43269230770716,
+          1.8846153846153397,
+          2.835470085470023
+        ],
+        "producer": [
+          9.003598740443069,
+          30.874943769668096,
+          55.33400809717596,
+          1.9275753486281215,
+          2.8598740440847568
+        ],
+        "msPerWeek": 63.70769230768761,
+        "saveKB": 45.544921875,
+        "canvasEnd": 47.90993118286133
+      },
+      {
+        "scenario": "late_duplicate_shops",
+        "seed": 2,
+        "gold": 15062,
+        "stockout": 54.982206405693944,
+        "travellers": 264,
+        "worker": [
+          9.145299145300303,
+          30.100427350411053,
+          56.041666666682076,
+          2.0309829059827944,
+          2.6816239316237693
+        ],
+        "producer": [
+          9.085695006749567,
+          30.093342330171485,
+          56.10211426001985,
+          2.0299145299146044,
+          2.6889338731444825
+        ],
+        "msPerWeek": 57.53076923076878,
+        "saveKB": 43.66796875,
+        "canvasEnd": 48.29872512817383
+      },
+      {
+        "scenario": "late_duplicate_shops",
+        "seed": 3,
+        "gold": 15454,
+        "stockout": 53.62318840579711,
+        "travellers": 263,
+        "worker": [
+          8.660256410257986,
+          31.92521367519759,
+          54.880341880356376,
+          1.8482905982906113,
+          2.685897435897434
+        ],
+        "producer": [
+          8.426675663520115,
+          32.3582995951292,
+          54.70422852002764,
+          1.8353576248315147,
+          2.6754385964915057
+        ],
+        "msPerWeek": 61.05576923076744,
+        "saveKB": 43.6923828125,
+        "canvasEnd": 49.08882522583008
+      },
+      {
+        "scenario": "late_duplicate_shops",
+        "seed": 4,
+        "gold": 16416,
+        "stockout": 50.522648083623686,
+        "travellers": 268,
+        "worker": [
+          9.029914529915404,
+          29.59081196579529,
+          56.70833333334953,
+          1.8717948717947186,
+          2.799145299145065
+        ],
+        "producer": [
+          8.693207377419501,
+          29.886414754822294,
+          56.755510571311916,
+          1.8634727845254422,
+          2.8013945119208428
+        ],
+        "msPerWeek": 59.715384615377005,
+        "saveKB": 45.177734375,
+        "canvasEnd": 48.7349739074707
+      },
+      {
+        "scenario": "late_duplicate_shops",
+        "seed": 5,
+        "gold": 17679,
+        "stockout": 50.53763440860215,
+        "travellers": 275,
+        "worker": [
+          9.066239316241138,
+          31.667735042719663,
+          54.37393162394508,
+          2.0576923076923483,
+          2.8344017094017757
+        ],
+        "producer": [
+          9.022717049035386,
+          31.52946468734749,
+          54.53441295547448,
+          2.0602789023843857,
+          2.853126405758271
+        ],
+        "msPerWeek": 62.43461538460934,
+        "saveKB": 44.01171875,
+        "canvasEnd": 48.99147415161133
+      },
+      {
+        "scenario": "demolish_and_roundtrip",
+        "seed": 1,
+        "gold": 5505,
+        "stockout": 57.194244604316545,
+        "travellers": 149,
+        "worker": [
+          10.79415954416471,
+          23.002136752143716,
+          61.134259259245425,
+          1.8856837606844163,
+          3.183760683761739
+        ],
+        "producer": [
+          10.79415954416471,
+          23.002136752143716,
+          61.134259259245425,
+          1.8856837606844163,
+          3.183760683761739
+        ],
+        "msPerWeek": 20.471153846153847,
+        "saveKB": 38.20703125,
+        "canvasEnd": 48.44856643676758
+      },
+      {
+        "scenario": "demolish_and_roundtrip",
+        "seed": 2,
+        "gold": 5885,
+        "stockout": 59.56678700361011,
+        "travellers": 153,
+        "worker": [
+          10.056980056984873,
+          25.02670940171548,
+          59.91096866095602,
+          2.051282051282776,
+          2.954059829060839
+        ],
+        "producer": [
+          10.056980056984873,
+          25.02670940171548,
+          59.91096866095602,
+          2.051282051282776,
+          2.954059829060839
+        ],
+        "msPerWeek": 20.15961538461628,
+        "saveKB": 38.0771484375,
+        "canvasEnd": 48.30971145629883
+      },
+      {
+        "scenario": "demolish_and_roundtrip",
+        "seed": 3,
+        "gold": 6092,
+        "stockout": 56.33802816901409,
+        "travellers": 148,
+        "worker": [
+          10.59116809117316,
+          22.946937321944365,
+          61.371082621068794,
+          1.9675925925932776,
+          3.1232193732204165
+        ],
+        "producer": [
+          10.59116809117316,
+          22.946937321944365,
+          61.371082621068794,
+          1.9675925925932776,
+          3.1232193732204165
+        ],
+        "msPerWeek": 17.17692307692778,
+        "saveKB": 38.09765625,
+        "canvasEnd": 47.36549758911133
+      },
+      {
+        "scenario": "demolish_and_roundtrip",
+        "seed": 4,
+        "gold": 5730,
+        "stockout": 54.63917525773196,
+        "travellers": 153,
+        "worker": [
+          12.161680911686648,
+          22.110042735049753,
+          60.204772079757575,
+          2.222222222222938,
+          3.301282051283078
+        ],
+        "producer": [
+          12.161680911686648,
+          22.110042735049753,
+          60.204772079757575,
+          2.222222222222938,
+          3.301282051283078
+        ],
+        "msPerWeek": 20.01923076922965,
+        "saveKB": 38.4482421875,
+        "canvasEnd": 48.89290237426758
+      },
+      {
+        "scenario": "demolish_and_roundtrip",
+        "seed": 5,
+        "gold": 6365,
+        "stockout": 56.272401433691755,
+        "travellers": 150,
+        "worker": [
+          11.506410256415736,
+          23.15527065527732,
+          60.14779202277818,
+          2.092236467237167,
+          3.0982905982915985
+        ],
+        "producer": [
+          11.506410256415736,
+          23.15527065527732,
+          60.14779202277818,
+          2.092236467237167,
+          3.0982905982915985
+        ],
+        "msPerWeek": 17.169230769228307,
+        "saveKB": 38.0791015625,
+        "canvasEnd": 48.78181838989258
+      }
+    ]
+  },
+  "paired": [
+    {
+      "scenario": "starter",
+      "seed": 1,
+      "goldChange": 11.188118811881198,
+      "costRatio": 1.6624436936934346,
+      "saveRatio": 0.9952118607401425
+    },
+    {
+      "scenario": "starter",
+      "seed": 2,
+      "goldChange": -4.4788273615635195,
+      "costRatio": 2.326123128119575,
+      "saveRatio": 1.0026499985597834
+    },
+    {
+      "scenario": "starter",
+      "seed": 3,
+      "goldChange": -9.854327335047131,
+      "costRatio": 2.2599085365849145,
+      "saveRatio": 1.0019664545980336
+    },
+    {
+      "scenario": "starter",
+      "seed": 4,
+      "goldChange": 1.5004413062665423,
+      "costRatio": 2.0596693026594397,
+      "saveRatio": 1.0171971030383473
+    },
+    {
+      "scenario": "starter",
+      "seed": 5,
+      "goldChange": 9.134615384615374,
+      "costRatio": 1.7037529060114234,
+      "saveRatio": 0.9950573292335987
+    },
+    {
+      "scenario": "small",
+      "seed": 1,
+      "goldChange": -12.390875809631085,
+      "costRatio": 1.61836127212927,
+      "saveRatio": 0.9995521468958182
+    },
+    {
+      "scenario": "small",
+      "seed": 2,
+      "goldChange": 1.0621348911311834,
+      "costRatio": 2.245575221238902,
+      "saveRatio": 0.9976680152843336
+    },
+    {
+      "scenario": "small",
+      "seed": 3,
+      "goldChange": -7.75818639798489,
+      "costRatio": 1.6004051658649172,
+      "saveRatio": 1.0010933864139728
+    },
+    {
+      "scenario": "small",
+      "seed": 4,
+      "goldChange": -23.752685605156366,
+      "costRatio": 1.8345413646589421,
+      "saveRatio": 1.0078358419302103
+    },
+    {
+      "scenario": "small",
+      "seed": 5,
+      "goldChange": -3.060138371474186,
+      "costRatio": 1.8522753258629312,
+      "saveRatio": 0.9935686803156683
+    },
+    {
+      "scenario": "mature",
+      "seed": 1,
+      "goldChange": 8.851475245874308,
+      "costRatio": 1.5376294235821217,
+      "saveRatio": 0.9994378864530635
+    },
+    {
+      "scenario": "mature",
+      "seed": 2,
+      "goldChange": 11.906758343115875,
+      "costRatio": 1.3698758053972995,
+      "saveRatio": 1.0001783575814711
+    },
+    {
+      "scenario": "mature",
+      "seed": 3,
+      "goldChange": -12.806617227609806,
+      "costRatio": 1.2954154437808718,
+      "saveRatio": 0.9915840705721312
+    },
+    {
+      "scenario": "mature",
+      "seed": 4,
+      "goldChange": 0.28901734104045396,
+      "costRatio": 1.2502455313297833,
+      "saveRatio": 0.9825219109377374
+    },
+    {
+      "scenario": "mature",
+      "seed": 5,
+      "goldChange": 6.259168704156481,
+      "costRatio": 1.256612436370866,
+      "saveRatio": 1.0058094896862364
+    },
+    {
+      "scenario": "mature_2porters_same",
+      "seed": 1,
+      "goldChange": 14.261838440111418,
+      "costRatio": 1.262702295822508,
+      "saveRatio": 0.9995678039355265
+    },
+    {
+      "scenario": "mature_2porters_same",
+      "seed": 2,
+      "goldChange": 42.19633943427621,
+      "costRatio": 1.4190476190475403,
+      "saveRatio": 0.9947210801482158
+    },
+    {
+      "scenario": "mature_2porters_same",
+      "seed": 3,
+      "goldChange": 25.97741094700261,
+      "costRatio": 1.1266276655970784,
+      "saveRatio": 0.9956592789296292
+    },
+    {
+      "scenario": "mature_2porters_same",
+      "seed": 4,
+      "goldChange": 1.8810839252828115,
+      "costRatio": 1.3158427876823573,
+      "saveRatio": 0.994705627815817
+    },
+    {
+      "scenario": "mature_2porters_same",
+      "seed": 5,
+      "goldChange": 19.357354546872575,
+      "costRatio": 1.763828322240203,
+      "saveRatio": 1.0035416139640778
+    },
+    {
+      "scenario": "mature_2porters_plus2",
+      "seed": 1,
+      "goldChange": 28.15713460427498,
+      "costRatio": 1.21154999571575,
+      "saveRatio": 1.0102324881498759
+    },
+    {
+      "scenario": "mature_2porters_plus2",
+      "seed": 2,
+      "goldChange": 40.683691393054985,
+      "costRatio": 1.1173042817330385,
+      "saveRatio": 1.0030930406585183
+    },
+    {
+      "scenario": "mature_2porters_plus2",
+      "seed": 3,
+      "goldChange": 55.32159264931087,
+      "costRatio": 1.1266149870799904,
+      "saveRatio": 1.001530087541074
+    },
+    {
+      "scenario": "mature_2porters_plus2",
+      "seed": 4,
+      "goldChange": 24.27495989139825,
+      "costRatio": 1.1839897739073646,
+      "saveRatio": 1.0123056994818653
+    },
+    {
+      "scenario": "mature_2porters_plus2",
+      "seed": 5,
+      "goldChange": 7.826993225638357,
+      "costRatio": 1.1470324108090784,
+      "saveRatio": 0.9949742492473814
+    },
+    {
+      "scenario": "early_duplicates",
+      "seed": 1,
+      "goldChange": 0.9966777408637828,
+      "costRatio": 1.461169702780604,
+      "saveRatio": 1.0062411918663177
+    },
+    {
+      "scenario": "early_duplicates",
+      "seed": 2,
+      "goldChange": -8.403908794788272,
+      "costRatio": 2.0158511371467145,
+      "saveRatio": 0.98757289248712
+    },
+    {
+      "scenario": "early_duplicates",
+      "seed": 3,
+      "goldChange": -13.701784686240648,
+      "costRatio": 2.238631947143007,
+      "saveRatio": 1.0095666370692866
+    },
+    {
+      "scenario": "early_duplicates",
+      "seed": 4,
+      "goldChange": -4.536979490366688,
+      "costRatio": 1.6265248670632564,
+      "saveRatio": 0.9933793652146734
+    },
+    {
+      "scenario": "early_duplicates",
+      "seed": 5,
+      "goldChange": -0.43695380774032566,
+      "costRatio": 2.21686746987974,
+      "saveRatio": 0.994203557424561
+    },
+    {
+      "scenario": "late",
+      "seed": 1,
+      "goldChange": 65.07721280602637,
+      "costRatio": 1.0840985664266178,
+      "saveRatio": 1
+    },
+    {
+      "scenario": "late",
+      "seed": 2,
+      "goldChange": 101.64800504652263,
+      "costRatio": 1.0629647647508988,
+      "saveRatio": 1.0064876115404202
+    },
+    {
+      "scenario": "late",
+      "seed": 3,
+      "goldChange": 72.276020857317,
+      "costRatio": 0.9397397536705828,
+      "saveRatio": 1.0091720598080784
+    },
+    {
+      "scenario": "late",
+      "seed": 4,
+      "goldChange": 25.377950403346272,
+      "costRatio": 0.9548156196075499,
+      "saveRatio": 0.9872390041672965
+    },
+    {
+      "scenario": "late",
+      "seed": 5,
+      "goldChange": 100.11574074074075,
+      "costRatio": 0.9494410145169548,
+      "saveRatio": 1.0290771740830968
+    },
+    {
+      "scenario": "late_second_chain",
+      "seed": 1,
+      "goldChange": 67.32326422787574,
+      "costRatio": 0.9033880359978615,
+      "saveRatio": 1.0354297917778965
+    },
+    {
+      "scenario": "late_second_chain",
+      "seed": 2,
+      "goldChange": 97.33014824703154,
+      "costRatio": 0.9567076429716505,
+      "saveRatio": 0.9897823914506557
+    },
+    {
+      "scenario": "late_second_chain",
+      "seed": 3,
+      "goldChange": 103.14011405471737,
+      "costRatio": 0.8984385355638191,
+      "saveRatio": 0.9893274853801169
+    },
+    {
+      "scenario": "late_second_chain",
+      "seed": 4,
+      "goldChange": 100.83821674949931,
+      "costRatio": 0.9630212431156937,
+      "saveRatio": 0.9869005652781544
+    },
+    {
+      "scenario": "late_second_chain",
+      "seed": 5,
+      "goldChange": 94.20050848622277,
+      "costRatio": 1.0102942761668199,
+      "saveRatio": 1.0296435512461823
+    },
+    {
+      "scenario": "late_duplicate_shops",
+      "seed": 1,
+      "goldChange": 75.8767268862912,
+      "costRatio": 1.0021733880705883,
+      "saveRatio": 0.9880355075260517
+    },
+    {
+      "scenario": "late_duplicate_shops",
+      "seed": 2,
+      "goldChange": 62.85353870667907,
+      "costRatio": 1.1084369568124166,
+      "saveRatio": 1.0312639770999195
+    },
+    {
+      "scenario": "late_duplicate_shops",
+      "seed": 3,
+      "goldChange": 48.479358094991596,
+      "costRatio": 1.0324734637311714,
+      "saveRatio": 1.0131423079502022
+    },
+    {
+      "scenario": "late_duplicate_shops",
+      "seed": 4,
+      "goldChange": 42.37938596491229,
+      "costRatio": 1.1100734252223492,
+      "saveRatio": 0.9917210669664087
+    },
+    {
+      "scenario": "late_duplicate_shops",
+      "seed": 5,
+      "goldChange": 44.36902539736411,
+      "costRatio": 0.9335920655455842,
+      "saveRatio": 1.0060797017839709
+    },
+    {
+      "scenario": "demolish_and_roundtrip",
+      "seed": 1,
+      "goldChange": 16.021798365122606,
+      "costRatio": 1.502113668388915,
+      "saveRatio": 1.0001533585522953
+    },
+    {
+      "scenario": "demolish_and_roundtrip",
+      "seed": 2,
+      "goldChange": 18.31775700934579,
+      "costRatio": 1.4633215682532976,
+      "saveRatio": 1.013490292631633
+    },
+    {
+      "scenario": "demolish_and_roundtrip",
+      "seed": 3,
+      "goldChange": 13.31254103742614,
+      "costRatio": 1.3636363636359905,
+      "saveRatio": 1.0097918589152055
+    },
+    {
+      "scenario": "demolish_and_roundtrip",
+      "seed": 4,
+      "goldChange": 31.29144851657941,
+      "costRatio": 1.1902017291066946,
+      "saveRatio": 0.9949709176805263
+    },
+    {
+      "scenario": "demolish_and_roundtrip",
+      "seed": 5,
+      "goldChange": 7.855459544383336,
+      "costRatio": 1.4101702508962595,
+      "saveRatio": 1.0058728489728925
+    }
+  ],
+  "sourceCommit": "c7898ede1caf9d108f985b7c989a1a59d71867f2",
+  "engine": "webkit",
+  "isolation": true,
+  "errors": []
+}

@@ -1,7 +1,8 @@
-const fs=require('fs'),http=require('http'),path=require('path'),assert=require('assert'),{chromium}=require('playwright');
+const fs=require('fs'),http=require('http'),path=require('path'),assert=require('assert'),{chromium,webkit}=require('playwright');
+const engine=process.env.SIM_ENGINE==='webkit'?webkit:chromium;
 const root=path.resolve(__dirname,'..');
 (async()=>{const server=http.createServer((q,r)=>{r.setHeader('content-type','text/html');r.end(fs.readFileSync(path.join(root,'index.html')));});await new Promise(r=>server.listen(0,'127.0.0.1',r));
-const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+const browser=await engine.launch({headless:true,args:engine===chromium?['--no-sandbox']:[]});
 try{const p=await browser.newPage({viewport:{width:430,height:900}}),errors=[];p.on('pageerror',e=>errors.push(e.message));
 await p.addInitScript(()=>{window.__noIntro=true;window.__noQuick=true;});await p.goto('http://127.0.0.1:'+server.address().port+'/?perf=1');await p.waitForFunction(()=>typeof ECONOMY_P0!=='undefined');
 const rawHtml=fs.readFileSync(path.join(root,'baseline/v19.1.html'),'utf8'),at=rawHtml.indexOf('function artLiveVillager('),end=rawHtml.indexOf('\n}',at)+2,uncroppedSource=rawHtml.slice(at,end).replaceAll('artLiveVillager','uncroppedRig').replace('const key=JSON.stringify','const key=\'uncropped|\'+JSON.stringify').replace('if(_villageRigCache.size>=256)_villageRigCache.delete(_villageRigCache.keys().next().value);','');

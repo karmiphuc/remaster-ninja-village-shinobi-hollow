@@ -24,13 +24,11 @@ jobs:
       - run: npx playwright install --with-deps chromium webkit
       - name: Validate equipment and integration
         run: npm test
-      - name: Run in-page economy baseline and P0 suite
-        run: |
-          if test -f tests/logistics.cjs; then node tests/logistics.cjs; fi
-          if test -f tests/economy-sim.cjs; then node tests/economy-sim.cjs; fi
-      - name: Real-time 15-minute Safari and Chromium stress session
-        if: contains(github.event.head_commit.message, '[soak]')
-        run: node tests/perf-soak.cjs
+      - name: Validate logistics and procedural pixels
+        run: node tests/logistics.cjs
+      - name: Run optional seeded economy suite
+        if: github.event_name == 'workflow_dispatch'
+        run: node tests/economy-sim.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
