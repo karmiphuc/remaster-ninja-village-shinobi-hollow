@@ -8543,20 +8543,20 @@ function forgeTick() {
   };
   // each formation's forges work their own focus; the village smiths' shared sets go round the formations
   const lanes = [];
-  types.forEach(t => { const w = forgeRate(t, 'weapon'), a = forgeRate(t, 'armor'); if (w) lanes.push({ t, cats: ['w'], left: w }); if (a) lanes.push({ t, cats: ['a', 'h'], left: a }); });
+  types.forEach(t => { const w = forgeRate(t, 'weapon'), a = forgeRate(t, 'armor'); if (w) lanes.push({ t, cats: ['w'], spill: ['a', 'h'], left: w }); if (a) lanes.push({ t, cats: ['a', 'h'], spill: ['w'], left: a }); });
   lanes.push({ t: null, cats: ['w', 'a', 'h'], left: forgeCapacity(), turn: 0 });
   let progressed = true;
   while (progressed) { progressed = false;
     for (const L of lanes) { if (L.left <= 0) continue;
       let t = L.t, cat = null;
-      if (t) cat = pickCat(t, L.cats);
+      if (t) cat = pickCat(t, L.cats) || pickCat(t, L.spill); // focus first; with it fully equipped, the other job
       else for (let i = 0; i < types.length && !cat; i++) { t = types[(L.turn + i) % types.length]; cat = pickCat(t, L.cats); if (cat) L.turn = (L.turn + i + 1) % types.length; }
       if (!cat) { L.left = 0; continue; } // nothing missing: this lane idles and spends nothing
       if (!makeOne(t, cat)) { L.left = 0; continue; }
       L.left--; progressed = true; }
   }
   if (made.length) {
-    toast(`${icon('it_' + made[0].k)} Smiths forge ${made.slice(0, 3).map(m => `<b>${m.n} ${esc(ITEMS[m.k].name)}</b> for ${UNITS[m.t].name}`).join(', ')} <span class="muted">(−${fmt(spent)}G)</span>`);
+    toast(`${icon('it_' + made[0].k)} Smiths forge ${made.slice(0, 3).map(m => `<b>${m.n} ${esc(ITEMS[m.k].name)}</b> for ${UNITS[m.t].name}`).join(', ')}${made.length > 3 ? ` and ${made.slice(3).reduce((n, m) => n + m.n, 0)} more` : ''} <span class="muted">(−${fmt(spent)}G)</span>${short.size ? ` · <b style="color:#a02a1a">stopped short of ${[...short].join(', ')}</b>` : ''}`);
     RT.forgeIdle = null;
   } else if (short.size && types.some(t => forgePlan(t).length)) {
     const key = [...short].join(','); if (RT.forgeIdle !== key) toast(`Smiths are idle — short of ${[...short].join(', ')}.`); RT.forgeIdle = key;
@@ -8568,11 +8568,16 @@ function forgeCostText(job) {
   return `${forgeSetCost(job.k)}G${mats.length ? ' + ' + mats.join(', ') : ''}`;
 }
 function forgeSummary(type) {
-  return `Forges: weapons ${forgeRate(type, 'weapon')} sets/month · armor & helmets ${forgeRate(type, 'armor')} sets/month, plus a share of the village smiths' ${forgeCapacity()}.`;
+  const C = forgeCoverage(type), w = forgeWorkRate(type, 'weapon', C), a = forgeWorkRate(type, 'armor', C), all = forgeRate(type, 'weapon') + forgeRate(type, 'armor');
+  return `Forges: weapons ${w} sets/month · armor & helmets ${a} sets/month${all && !w && !a ? ' (everyone equipped: resting)' : ''}, plus a share of the village smiths' ${forgeCapacity()}.`;
 }
 // months until the current shortfall is covered at the present rate (null: nothing missing, Infinity: no forge on it)
+// a forge whose focus is fully equipped helps with the other job rather than standing idle
+const FOCUS_CATS = { weapon: ['w'], armor: ['a', 'h'] };
+function forgeFocusDone(type, focus, C = forgeCoverage(type)) { return FOCUS_CATS[focus].every(c => !C[c].k || C[c].need <= 0); }
+function forgeWorkRate(type, focus, C = forgeCoverage(type)) { const other = focus === 'weapon' ? 'armor' : 'weapon'; return forgeFocusDone(type, focus, C) ? 0 : forgeRate(type, focus) + (forgeFocusDone(type, other, C) ? forgeRate(type, other) : 0); }
 function forgeEta(type, focus) {
-  const C = forgeCoverage(type), need = (focus === 'weapon' ? ['w'] : ['a', 'h']).reduce((n, c) => n + C[c].need, 0), rate = forgeRate(type, focus);
+  const C = forgeCoverage(type), need = FOCUS_CATS[focus].reduce((n, c) => n + C[c].need, 0), rate = forgeWorkRate(type, focus, C);
   return need ? (rate ? Math.ceil(need / rate) : Infinity) : null;
 }
 function armyForgePanel(b) {
@@ -8585,6 +8590,7 @@ function armyForgePanel(b) {
     <div class="lvsteps">${FORGE_OUT.map((n, i) => `<span class="${i + 1 === lv ? 'on' : i + 1 < lv ? 'done' : ''}">Lv${i + 1} · ${n}/mo</span>`).join('<i>→</i>')}</div>
     <div class="forge-metrics"><div><b>${forgeOutput(b)}</b><span>This forge, sets/month</span></div><div><b>${forgeRate(type, focus)}</b><span>All ${focus === 'weapon' ? 'weapon' : 'armor'} forges, sets/month</span></div><div><b>${eta == null ? 'Done' : eta === Infinity ? '—' : eta + ' mo'}</b><span>To full coverage</span></div></div>
     <p class="note">${cov}</p>
+    ${forgeFocusDone(type, focus, C) && !forgeFocusDone(type, focus === 'weapon' ? 'armor' : 'weapon', C) ? `<p class="note">${focus === 'weapon' ? 'Every soldier has your best weapon, so this forge is making armor & helmets.' : 'Every soldier has your best armor & helmet, so this forge is making weapons.'}</p>` : ''}
     ${b.reno ? `<p class="note">${icon('build')} Upgrading to Level ${b.reno.lv} — <b>${b.reno.w}</b> week${b.reno.w === 1 ? '' : 's'} left. It keeps forging at Level ${lv} meanwhile.</p>`
       : N ? `<div class="row wrap" style="align-items:center;gap:8px"><div class="note" style="flex:1;margin:0"><b>Upgrade to Level ${N.lv}</b>: ${FORGE_OUT[N.lv - 1]} sets/month.<br>${icon('gold')}${fmt(N.cost)} ${Object.entries(N.res).map(([r, n]) => `${icon('g_' + r)}${n}`).join(' ')} · ${N.lv >= 3 ? 3 : 2} weeks</div><button class="btn gold" data-forge-up>Upgrade</button></div>`
       : `<p class="note">Fully upgraded.</p>`}

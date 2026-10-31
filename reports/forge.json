@@ -1,0 +1,78 @@
+{
+  "rates": {
+    "perLevel": [
+      40,
+      65,
+      90
+    ],
+    "fiveLv1Gunners": 200,
+    "weaponLv3": 90
+  },
+  "oneMonth": {
+    "armor": 20,
+    "helmets": 20,
+    "gold": 3700,
+    "armorItem": "Black Sun Gusoku",
+    "helmetItem": "Eboshi-nari Kabuto",
+    "materialsCarried": {
+      "ore": 0.5,
+      "silk": 0.5
+    }
+  },
+  "balance": {
+    "fiveLv1Months": 10,
+    "fiveLv3Months": 5,
+    "fiveLv1WithVillageSmithsMonths": 10
+  },
+  "preserved": {
+    "kept": "Lamellar Armor",
+    "quality": 2
+  },
+  "qualityCounts": {
+    "item": "White Crane Harness",
+    "quality": 2,
+    "topItem": "Black Sun Gusoku",
+    "countedAsCovered": 20,
+    "forgedOnly": 30
+  },
+  "focus": "weapons then armor & helmets",
+  "spill": {
+    "weaponForgesOnArmor": 200,
+    "armorForgeOnWeapons": 40,
+    "focusFirst": true,
+    "shortOf": "Silk",
+    "madeWithShortage": 25
+  },
+  "limits": {
+    "researchRespected": true,
+    "goldFloor": true,
+    "pauseRespected": true,
+    "materialShortStops": true
+  },
+  "smithsShare": [
+    10,
+    10,
+    10,
+    10
+  ],
+  "upgrades": {
+    "lv2": {
+      "gold": 3200,
+      "wood": 20,
+      "ore": 20,
+      "weeks": 2
+    },
+    "lv3": {
+      "gold": 6400,
+      "wood": 40,
+      "ore": 40,
+      "weeks": 3
+    }
+  },
+  "oldSave": "loads at Level 1, keeps quality sets, forges",
+  "ui": {
+    "forgePanel": true,
+    "armyCoverage": "0%0%0%0%105/mo▾"
+  },
+  "errors": []
+}

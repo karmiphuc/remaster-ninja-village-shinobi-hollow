@@ -81,6 +81,21 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
       check(cov('gun').w.have === 40 && cov('gun').a.have === 0 && cov('gun').h.have === 0, 'Weapon focus made armor');
       wf.forgeFocus = 'armor'; forgeTick(); check(cov('gun').w.have === 40 && cov('gun').a.have + cov('gun').h.have === 40, 'Switching focus did not switch the work');
       out.focus = 'weapons then armor & helmets';
+      // a forge whose focus is fully equipped helps with the other job instead of idling (reported: 5 Gunner forges on
+      // Weapons, every Gunner already carrying the best gun, only the village smiths' few sets arriving)
+      fresh({ gun: 1200 }); slot = 0; for (let i = 0; i < 5; i++) forge('teppo_kaji', 'weapon'); G.kit.gun[cov('gun').w.k] = 1200;
+      check(forgeWorkRate('gun', 'weapon') === 0 && forgeWorkRate('gun', 'armor') === 200 && forgeEta('gun', 'armor') === Math.ceil(2400 / 200), 'Rates and ETA ignore the spare forges');
+      check(/making armor & helmets/.test(armyForgePanel(G.buildings.find(b => b.id === 'teppo_kaji')).textContent), 'Forge panel does not say it switched');
+      forgeTick(); const sp = cov('gun'); check(sp.a.have + sp.h.have === 200 && sp.w.have === 1200, 'Idle weapon forges made ' + (sp.a.have + sp.h.have));
+      fresh({ gun: 100 }); slot = 0; forge('teppo_kaji', 'armor'); G.kit.gun[cov('gun').a.k] = 100; G.kit.gun[cov('gun').h.k] = 100; forgeTick();
+      check(cov('gun').w.have === 40, 'Idle armor forge did not make weapons');
+      fresh({ gun: 100 }); slot = 0; forge('teppo_kaji', 'weapon'); forgeTick(); check(cov('gun').w.have === 40 && cov('gun').a.have + cov('gun').h.have === 0, 'Spilled while its own focus still had work');
+      // a scarce material: the month stops early and the message says why
+      fresh({ gun: 1200 }); slot = 0; for (let i = 0; i < 5; i++) forge('teppo_kaji', 'weapon'); G.kit.gun[cov('gun').w.k] = 1200;
+      { const ka = cov('gun').a.k, mats = Object.keys(ITEMS[ka].res || {}), scarce = mats.find(r => r === 'silk') || mats[0]; economyWrite(economyCentral(scarce), scarce, 20); G.stock[scarce] = 20;
+        const said = []; const T = window.toast; window.toast = m => said.push(m); try { forgeTick(); } finally { window.toast = T; }
+        const made = cov('gun').a.have + cov('gun').h.have; check(made > 0 && made < 200 && RT.forgeNote.short.includes(GOODS[scarce].name) && said.some(m => new RegExp('stopped short of ' + GOODS[scarce].name).test(m)), 'Shortage not reported: ' + said.join(' | '));
+        out.spill = { weaponForgesOnArmor: 200, armorForgeOnWeapons: 40, focusFirst: true, shortOf: GOODS[scarce].name, madeWithShortage: made }; }
 
       // ---------- research, treasury and pause ----------
       fresh({ gun: 100 }); slot = 0; forge(); const top = cov('gun').a.k; delete G.researched[top]; const next = cov('gun').a.k;
