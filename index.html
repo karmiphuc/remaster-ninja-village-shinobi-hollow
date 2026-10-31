@@ -607,7 +607,7 @@ img.px, canvas.px { image-rendering: pixelated; image-rendering: crisp-edges; }
       </div>
       <div class="hud-gold lac"><img id="hud-goldimg" alt="Gold" class="px"><span id="hud-gold">0</span></div>
       <div class="hud-speed lac" role="group" aria-label="Game speed">
-        <button data-sp="0" aria-label="Pause">II</button><button data-sp="1" class="on" aria-label="Normal speed">▶</button><button data-sp="3" aria-label="Fast">▶▶</button><button id="hud-snd" aria-label="Sound">♪</button>
+        <button data-sp="0" aria-label="Pause">II</button><button data-sp="1" class="on" aria-label="Normal speed">▶</button><button data-sp="4" aria-label="Fast">▶▶</button><button id="hud-snd" aria-label="Sound">♪</button>
       </div>
     </div>
     <div class="res-row" id="hud-res"></div>
@@ -6960,7 +6960,7 @@ function nearestRoad(x, y) { let best = null, bd = 1e9; for (let j = -6; j <= 6;
 function stepAgent(a, dt) {
   if (a.path.length) {
     const [tx, ty] = a.path[0]; const gx = tx * 16 + 8, gy = ty * 16 + 12; const dx = gx - a.x, dy = gy - a.y, dist = Math.hypot(dx, dy);
-    const sp = a.speed * (a.speedMul || 1) * (G.roads[idx(tx, ty)] === 2 ? 1.25 : 1) * dt;
+    const sp = a.speed * (a.speedMul || 1) * (a.porter ? PORTER_SPEED : 1) * (G.roads[idx(tx, ty)] === 2 ? 1.25 : 1) * dt;
     // facing: turn only when the new axis clearly dominates (no flip-flopping on a diagonal), but always follow a reversal
     const horiz = a.dir === 'left' || a.dir === 'right', ax = Math.abs(dx), ay = Math.abs(dy);
     if (horiz ? ay > ax * 1.3 : ax > ay * 1.3) a.dir = ax > ay ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'down' : 'up');
@@ -7004,7 +7004,7 @@ function updateVillagerAgent(a, dt) {
   const hurt = v.hp != null && !a.carry, tired = ((v.en ?? 100) < 25 && !a.carry) || hurt, helps = v.role !== 'work' && Math.random() < clamp(.2 * vStats(v).wrk / 8, .1, .3);
   if (tired && (v.role === 'work' || helps || hurt)) { target = homeOf(v) || G.buildings.find(b => b.id === 'hall'); a.goingHome = true; a.mission = 'rest'; a.bubble = { t: 1.6, icon: 'z' }; }
   else if (v.role === 'work' || helps) {
-    if(isPorter(v))target=porterPlan(a,v);else {const supply=planShopSupply(a,v),J=supply?null:chooseSite(a,v,v.role!=='work');target=supply||(J&&workerPlan(a,v,J));} if (!target) { a.timer = rnd(1.2, 2.2); return; }
+    a.porter=isPorter(v);if(a.porter)target=porterPlan(a,v);else {const supply=planShopSupply(a,v),J=supply?null:chooseSite(a,v,v.role!=='work');target=supply||(J&&workerPlan(a,v,J));} if (!target) { a.timer = rnd(1.2, 2.2); return; }
   } else if (v.role !== 'work') {
     const dojos = G.buildings.filter(b => b.id === 'dojo' && entranceOf(b));
     if (dojos.length && !G.dojoOff && G.gold >= dojoFee(v) && Math.random() < .7) target = pick(dojos);
@@ -7520,7 +7520,7 @@ function renderBHUD(){
   const pressure=offensivePressure(),gate=BT.siege?`<div class="gaterow"${tipAttr(`Castle gate · ${Math.ceil(BT.siege.hp)}/${BT.siege.max}`)}>${icon('it_kabuto')}<div class="gatebar"><i style="width:${clamp(BT.siege.hp/BT.siege.max*100,0,100)}%"></i></div></div>`:'';
   $('#bhud').innerHTML=side(BT.A[0],0)+`<div class="bround lac"><span>${BT.round?'Round '+BT.round:BT.siege?'Siege':'Deploy'}</span>${pressure>1?`<small>+${Math.round((pressure-1)*100)}% pressure</small>`:''}${gate}${live?`<div class="bcontrols"><button id="rs-speed" aria-label="Battle speed">×${BT.speed}</button><button id="rs-auto" aria-pressed="${BT.auto}"${tipAttr('On: your commanders take up duels on their own. Off: you choose who answers a challenge.')}>Duels ${BT.auto?'auto':'pick'}</button>${BT.round>0&&!BT.quick?`<button id="rs-retreat"${BT.retreatReq?' disabled':''}${tipAttr('Sound the retreat at the end of this round.')}>${BT.retreatReq?'Retreating…':'Retreat'}</button>`:''}</div>`:''}</div>`+side(BT.A[1],1);
   $('#bformations').innerHTML=typeRows();
-  const speed=$('#rs-speed'),auto=$('#rs-auto');if(speed)speed.onclick=()=>{BT.speed=BT.speed===1?2:BT.speed===2?3:1;Sound.play('tap');renderBHUD();};
+  const speed=$('#rs-speed'),auto=$('#rs-auto');if(speed)speed.onclick=()=>{BT.speed=BT.speed>=4?1:BT.speed+1;Sound.play('tap');renderBHUD();};
   if(auto)auto.onclick=()=>{BT.auto=!BT.auto;Sound.play('tap');renderBHUD();};
   const rt=$('#rs-retreat');if(rt)rt.onclick=()=>{BT.retreatReq=true;Sound.play('tap');renderBHUD();};
 }
@@ -10052,7 +10052,7 @@ function showTacticPanel() {
     else { if (G.gold < fee) { Sound.play('alert'); toast('Not enough gold to hire the battery.'); return; } G.gold -= fee; BT.battery = true; BT.batteryPaid = fee; Sound.play('coin'); Sound.play('taiko', { vol: .6 }); toast(`The siege battery rolls up behind your lines <span class="muted">(−${fmt(fee)}G)</span>.`); }
     placeBattery(); updateHUD(); showTacticPanel(); };
   $('#bt-go').onclick = () => { Sound.play('horn'); beginRound(); };
-  $('#bt-speed').onclick = () => { BT.speed = BT.speed === 1 ? 2 : BT.speed === 2 ? 3 : 1; Sound.play('tap'); showTacticPanel(); };
+  $('#bt-speed').onclick = () => { BT.speed = BT.speed >= 4 ? 1 : BT.speed + 1; Sound.play('tap'); showTacticPanel(); };
   $('#bt-retreat').onclick = () => { if (BT.battery) G.gold += BT.batteryPaid || 0; closeBattle(); openMap(); };
 }
 
@@ -12569,6 +12569,7 @@ function campTick() {
 function centerOnHall() { const h = G.buildings.find(b => b.id === 'hall'); VIEW.cx = (h ? h.x + 1.5 : 15) * 16; VIEW.cy = (h ? h.y + 3 : 11) * 16; clampCam(); }
 function afterLoad() {
   if (!G.endYear) G.endYear = rint(20, 30);
+  if (G.speed === 3) G.speed = 4; // fast-forward is now 4x
   applyCampaign(); // per-campaign clans, recruits and doctrine prices (old saves: the classic map)
   if (G.boons && G.boons.pending && !window.__noIntro) setTimeout(() => G && G.boons.pending && !MQ.some(m => m.opts.must) && reofferDilemma(), 600);
   if (G.roll && G.roll.v && !G.boons.doc && !window.__noIntro) setTimeout(() => G && G.roll && G.roll.v && !G.boons.doc && !MQ.some(m => m.opts.must) && offerDoctrine(), 400);
@@ -12840,7 +12841,7 @@ function economyFlush(b){
 function economyJobs(){
  const E=economyState();E.jobCount=0;
  for(let i=0;i<E.producers.length;i++){const b=E.producers[i],g=BUILDINGS[b.id].makes,p=economyPoint(b,'pile');economyFlush(b);
-  if(economyAvailable(p,g)<2)continue;const target=economyOutputTarget(g,b);if(target)economyJob(p,economyDestination(target,g),g,24,economyFull(b)?18:(b.pile||0)>=PILE_CAP*.6?12:5,b,target);}
+  if(economyAvailable(p,g)<2)continue;const target=economyOutputTarget(g,b);if(target)economyJob(p,economyDestination(target,g),g,PORTER_LOAD,economyFull(b)?18:(b.pile||0)>=PILE_CAP*.6?12:5,b,target);}
  for(let i=0;i<E.crafts.length;i++){const b=E.crafts[i];economyFlush(b);
   for(const g in b.outs||{}){const p=economyPoint(b,'outs');if(economyAvailable(p,g)<1)continue;const target=economyOutputTarget(g,b);
    if(target)economyJob(p,economyDestination(target,g),g,20,economyFull(b)?13:9,b,target);}
@@ -12870,13 +12871,15 @@ function economyStart(a,v,from,to,good,n,source,target){
  const c=economyClaim(a,from,to,good,n,source,target);if(!c)return null;
  a.mission='goodsPick';a.dest=target.uid;a.home2=source.uid;return source;
 }
+// Porters only haul: a porter carries 30% more per trip (31 vs 24 goods) and walks 15% faster (before any cart load)
+const PORTER_LOAD=31,PORTER_SPEED=1.15;
 function porterPlan(a,v){
  const E=economyState();if(E.dirty)economyTopology();const component=economyAgentComponent(a);let best=null,score=-Infinity;
- for(let i=0;i<E.jobCount;i++){const j=E.jobs[i];if(economyBuildingComponent(j.source)!==component)continue;const n=Math.min(j.n,economyAvailable(j.from,j.good),economyRoom(j.to,j.good),24);if(n<1)continue;
+ for(let i=0;i<E.jobCount;i++){const j=E.jobs[i];if(economyBuildingComponent(j.source)!==component)continue;const n=Math.min(j.n,economyAvailable(j.from,j.good),economyRoom(j.to,j.good),PORTER_LOAD);if(n<1)continue;
   const empty=Math.abs(a.x/16-j.source.x)+Math.abs(a.y/16-j.source.y),
    loaded=Math.abs(j.source.x-j.target.x)+Math.abs(j.source.y-j.target.y),s=(j.rank+n*.6+(WARES[j.good]?Math.min(3,WARES[j.good].price/20):0))/(8+empty*1.5+loaded*.6);
   if(s>score){score=s;best=j;}}
- if(best){const source=economyStart(a,v,best.from,best.to,best.good,Math.min(best.n,24),best.source,best.target);if(source)economyBundle(a);return source;}
+ if(best){const source=economyStart(a,v,best.from,best.to,best.good,Math.min(best.n,PORTER_LOAD),best.source,best.target);if(source)economyBundle(a);return source;}
  a.timer=.75;return null;
 }
 
@@ -13129,7 +13132,7 @@ function economyAddLine(c,from,to,good,n){
  if(!c.extra)c.extra=[];if(c.extra.length>=3)return 0;c.extra.push({from:from,to:to,good:good,n:n});return n;
 }
 function economyBundle(a){
- const c=economyClaimOf(a),E=economyState();if(!c)return;let room=24-c.n;
+ const c=economyClaimOf(a),E=economyState();if(!c)return;let room=PORTER_LOAD-c.n;
  for(let i=0;i<E.jobCount&&room>0;i++){const j=E.jobs[i];if(j.source!==c.source||j.target!==c.target)continue;
   room-=economyAddLine(c,j.from,j.to,j.good,Math.min(room,j.n));}
 }
