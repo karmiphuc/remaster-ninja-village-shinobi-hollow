@@ -9,9 +9,12 @@ for(const name of ['outTotal','shopStock','shopTotal','shopIncoming','shopRoom',
 rep('if (window.claude && window.claude.hot && window.claude.hot.ready)',core+'\nif (window.claude && window.claude.hot && window.claude.hot.ready)');
 edit('resetRT','invalidateRoadTraffic();','invalidateRoadTraffic(); RT.eco=null;');
 edit('refreshBoosts',"  const envs =","  if(RT.eco)RT.eco.dirty=true;\n  const envs =");
-edit('chooseSite',"  const sites =","  if(isPorter(v))return null;const E=economyState();if(E.dirty)economyTopology();\n  if(v.job>=0){const J=bByUid(v.job);if(J&&!J.reno&&entranceOf(J)&&(BUILDINGS[J.id].makes||BUILDINGS[J.id].craft))return J;}\n  const sites =");
+edit('chooseSite',"  const sites =","  if(isPorter(v))return null;const E=economyState();if(E.dirty)economyTopology();const component=economyAgentComponent(a);\n  if(v.job>=0){const J=bByUid(v.job);if(J&&!J.reno&&economyBuildingComponent(J)===component&&entranceOf(J)&&(BUILDINGS[J.id].makes||BUILDINGS[J.id].craft))return J;}\n  const sites =");
 edit('updateVillagerAgent',"    const supply=planShopSupply(a,v),J=supply?null:chooseSite(a,v,v.role!=='work');\n    target=supply||(J&&workerPlan(a,v,J));","    if(isPorter(v))target=porterPlan(a,v);else {const supply=planShopSupply(a,v),J=supply?null:chooseSite(a,v,v.role!=='work');target=supply||(J&&workerPlan(a,v,J));}");
 edit('updateVillagerAgent',"  if (target && a.mission === 'rest'","  if(target&&target.uid===a.target&&(a.mission==='work'||a.mission==='craft')){arrive(a,v,target);return;}\n  if (target && a.mission === 'rest'");
+edit('chooseSite',"(BUILDINGS[b.id].makes || BUILDINGS[b.id].craft) && !b.reno && entranceOf(b)","(BUILDINGS[b.id].makes || BUILDINGS[b.id].craft) && !b.reno && economyBuildingComponent(b)===component && entranceOf(b)");
+edit('ensureVillagerAgents',"RT.agents = RT.agents.filter(a => a.kind !== 'villager' || vById(a.vid));","RT.agents=RT.agents.filter(a=>{if(a.kind==='villager'&&!vById(a.vid)){dropLost(a);return false;}return true;});");
+edit('updateVillagerAgent',"if(a.carry){returnShopCarry(a);return;}","if(a.carry||economyFreightTotal(a)){economyPromoteCargo(a);returnShopCarry(a);return;}");
 edit('updateVillagerAgent',"if (!v) { a.dead = true; return; }","if (!v) { dropLost(a);a.dead = true; return; }");
 edit('updateVillagerAgent',"  if (a.state === 'walk')","  if(a.state==='goodsRest'){v.en=Math.min(100,(v.en??100)+dt*4);a.timer-=dt;if(a.timer<=0){a.state='idle';a.timer=0;}return;}\n  if (a.state === 'walk')");
 edit('agentFrame',"a.state==='inside'&&a.resting&&!a.hidden","(a.state==='inside'&&a.resting&&!a.hidden)||a.state==='goodsRest'");

@@ -30,6 +30,13 @@ const result=await p.evaluate(()=>{
  a.mission='goodsPick';missionArrive(a,porters[0],pick);ok(a.carry&&a.carry.n===6,'physical pickup');
  a.mission='goodsDrop';missionArrive(a,porters[0],shop);ok(!a.carry&&shopStock(shop).rice===6,'physical shelf delivery');
  ok(E.claims.size===0,'claims released after delivery');out.claimsAndDelivery=true;
+ const noodle=G.buildings.find(q=>q.id==='noodle'),to=economyPoint(noodle,'shelf'),src=E.stores[0];createGoods(economyCentral('veg'),'veg',20,'test-seed');
+ const bundleSource=economyStart(a,porters[0],central,to,'rice',5,src,noodle),bundle=economyClaimOf(a);
+ ok(bundleSource&&economyAddLine(bundle,economyCentral('veg'),to,'veg',5)===5,'mixed pickup reserves both ingredients');
+ a.mission='goodsPick';missionArrive(a,porters[0],src);ok(a.carry.n+economyFreightTotal(a)===10&&a.carry.kind==='cart','mixed cart has ten real goods');
+ a.mission='goodsDrop';missionArrive(a,porters[0],noodle);ok(shopStock(noodle).rice===5&&shopStock(noodle).veg===5&&!a.carry&&!economyFreightTotal(a),'mixed ingredients delivered without duplicate cargo');
+ out.mixedCart=true;
+
  const contract=G.trade;G.trade={cs:[{items:[{k:'rice',qty:7}]}]};
  const available=spendableGood('rice');ok(available===Math.max(0,G.stock.rice-7),'contracts protect stock');
  const cl=economyClaim(a,central,shelf,'rice',999,E.stores[0],shop);if(cl)ok(cl.n<=available,'claims respect contracts');economyRelease(a);G.trade=contract;out.contractReserves=true;
@@ -56,5 +63,9 @@ const result=await p.evaluate(()=>{
  return out;
  }finally{simRestore(S);}
  });
-assert.deepStrictEqual(errors,[]);fs.mkdirSync(path.join(root,'reports'),{recursive:true});fs.writeFileSync(path.join(root,'reports/logistics-checks.json'),JSON.stringify(result,null,2));console.log('LOGISTICS_CHECKS='+JSON.stringify(result));
+const preview=await p.evaluate(()=>{const c=gameCanvas();c.width=960;c.height=340;const x=c.getContext('2d');x.fillStyle='#e5d4ae';x.fillRect(0,0,960,340);x.imageSmoothingEnabled=false;
+ for(const it of [['Porter House','porter'],['Workshop','workshop'],['Storehouse','kura']].entries()){const i=it[0],label=it[1][0],id=it[1][1],im=buildingSprite(id,0);x.save();x.translate(64+i*306,106);x.scale(5,5);artDraw(x,im.cv,im.ox,im.oy);x.restore();x.font='18px monospace';x.fillStyle='#403324';x.fillText(label,50+i*306,292);}
+ const url=c.toDataURL('image/png');c.width=c.height=0;return url.split(',')[1];});
+ fs.mkdirSync(path.join(root,'reports'),{recursive:true});fs.writeFileSync(path.join(root,'reports/porter-preview.png'),Buffer.from(preview,'base64'));console.log('PORTER_PREVIEW_DATA='+preview);
+ assert.deepStrictEqual(errors,[]);fs.mkdirSync(path.join(root,'reports'),{recursive:true});fs.writeFileSync(path.join(root,'reports/logistics-checks.json'),JSON.stringify(result,null,2));console.log('LOGISTICS_CHECKS='+JSON.stringify(result));
 }finally{await browser.close();server.close();}})().catch(e=>{console.error(e);process.exitCode=1;});

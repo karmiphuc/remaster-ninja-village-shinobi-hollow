@@ -29,7 +29,9 @@ seconds. Prioritize low shelves, workshop inputs, output piles and useful
 return loads. Score cheap distances and cached connectivity; roadPath only
 for the selected trip, never pathLen inside jobs x sites loops.
 Existing producer/artisan hauling remains sufficient with zero porters.
-Porter carts carry larger loads, freeing producers to work; no rate nerfs.
+Porter carts carry up to 24 real goods, bundling up to four kinds on the same
+pickup/drop route. Every kind reserves quantity and shelf room separately;
+render the dominant parcel with the existing cached cart. No rate nerfs.
 When a confirmed porter trip blocks work, workers take seated breaks at the
 site (4 energy/second, no wound healing). Homes retain 16+/second recovery.
 This uses waiting time without changing output rates or production costs.

@@ -98,14 +98,14 @@ function diagInventory(out){
  for(var k in G.stock)add(k,G.stock[k]);for(var k in G.wares)add(k,G.wares[k]);
  for(var b of G.buildings){if(BUILDINGS[b.id].makes)add(BUILDINGS[b.id].makes,(b.pile||0)+(b.buffer||0));
   for(var key of ['inbox','outs','shopGoods','shopWares'])for(var k in b[key]||{})add(k,b[key][k]);if(b.shelf)for(var side of ['raw','ware'])for(var k in b.shelf[side]||{})add(k,b.shelf[side][k]);}
- for(var a of RT.agents)if(a.carry)add(a.carry.good,a.carry.n);
+ for(var a of RT.agents){if(a.carry)add(a.carry.good,a.carry.n);for(var g in a.freight||{})add(g,a.freight[g]);}
  return out;
 }
 function diagNegatives(){
  var n=0,check=function(x){if(x<-.00000001)n++;};
  for(var k in G.stock)check(G.stock[k]);for(var k in G.wares)check(G.wares[k]);
  for(var b of G.buildings){check(b.pile||0);check(b.buffer||0);for(var key of ['inbox','outs','shopGoods','shopWares'])for(var k in b[key]||{})check(b[key][k]);if(b.shelf)for(var side of ['raw','ware'])for(var k in b.shelf[side]||{})check(b.shelf[side][k]);}
- for(var a of RT.agents)if(a.carry)check(a.carry.n);return n;
+ for(var a of RT.agents){if(a.carry)check(a.carry.n);for(var g in a.freight||{})check(a.freight[g]);}return n;
 }
 function diagProbe(dt){
  var d=SH_PERF.diag;if(!d)return;
@@ -181,7 +181,7 @@ function simPrepare(){
  saveGame=function(){return true;};loadGame=function(){return false;};modal=function(){};announce=function(){};toast=function(){};
  window.__noIntro=window.__noQuick=true;UI.panel=null;UI.render=null;UI.atelier=false;
  window.setTimeout=function(fn,delay){var id=S.timer(function(){if(SH_PERF.sim)fn();},delay);S.timers.push(id);return id;};
- S.VIEW.cv.width=S.VIEW.cv.height=0;VIEW.cv=S.canvas;VIEW.ctx=S.canvas.getContext('2d');SH_PERF.sim=true;SH_PERF.run=S;return S;
+ S.VIEW.cv.width=S.VIEW.cv.height=0;VIEW.cv=S.canvas;VIEW.ctx=S.canvas.getContext('2d');RT.agents=[];RT.floaters=[];RT.particles=[];RT.waterTiles=[];RT.ready=false;RT.ground=null;RT.eco=null;ROAD_TRAFFIC.distances=new Map();ROAD_TRAFFIC.paths=new Map();SH_PERF.sim=true;SH_PERF.run=S;return S;
 }
 function simRestore(S){
  for(var id of S.timers)S.clear(id);window.setTimeout=S.rawTimer;window.clearTimeout=S.rawClear;
@@ -199,7 +199,7 @@ function simFailureStep(S,spec){
  if(S.step<900||!found&&S.step<1500)return;
  if(found)removeBuilding(found);else {var shops=G.buildings.filter(function(b){return BUILDINGS[b.id].cat==='shop';});if(shops.length)removeBuilding(shops[0]);}
  var d=SH_PERF.diag;
- for(var a of RT.agents)if(a.carry){dropLost(a);a.mission=null;}
+ for(var a of RT.agents)if(a.carry||typeof economyFreightTotal==='function'&&economyFreightTotal(a)){dropLost(a);a.mission=null;}
  if(typeof economyBeforeSave==='function')economyBeforeSave();
  var start=performance.now(),json=JSON.stringify(G);d.serialMs=Math.max(d.serialMs,performance.now()-start);
  G=JSON.parse(json);resetRT();afterLoad();G.speed=1;RT.paused=false;UI.panel=null;S.mutated=1;
