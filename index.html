@@ -1967,18 +1967,8 @@ function armyForgeArt(p,id,W,H,Y,variant=0,lv=1) {
   // The taller drawing buffer adds headroom without moving the footprint or roof.
   if(lv>=2)armyForgeChimney(p,W-13,wallY-28);
   if(lv>=3)armyForgeChimney(p,9,wallY-28);
-  // A roof plaque reads at village zoom, like the signs on existing shops.
-  const bx=Math.floor(W/2-5),by=wallY-11;
-  p.rect(bx-1,by-1,12,10,'#40312a');p.rect(bx,by,10,8,'#c9ad73');p.rect(bx+1,by+1,8,6,F.cloth);
-  if(F.type==='inf'){
-    p.line(bx+2,by+6,bx+7,by+1,light);p.line(bx+2,by+1,bx+7,by+6,light);p.hline(bx+1,by+5,3,'#e4bf70');p.hline(bx+6,by+5,3,'#e4bf70');
-  }else if(F.type==='arc'){
-    p.line(bx+3,by+1,bx+6,by+3,'#e8d6a3');p.vline(bx+6,by+3,2,'#e8d6a3');p.line(bx+6,by+5,bx+3,by+7,'#e8d6a3');p.vline(bx+3,by+1,7,'#eee7d1');p.hline(bx+1,by+4,8,'#eee7d1');
-  }else if(F.type==='gun'){
-    p.line(bx+2,by+6,bx+8,by+1,light);p.line(bx+1,by+6,bx+4,by+4,'#e4bf70');p.rect(bx+1,by+6,2,1,'#e4bf70');p.set(bx+5,by+4,'#e4bf70');
-  }else{
-    p.poly([[bx+2,by+7],[bx+2,by+4],[bx+4,by+1],[bx+6,by+1],[bx+8,by+3],[bx+7,by+5],[bx+5,by+4],[bx+5,by+7]],'#eee5cc');p.set(bx+6,by+2,'#2b2325');
-  }
+  // A larger, high-contrast formation mon stays legible between the two flues.
+  armyForgePlaque(p,Math.floor(W/2-8),wallY-14,F.type,F.cloth);
   // The door cloth repeats the focus color; the roof plaque still identifies the formation.
   p.rect(14,wallY+2,19,4,modeColor);p.hline(13,wallY+1,21,wood);p.vline(23,wallY+4,2,'#29252a');
   const gx=23, gy=wallY+3;
@@ -1999,6 +1989,38 @@ function armyForgeArt(p,id,W,H,Y,variant=0,lv=1) {
     p.rect(32,floor-3,8,2,wood);p.line(32,floor-4,39,floor-7,light);p.line(32,floor-5,34,floor-6,'#bf9e5a');
   }
   armyForgeBanner(p,W,Y,H,armor,modeColor);
+}
+
+function armyForgePlaque(p,x,y,type,cloth) {
+  const ink='#f8f4e8',gold='#e4bf70',dark='#211a1c',gx=x+1,gy=y+1;
+  p.rect(x-1,y-1,18,15,'#40312a');p.rect(x,y,16,13,'#c9ad73');
+  p.hline(x,y,16,'#e0b884');p.rect(gx,gy,14,11,shade(cloth,-.35));
+  if(type==='inf'){
+    // Broad crossed katana blades with separate gold guards and grips.
+    p.poly([[gx+1,gy],[gx+4,gy+1],[gx+11,gy+8],[gx+9,gy+9],[gx+2,gy+2]],ink);
+    p.poly([[gx+12,gy],[gx+9,gy+1],[gx+2,gy+8],[gx+4,gy+9],[gx+11,gy+2]],ink);
+    p.line(gx+2,gy+7,gx+5,gy+10,gold);p.rect(gx+2,gy+9,2,2,gold);
+    p.line(gx+8,gy+10,gx+11,gy+7,gold);p.rect(gx+10,gy+9,2,2,gold);
+  }else if(type==='arc'){
+    // A thick gold bow, a fine string and a broad ivory arrowhead.
+    p.poly([[gx+4,gy],[gx+8,gy+1],[gx+11,gy+4],[gx+11,gy+6],[gx+8,gy+9],[gx+4,gy+10],
+      [gx+4,gy+8],[gx+7,gy+7],[gx+9,gy+5],[gx+7,gy+3],[gx+4,gy+2]],gold);
+    p.vline(gx+4,gy+1,9,ink);p.rect(gx,gy+4,12,2,ink);
+    p.poly([[gx+11,gy+2],[gx+13,gy+5],[gx+11,gy+7]],ink);
+  }else if(type==='gun'){
+    // Side-on matchlock: a long barrel, broad shoulder stock, lock and trigger.
+    p.rect(gx+3,gy+3,11,2,ink);p.hline(gx+4,gy+5,10,'#8d93a3');
+    p.rect(gx+12,gy+2,2,4,ink);p.vline(gx+13,gy+3,2,dark);
+    p.poly([[gx,gy+6],[gx+4,gy+4],[gx+10,gy+4],[gx+10,gy+6],[gx+5,gy+6],
+      [gx+3,gy+9],[gx,gy+9]],gold);
+    p.rect(gx+5,gy+6,3,2,ink);p.set(gx+6,gy+6,dark);
+    p.vline(gx+5,gy+1,3,gold);p.set(gx+6,gy+1,ink);
+  }else{
+    // A full horse-head silhouette with ears, neck, muzzle, mane and a dark eye.
+    p.poly([[gx+2,gy+10],[gx+2,gy+6],[gx+4,gy+3],[gx+4,gy],[gx+6,gy+1],[gx+8,gy],
+      [gx+10,gy+2],[gx+12,gy+3],[gx+13,gy+6],[gx+11,gy+8],[gx+8,gy+6],[gx+7,gy+7],[gx+7,gy+10]],ink);
+    p.line(gx+4,gy+3,gx+3,gy+9,gold);p.rect(gx+9,gy+3,2,2,dark);p.set(gx+12,gy+6,dark);
+  }
 }
 
 function armyForgeChimney(p,x,y) {
