@@ -1,0 +1,55 @@
+{
+  "additions": 11,
+  "duelSamples": {
+    "duels": 1100,
+    "clawPairs": 2793,
+    "clawTriples": 1384,
+    "shots": 8820,
+    "reloads": 4433,
+    "kos": 2502,
+    "counters": 12089,
+    "assists": 2011
+  },
+  "burstCadence": {
+    "repeater": {
+      "shots": 2,
+      "attackRounds": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        10,
+        12
+      ],
+      "reloads": 7
+    },
+    "rifle": {
+      "shots": 3,
+      "attackRounds": [
+        0,
+        3,
+        6,
+        9,
+        12
+      ],
+      "reloads": 9
+    }
+  },
+  "antiCavalry": true,
+  "happuriMeleeOnly": true,
+  "ration20Percent": true,
+  "medicine15Percent": true,
+  "sharedRecoveryLimit": true,
+  "noResurrection": true,
+  "grenadeOnce": true,
+  "grenadeDamageOnce": true,
+  "wolfStrategyAndFormation": true,
+  "specialistOfficers": [
+    "zanbato",
+    "rifle",
+    "repeater"
+  ],
+  "saveLoad": true,
+  "errors": []
+}

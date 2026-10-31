@@ -1,0 +1,50 @@
+{
+  "allViews": 11,
+  "battlePoseViews": 99,
+  "villageDirections": 44,
+  "rifleFieldCadence": [
+    {
+      "round": 1,
+      "shots": 3,
+      "hits": 1,
+      "reload": false
+    },
+    {
+      "round": 2,
+      "shots": 0,
+      "hits": 0,
+      "reload": true
+    },
+    {
+      "round": 3,
+      "shots": 0,
+      "hits": 0,
+      "reload": true
+    },
+    {
+      "round": 4,
+      "shots": 3,
+      "hits": 1,
+      "reload": false
+    }
+  ],
+  "independentRecovery": true,
+  "noFreeTroops": true,
+  "resilienceCapped": true,
+  "officerWeapons": [
+    "ninja_claw",
+    "ninjato",
+    "repeater",
+    "zanbato",
+    "rifle"
+  ],
+  "wolfStrategyDoesNotStack": true,
+  "researchStartAndCompletion": true,
+  "resourcePurchase": true,
+  "atelierMixAndMatch": true,
+  "mobile": {
+    "viewport": 430,
+    "scroll": 430
+  },
+  "errors": []
+}

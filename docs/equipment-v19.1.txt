@@ -1,0 +1,127 @@
+SHINOBI HOLLOW — SPECIALIST ARSENAL V19
+
+Audit and scope
+The starting game contained 105 pieces of equipment: 32 weapons, 19 armor,
+20 headgear, 17 specials and 17 mounts/companions (doctrines excluded).
+This update adds 11 pieces, bringing equipment to 116. Existing items remain.
+The supplied Ninja Village list informed identities; numeric bonuses were
+adapted to Shinobi Hollow's much smaller stat scale.
+
+New equipment
+
+T2 Ninja Claws — ATK +6, DEF +5, Duel +1.
+  Short reach (10 versus a katana's 17). Two quick, individually resolved
+  duel strikes and a chance of a third. Reduced power per hit; each attack
+  can hit, miss, crit or KO independently. Iron claws also reduce an enemy
+  melee attack's hit chance by five percentage points. Low raw attack and
+  reach offset the extra pressure. Personal infantry equipment.
+
+T2 Ninjato — ATK +9, DEF +1, Duel +2.
+  Reach 15. Duel accuracy +6 percentage points, reduced armor mitigation,
+  and +20% counter damage. Personal field blows +8%. A katana remains
+  cheaper, has more raw ATK for leadership, and arms ordinary troops.
+
+T4 Zanbato — ATK +21, STR +2.
+  Broad, heavy anti-cavalry blade. Personal damage +40% versus mounted
+  enemies; -8% versus ordinary opponents. Lower duel accuracy, longer
+  wind-up and fewer follow-ups. Nodachi retains its own Duel +3 identity.
+  Personal infantry equipment.
+
+T3 Two-shot Repeater — MRK +14.
+  Two separately resolved shots at 68% power each, then one reload turn.
+  In field combat its owner fires on gun phases 1, 3, 5, etc.
+
+T4 Three-shot Rifle — MRK +18.
+  Three separately resolved shots at 60% power each, then two reload turns.
+  In field combat its owner fires on gun phases 1, 4, 7, etc.
+  Both burst guns trade sustained fire for an opening burst. Ordinary
+  matchlocks, Thunder Cannon and Kunitomo remain distinct choices.
+
+T3 Ninja Mail — DEF +6, HP +8, MRK +7.
+T4 Iga Mail — DEF +9, HP +12, MRK +10.
+  Fine indigo chainmail and blackened reinforced mail, without large sode.
+  These extend the existing light MRK armor line. Great Armor and Tosei
+  still give substantially more DEF/HP; endgame plate remains protective.
+  The existing troop arsenal can forge the mail after research and uses
+  its MRK bonuses for bows/guns as well as its actual defensive values.
+
+T1 Happuri — DEF +2, HP +1.
+  Open iron brow-and-cheek protection. Personal melee damage taken -12%,
+  including duels. This extra protection does not stop arrows, bullets or
+  grenade blasts. No material purchase cost, like other Tier 1 equipment.
+
+T2 Field Rations — HP +4.
+  Recover 20% maximum HP once per battle at a round break below 65% HP.
+  Also add 4% formation cohesion resilience, capped at 8% from provisions
+  and within the existing overall resilience cap. Defeated commanders
+  provide no resilience. Rice and vegetables, no Silk, buy the packet.
+
+T3 Pitch Grenade — one throw per equipped infantry commander per battle.
+  A ceramic horoku bomb is thrown before the first available melee exchange.
+  Its real field damage scales with STR/MRK and respects defenses, tactics,
+  siege protection and remaining targets. It does not add a fabricated
+  Infantry Power bonus, duplicate casualty damage or grant free duel hits.
+
+T4 Mountain Wolf — ATK +4, DEF +2, HP +10; rare support companion.
+  Its wearer's formation gains +10% attack, using the existing diminishing
+  companion stacking. Counts as Strategy 2 if the wearer's Strategy is lower;
+  it does not add another two levels to an already skilled strategist.
+  Wild hunt opponents use ATK 26 and HP 100 before normal hunt scaling.
+
+Existing equivalents extended; duplicate inventory entries excluded
+
+- Fuma Garb uses the existing Shinobi Garb item ID, shinobi. Its DEF +4,
+  HP +4 and MRK +4 remain. Existing owned/equipped copies survive saves.
+  It is the starting point of Fuma Garb -> Ninja Mail -> Iga Mail.
+- The existing Medicine Case supplies the Herb role: its HP +14 and Duel
+  +3 remain, with a real 15% maximum-HP recovery once per battle.
+- Rations and Medicine Case share one recovery use per commander per
+  battle, choosing the stronger equipped recovery. Duplicate packets do
+  not stack healing. Recovery cannot revive a KO or replenish common troops.
+- No separate Herb inventory entry, duplicate Shinobi/Fuma armor, generic
+  rifle-stat reskin, blanket infantry-power grenade or new consumable
+  management interface was added.
+
+Acquisition and visual integration
+
+Research follows existing tiers, point gates and prerequisites. Ninja weapons
+branch from the sword line; Repeater follows Samurai-zutsu and Rifle follows
+Repeater; the light mail branches from Fuma Garb. Existing early-material
+rules remain: Tier 1 needs gold only, and Tier 2 uses no Silk.
+
+Swordsmiths carry claws, Ninjato, Zanbato and Happuri. Sakai carries the burst
+firearms, mail and grenade; Nanban traders can carry Rifle. Pilgrim peddlers
+carry rations and selected ninja gear. Wolves appear rarely through hunts,
+Ookami-clan companion spoils and the beast trader; they are never researched.
+
+Enemy captains can use specialist weapons at the matching tiers, and those
+worn weapons can become normal battle spoils. Ordinary troop weapon-forging
+priorities stay unchanged; specialist weapons are personal choices. Existing
+utility loot pools also include rations and grenades.
+
+Shared procedural modules draw the claws, wide blade, multiple gun barrels,
+iron face guard, mail, packets and wolf. Icons, portraits, village citizens,
+battle poses, reloads, duel finishers and the Atelier collection use them.
+The PNG review sheet is rendered from the actual game code.
+
+Validation
+- 1,100 sampled 1v1–3v3 duels: individual HP accounting, real claw combos,
+  gun shot/reload cadence, anti-cavalry effects and post-KO action checks.
+- Live 1v1, 2v2 and 3v3 choreography, talisman and retainer rescues; duplicate
+  strike events did not repeat damage. Existing execution timing retained.
+- Actual field battle through all four formation phases, grenade impact,
+  battle aftermath and elimination. Rifle additionally tested through four
+  gun phases: 3 shots, reload, reload, 3 shots; no hidden reload intercepts.
+- Both healing rates, shared-use limit, KO exclusion, independent-hero HP
+  synchronization, no free recruits, capped resilience and save/load.
+- All 11 additions rendered through 99 battle-pose samples, 44 village
+  direction samples and portraits; Atelier mixing and 430px mobile layout.
+- Existing roads, delivered shop stock, rebellion guarantees, casualty routs,
+  finishBattle, duelLoss, hero rescues and save functions preserved.
+
+Limits
+Field armies retain the existing aggregate damage model; visual burst bullets
+represent that phase's already-resolved damage. Duel bullets and claw strikes
+are individually resolved HP attacks. Medicine/rations act at round breaks,
+not during an execution or as a new rescue mechanic. Reloads are deliberate
+vulnerable turns, so burst weapons do not replace reliable single-shot guns.

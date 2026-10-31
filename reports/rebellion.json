@@ -1,0 +1,13 @@
+{
+  "guaranteedWithBadLuck": true,
+  "goodLuckCaptives": 3,
+  "uniqueRebellions": 70,
+  "exhaustedRosterProceduralFallback": true,
+  "workerCallingPreserved": true,
+  "normalStatsAndPortrait": true,
+  "saveLoad": true,
+  "oldRewardRepair": true,
+  "claimedWorkerReplaced": true,
+  "freeJoinOrHousingQueue": true,
+  "errors": []
+}

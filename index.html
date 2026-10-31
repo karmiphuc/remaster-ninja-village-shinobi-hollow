@@ -2,6 +2,41 @@
 .art-tabs{flex-wrap:wrap;column-gap:20px}.art-card .art-note .muted{color:inherit}@media(max-width:620px){.art-tabs{gap:0 13px}.art-tabs button{font-size:12px}.art-tabs button span,.art-tabs small{display:none}}
 
 .forge-focus{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.forge-focus button{flex:1;min-width:130px}.forge-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}.forge-metrics>div{padding:10px 5px;text-align:center;border:1px solid var(--line);background:rgba(224,181,74,.08)}.forge-metrics b{display:block;font-size:24px;color:var(--pine)}.forge-metrics span{display:block;font-size:11px}.forge-summary{font-size:11px;line-height:1.5;margin:4px 0 8px;color:var(--pine)}.kit-quality{font-size:9px;color:var(--gold-l);background:var(--ink);padding:1px 3px;margin-left:2px}.army-forge-panel{margin-top:14px}
+/* Compact lacquer status deck: leave the middle and lower field unobstructed. */
+.shop-stock-info img,.shop-prices img{width:14px;height:14px;object-fit:contain;vertical-align:middle;image-rendering:pixelated}
+#bhud{padding-top:calc(env(safe-area-inset-top,0px) + 5px);gap:5px;align-items:stretch}
+#bhud .bside{padding:4px 8px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+#bhud .bside.r{flex-direction:row-reverse}
+#bhud .bside .nm{font-size:10px;gap:5px;min-width:0}
+#bhud .bside .nm span{overflow:hidden;text-overflow:ellipsis;max-width:150px}
+#bhud .bside .nm img{width:15px;height:15px}
+.bmetrics{display:flex;gap:12px;flex-shrink:0;color:#fff0d1;font-variant-numeric:tabular-nums}
+.bmetrics>span{display:flex;align-items:center;gap:4px;font-size:12px}
+.bmetrics img{width:13px;height:13px;image-rendering:pixelated}.bmetrics b{font-weight:400}
+#bhud .bround{padding:3px 7px;font:10px var(--f-ui);min-width:74px;display:flex;align-items:center;justify-content:center;gap:6px}
+#bhud .bround small{font-size:8px}.bcontrols{display:flex;justify-content:center;gap:3px;pointer-events:auto}
+.bcontrols button{background:#332425;color:#e8d3a2;border:1px solid #806c40;font:9px var(--f-ui);padding:2px 4px;min-height:22px;touch-action:manipulation}
+#bformations{position:absolute;z-index:2;top:calc(env(safe-area-inset-top,0px) + 43px);left:max(8px,env(safe-area-inset-left,0px));right:max(8px,env(safe-area-inset-right,0px));display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;pointer-events:auto}
+#bformations .trow{grid-template-columns:32px minmax(8px,1fr) 17px minmax(8px,1fr) 32px;gap:4px;padding:3px 6px;background:rgba(36,25,28,.85);border:1px solid #756345;box-shadow:inset 0 0 0 1px rgba(206,174,97,.1);font-size:10px}
+#bformations .trow.on{border-color:#d4b56a;background:rgba(55,45,35,.96)}
+#bformations .n,#bformations .n.r{display:flex;align-items:center;gap:3px;color:#f1e2c3;justify-content:flex-end;line-height:12px}
+#bformations .n.r{flex-direction:row-reverse;justify-content:flex-end}
+#bformations .bar{height:4px;border:0;background:#584944}
+#bformations .bar b{background:#78adbd}#bformations .bar.r b{background:#c16a59}
+#bformations .ty img{width:14px;height:14px}.coh-dot{display:inline-block;width:4px;height:4px;border:1px solid rgba(0,0,0,.35);background:var(--coh);border-radius:50%;flex-shrink:0}
+#bhud .gaterow{margin:0;height:7px;gap:2px}#bhud .gaterow img{width:8px;height:8px}#bhud .gatebar{height:4px;min-width:35px}
+#bcall{top:calc(env(safe-area-inset-top,0px) + 87px)}#bcut{top:calc(env(safe-area-inset-top,0px) + 132px)}
+@media(max-width:650px){
+ #bhud .bside{padding:4px 5px;display:grid;align-content:center;justify-content:stretch;gap:3px}
+ #bhud .bside.r{display:grid}#bhud .bside .nm{font-size:9px}#bhud .bside .nm span{max-width:95px}
+ .bmetrics{gap:7px}.bmetrics>span{font-size:10px;gap:3px}.bmetrics img{width:11px;height:11px}
+ #bhud .bside.r .bmetrics{justify-content:flex-end}#bhud .bround{min-width:69px;display:grid;align-content:center;gap:1px}
+ #bformations{grid-template-columns:repeat(2,minmax(0,1fr));gap:3px;top:calc(env(safe-area-inset-top,0px) + 59px)}
+ #bformations .trow{padding:2px 5px;grid-template-columns:27px minmax(6px,1fr) 15px minmax(6px,1fr) 27px;font-size:9px;gap:3px}
+ #bcall{top:calc(env(safe-area-inset-top,0px) + 110px)}#bcut{top:calc(env(safe-area-inset-top,0px) + 145px)}
+}
+@media(max-height:480px) and (min-width:651px){#bformations{top:calc(env(safe-area-inset-top,0px) + 49px)}#bhud .bround{padding:2px 5px}.bcontrols button{min-height:20px}#bcall{top:calc(env(safe-area-inset-top,0px) + 78px)}}
+
 </style></head><body>
 <!doctype html>
 <html lang="en"><head>
@@ -600,6 +635,7 @@ img.px, canvas.px { image-rendering: pixelated; image-rendering: crisp-edges; }
   <section class="layer" id="battle-layer" hidden>
     <canvas id="battle-cv" class="px" aria-label="Battlefield"></canvas>
     <div id="bhud"></div>
+    <div id="bformations" aria-label="Formation strengths"></div>
     <div id="bcall"></div>
     <div id="bcut"></div>
     <div id="btac"></div>
@@ -900,6 +936,28 @@ Object.values(ITEMS).forEach(I => {
     if (!Object.keys(I.res).length) delete I.res;
   }
 });
+
+/* Equipment expansion: identities, not another automatic troop-upgrade ladder.
+   Specialist weapons are personal arms. Existing arsenal recipes stay intact. */
+const TACTICAL_GEAR = [
+ {id:'ninja_claw',line:'sword',pre:['wakizashi','katana'],research:{weeks:6,gold:650},item:{name:'Ninja Claws',slot:'weapon',for:['inf'],tier:2,cost:620,atk:6,def:5,duel:1,res:{ore:6,wood:2},style:'claw',desc:'Paired iron tekko-kagi. Short reach and low striking power; two quick, separately resolved duel attacks, with a possible third. The claws also catch melee blows.'}},
+ {id:'ninjato',line:'sword',pre:['katana'],research:{weeks:6,gold:650},item:{name:'Ninjatō',slot:'weapon',for:['inf','cav'],tier:2,cost:620,atk:9,def:1,duel:2,res:{ore:6,wood:2},style:'ninjato',desc:'A compact precision sword. Duel accuracy +6%; exploits armor gaps and deals +20% damage on a counter. Less reach and raw power than a katana.'}},
+ {id:'zanbato',line:'sword',pre:['nodachi'],research:{weeks:13,gold:2500},item:{name:'Zanbatō',slot:'weapon',for:['inf'],tier:4,cost:2500,atk:21,str:2,res:{ore:18,wood:6,silk:4},style:'zanbato',desc:'A broad horse-cleaving blade. Its wearer deals +40% personal damage to cavalry. Slow, committed swings: lower duel accuracy and fewer follow-ups; ordinary foes take 8% less damage.'}},
+ {id:'repeater',line:'gun',pre:['samurai'],research:{weeks:10,gold:1700,need:'gun'},item:{name:'Two-shot Repeater',slot:'weapon',for:['gun'],tier:3,cost:1650,mrk:14,res:{ore:14,wood:6,silk:2},burst:2,reload:1,shotPower:.68,desc:'A two-barrel experimental teppō. Two separately resolved shots, each at 68% power, then one attack spent reloading. In field battles its commander fires every other gun phase.'}},
+ {id:'rifle',line:'gun',pre:['repeater'],research:{weeks:14,gold:3200,need:'gun'},item:{name:'Three-shot Rifle',slot:'weapon',for:['gun'],tier:4,cost:3000,mrk:18,res:{ore:22,wood:8,silk:4},burst:3,reload:2,shotPower:.60,desc:'A Sakai rifle with one upper barrel over two lower barrels in a triangular iron cluster. Three resolved shots at 60% power each, followed by two reload turns. A strong opening with a long, vulnerable recovery.'}},
+ {id:'ninja_mail',line:'armor',pre:['shinobi'],research:{weeks:9,gold:1250},item:{name:'Ninja Mail',slot:'armor',tier:3,cost:1200,def:6,hp:8,mrk:7,res:{ore:6,silk:4},desc:'Fine kusari beneath close-cut indigo cloth. MRK-focused protection between Fūma Garb and Iga Mail; lighter protection than Great Armor.'}},
+ {id:'iga_mail',line:'armor',pre:['ninja_mail'],research:{weeks:13,gold:2300},item:{name:'Iga Mail',slot:'armor',tier:4,cost:2200,def:9,hp:12,mrk:10,res:{ore:10,silk:8},desc:'Blackened Iga chainmail, reinforced at the ribs and throat. High MRK with flexible protection; plate gusoku still provides much better DEF and HP.'}},
+ {id:'happuri',line:'armor',pre:['jingasa','hachigane'],research:{weeks:3,gold:210},item:{name:'Happuri',slot:'head',tier:1,cost:200,def:2,hp:1,meleeGuard:.12,desc:'An open iron brow-and-cheek guard. Personal melee damage taken −12%, including duels; the crown remains exposed. No protection bonus against arrows or bullets.'}},
+ {id:'rations',pre:['omamori','yakuro'],research:{weeks:5,gold:400},item:{name:'Field Rations',slot:'special',tier:2,cost:360,hp:4,res:{rice:4,veg:2},recover:.20,resolve:.04,desc:'Rice, umeboshi and dried greens in a bamboo packet. Once per battle recover 20% maximum HP at a round break below 65% HP. Provisions also steady the wearer’s formation under losses (+4% resilience, at most +8%). Recovery pouches share one use; cannot revive a defeated hero.'}},
+ {id:'pitch_grenade',pre:['shuriken','smoke'],research:{weeks:9,gold:1200},item:{name:'Pitch Grenade',slot:'special',for:['inf'],tier:3,cost:1150,res:{ore:5,wood:4,tea:4},grenade:1,desc:'A ceramic hōroku bomb filled with pitch. One opening infantry throw per equipped commander per battle; actual damage scales with STR and MRK. Does not replace the wearer’s weapon or grant free duel damage.'}},
+ {id:'wolf',item:{name:'Mountain Wolf',slot:'mount',tier:4,cost:2500,rare:1,wild:1,atk:4,def:2,hp:10,unitBonus:.10,command:2,desc:'A rare grey mountain guide. Its wearer’s formation gains +10% attack, with normal diminishing companion stacking. Counts as Strategy 2 when the wearer’s own Strategy is lower.'}}
+];
+TACTICAL_GEAR.forEach(g=>ITEMS[g.id]=g.item);
+// Preserve the old saved item ID and every equipped copy.
+ITEMS.shinobi.name='Fūma Garb';
+ITEMS.shinobi.desc='The original Shinobi Garb: close-cut dark cloth with MRK +4. The light beginning of the Fūma → Ninja Mail → Iga Mail progression.';
+ITEMS.yakuro.recover=.15;
+ITEMS.yakuro.desc='An herbal medicine case. HP +14 and Duel +3; once per battle recover 15% maximum HP at a round break below 65% HP. Shares its recovery use with rations; cannot revive a defeated hero.';
 
 // research projects unlock items for the Armory shop
 const RESEARCH = [
@@ -2210,7 +2268,8 @@ function buildItemIcons() {
   };
   D.steel_yari=D.yari; D.yari=artBambooIcon; D.nanbu=artNanbuIcon; D.nanbando=artNanbanIcon; ['iron_jingasa','clothmask','mensho','gunnerhat'].forEach(k=>D[k]=p=>artHeadItemIcon(p,k));
   PROGRESSION_GEAR.forEach(g=>D[g.id]=p=>artProgressIcon(p,g.id));Object.keys(GUSOKU_STYLES).forEach(k=>D[k]=p=>gusokuIcon(p,k));D.eboshi_cloth=p=>eboshiIcon(p,'eboshi_cloth');D.eboshi_samurai=p=>eboshiIcon(p,'eboshi_samurai');D.shokunin_happi=happiIcon;
-  Object.keys(ITEMS).forEach(k => { const p = PROGRESSION_GEAR.some(g=>g.id===k)||['yari','steel_yari','nanbu','nanbando','iron_jingasa','clothmask','mensho','gunnerhat'].includes(k) ? new ArtPB(12,12) : new PB(12, 12); (D[k] || EXTRA_ITEM_ICONS[k] || EXTRA_ITEM_ICONS2[k] || EXTRA_ITEM_ICONS3[k] || (q => q.circle(6, 6, 4, '#888')))(p); p.shadeEdges(.82, 1.12); ICONS['it_' + k] = dataURL(p.outlined().canvas(), 4); });
+  TACTICAL_GEAR.forEach(o=>D[o.id]=p=>tacticalItemIcon(p,o.id));
+  Object.keys(ITEMS).forEach(k => { const p = TACTICAL_GEAR.some(o=>o.id===k)||PROGRESSION_GEAR.some(g=>g.id===k)||['yari','steel_yari','nanbu','nanbando','iron_jingasa','clothmask','mensho','gunnerhat'].includes(k) ? new ArtPB(12,12) : new PB(12, 12); (D[k] || EXTRA_ITEM_ICONS[k] || EXTRA_ITEM_ICONS2[k] || EXTRA_ITEM_ICONS3[k] || (q => q.circle(6, 6, 4, '#888')))(p); p.shadeEdges(.82, 1.12); ICONS['it_' + k] = dataURL(p.outlined().canvas(), 4); });
 }
 
 /* ================= ART X: skill icons, rare-ware icons, merchant stalls =================
@@ -2981,9 +3040,9 @@ function beastSprites(kind) {
   if (_beast[kind]) return _beast[kind];
   let r;
   const Q = QUADS[kind];
-  if (kind === 'hound' || kind === 'fox' || kind === 'tosa' || kind === 'tanuki') {
+  if (kind === 'wolf' || kind === 'hound' || kind === 'fox' || kind === 'tosa' || kind === 'tanuki') {
     const W = kind === 'tosa' ? 40 : 36, H = kind === 'tanuki' ? 22 : 26, f = P => quadFrame(Q, W, H, P);
-    const spin = kind === 'hound' ? [QP.howl, Object.assign({}, QP.howl, { bob: 1, tilt: 1.1, hdy: 3 }), Object.assign({}, QP.stand, { open: 1, hdy: 1 }), Object.assign({}, QP.howl, { tilt: .8 })]
+    const spin = kind === 'hound'||kind==='wolf' ? [QP.howl, Object.assign({}, QP.howl, { bob: 1, tilt: 1.1, hdy: 3 }), Object.assign({}, QP.stand, { open: 1, hdy: 1 }), Object.assign({}, QP.howl, { tilt: .8 })]
       : kind === 'tosa' ? [Object.assign({}, QP.stand, { open: 2, hdy: -1, tail: 1 }), Object.assign({}, QP.pawL, { open: 2, hdy: -1 }), Object.assign({}, QP.stand, { open: 1, hdy: -1 }), Object.assign({}, QP.stand, { legs: [[-1, 3, 0, 5], [1, 2, 2, 3]], open: 2, hdy: -2, bob: -1 })]
       : kind === 'fox' ? [Object.assign({}, QP.stand, { tail: 2, hdy: 1 }), Object.assign({}, QP.pawL, { tail: 1, bob: 1, hdx: 1 }), Object.assign({}, QP.stand, { tail: -1, hdy: 1, open: 1 }), Object.assign({}, QP.crouch, { bob: -1, tail: 2 })]
       : [Object.assign({}, QP.stand, { bob: 1, tail: 1, hdy: 1 }), Object.assign({}, QP.stand, { legs: [[-1, 3, 0, 5], [1, 1, 2, 2]], bob: 1, hdy: 2, open: 1 }), Object.assign({}, QP.stand, { bob: 0, tail: -1 }), Object.assign({}, QP.stand, { legs: [[-1, 3, 0, 5], [1, 1, 2, 2]], bob: 2, hdy: 2, open: 1, tail: 1 })];
@@ -3063,6 +3122,7 @@ const _pet2 = {};
 function petSprite2(kind) {
   if (_pet2[kind]) return _pet2[kind];
   if (kind === 'nanbu') { const r=artNanbuPet(); return (_pet2[kind]={r,l:flipCanvas(r)}); }
+  if(kind==='wolf'){const src=beastSprites(kind).idle[0],r=document.createElement('canvas');r.width=20;r.height=16;const x=r.getContext('2d');x.imageSmoothingEnabled=false;x.drawImage(src,0,0,20,16);return (_pet2[kind]={r,l:flipCanvas(r)});}
   let p;
   if (kind === 'kiso' || kind === 'ashige' || kind === 'yoroiuma' || kind === 'akayoroi' || kind === 'jiba' || kind === 'nanbu') { p = new PB(16, 12); petHorse(p, kind === 'ashige' ? COATS[4] : kind === 'kiso' ? COATS[5] : kind === 'akayoroi' ? COATS[3] : kind === 'jiba' ? COATS[1] : kind === 'nanbu' ? COATS[2] : COATS[0], kind === 'yoroiuma' ? 'lamellar' : kind === 'akayoroi' ? 'oyoroi' : null); }
   else if (kind === 'tosa') { const C = BEAST_PAL.tosa; p = new PB(13, 9); p.ellipse(5.5, 4.5, 4.5, 2.6, C.c); p.rect(8, 1, 4, 4, C.c); p.rect(9, 0, 3, 2, C.c); p.rect(11, 2, 2, 2, C.mask); p.set(12, 3, X3.eye); p.set(11, 1, X3.eye); p.set(8, 1, C.d);
@@ -3736,7 +3796,7 @@ function thrustLines(pb, x, y, ux, uy, len) {
    pbGrip so the fist shows on it; the guard and blade go into pbBlade. (hx,hy) is the tsuba. */
 
 /* saya worn at the back hip so a sword user is recognisable even in idle */
-function scabbard(pb, x, y, wid) { const s = SHEATH[wid] || '#5a5470'; thick(pb, x, y, x - 4, y + 4, 2, s); pb.set(x - 5, y + 5, GOLD); pb.set(x - 4, y + 5, GOLD); pb.set(x - 1, y + 1, shade(s, .4)); }
+function scabbard(pb, x, y, wid) { if(wid==='ninja_claw')return;const s = SHEATH[wid] || '#5a5470'; thick(pb, x, y, x - 4, y + 4, 2, s); pb.set(x - 5, y + 5, GOLD); pb.set(x - 4, y + 5, GOLD); pb.set(x - 1, y + 1, shade(s, .4)); }
 /* quiver on the back with fletched arrow ends poking out */
 function quiver(pb, tx, ty) { pb.rect(tx - 2, ty - 3, 3, 8, '#6b4a2e'); pb.vline(tx - 2, ty - 3, 8, '#8a6440'); pb.hline(tx - 2, ty, 3, '#c8452c'); pb.rect(tx - 2, ty - 5, 2, 2, '#f2efe2'); pb.set(tx, ty - 4, '#f2efe2'); pb.set(tx - 1, ty - 6, '#e0d8c0'); }
 /* bow: tall asymmetric yumi (grip two thirds of the way down), 2px limbs, pale string, wrapped grip.
@@ -3791,7 +3851,8 @@ function footSoldierFrame(type, L, pose, hero, wid) {
   let hand, handB; const fists = []; // fists re-stamped over a weapon held two-handed in front
   let smear = null; // () => draws speed lines onto the outlined frame
   const run = pose === 'runA' || pose === 'runB' || pose === 'walkA' || pose === 'walkB';
-  if (spinI >= 0) { hand = [sh[0] + 2, sh[1] - 9]; handB = [sh[0] - 3, sh[1] - 4 + (spinI % 2)]; spinWeapon(front, back, k, wid, hand, spinI, 7); if (k === 'bow') quiver(back, tx, ty); if (k === 'sword') scabbard(back, tx + 1, ty + 4, wid); }
+  if(wid==='ninja_claw'){const h=tacticalClawHands(front,back,L,pose,tx,ty);hand=h.near;handB=h.far;}
+  else if (spinI >= 0) { hand = [sh[0] + 2, sh[1] - 9]; handB = [sh[0] - 3, sh[1] - 4 + (spinI % 2)]; spinWeapon(front, back, k, wid, hand, spinI, 7); if (k === 'bow') quiver(back, tx, ty); if (k === 'sword') scabbard(back, tx + 1, ty + 4, wid); }
   else if (pole) { // long pike: levelled at rest (shaft flat, head straight at the enemy), carried on the march, drawn back, rammed forward with a smear, held at full reach, then brought back to level
     const gl = k === 'glaive';
     const L = SHAFT_FOOT;
@@ -4242,7 +4303,7 @@ function headPB(source,opts={}) {
   else if(!hat)artHair(p,L,0,0,true);
   raw.identity=F;return raw;
  }
- artFaceDetails(p,L,F,opts);raw.maskType=artFaceMask(p,L);if(tetsuMenpo(p,L))raw.maskType='iron-menpo';raw.identity=F;return raw;
+ artFaceDetails(p,L,F,opts);tacticalHappuri(p,L);raw.maskType=artFaceMask(p,L);if(tetsuMenpo(p,L))raw.maskType='iron-menpo';raw.identity=F;return raw;
 }
 
 function torsoPB(L,kind,opts={}) {
@@ -4254,7 +4315,7 @@ function torsoPB(L,kind,opts={}) {
  p.poly([[3,0],[5.7,0],[7,2.5],[6.1,3],[4.6,1]],ART_MAT.ivory);p.poly([[8.7,0],[10,0],[7.1,3.2],[6.2,2.8]],shade(ART_MAT.ivory,-.13));p.poly([[4.5,.2],[5.3,.2],[6.5,2.4],[6.2,2.5]],shade(c,.2));
  if(a){
   if(a.steel){artSteelPlate(p,[[3,.8],[9.4,.8],[10.2,2],[9.5,4.6],[6.8,5],[3,4.8],[2.4,2]]);artStroke(p,[[7,1.2],[7.1,4.4]],.4,'#dee1dc');}
-  else if(a.material)artProgressBreastplate(p,a);else artPlate(p,2,1.2,8.8,3.7,a,a.rows,false);
+  else if(a.material==='ninjaMail')tacticalMail(p,a);else if(a.material)artProgressBreastplate(p,a);else artPlate(p,2,1.2,8.8,3.7,a,a.rows,false);
   artProgressMon(p,a);
   if(a.skirt!==false)for(let i=0;i<3;i++){const x=2+i*3;artPlate(p,x,5,2.8,i===1?2.9:2.6,a,3,true);}
   artStroke(p,[[3.3,.2],[3.4,1.6]],.9,a.lace);artStroke(p,[[9,.2],[8.6,1.6]],.9,a.lace);p.circle(4.2,1.2,.45,a.steel?'#d7e1dd':ART_MAT.gold);p.circle(8.3,1.2,.45,a.steel?'#d7e1dd':ART_MAT.gold);
@@ -4263,7 +4324,7 @@ function torsoPB(L,kind,opts={}) {
 
  p.rect(1.9,4.4,8.9,1,shade(b,-.25));p.rect(2.1,4.4,8.3,.33,shade(b,.18));p.circle(6.8,4.8,.7,shade(b,-.45));
  artStroke(p,[[6.5,4.7],[5.1,4.1],[4.6,4.5],[6.1,5],[7.8,4.1],[8.2,4.4],[6.7,5]],.6,b);artStroke(p,[[6.5,5],[5.7,7.7]],.6,b);artStroke(p,[[7.1,5],[8,7.6]],.6,shade(b,.17));
- return p;
+ tacticalPouches(p,L);return p;
 }
 // Each shoulder is a small pitched roof: lit upper plane, a dark return, sloped lames.
 function artShoulder(p,x,y,w,h,a,side=1){
@@ -4318,13 +4379,14 @@ function drawLegs(p,cx,base,pose,pal,lift=0) {
 /* Detailed props use continuous local coordinates. Every weapon follows the old hand sockets. */
 function artLocal(p,x,y,ux,uy){return (pts,c)=>p.poly(pts.map(([u,v])=>[x+ux*u-uy*v,y+uy*u+ux*v]),c);}
 const ART_WEAPON_SCALE=Object.freeze({sword:1.5,nodachi:1.7,gun:28,ozutsu:33,thunder:18});
-function artBladeLength(length,id){return length*(id==='nodachi'?ART_WEAPON_SCALE.nodachi:ART_WEAPON_SCALE.sword)*({wakizashi:.66,uchigatana:1.06,dojigiri:1.08}[id]||1);}
-function artGunLength(base,kind){return kind==='thunder'?base:kind==='ozutsu'?base+15:kind==='hino'?base+14:kind==='osaka'?base+18:base+12;}
+function artBladeLength(length,id){return length*(id==='nodachi'?ART_WEAPON_SCALE.nodachi:ART_WEAPON_SCALE.sword)*({ninja_claw:.3,ninjato:.88,zanbato:1.48,wakizashi:.66,uchigatana:1.06,dojigiri:1.08}[id]||1);}
+function artGunLength(base,kind){return kind==='thunder'?base:kind==='rifle'?base+17:kind==='repeater'?base+12:kind==='ozutsu'?base+15:kind==='hino'?base+14:kind==='osaka'?base+18:base+12;}
 function sword(p,g,hx,hy,ang,baseLen,wid){
+ if(wid==='ninja_claw')return tacticalClaw(p,g,hx,hy,ang);
  const len=artBladeLength(baseLen,wid),ux=Math.cos(ang),uy=Math.sin(ang),B=artLocal(p,hx,hy,ux,uy),G=artLocal(g,hx,hy,ux,uy),wood=wid==='bokken',c=BLADE[wid]||'#d4d5c6';
  G([[-4.7,-.1],[0,-.1],[0,1.4],[-4.7,1.4]],SHEATH[wid]||'#342c29');for(let i=-4;i<0;i+=.7)G([[i,0],[i+.45,.7],[i,1.2],[i-.35,.7]],'#b69a66');G([[-5,-.2],[-4.4,-.2],[-4.4,1.5],[-5,1.5]],ART_MAT.gold);
  B([[-.2,-1.1],[.5,-1.3],[.9,.4],[.5,2.2],[-.2,2.2],[-.6,.5]],ART_MAT.goldD);B([[0,-1],[.4,-1],[.6,1.8],[.1,1.8]],ART_MAT.goldL);
- const curve=t=>-1.25*t*t-.65*Math.pow(Math.max(0,(t-.68)/.32),2),width=t=>(wid==='nodachi'?1.6:1.2)*Math.min(1,(1-t)/.17),edge=[],spine=[],ridge=[];
+ const curve=t=>-1.25*t*t-.65*Math.pow(Math.max(0,(t-.68)/.32),2),width=t=>(wid==='zanbato'?2.25:wid==='nodachi'?1.6:1.2)*Math.min(1,(1-t)/.17),edge=[],spine=[],ridge=[];
  for(let i=0;i<=28;i++){const t=i/28,u=.7+(len-.7)*t,v=curve(t),w=width(t);spine.push([u,v]);ridge.push([u,v+w*.58]);edge.push([u,v+w]);}
  B([...spine,...edge.slice().reverse()],wood?'#745132':'#677780');B([...spine,...ridge.slice().reverse()],c);
  if(!wood)B([...ridge,...edge.slice().reverse()],wid==='muramasa'?'#ffc2a2':'#f8efd8');
@@ -4368,7 +4430,8 @@ function bow(p,x,top,bot,col,drawn,handY){
 }
 
 function musket(p,x0,y0,x1,y1,kind){const [ux,uy,n]=dirOf(x0,y0,x1,y1),P=artLocal(p,x0,y0,ux,uy),big=kind==='thunder',t=big?2.4:kind==='ozutsu'?1.7:1.1;
- P([[0,0],[6,0],[8,1],[n-4,1],[n-4,2],[6,2],[2,3],[-1,2.5]],'#382923');P([[0,.3],[6,.3],[7,1.5],[2,2.4]],'#865733');P([[2,.7],[5.5,.7],[5.5,1.1],[2,1.3]],'#ad7747');P([[4,-t],[n,-t],[n,.3],[4,.3]],'#424646');P([[4,-t],[n-.4,-t],[n-.4,-t+.45],[4,-t+.45]],'#c7c6b1');P([[7,-t+.5],[n-1,-t+.5],[n-1,-t+.8],[7,-t+.8]],'#737d7c');for(const i of [8,n-5])P([[i,-t-.1],[i+.7,-t-.1],[i+.7,1.6],[i,1.6]],ART_MAT.goldD);P([[n-.2,-t],[n+.4,-t],[n+.4,.3],[n-.2,.3]],'#242321');P([[5.4,-.2],[7.6,-.2],[7.6,1.2],[5.4,1.2]],ART_MAT.gold);P([[6.7,1],[7.5,1],[8,2.5],[7.5,2.5]],'#4d3427');P([[7.5,2.2],[8.1,2.2],[8.1,2.8],[7.5,2.8]],'#de733f');const style=PROGRESS_GUN[kind];if(style){P([[0,.3],[5.8,.3],[7,1.4],[2,2.4]],style.wood);P([[8,-t],[n-.5,-t],[n-.5,-t+.4],[8,-t+.4]],style.barrel);for(const u of [8,n-5])P([[u,-t],[u+.6,-t],[u+.6,1.5],[u,1.5]],style.trim);if(kind==='osaka')for(let u=10;u<n-5;u+=3)P([[u,.1],[u+.7,-.5],[u+1.5,.1],[u+.7,.5]],style.trim);}}
+ P([[0,0],[6,0],[8,1],[n-4,1],[n-4,2],[6,2],[2,3],[-1,2.5]],'#382923');P([[0,.3],[6,.3],[7,1.5],[2,2.4]],'#865733');P([[2,.7],[5.5,.7],[5.5,1.1],[2,1.3]],'#ad7747');P([[4,-t],[n,-t],[n,.3],[4,.3]],'#424646');P([[4,-t],[n-.4,-t],[n-.4,-t+.45],[4,-t+.45]],'#c7c6b1');P([[7,-t+.5],[n-1,-t+.5],[n-1,-t+.8],[7,-t+.8]],'#737d7c');for(const i of [8,n-5])P([[i,-t-.1],[i+.7,-t-.1],[i+.7,1.6],[i,1.6]],ART_MAT.goldD);P([[n-.2,-t],[n+.4,-t],[n+.4,.3],[n-.2,.3]],'#242321');P([[5.4,-.2],[7.6,-.2],[7.6,1.2],[5.4,1.2]],ART_MAT.gold);P([[6.7,1],[7.5,1],[8,2.5],[7.5,2.5]],'#4d3427');P([[7.5,2.2],[8.1,2.2],[8.1,2.8],[7.5,2.8]],'#de733f');if(kind==='rifle')tacticalRifleCluster(p,P,n);else if(kind==='repeater'){const barrels=kind==='rifle'?3:2;for(let j=1;j<barrels;j++){const v=-t-j*.85;P([[8,v],[n,v],[n,v+.55],[8,v+.55]],j===barrels-1?'#bbcbc8':'#617985');P([[n-.2,v-.1],[n+.5,v-.1],[n+.5,v+.6],[n-.2,v+.6]],'#24323b');}P([[4,-1],[7,-1],[7,1.6],[4,1.6]],'#997b46');P([[4.4,-.7],[5.7,-.7],[5.7,.9],[4.4,.9]],'#c6b078');}
+ const style=PROGRESS_GUN[kind];if(style){P([[0,.3],[5.8,.3],[7,1.4],[2,2.4]],style.wood);P([[8,-t],[n-.5,-t],[n-.5,-t+.4],[8,-t+.4]],style.barrel);for(const u of [8,n-5])P([[u,-t],[u+.6,-t],[u+.6,1.5],[u,1.5]],style.trim);if(kind==='osaka')for(let u=10;u<n-5;u+=3)P([[u,.1],[u+.7,-.5],[u+1.5,.1],[u+.7,.5]],style.trim);}}
 // Steel Yari intentionally retains the old leaf-blade geometry. Bamboo is one
 // continuous jointed cane, ending in a shaved point with no metal socket or cap.
 function artBambooSpear(p,x0,y0,x1,y1,headLength=11){
@@ -4394,6 +4457,7 @@ function spear(p,x0,y0,x1,y1,glaive,wid,headLength=11){
 }
 function gearCarry(pb,look,view,pose){
  const G=look.gear||{},k=WEAPON_KIND[G.w];
+ if(['ninja_claw','repeater','rifle'].includes(G.w)){gearCarryLegacy(pb,{...look,gear:{...G,w:null}},view);const h=pose?.near||[10,14],far=pose?.far||[2,14];if(G.w==='ninja_claw'){tacticalClaw(pb,pb,h[0]+.5,h[1],-.6);if(view!=='up')tacticalClaw(pb,pb,far[0],far[1],-.8);}else musket(pb,h[0]-3,h[1]+2,h[0]+1,h[1]-11,G.w);return;}
  if(k!=='spear'&&k!=='glaive'){gearCarryLegacy(pb,look,view);return;}
  gearCarryLegacy(pb,Object.assign({},look,{gear:Object.assign({},G,{w:null})}),view);
  const h=pose?pose.near:(view==='side'?[9.6,14.2]:[10.1,14.5]),x=h[0]+.6;
@@ -4438,6 +4502,7 @@ function portrait(source,big=false){
  const p=new ArtPB(28,28),hat=hatOf(L),head=headPB(L,{hat}),wide=hat==='jingasa'||hat==='gunnerhat'||hat==='captainhat',sx=hat==='jingasa'?1.22:(hat==='gunnerhat'||hat==='captainhat')?1.35:1.65,sy=wide?1.4:1.5;
  p.scaled(torsoPB(L,null),2,21.5,1.85,1);p.scaled(head,wide?14-8*sx:.8,.1,sx,sy);
  const choice=L.parts&&L.parts.shoulders,a=choice==='none'?null:artArmor(L,choice&&choice!=='auto'?choice:null);if(a&&a.shoulder){artShoulder(p,3.2,23.2,5.2,4.4,a,-1);artShoulder(p,24.2,23.2,5.2,4.4,a,1);}
+ if(L.gear?.m==='wolf'){const wolf=new ArtPB(12,12);tacticalItemIcon(wolf,'wolf');p.scaled(wolf,20.5,20,.55);}
  const c=p.outlined().canvas();_portCache.set(key,c);return c;
 }
 
@@ -4541,7 +4606,7 @@ function artEquipmentLook(source){
  const L=Object.assign({},source),g=L.gear||{};delete L._k;
  L.baseCloth=source.baseCloth||source.cloth||'#35475b';L.cloth=L.baseCloth;
  L.baseMask=source.baseMask===undefined?!!source.mask:source.baseMask;L.mask=L.baseMask;
- if(g.a==='shinobi'){L.cloth='#2c2a38';L.mask=true;}if(g.a==='shokunin_happi')L.cloth=happiOptions(source).coat;
+ if(['shinobi','ninja_mail','iga_mail'].includes(g.a)){L.cloth=g.a==='ninja_mail'?'#34465b':g.a==='iga_mail'?'#242d38':'#2c2a38';L.mask=true;}if(g.a==='shokunin_happi')L.cloth=happiOptions(source).coat;
  if(L.baseBand)L.band=L.baseBand;
  if(g.h==='bandana')L.headBand='#ece4cc';if(g.h==='hachigane')L.headBand='#b8c0cc';
  const hats={jingasa:'#363234',iron_jingasa:'#242c31',gunnerhat:'#292f35',sugegasa:'#b18d50',archer_jingasa:'#536147',kabuto:'#3a3442',zunari:'#5a5f6e',kawari:'#b8342a'};if(hats[g.h])L.hat=hats[g.h];
@@ -4550,7 +4615,7 @@ function artEquipmentLook(source){
 function artTroopLook(type,side,variant=0,kit=null){
  const n=Math.abs(variant|0),seed=artHash('troop:'+type+':'+side+':'+n),ours=side===0;
  const L={faceSeed:seed,hair:ART_HAIR_STYLES[n%ART_HAIR_STYLES.length],hc:['#241e1b','#3c2a22','#25262a','#574537'][(seed>>>3)%4],sex:n%4===3?'f':'m',skin:SKIN[(seed>>>7)%SKIN.length],cloth:ours?'#3f62c0':'#c0392e',band:ours?'#d84a3a':'#e8c050',hat:ours?'#3a6a5a':'#7a3a2a',dou:ours?'#28407e':'#7e2420',lace:'#d5ac62',mask:false,sashi:null};
- if(kit!==null){L.gear={w:kit.w||null,a:kit.a||null,h:kit.h||null,m:kit.m||null};if(kit.horo)L.horo=kit.horo;}
+ if(kit!==null){L.gear={w:kit.w||null,a:kit.a||null,h:kit.h||null,m:kit.m||null,s:kit.s||null,s2:kit.s2||null};if(kit.horo)L.horo=kit.horo;}
  return artEquipmentLook(L);
 }
 function kitOffStat(k,type){const I=ITEMS[k];return type==='arc'||type==='gun'?I.mrk||0:I.str||0;}
@@ -5156,14 +5221,15 @@ function agentFrame(a){
 /* Seven new items use normal inventory IDs and the same shared rig as the army. */
 const NEW_EQUIPMENT_IDS=['eboshi_cloth','eboshi_samurai','shokunin_happi','gekko_gusoku','kokuyo_gusoku','ginryu_gusoku','kokuryu_gusoku'];
 function newEquipmentLook(k){
+ if(TACTICAL_GEAR.some(g=>g.id===k))return tacticalEquipmentLook(k);
  const L=artPresetLook(ART_PRESETS[1]);L.faceSeed=54321;L.hair='topknot';L.gear={w:null,a:'gekko_gusoku',h:'kabuto',m:null};L.parts={shoulders:'auto',menpo:false};
  if(ITEMS[k].slot==='head'){L.gear.h=k;if(k==='eboshi_cloth'){L.gear.a='shokunin_happi';L.cloth='#293e59';}}
  else L.gear.a=k;
  if(k==='shokunin_happi'){L.gear.h='bandana';L.cloth='#293e59';}return L;
 }
 function renderNewEquipment(host){
- host.innerHTML=`<div class="art-intro"><span>NEW EQUIPMENT</span><h2>Artisans, archers and legendary samurai.</h2><p>Choose a piece to mix it with your weapons, headwear and armor.</p></div><div class="art-roster">${NEW_EQUIPMENT_IDS.map(k=>`<button class="art-card" data-new-equipment="${k}"><span class="art-jp">五</span><canvas width="620" height="490" aria-label="${esc(ITEMS[k].name)}"></canvas><span class="art-unit">${esc(ITEMS[k].name)}</span><span class="art-note">Tier ${ITEMS[k].tier} · ${itemStat(k)} · ${ITEMS[k].cost}G</span></button>`).join('')}</div>`;
- $$('[data-new-equipment]',host).forEach(card=>{const k=card.dataset.newEquipment,L=newEquipmentLook(k);$('.art-jp',card).textContent=ITEMS[k].tier===5?'五':ITEMS[k].tier===3?'三':'二';paintArtStage($('canvas',card),artPreview(L),12);card.onclick=()=>{ATELIER.look=L;ATELIER.tab='forge';ATELIER.motion='idle';renderAtelier();};});
+ host.innerHTML=`<div class="art-intro"><span>NEW EQUIPMENT</span><h2>Specialists, artisans and legendary samurai.</h2><p>Choose a piece to mix it with your weapons, headwear and armor.</p></div><div class="art-roster">${NEW_EQUIPMENT_IDS.map(k=>`<button class="art-card" data-new-equipment="${k}"><span class="art-jp">五</span><canvas width="620" height="490" aria-label="${esc(ITEMS[k].name)}"></canvas><span class="art-unit">${esc(ITEMS[k].name)}</span><span class="art-note">Tier ${ITEMS[k].tier} · ${itemStat(k)} · ${ITEMS[k].cost}G</span></button>`).join('')}</div>`;
+ $$('[data-new-equipment]',host).forEach(card=>{const k=card.dataset.newEquipment,L=newEquipmentLook(k);$('.art-jp',card).textContent='〇一二三四五'[ITEMS[k].tier]||String(ITEMS[k].tier);paintArtStage($('canvas',card),artPreview(L),12);card.onclick=()=>{ATELIER.look=L;ATELIER.tab='forge';ATELIER.motion='idle';renderAtelier();};});
 }
 
 /* ================= EQUIPMENT ATELIER: visual-only sandbox ================= */
@@ -5176,8 +5242,8 @@ const ART_PRESETS=[
  {name:'Armored Cavalry',jp:'騎馬',note:'Horned kabuto · barded Kiso warhorse',w:'katana',a:'oyoroi',h:'kabuto',c:'#354357',b:'#ad4d2e',mount:'akayoroi'}
 ];
 function artPresetLook(p){return {faceSeed:artHash(p.name),hair:p.hair||'topknot',hc:'#2c2320',skin:SKIN[1],sex:'m',cloth:p.c,band:p.b,hat:p.h==='sugegasa'?'#493930':p.h==='jingasa'?'#363439':'#343133',gear:{w:p.w,a:p.a,h:p.h,m:p.mount||null},parts:{shoulders:'auto',menpo:!!p.menpo}};}
-function artType(L){const w=WEAPON_KIND[L.gear.w];return L.gear.m?'cav':w==='bow'?'arc':w==='gun'||w==='cannon'?'gun':'inf';}
-function artPreview(source,pose='idle',trim=true){const L=source.gear.a==='shinobi'?Object.assign({},source,{cloth:'#2c2a38',mask:true}):source;const type=artType(L);let frame;if(type==='cav'){const ML=MOUNT_LOOK[L.gear.m]||MOUNT_LOOK.kiso;frame=riderFrame(L,pose==='idle'?'studio':pose,true,L.gear.w||'unarmed',ML?ML.coat:0,Object.assign({cloth:'#a03428',trim:ART_MAT.gold,tassel:ART_MAT.gold,barding:'oyoroi'},ML&&ML.tack));}else frame=footSoldierFrame(type,L,pose==='idle'?'studio':pose,true,L.gear.w||'unarmed');const image=finishSet([frame])(frame);return trim?artTrim(image):image;}
+function artType(L){const w=WEAPON_KIND[L.gear.w];return isHorse(L.gear.m)?'cav':w==='bow'?'arc':w==='gun'||w==='cannon'?'gun':'inf';}
+function artPreviewBase(source,pose='idle',trim=true){const L=source.gear.a==='shinobi'?Object.assign({},source,{cloth:'#2c2a38',mask:true}):source;const type=artType(L);let frame;if(type==='cav'){const ML=MOUNT_LOOK[L.gear.m]||MOUNT_LOOK.kiso;frame=riderFrame(L,pose==='idle'?'studio':pose,true,L.gear.w||'unarmed',ML?ML.coat:0,Object.assign({cloth:'#a03428',trim:ART_MAT.gold,tassel:ART_MAT.gold,barding:'oyoroi'},ML&&ML.tack));}else frame=footSoldierFrame(type,L,pose==='idle'?'studio':pose,true,L.gear.w||'unarmed');const image=finishSet([frame])(frame);return trim?artTrim(image):image;}
 const ATELIER={open:false,tab:'guide',look:artPresetLook(ART_PRESETS[1]),motion:'idle',frame:-1,last:0,images:null};
 function openAtelier(){ATELIER.open=true;ATELIER.focus=document.activeElement;$('#atelier').hidden=false;renderAtelier();$('#atelier-close').focus();}
 function closeAtelier(){ATELIER.open=false;$('#atelier').hidden=true;ATELIER.images=null;if(ATELIER.focus&&ATELIER.focus.isConnected)ATELIER.focus.focus();}
@@ -5911,7 +5977,7 @@ let G = null;           // saved game state
 const RT = { agents: [], floaters: [], particles: [], groundDirty: true, ground: null, t: 0, sel: null, mode: 'normal', ghost: null, buildId: null, waterTiles: [], spawnAcc: 0, lastWeekSpawns: 0, monthSales: 0, monthTrav: 0, uidAgent: 1 };
 
 function vById(id) { return G.villagers.find(v => v.id === id); }
-function vBase(id) { return VILLAGER_POOL.find(v => v.id === id) || RECRUITS.find(v => v.id === id); }
+function vBase(id){return VILLAGER_POOL.find(v=>v.id===id)||RECRUITS.find(v=>v.id===id)||G?.rebelWorkers?.[id];}
 // this campaign's roll of a villager (stats, calling, skills, potential); looks and identity stay the base data's
 const _VD = new Map(); let _vdRoll = null;
 function vData(id) {
@@ -6207,6 +6273,7 @@ function place(id, x, y, free) {
 }
 function bByUid(uid) { return G.buildings.find(b => b.uid === uid); }
 function removeBuilding(b) {
+  releaseShopStock(b);
   const B = BUILDINGS[b.id];
   for (let j = 0; j < B.h; j++) for (let i = 0; i < B.w; i++) G.bmap[idx(b.x + i, b.y + j)] = -1;
   G.buildings.splice(G.buildings.indexOf(b), 1);
@@ -6571,15 +6638,16 @@ function updateVillagerAgent(a, dt) {
       if (v.en >= 100 && v.hp == null) { a.resting = false; a.hidden = false; a.state = 'idle'; a.timer = .2; if (homePerk(v).work > 0) a.bubble = { t: 1.4, icon: '♪' }; } return; }
     a.timer -= dt; if (a.timer <= 0) { a.hidden = false; a.state = 'idle'; a.timer = 0.2; const b = bByUid(a.target); if (b && b.id === 'dojo') { const f = dojoFee(v); if (G.gold >= f) { G.gold -= f; RT.dojoSpent = (RT.dojoSpent || 0) + f; giveXP(v, 6); floater(a.x, a.y - 18, '-' + f, 'gold', '#ff8a7a'); } else a.bubble = { t: 1.6, icon: '…' }; } } return; }
   // idle: decide
-  a.timer -= dt; if (a.timer > 0) return;
+  a.timer -= dt; if(a.timer>0)return;
+  if(a.carry){returnShopCarry(a);return;}
   let target = null;
   // free will: workers favour their regular site and the ones nearby, but help wherever work piles up;
   // commanders lend a hand about a fifth of the time (more if they're handy), otherwise they train and rest
   const hurt = v.hp != null && !a.carry, tired = ((v.en ?? 100) < 25 && !a.carry) || hurt, helps = v.role !== 'work' && Math.random() < clamp(.2 * vStats(v).wrk / 8, .1, .3);
   if (tired && (v.role === 'work' || helps || hurt)) { target = homeOf(v) || G.buildings.find(b => b.id === 'hall'); a.goingHome = true; a.mission = 'rest'; a.bubble = { t: 1.6, icon: 'z' }; }
   else if (v.role === 'work' || helps) {
-    const J = chooseSite(a, v, v.role !== 'work');
-    target = J && workerPlan(a, v, J); if (!target) { a.timer = rnd(1.2, 2.2); return; }
+    const supply=planShopSupply(a,v),J=supply?null:chooseSite(a,v,v.role!=='work');
+    target=supply||(J&&workerPlan(a,v,J)); if (!target) { a.timer = rnd(1.2, 2.2); return; }
   } else if (v.role !== 'work') {
     const dojos = G.buildings.filter(b => b.id === 'dojo' && entranceOf(b));
     if (dojos.length && !G.dojoOff && G.gold >= dojoFee(v) && Math.random() < .7) target = pick(dojos);
@@ -6636,23 +6704,7 @@ function updateTraveller(a, dt) {
   if (a.state === 'idle') leave(a);
 }
 function leave(a) { const sx = clamp(Math.round((a.x - 8) / 16), 0, MAP_W - 1), sy = clamp(Math.round((a.y - 12) / 16), 0, MAP_H - 1); let gt = pick(gates()), p = roadPath(sx, sy, gt[0], gt[1]); if (!p) { gt = gates()[0]; p = roadPath(sx, sy, gt[0], gt[1]); } if (!p) { a.dead = true; return; } a.path = p; a.path.push([gt[0] + GATE_OFF[gt[2]][0], gt[1] + GATE_OFF[gt[2]][1]]); a.state = 'walk'; a.leaving = true; }
-function sell(a, b) {
-  const B = BUILDINGS[b.id]; const qty = rint(1, 2 + (a.wallet > 2 ? 1 : 0)) + (likes(a, b) ? 1 : 0), L = lvInfo(b), ws = waresOf(b.id);
-  let base = 0, n = 0, wn = 0, wk = null;
-  for (let i = 0; i < qty; i++) {
-    const w = ws.filter(k => (G.wares[k] || 0) - tradeHold(k) >= 1).sort((p, q) => WARES[q].price - WARES[p].price)[0];
-    if (w) { G.wares[w]--; base += WARES[w].price; n++; wn++; wk = w; }
-    else if (!B.needWares && B.sells.every(g => (G.stock[g] || 0) - tradeHold(g) >= 1)) { B.sells.forEach(g => G.stock[g] -= 1); base += B.price; n++; }
-  }
-  if (!n) { a.bubble = { t: 1.8, icon: '…' }; return 0; }
-  let price = (1 + (b.boost || 0)) * (b.combo ? b.combo.m : 1) * (G.activeCombos && G.activeCombos.lanterns ? 1.15 : 1) * (1 + (L && L.sale || 0)) * (1+(b.wideStreet?WIDE_STREET_BONUS.sale:0));
-  const g = Math.round(base * price * boonSales());
-  if (wn) a.bubble = { t: 1.6, icon: '★' };
-  G.gold += g; G.stats.sales += g; RT.monthSales += g;
-  floater(b.x * 16 + BUILDINGS[b.id].w * 8, b.y * 16 - 2, '+' + g, 'gold', '#f2d27a');
-  if (Math.random() < .35) a.bubble = { t: 1.6, icon: '♥' }; if (Math.random() < .5) a.cheer = RT.t + 1.1;
-  Sound.play('coin', { vol: 0.5 }); return n;
-}
+
 function floater(x, y, text, icon, col) { RT.floaters.push({ x, y, text, icon, col, t: 0 }); if (RT.floaters.length > 40) RT.floaters.shift(); }
 
 /* ---------- Calendar ---------- */
@@ -7048,6 +7100,465 @@ function openPanel(p) {
 function h(html) { const d = document.createElement('div'); d.innerHTML = html; return d.firstElementChild; }
 function isUnlocked(id) { const B = BUILDINGS[id]; return (!B.lock || G.unlocked[B.lock]) && (!B.wins || G.wins >= B.wins); }
 
+/* Commanders without rank-and-file keep their own corps and real endurance.
+   One independent group is one existing hero, never newly recruited troops. */
+function independentHeroes(g){return g.heroOnly?(g.spr||[]):(g.heroes||[]);}
+function refreshIndependent(g){
+  const c=g.solo,ranged=g.type==='arc'||g.type==='gun';
+  g.mods=modsOf(c.ko?[]:[c]);g.guards=c.ko?0:c.guard||0;
+  g.atkMul=(ranged?c.s.mrk+c.s.atk*.3:c.s.atk+c.s.str*.5)/8*(c.aux?.5:1)*(1+boonAtk(g.type));
+  g.defMul=(c.s.def/6+.5)*(1+.08*(g.mods.ironwall||0));g.troops=c.ko?0:Math.max(0,c.hp||0)/3;
+  if(g.troops>0){g.cohEliminated=false;g.cohBreakStarted=false;g.bannerFall=null;}
+  updateCohesion(g);return g;
+}
+function independentDamage(g,from){
+  if(!g.heroOnly)return;const c=g.solo;c.hp=clamp(g.troops*3,0,c.hpMax);
+  if(c.hp<=0&&!c.ko)cmdHurt(g,c,0,from);
+}
+function independentDuelExit(g){
+  if(!g.heroOnly)return;refreshIndependent(g);
+  if(g.troops<=0){g.cohEliminated=true;const h=g.spr[0];if(h&&!g.bannerFall)g.bannerFall={t:0,x:h.x,y:h.y};}
+}
+function playerArmy(){
+  const A={side:0,clan:'kage',name:'Kage Clan',groups:[],ki:1,strat:0,mode:'army',recovering:[]},
+    types=['inf','arc','gun','cav'],units=types.filter(t=>unitOpen(t)&&(G.troops[t]||0)>0),by={},allC=[];
+  for(const v of G.villagers){
+    if(v.role==='work'&&G.allHands===false)continue;if(cmdWorn(v)){A.recovering.push(v);continue;}
+    const c=cmdFrom(v),type=v.role==='work'?militiaType(v):v.role;if(!types.includes(type))continue;
+    if(v.role==='work')c.aux=true;c.hpMax=c.s.hp;c.hp=clamp(v.hp??c.hpMax,0,c.hpMax);c.retF=(c.ret||[]).map(retFighter);
+    (by[type]||=[]).push(c);allC.push(c);
+  }
+  for(const t of types){
+    const cmds=(by[t]||[]).sort((a,b)=>(a.aux?1:0)-(b.aux?1:0)||b.s.atk-a.s.atk);
+    if(units.includes(t)){
+      const m=groupMuls(t,cmds),kf=kitFill(t,G.troops[t],G.kit[t]||{}),md=modsOf(cmds),
+        g={type:t,troops:G.troops[t],atkMul:m.atk,defMul:m.def*(1+.08*md.ironwall),cmds,mods:md,kitMul:kf.mul,
+          kitDist:playerKitDist(t,G.troops[t]),guards:cmds.reduce((n,c)=>n+(c.guard||0),0),
+          retAtk:cmds.reduce((n,c)=>n+(c.retAtk||0),0),retDef:cmds.reduce((n,c)=>n+(c.retDef||0),0)};
+      applyUnitExtras(g);A.groups.push(g);
+    }else for(const c of cmds){const g=fighterGroup(t,c);g.heroOnly=true;g.troops=c.hp/3;g.guards=c.guard||0;A.groups.push(g);}
+  }
+  applyBonds(A);applyArmyWide(A,allC);A.groups.forEach(g=>recalcGroup(g,A));finishArmy(A);
+  for(const g of A.groups)if(g.heroOnly)g.start=g.max=g.solo.hpMax/3;
+  A.start=A.groups.reduce((n,g)=>n+g.start,0);return A;
+}
+function layoutIndependent(g,si,front,mid,fh){
+  const face=sideDir(si),same=BT.A[si].groups.filter(o=>o.heroOnly&&o.type===g.type),i=same.indexOf(g),
+    y=clamp(mid+(i-(same.length-1)/2)*Math.min(24,fh/Math.max(1,same.length)),BT.fy0+8,BT.fy1-5);
+  g.front=g.post=g.home=g.hx=front;g.hy=y;g.halfW=0;g.colStep=23;g.heroes=[];
+  const s=mkSprite(g,si,front,y,g.solo.look);s.hero=g.solo;s.hdx=0;s.hdy=0;g.spr=[s];
+  if(g.guards)mkGuards(g,si,s,g.guards);if(g.solo.pet)mkPet(g,si,s,g.solo.pet);
+  if(g.troops<=0){s.alive=false;s.die=-1;}return front-face*28;
+}
+
+/* A shallow status deck replaces the bottom formation panel. All quantities
+   use the combat ledger; independent heroes count as people, not HP as troops. */
+function combatCount(A){return A.groups.reduce((n,g)=>n+(g.heroOnly?(g.troops>0?1:0):Math.ceil(Math.max(0,g.troops))),0);}
+function typeRows(){
+  const cur=BT.state==='run'?BT.phaseName:null;
+  const cell=(A,t,r)=>{const gs=A.groups.filter(g=>g.type===t),hp=gs.reduce((n,g)=>n+Math.max(0,g.troops),0),max=gs.reduce((n,g)=>n+(g.start||g.max||0),0),
+    count=gs.reduce((n,g)=>n+(g.heroOnly?(g.troops>0?1:0):Math.ceil(Math.max(0,g.troops))),0),active=gs.find(g=>g.troops>0),c=active&&cohesionState(active),state=c?COHESION_STAGES[c.stage]:null,
+    tip=state?`${state.name} · Cohesion ${Math.round(c.value*100)}%`:'No active combatants',
+    number=`<span class="n${r?' r':''}">${state?`<i class="coh-dot" style="--coh:${state.col}"${tipAttr(tip)}></i>`:''}${count?fmt(count):gs.length?'0':'–'}</span>`,
+    bar=`<i class="bar${r?' r':''}"${tipAttr(`${UNITS[t].name}: ${count} active${gs.some(g=>g.heroOnly)?' · includes independent heroes':''}`)}><b style="width:${clamp(max?hp/max*100:0,0,100)}%"></b></i>`;
+    return r?bar+number:number+bar;};
+  return UNIT_ORDER.map(t=>`<div class="trow${cur===t?' on':''}" data-formation="${t}">${cell(BT.A[0],t,0)}<span class="ty"${tipAttr(UNITS[t].name)}>${icon('u_'+t)}</span>${cell(BT.A[1],t,1)}</div>`).join('');
+}
+function renderRunStrip(){if(!BT||BT.state==='done')return;$('#btac').innerHTML='';renderBHUD();}
+function renderBHUD(){
+  if(!BT)return;
+  const live=['run','between','autowait','duelpick'].includes(BT.state),side=(A,r)=>
+    `<div class="bside lac${r?' r':''}"><div class="nm">${icon('mon_'+A.clan)}<span>${esc(A.name)}</span></div><div class="bmetrics"><span${tipAttr('Total fighting strength')}>${icon('army')}<b>${fmt(armyPower(A))}</b></span><span${tipAttr('Active units: troops and independent heroes')}>${icon('people')}<b>${fmt(combatCount(A))}</b></span></div></div>`;
+  const pressure=offensivePressure(),gate=BT.siege?`<div class="gaterow"${tipAttr(`Castle gate · ${Math.ceil(BT.siege.hp)}/${BT.siege.max}`)}>${icon('it_kabuto')}<div class="gatebar"><i style="width:${clamp(BT.siege.hp/BT.siege.max*100,0,100)}%"></i></div></div>`:'';
+  $('#bhud').innerHTML=side(BT.A[0],0)+`<div class="bround lac"><span>${BT.round?'Round '+BT.round:BT.siege?'Siege':'Deploy'}</span>${pressure>1?`<small>+${Math.round((pressure-1)*100)}% pressure</small>`:''}${gate}${live?`<div class="bcontrols"><button id="rs-speed" aria-label="Battle speed">×${BT.speed}</button><button id="rs-auto" aria-pressed="${BT.auto}">Auto ${BT.auto?'on':'off'}</button></div>`:''}</div>`+side(BT.A[1],1);
+  $('#bformations').innerHTML=typeRows();
+  const speed=$('#rs-speed'),auto=$('#rs-auto');if(speed)speed.onclick=()=>{BT.speed=BT.speed===1?2:BT.speed===2?3:1;Sound.play('tap');renderBHUD();};
+  if(auto)auto.onclick=()=>{BT.auto=!BT.auto;Sound.play('tap');renderBHUD();};
+}
+
+/* Shops sell only delivered stock. The existing global ledgers are the
+   warehouse; local material/ware capacities are totals, not per item type. */
+const SHOP_CAP=10;
+function shopIs(b){return !!b&&BUILDINGS[b.id]?.cat==='shop';}
+function shopStock(b,ware=false){const key=ware?'shopWares':'shopGoods';return b[key]||(b[key]={});}
+function shopTotal(b,ware=false){return Object.values(shopStock(b,ware)).reduce((n,q)=>n+Math.max(0,q||0),0);}
+function shopIncoming(b,good,exclude){
+  let n=0;for(const a of RT.agents){if(a===exclude||a.dead)continue;
+    if(a.shopSupply?.uid===b.uid&&a.shopSupply.good===good&&a.mission)n+=a.carry?.n||a.shopSupply.n;
+    else if(!a.shopSupply&&a.carry?.good===good&&a.dest===b.uid&&a.mission)n+=a.carry.n;
+  }return n;
+}
+function shopRoom(b,good,exclude){
+  if(!shopIs(b))return Infinity;const ware=!!WARES[good],B=BUILDINGS[b.id];
+  if(ware?!WARES[good].shops.includes(b.id):B.needWares||!B.sells.includes(good))return 0;
+  const stock=shopStock(b,ware),keys=ware?waresOf(b.id):B.sells,
+    incoming=keys.reduce((n,k)=>n+shopIncoming(b,k,exclude),0),room=SHOP_CAP-shopTotal(b,ware)-incoming,
+    perKind=ware?SHOP_CAP:Math.max(1,Math.floor(SHOP_CAP/Math.max(1,B.sells.length)));
+  return Math.max(0,Math.floor(Math.min(room,perKind-(stock[good]||0)-shopIncoming(b,good,exclude))));
+}
+function migrateShopStock(){
+  for(const b of G.buildings){if(!shopIs(b))continue;const B=BUILDINGS[b.id];
+    for(const ware of [false,true]){const stock=shopStock(b,ware),ledger=ware?G.wares:G.stock;let used=0;
+      for(const k of Object.keys(stock)){const n=Math.max(0,Math.floor(Number(stock[k])||0)),valid=ware?WARES[k]?.shops.includes(b.id):!B.needWares&&B.sells.includes(k),
+        cap=ware?SHOP_CAP:Math.floor(SHOP_CAP/Math.max(1,B.sells.length)),keep=valid?Math.min(n,cap,SHOP_CAP-used):0;
+        if(n>keep&&(WARES[k]||GOODS[k]))ledger[k]=(ledger[k]||0)+n-keep;
+        if(keep){stock[k]=keep;used+=keep;}else delete stock[k];
+      }
+    }
+  }
+}
+function releaseShopStock(b){if(!shopIs(b))return;for(const ware of [false,true]){const ledger=ware?G.wares:G.stock;for(const[k,n]of Object.entries(shopStock(b,ware)))ledger[k]=(ledger[k]||0)+n;b[ware?'shopWares':'shopGoods']={};}}
+function shopsFor(ware){return G.buildings.filter(b=>(WARES[ware].shops.includes(b.id)&&shopRoom(b,ware)>0||b.id==='tonya'&&tradeHold(ware))&&entranceOf(b));}
+function dropFor(g,fromB){
+  const ws=G.buildings.filter(w=>w.id==='workshop'&&wantsGood(w,g)),shops=tradeHold(g)>(G.stock[g]||0)?[]:
+    G.buildings.filter(b=>shopIs(b)&&shopRoom(b,g)>0&&entranceOf(b));
+  ws.forEach(w=>w._bias=3);shops.forEach(b=>b._bias=4);
+  const dest=nearest(fromB,shops.concat(ws,stores()));ws.concat(shops).forEach(b=>delete b._bias);return dest;
+}
+function depositCarry(a,b){
+  if(!a.carry)return;if(!shopIs(b))return depositCarryWarehouse(a,b);
+  const c=a.carry,n=Math.min(c.n,shopRoom(b,c.good,a)),stock=shopStock(b,!!WARES[c.good]);
+  if(n>0){stock[c.good]=(stock[c.good]||0)+n;const B=BUILDINGS[b.id];floater(b.x*16+B.w*8,b.y*16-2,'+'+n,(WARES[c.good]?'w_':'g_')+c.good,'#e9dcae');}
+  setCarry(a,c.good,c.n-n);
+}
+function agentStore(a){
+  const sx=clamp(Math.round((a.x-8)/16),0,MAP_W-1),sy=clamp(Math.round((a.y-12)/16),0,MAP_H-1),start=G.roads[idx(sx,sy)]?[sx,sy]:nearestRoad(sx,sy);
+  if(!start)return null;let best=null,d=Infinity;for(const b of stores()){const e=entranceOf(b),p=e&&roadPath(start[0],start[1],e[0],e[1],false);if(p&&p.length<d){best=b;d=p.length;}}return best;
+}
+function returnShopCarry(a){
+  a.shopSupply=null;const b=agentStore(a);if(b){a.mission='shopReturn';a.dest=b.uid;if(walkTo(a,b))return true;}
+  dropLost(a);a.mission=null;a.state='idle';a.timer=.5;return false;
+}
+function planShopSupply(a,v){
+  if(a.carry)return null;
+  const hauling=RT.agents.filter(q=>q.shopSupply&&q.mission&&!q.dead).length,
+    workers=G.villagers.filter(q=>q.role==='work').length;
+  if(hauling>=Math.max(1,Math.ceil(workers*.35)))return null;
+  const source=agentStore(a);if(!source)return null;let best=null,score=-1;
+  for(const b of G.buildings){if(!shopIs(b)||b.reno||!entranceOf(b))continue;const B=BUILDINGS[b.id],keys=waresOf(b.id).sort((a,c)=>WARES[c].price-WARES[a].price).concat(B.needWares?[]:B.sells);
+    for(const good of keys){const ledger=WARES[good]?G.wares:G.stock,available=Math.floor((ledger[good]||0)-tradeHold(good)),room=shopRoom(b,good);if(available<=0||room<=0)continue;
+      const stocked=shopTotal(b,!!WARES[good]),d=Math.hypot(b.x-source.x,b.y-source.y),s=(stocked===0?5:2)+room/10-d/60;
+      if(s>score){score=s;best={uid:b.uid,good,n:Math.min(available,room,Math.max(1,Math.round(6*(1+vStats(v).carry))))};}
+    }
+  }
+  if(!best)return null;a.shopSupply=best;a.mission='shopFetch';a.dest=source.uid;return source;
+}
+function shopMissionArrive(a,v,b){
+  const m=a.mission;a.mission=null;
+  if(m==='shopReturn'){depositCarry(a,b);if(a.carry&&returnShopCarry(a))return 'walking';return true;}
+  if(m==='shopDeliver'){depositCarry(a,b);a.shopSupply=null;v.en=Math.max(0,(v.en??100)-4);if(a.carry&&returnShopCarry(a))return 'walking';return true;}
+  const request=a.shopSupply,target=request&&bByUid(request.uid);if(!request||!target||!shopIs(target)){a.shopSupply=null;return true;}
+  const ledger=WARES[request.good]?G.wares:G.stock,n=Math.min(request.n,Math.max(0,Math.floor((ledger[request.good]||0)-tradeHold(request.good))),shopRoom(target,request.good,a));
+  if(!(n>0)){a.shopSupply=null;return true;}
+  ledger[request.good]-=n;request.n=n;setCarry(a,request.good,n);a.mission='shopDeliver';a.dest=target.uid;
+  if(walkTo(a,target))return 'walking';dropLost(a);a.mission=null;return true;
+}
+function sell(a,b){
+  const B=BUILDINGS[b.id],qty=rint(1,2+(a.wallet>2?1:0))+(likes(a,b)?1:0),L=lvInfo(b),ws=waresOf(b.id),wares=shopStock(b,true),goods=shopStock(b);
+  let base=0,n=0,wn=0;
+  for(let i=0;i<qty;i++){
+    const w=ws.filter(k=>(wares[k]||0)>=1).sort((p,q)=>WARES[q].price-WARES[p].price)[0];
+    if(w){wares[w]--;base+=WARES[w].price;n++;wn++;}
+    else if(!B.needWares&&B.sells.every(g=>(goods[g]||0)>=1)){B.sells.forEach(g=>goods[g]--);base+=B.price;n++;}
+  }
+  if(!n){a.bubble={t:1.8,icon:'…'};return 0;}
+  const price=(1+(b.boost||0))*(b.combo?b.combo.m:1)*(G.activeCombos?.lanterns?1.15:1)*(1+(L?.sale||0))*(1+(b.wideStreet?WIDE_STREET_BONUS.sale:0)),gold=Math.round(base*price*boonSales());
+  if(wn)a.bubble={t:1.6,icon:'★'};G.gold+=gold;G.stats.sales+=gold;RT.monthSales+=gold;
+  floater(b.x*16+B.w*8,b.y*16-2,'+'+gold,'gold','#f2d27a');if(Math.random()<.35)a.bubble={t:1.6,icon:'♥'};if(Math.random()<.5)a.cheer=RT.t+1.1;
+  Sound.play('coin',{vol:.5});return n;
+}
+function shopStockPanel(b){
+  const list=ware=>Object.entries(shopStock(b,ware)).filter(([,n])=>n>0).map(([k,n])=>`${icon((ware?'w_':'g_')+k)} ${esc(ware?WARES[k].name:GOODS[k].name)} <b>${n}</b>`).join(' · ')||'Empty';
+  return h(`<div class="shop-stock-info"><div class="sec">Delivered stock</div><p class="note">Materials <b>${shopTotal(b)}/10</b> · ${list(false)}<br>Wares <b>${shopTotal(b,true)}/10</b> · ${list(true)}<br>Workers carry stock here from fields, workshops and storehouses. Each limit is shared across all item types.</p></div>`);
+}
+function drawShopStock(ctx,b,B,px,py){
+  for(const ware of [false,true]){const total=shopTotal(b,ware);if(total<1)continue;const stock=shopStock(b,ware),k=Object.keys(stock).sort((a,c)=>stock[c]-stock[a])[0],im=pileSprite(ware?'w_'+visWare(k):k,Math.min(3,Math.ceil(total/4)));
+    artDraw(ctx,im,ware?px+B.w*16-im.width+2:px-2,py+B.h*16-im.height+2);
+  }
+}
+
+/* One worker calling is guaranteed; the existing 70% captive rolls are extras.
+   A saved procedural artisan covers campaigns that exhaust the named roster. */
+function newRebelWorker(){
+  const n=G.rebelWorkerUid=(G.rebelWorkerUid||0)+1,id='ikki_'+(G.vseed||0)+'_'+n,R=seeded(artHash(id)),
+    template=VILLAGER_POOL.concat(RECRUITS).find(v=>v.role==='work'),female=R()<.5,
+    first=(female?['Sumi','Tsuru','Matsu','Kinu','Tama','Hana']:['Tōbei','Kichizō','Shōbei','Hachirō','Genzō','Sōkichi'])[(R()*6)|0],
+    family=['Kawabe','Mizuno','Morita','Ishida','Tanaka','Sakuma'][(R()*6)|0],skill=pick(['strongback','greenthumb','artisan','swift','tireless']);
+  const d={...template,id,name:family+' '+first,role:'work',sex:female?'f':'m',base:[3+(R()*3|0),4+(R()*3|0),26+(R()*8|0),4+(R()*3|0),4+(R()*3|0),11+(R()*4|0)],
+    skill,skill2:skill==='tireless'?'artisan':'tireless',growth:1+R()*.12,pot:'B',bio:'An artisan freed after the uprising. A born worker, ready to rebuild the village.',
+    hair:ART_HAIR_STYLES[(R()*ART_HAIR_STYLES.length)|0],faceSeed:artHash(id),cloth:['#394e67','#67523e','#4e6353'][(R()*3)|0]};
+  (G.rebelWorkers||={})[id]=d;return id;
+}
+function ensureRebelWorker(reward){
+  reward.recruits=reward.recruits||[];
+  const available=id=>!vById(id)&&!G.recruitQueue.includes(id)&&!onHire(id)&&G.boons?.pledge!==id;
+  const present=reward.recruits.find(id=>available(id)&&vData(id)?.role==='work');
+  if(present){reward.workerCaptive=present;return present;}
+  const elsewhere=new Set((G.camps||[]).filter(c=>c.reward!==reward).flatMap(c=>[c.reward?.recruit,...(c.reward?.recruits||[])]).filter(Boolean)),
+    candidates=RECRUITS.filter(v=>available(v.id)&&!elsewhere.has(v.id)&&vData(v.id).role==='work'),
+    reserved=new Set(PROVINCES.filter(p=>G.prov[p.id]?.owner!=='kage').map(p=>p.reward?.recruit).filter(Boolean)),
+    free=candidates.filter(v=>!reserved.has(v.id)),pool=free.length?free:candidates,
+    id=pool.length?pick(pool).id:newRebelWorker();
+  reward.recruits.unshift(id);reward.workerCaptive=id;return id;
+}
+
+/* Shared procedural modules: the same grip, mail, mask and pouches are used
+   for item icons, portraits, village citizens, duels and battle aftermath. */
+function tacticalClaw(p,g,hx,hy,ang){
+ const P=artLocal(p,hx,hy,Math.cos(ang),Math.sin(ang));
+ P([[-2,-1.7],[1.8,-1.7],[2.4,-.6],[1.8,1.6],[-2,1.6]],'#24343d');
+ P([[-1.6,-1.3],[1.6,-1.3],[2,-.4],[1.4,1.2],[-1.6,1.2]],'#697f89');
+ for(const v of [-1.1,0,1.1]){
+  P([[.6,v-.35],[3.8,v-.5],[5.8,v-1.7],[4.9,v-.3],[2.8,v+.25],[.6,v+.25]],'#354b58');
+  P([[.8,v-.32],[3.8,v-.45],[5.8,v-1.7],[4.7,v-.65],[2.8,v-.05],[.8,v+.03]],'#dae4dc');
+ }
+ P([[-1.8,-1.1],[-1.1,-1.1],[-1.1,1.1],[-1.8,1.1]],'#b2a47f');
+ const rig={length:6,tip:[hx+Math.cos(ang)*6,hy+Math.sin(ang)*6]};p.swordRig=rig;return rig;
+}
+function tacticalClawHands(p,back,L,pose,tx,ty){
+ const move={wind:[[8,-4],[0,-1]],atk:[[12,1],[5,3]],follow:[[10,5],[-1,2]],recover:[[8,3],[0,4]],brace:[[8,0],[1,2]],hurt:[[5,3],[-2,4]],studio:[[10,2],[0,4]]};
+ const [a,b]=move[pose]||[[8,2],[0,4]],near=[tx+a[0],ty+a[1]],far=[tx+b[0],ty+b[1]],angle=pose==='atk'?-.15:pose==='follow'?.45:-.85;
+ tacticalClaw(p,p,near[0]+.4,near[1],angle);tacticalClaw(back,back,far[0]+.4,far[1],angle-.3);
+ return {near,far};
+}
+function tacticalMail(p,a){
+ const dark=a.key==='iga_mail',cloth=dark?'#242d38':'#34465b',metal=dark?'#5f747e':'#849ba2';
+ p.poly([[2.3,.8],[4.3,.5],[6.4,2.1],[8.8,.6],[10.1,1],[9.7,4.5],[2.2,4.5]],shade(cloth,-.22));
+ // Small overlapping rings, enclosed by fabric bindings rather than sode.
+ for(let row=0;row<6;row++)for(let col=0;col<10;col++){
+  const x=2.65+col*.69+(row%2)*.24,y=1.1+row*.55;
+  if(x>9.3||y<2&&x>4.3&&x<8.4)continue;
+  p.ellipse(x,y,.27,.34,'#182733');artStroke(p,[[x-.23,y],[x,y-.24],[x+.22,y]],.22,metal);
+ }
+ p.poly([[2.3,.7],[3.5,.6],[4.8,2.2],[4.3,4.5],[2.2,4.5]],cloth);
+ p.poly([[8.7,.7],[10.2,1],[9.7,4.5],[8.3,4.5],[8,2.1]],shade(cloth,-.12));
+ artStroke(p,[[3.3,.8],[4.8,2.4],[4.3,4.3]],.4,a.lace);artStroke(p,[[8.7,.8],[7.6,2.3],[8.3,4.3]],.35,a.lace);
+ if(dark){for(const y of [2.7,3.4,4.1]){p.rect(5.1,y,2.5,.4,'#87989b');p.rect(5.3,y,.4,.3,'#c1cbc5');}p.rect(5.6,2.1,1.4,.35,'#b89f6c');}
+}
+function tacticalHappuri(p,L){
+ if(L.gear?.h!=='happuri')return;
+ artSteelPlate(p,[[3.4,7.7],[12.9,7.7],[13.7,8.5],[13.4,10.1],[12.7,10.3],[12.4,9],[4.6,9],[4.4,10.1],[3.5,10]]);
+ artSteelPlate(p,[[3.5,9.2],[4.6,9.3],[5.2,12.4],[6.5,13.4],[6,14.6],[4.3,13.8],[3.2,11.3]]);
+ artSteelPlate(p,[[13,9.4],[13.8,9.2],[14.4,11.2],[13.4,13.7],[12.3,14.4],[11.8,13.3],[12.7,12.1]]);
+ for(const [x,y] of [[4.1,8.3],[12.8,8.3],[4.6,12.7],[13.2,12.7]])artIronRivet(p,x,y,.18);
+ artStroke(p,[[3.2,8.6],[1.7,9.5],[1.4,12]],.45,'#7c5545');
+}
+function tacticalPouch(p,id,x,y,s=1){
+ const q={poly:(pts,c)=>p.poly(pts.map(([u,v])=>[x+u*s,y+v*s]),c),line:(pts,w,c)=>artStroke(p,pts.map(([u,v])=>[x+u*s,y+v*s]),w*s,c)};
+ if(id==='rations'){
+  q.poly([[0,.4],[2.7,0],[3.3,1.4],[2.8,3.2],[.2,3.2],[-.3,1.5]],'#68764c');
+  q.poly([[.2,.6],[2.4,.3],[2.8,1.4],[2.5,2.8],[.3,2.8]],'#a5ad70');
+  for(const u of [.4,1.3,2.2])q.line([[u,.6],[u+.2,2.7]],.2,'#d6ce94');
+  q.line([[-.1,1.5],[3,1.4]],.4,'#6b4f34');q.line([[1.4,.1],[1.6,3]],.33,'#d3bb80');
+ }else if(id==='pitch_grenade'){
+  q.poly([[.3,.7],[1.9,.6],[2.6,1.3],[2.5,2.8],[1.3,3.4],[0,2.8],[-.2,1.4]],'#332b27');
+  q.poly([[.4,1],[1.8,.8],[2.1,1.4],[1.8,2.8],[.5,2.9],[.1,1.7]],'#6b4d37');
+  q.line([[.3,1.6],[2.2,1.9]],.4,'#c1a571');q.line([[1,.6],[1.4,-.3],[2.2,-.6]],.35,'#a48a5e');
+  q.line([[.3,1.1],[.8,.9]],.35,'#b18754');
+ }else if(id==='yakuro'){
+  q.poly([[0,.5],[2.6,.5],[2.8,3],[0,3]],'#785340');q.line([[.2,.8],[2.4,.8]],.45,'#baa674');
+  q.line([[1.2,.8],[1.2,2.7]],.5,'#dbd2b2');q.line([[.5,1.7],[1.9,1.7]],.5,'#dbd2b2');
+ }
+}
+function tacticalPouches(p,L){
+ const ids=[L.gear?.s,L.gear?.s2].filter(k=>['rations','pitch_grenade','yakuro'].includes(k));
+ ids.forEach((id,i)=>tacticalPouch(p,id,i?0:10,4.8,.66));
+}
+function tacticalItemIcon(p,id){
+ if(['ninja_claw','ninjato','zanbato','ninja_mail','iga_mail'].includes(id))return artProgressIcon(p,id);
+ if(id==='happuri'){
+  const L={gear:{h:id}};const q=artOffset(p,-1.5,-5.2);tacticalHappuri(q,L);return;
+ }
+ if(id==='rifle')return musket(p,-2,10,7.1,5.6,id);
+ if(id==='repeater')return musket(p,.5,9.5,11,3.5,id);
+ if(id==='wolf'){
+  const c='#83939c',hi='#c3cfcd';p.poly([[1.7,7],[1,1.5],[4.8,3],[7.2,3],[10.6,1.4],[10.3,7],[8.7,10.7],[5.8,11.4],[3,10]],'#3e505e');
+  p.poly([[2.2,6.8],[1.7,2.2],[4.7,3.7],[7.3,3.7],[9.9,2.2],[9.5,7],[8.3,10],[5.8,10.7],[3.5,9.6]],c);
+  p.poly([[3.1,7.5],[4.9,8],[5.8,7.5],[7,8],[9,7.2],[8,9.8],[5.9,10.6],[3.8,9.3]],hi);
+  p.poly([[2.1,3.2],[3.7,4.2],[2.6,5.5]],'#5b5a60');p.poly([[9.4,3.2],[7.9,4.3],[9,5.5]],'#5b5a60');
+  p.rect(3.5,6.3,1,.7,'#e5cd72');p.rect(7.3,6.3,1,.7,'#e5cd72');p.poly([[5.1,8.4],[6.7,8.4],[5.9,9.3]],'#1b2931');return;
+ }
+ tacticalPouch(p,id,2.3,2.2,2.4);
+}
+function tacticalEquipmentLook(id){
+ const L=artPresetLook(ART_PRESETS[0]);L.faceSeed=19371;L.hair='swept';L.parts={shoulders:'auto',menpo:false};L.gear={w:'ninjato',a:'shinobi',h:'happuri',m:null,s:null};
+ const I=ITEMS[id];if(I.slot==='weapon'){L.gear.w=id;if(I.for.includes('gun'))L.gear.h='gunnerhat';}
+ else if(I.slot==='armor')L.gear.a=id;
+ else if(I.slot==='head')L.gear.h=id;
+ else if(I.slot==='mount')L.gear.m=id;
+ else L.gear.s=id;
+ return artEquipmentLook(L);
+}
+function artPreview(source,pose='idle',trim=true){
+ const c=artPreviewBase(source,pose,trim);if(source.gear?.m!=='wolf')return c;
+ const pet=beastSprites('wolf').idle[0],w=c.width+19,h=Math.max(c.height,pet.height),out=document.createElement('canvas'),d=document.createElement('canvas');
+ out.width=w;out.height=h;d.width=w*3;d.height=h*3;out.detail=d;
+ const x=d.getContext('2d');x.scale(3,3);x.imageSmoothingEnabled=false;artDraw(x,c,0,h-c.height);artDraw(x,pet,w-26,h-21,26,21);
+ out.getContext('2d').drawImage(d,0,0,w,h);return out;
+}
+
+/* Personal equipment effects use the existing damage ledger. No proc deducts
+   troops outside a hit event; no supply restores an actual rank-and-file unit. */
+function equippedKeys(c){return c?.vref?Object.values(c.vref.eq||{}):Object.values(c?.look?.gear||{});}
+function commanderWeapon(c){return c?.vref?.eq?.weapon||c?.look?.gear?.w||null;}
+function equipmentGuard(c,melee=true){return melee?Math.min(.12,Math.max(0,...equippedKeys(c).map(k=>ITEMS[k]?.meleeGuard||0))):0;}
+function burstReady(c,round=BT?.round||1){const I=ITEMS[commanderWeapon(c)];return !I?.burst||((Math.max(1,round)-1)%(I.reload+1)===0);}
+function personalWeaponFactor(c,target,phase){
+ const id=commanderWeapon(c),I=ITEMS[id];
+ if(I?.burst&&phase==='gun')return burstReady(c)?I.burst*I.shotPower:0;
+ if(id==='zanbato')return target?.type==='cav'?1.4:.92;
+ if(id==='ninjato')return 1.08;
+ if(id==='ninja_claw')return 1.08;
+ return 1;
+}
+function personalDamageGuard(g,phase){return g.solo?1-equipmentGuard(g.solo,phase==='inf'||phase==='cav'):1;}
+function supplyResilience(g){return Math.min(.08,(g.cmds||[]).filter(c=>!c.ko).reduce((n,c)=>n+Math.max(0,...equippedKeys(c).map(k=>ITEMS[k]?.resolve||0)),0));}
+function recoverEquipment(){
+ for(const A of BT.A)for(const g of A.groups){
+  if(!(g.troops>0))continue;
+  for(const c of g.cmds||[]){
+   if(c.ko||c.supplyUsed||!(c.hp>0))continue;
+   const max=c.hpMax||c.s.hp,rate=Math.max(0,...equippedKeys(c).map(k=>ITEMS[k]?.recover||0));
+   if(!rate||c.hp>=max*.65)continue;
+   const before=c.hp;c.hp=Math.min(max,c.hp+max*rate);c.supplyUsed=true;const n=c.hp-before;
+   if(g.solo===c){g.troops=Math.min(g.start,g.troops+n/3);if(g.heroOnly)refreshIndependent(g);else syncRevive(g);}
+   const s=(g.heroes||[]).concat(g.spr||[]).find(s=>s.hero===c),p=s||gCenter(g);
+   BT.labels.push({x:p.x,y:p.y-28,text:'+'+Math.round(n)+' HP',t:0,side:A.side});
+   BT.log.push(c.name+' uses '+(rate>=.20?'field rations':'herbal medicine')+' (+'+Math.round(n)+' HP)');BT.hudDirty=true;
+  }
+ }
+}
+function equipmentGrenades(phase,hits,ctx){
+ if(phase!=='inf')return;
+ for(const A of BT.A)for(const g of alive(A,'inf')){
+  const D=BT.A[1-A.side];
+  for(const c of g.cmds||[]){
+   if(c.ko||c.grenadeUsed||c.post==='hq'||!equippedKeys(c).includes('pitch_grenade'))continue;
+   // Intercept losses are temporarily present in troops while this phase is
+   // planned. Reserve each loss once, as runPhase will later restore them.
+   const room=t=>Math.max(0,t.troops-hits.filter(h=>h.to===t&&!h.icpt).reduce((n,h)=>n+h.kills,0));
+   const target=PREF.inf.flatMap(type=>alive(D,type)).find(t=>room(t)>0);if(!target)continue;
+   const scale=ctx.siege?(A.side===0?.3:.7):1,power=(c.s.str*.22+c.s.mrk*.25+3)*(c.aux?.5:1)*battleAttack(g)*scale,
+    kills=Math.min(room(target),battleDamage(power,battleResistance(target),TACTICS[ctx.tac[1-A.side]].mod.take,1));
+   if(!(kills>0))continue;
+   hits.push({from:g,to:target,kills,depth:0,grenade:true,owner:c,pk:'burn'});c.grenadeUsed=true;
+  }
+ }
+}
+function grenadeScript(h,S,planned,ev,T0){
+ const sh=(h.from.heroes||[]).concat(h.from.spr||[]).find(s=>s.hero===h.owner),from=sh||gCenter(h.from),target=gCenter(h.to),at=T0+.18,land=at+.7;
+ ev(at,'pitchThrow',{h,sh,from:{x:from.x,y:from.y},to:target,land});ev(land,'pitchBurst',{h,to:target});
+ ev(land,'hit',{h});h.t0=land;h.t1=land+.25;
+ const vs=h.to.spr.filter(s=>s.alive&&!planned.has(s)).sort((a,b)=>Math.hypot(a.x-target.x,a.y-target.y)-Math.hypot(b.x-target.x,b.y-target.y)).slice(0,h.deaths||0);
+ for(const [i,s] of vs.entries()){const t=land+.025+i*.025;planned.set(s,t);ev(t,'die',{s,h,hero:sh,cred:h.kills/Math.max(1,vs.length)});}
+}
+function tacticalEvent(e){
+ if(e.k==='tdReload'){const s=e.e.f.hr;s.duelPose=null;s.reloadUntil=e.until;BT.pops.push({x:s.x,y:s.y-27,v:0,txt:'Reload',t:0,side:e.e.f.si,duel:1});return true;}
+ if(e.k==='pitchThrow'){
+  if(e.sh&&!e.sh.out)e.sh.jab=.28;
+  BT.proj.push(warpProj({k:'pitch',x0:e.from.x,y0:e.from.y-15,x1:e.to.x,y1:e.to.y-3,t0:BT.t,dur:.7,h:35}));Sound.play('arrow',{vol:.35,pitch:.6});return true;
+ }
+ if(e.k==='pitchBurst'){
+  const {x,y}=e.to;Sound.play('gun',{vol:.65,pitch:.45});BT.shake=Math.max(BT.shake,.22);
+  for(let i=0;i<10;i++)BT.fx.push({k:'gold',x:x+rnd(-4,4),y:y-3,vx:rnd(-34,34),vy:rnd(-48,-12),g:110,t:.45,t0:.45,col:'237,154,66'});
+  for(let i=0;i<4;i++)BT.fx.push({k:'smoke',x:x+rnd(-5,5),y:y-2,vx:rnd(-5,5)+BT.wind,vy:-rnd(6,12),t:.8,t0:.8,r:rnd(2,4)});
+  BT.fx.push({k:'ring',x,y:y-3,t:.2,t0:.2,col:'220,151,74'});return true;
+ }
+ if(e.k==='equipmentReload'){
+  const s=e.s;if(s&&!s.out&&s.alive){s.aimFrom=BT.t-.1;s.fireAt=BT.t-3;s.aimUntil=BT.t+.6;s.reloadUntil=BT.t+.6;
+   BT.pops.push({x:s.x,y:s.y-27,v:0,txt:'Reload',t:0,side:sideOf(e.g)});}return true;
+ }
+ return false;
+}
+function tacticalShotScript(S,p){
+ if(p!=='gun')return;
+ // One actual commander, one burst. Extra visible bullets do not apply damage:
+ // damage was resolved by the phase ledger, just like a normal troop volley.
+ const events=S.ev.filter(e=>e.k==='shot'),seen=new Set();
+ for(const A of BT.A)for(const g of alive(A,'gun'))for(const s of (g.heroes||[]).concat(g.spr||[])){
+  const c=s.hero,I=ITEMS[commanderWeapon(c)];if(!I?.burst||seen.has(s)||s.out||!s.alive)continue;seen.add(s);
+  const own=events.filter(e=>e.shooter===s).sort((a,b)=>a.t-b.t);
+  if(!burstReady(c)){
+   S.ev=S.ev.filter(e=>!own.includes(e));S.ev.push({t:BT.t+RANGED_LEAD+.3,k:'equipmentReload',s,g});continue;
+  }
+  const keep=own.slice(0,I.burst),discard=new Set(own.slice(I.burst));if(discard.size)S.ev=S.ev.filter(e=>!discard.has(e));
+  let first=keep[0];
+  if(!first){const h=S.ev.find(e=>e.k==='hit'&&e.h.from===g)?.h;first={t:BT.t+RANGED_LEAD+.45,k:'shot',g,shooter:s,h,hero:s,lethal:false,pk:'gun',flight:.12};S.ev.push(first);keep.push(first);}
+  const start=first.t;
+  own.forEach((shot,i)=>{const fire=start+Math.min(i,I.burst-1)*.16,delta=fire-shot.t;shot.t=fire;
+   if(shot.s)for(const e of S.ev)if(e.k==='die'&&e.h===shot.h&&e.s===shot.s)e.t+=delta;});
+  for(let i=keep.length;i<I.burst;i++)S.ev.push({...first,t:start+i*.16,lethal:false,burstVisual:true});
+ }
+}
+function tacticalDuelShot(o){
+ if(o.reload||!['gun','bow'].includes(o.f.weapon.style))return;
+ const a=o.f.hr,b=o.t.hr,face=sideDir(o.f.si),x=a.x+face*12,y=a.y-15;
+ if(o.f.weapon.style==='gun'){
+  BT.fx.push({k:'flash',x,y,t:.07,t0:.07,dir:face});
+  BT.proj.push(warpProj({k:'bullet',x0:x,y0:y,x1:b.x,y1:b.y-11,t0:BT.t,dur:.08,lethal:!!o.hit,hero:true}));Sound.play('gun',{vol:.4,pitch:1.15});
+ }else BT.proj.push(warpProj({k:'arrow',x0:x,y0:y,x1:b.x,y1:b.y-11,t0:BT.t,dur:.13,h:3,lethal:!!o.hit}));
+}
+function specialistOfficer(type,gear,tier,boss,site,index,lv){
+ const rng=enemyGearSeed(type,tier,boss,site,'specialist:'+index),T=lv!=null?officerGearTier(lv,boss,site):enemyGearCap(tier,boss,site),
+  keys=TACTICAL_GEAR.filter(o=>o.item.slot==='weapon'&&o.item.for.includes(type)&&o.item.tier<=T&&o.item.tier>=T-1).map(o=>o.id);
+ if(keys.length&&rng()<.18)gear.w=keys[Math.floor(rng()*keys.length)];
+ if(type==='inf'&&T>=1&&T<=2&&rng()<.12)gear.h='happuri';
+ if(T>=2&&rng()<.12)gear.s='rations';
+ if(type==='inf'&&T>=3&&rng()<.14)gear.s2='pitch_grenade';
+ return gear;
+}
+
+function duelWeapon(hr){
+ const type=hr._g?.type||BATTLE_RECIPES.get(hr.sprs)?.type;
+ const id=hr.hero?.look?.gear?.w||hr.look?.gear?.w||hr.artKit?.w||BATTLE_RECIPES.get(hr.sprs)?.wid||(type==='gun'?'tanegashima':type==='arc'?'yumi':'yari'),kind=weaponKind(id),I=ITEMS[id]||{},
+  style=I.style||(id==='nodachi'?'nodachi':kind==='spear'?'yari':kind==='glaive'?'naginata':kind==='bow'?'bow':kind==='gun'?'gun':'katana');
+ return {id,kind,style,burst:I.burst||0,reload:I.reload||0,shotPower:I.shotPower||1,
+  reach:style==='claw'?10:hr.sprs?.horse?27:kind==='spear'?25:kind==='glaive'?23:style==='zanbato'?24:id==='nodachi'?22:style==='ninjato'?15:kind==='bow'||kind==='gun'?32:17};
+}
+function simDuel(pairs){
+ const F=[];
+ pairs.forEach((p,k)=>[p.a,p.b].forEach((hr,si)=>{const d=duelStats(hr.hero);F.push({hr,g:hr._g,si,k,off:d.off,def:d.def,hp:d.hp,max:d.max,cur:d.hp,startHp:d.hp,by:null,weapon:duelWeapon(hr),reloadLeft:0});}));
+ pairs.forEach((p,k)=>{F[k*2].foe=F[k*2+1];F[k*2+1].foe=F[k*2];});
+ const up=si=>F.filter(f=>f.si===si&&f.hp>0&&!f.yield),weakest=si=>up(si).sort((a,b)=>a.hp/a.max-b.hp/b.max)[0];
+ const log=[];let r=0,chain=0;
+ for(;r<DUEL_RMAX&&up(0).length&&up(1).length;r++){
+  const grim=1+Math.max(0,r-7)*.4;
+  const order=F.filter(f=>f.hp>0).map(f=>({f,slot:(f.si?.42:0)+(f.foe.hp<=0?.2:0)+f.k*.05})).sort((a,b)=>a.slot-b.slot);
+  for(const o of order){
+   const f=o.f;if(f.hp<=0)continue;const t=f.foe.hp>0?f.foe:weakest(1-f.si);if(!t)break;
+   if(f.reloadLeft>0){f.reloadLeft--;log.push({r,slot:o.slot,f,t,reload:true,chain:chain++,index:0,hit:false,dmg:0,hpBefore:t.hp,hp:t.hp,ko:false});continue;}
+   const help=t!==f.foe,skill=skv(f.hr.hero,'duelist'),counter=f.open===t,style=f.weapon.style,
+    reach=clamp((f.weapon.reach-t.weapon.reach)*.003,-.045,.045),claw=style==='claw',burst=f.weapon.burst,
+    melee=!['gun','bow'].includes(style),antiCav=style==='zanbato'&&(t.g?.type==='cav'||!!t.hr.sprs?.horse),chainId=chain++,opening=counter||help;
+   for(let j=0;j<3&&t.hp>0;j++){
+    const precision=style==='ninjato'?.06:style==='zanbato'?-.06:0,guard=t.weapon.style==='claw'&&melee?.05:0,
+     pHit=clamp(.68+(f.off-t.def)*.006+(help?.08:0)+reach+(counter?.07:0)+precision-guard-j*(burst?.035:.075),.35,.94),
+     hit=Math.random()<pHit,crit=hit&&Math.random()<clamp(.12+skill*.02,0,.4),hpBefore=t.hp;
+    let dmg=0;
+    const damageScale=(burst?f.weapon.shotPower:claw?j===0?.64:j===1?.49:.40:j===0?1:j===1?.67:.52)*
+     (style==='ninjato'&&counter?1.2:1)*(style==='zanbato'?(antiCav?1.4:.92):1)*(1-equipmentGuard(t.hr.hero,melee));
+    if(hit){dmg=Math.max(1,Math.round(Math.max(1,f.off*rnd(.6,1)-t.def*.3*(style==='ninjato'?.8:1))*(crit?1.6:1)*grim*damageScale));t.hp=Math.max(0,t.hp-dmg);if(!t.hp)t.by=f;}
+    const defense=hit?null:(Math.random()<clamp(.34+(t.hr.hero.s?.str||0)*.005-(style==='yari'?.12:0),.2,.6)?'dodge':'parry'),
+     feint=!burst&&j===0&&skill>0&&((chainId+r)%4===0);
+    log.push({r,slot:o.slot,f,t,help,hit,crit,dmg,hpBefore,hp:t.hp,ko:!t.hp,chain:chainId,index:j,counter,defense,feint,accuracy:pHit,damageScale,antiCav});
+    if(!hit)t.open=f;else f.open=null;
+    if(!t.hp)break;
+    if(burst){if(j+1>=burst)break;continue;}
+    if(claw){if(j===0)continue;if(j===1&&Math.random()<clamp(.3+skill*.05+(opening?.15:0),.3,.65))continue;break;}
+    if(!hit||style==='gun'||style==='bow')break;
+    const follow=clamp(.18+skill*.07+(opening?.14:0)+(style==='katana'?.1:style==='ninjato'?.07:style==='naginata'?.08:style==='nodachi'||style==='zanbato'?-.1:0)-j*.18,.05,.72);
+    if(Math.random()>=follow)break;
+   }
+   if(burst)f.reloadLeft=f.weapon.reload;
+  }
+ }
+ const yields=[];
+ if(up(0).length&&up(1).length){const frac=si=>up(si).reduce((n,f)=>n+f.hp/f.max,0)/F.filter(f=>f.si===si).length,
+   lose=frac(0)<frac(1)?0:1,w=up(1-lose).sort((a,b)=>b.hp-a.hp)[0];
+  up(lose).forEach(f=>{f.yield=true;f.by=w;yields.push(f);});}
+ return {F,log,yields,rounds:r,win:up(0).length?0:1,res:[],committed:0};
+}
+
 /* ---------- Build ---------- */
 function renderBuild(body, tab) {
   UI.lastBuildTab = tab;
@@ -7120,8 +7631,8 @@ function openBuildingInfo(b) {
         body.appendChild(h('<div class="sec">Assign</div>')); body.appendChild(row); }
       if (B.makes) { const d = (b.pile || 0) >= 1 ? dropFor(B.makes, b) : null; body.appendChild(h(`<p class="note">${icon('g_' + B.makes)} <b>${Math.floor(b.pile || 0)}</b>/${PILE_CAP} waiting${d ? ` → ${esc(bName(d))}` : ''} · stock <b>${Math.floor(G.stock[B.makes])}</b>${B.needTrees ? ` · 🌲${treesNear(b, 2)}` : ''}</p>`)); }
     }
-    if (B.cat === 'shop') { const m = (1 + (b.boost || 0)) * (b.combo ? b.combo.m : 1) * (1 + ((lvInfo(b) || {}).sale || 0)) * (1+(b.wideStreet?WIDE_STREET_BONUS.sale:0)), ws = waresOf(b.id);
-      body.appendChild(h(`<p class="note">${ws.length ? `Wares: ${ws.map(w => `${icon('w_' + w)} <b>${WARES[w].name}</b> ~${Math.round(WARES[w].price * m)}G (in stock ${G.wares[w] || 0})`).join(' · ')}.<br>` : ''}${B.needWares ? '<b>Sells only wares</b> — a Workshop must craft them.' : `Otherwise ${B.sells.map(g => `${icon('g_' + g)} ${GOODS[g].name} (stock ${Math.floor(G.stock[g])})`).join(' + ')} at ~<b>${Math.round(B.price * m)}G</b>.`}</p>`)); }
+    if(B.cat==='shop'){body.appendChild(shopStockPanel(b));const m = (1 + (b.boost || 0)) * (b.combo ? b.combo.m : 1) * (1 + ((lvInfo(b) || {}).sale || 0)) * (1+(b.wideStreet?WIDE_STREET_BONUS.sale:0)), ws = waresOf(b.id);
+      body.appendChild(h(`<p class="note shop-prices">${ws.length ? `Wares: ${ws.map(w => `${icon('w_' + w)} <b>${WARES[w].name}</b> ~${Math.round(WARES[w].price * m)}G (here ${shopStock(b,true)[w]||0})`).join(' · ')}.<br>` : ''}${B.needWares ? '<b>Sells only wares</b> — a Workshop must craft them.' : `Otherwise ${B.sells.map(g => `${icon('g_' + g)} ${GOODS[g].name} (here ${shopStock(b)[g]||0})`).join(' + ')} at ~<b>${Math.round(B.price * m)}G</b>.`}</p>`)); }
     if (HOME_LV[b.id] || B.cat === 'shop') body.appendChild(renoPanel(b));
     if (B.cap) { const rs = G.villagers.filter(v => v.home === b.uid); body.appendChild(h(`<div class="sec">Residents ${rs.length}/${B.cap}</div>`)); const l = h('<div class="vlist"></div>'); rs.forEach(v => l.appendChild(vCard(v))); body.appendChild(l); }
     if (B.cat === 'env') body.appendChild(h(`<p class="note">+${Math.round(B.boost * 100)}% within ${B.radius} tiles · appeal +${B.appeal} ${ib('Boosts nearby shops, fields and workshops, and helps neighbours rest faster.')}</p>`));
@@ -7240,7 +7751,7 @@ function retPanel(v) {
 }
 const SLOT_NAME = { weapon: 'Weapon', armor: 'Armor', head: 'Head', special: 'Special', mount: 'Mount', perk: 'Doctrine' };
 function canBuyItem(k) { const I = ITEMS[k]; return G.gold >= I.cost && (!I.res || Object.entries(I.res).every(([r, n]) => (G.stock[r] || 0) >= n)); }
-function itemStat(k) { const I = ITEMS[k]; const p = []; ['atk', 'def', 'hp', 'str', 'mrk', 'wrk'].forEach(s => { if (I[s]) p.push(s.toUpperCase() + '+' + I[s]); }); if (I.ki) p.push('Ki+' + I.ki); if (I.duel) p.push('Duel+' + I.duel); if (I.strat) p.push('Strategy+' + I.strat); if (I.move) p.push('Move+' + Math.round(I.move * 100) + '%'); if (I.carry) p.push('Carry+' + Math.round(I.carry * 100) + '%'); if (I.craft) p.push('Craft+' + Math.round(I.craft * 100) + '%'); if (I.ride) p.push('Rideable'); if (I.intel) p.push('Scouting'); if (I.ward) p.push('Duel ward'); if (I.beast) p.push(UNITS[I.beast].short + ' +' + Math.round(I.bonus * 100) + '%'); return `<span class="muted">${p.join(' ')}</span>`; }
+function itemStat(k) { const I = ITEMS[k]; const p = []; ['atk', 'def', 'hp', 'str', 'mrk', 'wrk'].forEach(s => { if (I[s]) p.push(s.toUpperCase() + '+' + I[s]); }); if (I.ki) p.push('Ki+' + I.ki); if (I.duel) p.push('Duel+' + I.duel); if (I.strat) p.push('Strategy+' + I.strat); if (I.move) p.push('Move+' + Math.round(I.move * 100) + '%'); if (I.carry) p.push('Carry+' + Math.round(I.carry * 100) + '%'); if (I.craft) p.push('Craft+' + Math.round(I.craft * 100) + '%'); if (I.ride) p.push('Rideable'); if (I.intel) p.push('Scouting'); if (I.ward) p.push('Duel ward'); if (I.beast) p.push(UNITS[I.beast].short + ' +' + Math.round(I.bonus * 100) + '%'); if(I.recover)p.push('Recover '+Math.round(I.recover*100)+'% · once/battle');if(I.burst)p.push(I.burst+' shots · '+I.reload+' reload turn'+(I.reload>1?'s':''));if(I.style==='claw')p.push('Quick combos · short reach');if(I.style==='ninjato')p.push('Precision / counters');if(I.style==='zanbato')p.push('Anti-cavalry +40%');if(I.meleeGuard)p.push('Personal melee guard 12%');if(I.grenade)p.push('1 bomb / battle');if(I.unitBonus)p.push('Own formation ATK +10%');if(I.resolve)p.push('Formation resilience +4%');if(I.command)p.push('Strategy '+I.command+' minimum');return `<span class="muted">${p.join(' ')}</span>`; }
 
 /* ---------- Army ---------- */
 function troopCost(t) { const tot = Object.values(G.troops).reduce((a, b) => a + b, 0); return Math.round(UNITS[t].cost * (1 + tot / 350)); }
@@ -7636,7 +8147,7 @@ function forgeCapacity() { const sm = G.buildings.filter(b => b.id === 'smithy')
 // Most captured gear is broken: few sets are worth keeping, and firearms and horse kit fewer still.
 function kitAfterBattle(pa, ea, res) {
   const spoils = {};
-  pa.groups.forEach(g => { const t = g.type, lost=clamp(1-Math.ceil(g.troops)/Math.max(1,g.start),0,1), keep = res === 'win' ? .35 : .7;
+  pa.groups.filter(g=>!g.heroOnly).forEach(g => { const t = g.type, lost=clamp(1-Math.ceil(g.troops)/Math.max(1,g.start),0,1), keep = res === 'win' ? .35 : .7;
     Object.keys(G.kit[t]).forEach(k => { kitKeep(t,k,Math.max(0,Math.round(G.kit[t][k]-G.kit[t][k]*lost*keep))); }); });
   if (res === 'win') ea.groups.forEach(g => { if (!g.kitDist) return; const dead = Math.max(0, g.start - g.troops), t = g.type, own = unitOpen(t) ? t : 'inf';
     ['w', 'a', 'h'].forEach(cat => (g.kitDist[cat] || []).forEach(([k, frac]) => { if (!kitList(cat, own).includes(k)) return; const n = Math.round(dead * frac * (own === 'gun' || own === 'cav' ? .075 : .11)); if (n > 0) { kitAdd(own,k,n); spoils[k] = (spoils[k] || 0) + n; } })); });
@@ -7699,10 +8210,10 @@ function enemyOfficerKit(type,tier,boss,site,index,lv){
   gear[cat]=enemyWeightedPick(table,rng);
  }
  if(type==='cav'){const hs=ENEMY_HORSES[T!=null?T:boss?3:1]||ENEMY_HORSES[1];gear.m=hs[(rng()*hs.length)|0];}
- return gear;
+ return specialistOfficer(type,gear,tier,boss,site,index,lv);
 }
 function enemyGearStats(stats,look){
- const out={...stats};for(const slot of ['w','a','h','m']){const I=ITEMS[look.gear[slot]];if(!I)continue;for(const stat of ['atk','def','hp','str','mrk','duel'])out[stat]=(out[stat]||0)+(I[stat]||0);}return out;
+ const out={...stats};for(const slot of ['w','a','h','m','s','s2']){const I=ITEMS[look.gear[slot]];if(!I)continue;for(const stat of ['atk','def','hp','str','mrk','duel'])out[stat]=(out[stat]||0)+(I[stat]||0);}return out;
 }
 function enemyLootTable(site,maxTier=5){
  const strength=Math.log2(1+Math.max(0,site.power||60)/100),boss=!!site.boss,mix=site.boss?{inf:.25,arc:.25,gun:.25,cav:.25}:clanMix(site.clan)||CLAN_MIX[site.clan]||CLAN_MIX.bandit,table=new Map();
@@ -7983,18 +8494,15 @@ function chooseSite(a, v, casual) {
     return s; });
   const tot = w.reduce((n, x) => n + x, 0); let r = Math.random() * tot; for (let i = 0; i < sites.length; i++) { r -= w[i]; if (r <= 0) return sites[i]; } return sites[0];
 }
-function dropFor(g, fromB) {
-  const ws = G.buildings.filter(w => w.id === 'workshop' && wantsGood(w, g)); ws.forEach(w => w._bias = 3);
-  const r = nearest(fromB, ws.concat(stores())); ws.forEach(w => delete w._bias); return r;
-}
-function shopsFor(ware) { return G.buildings.filter(b => (WARES[ware].shops.includes(b.id) || (b.id === 'tonya' && tradeHold(ware))) && entranceOf(b)); }
+
+
 function waresOf(shopId) { return Object.keys(WARES).filter(k => WARES[k].shops.includes(shopId)); }
 function defaultRecipe() { const have = new Set(G.buildings.map(b => b.id)); return Object.keys(WARES).find(k => WARES[k].shops.some(s => have.has(s)) && Object.keys(WARES[k].from).every(g => G.buildings.some(b => BUILDINGS[b.id].makes === g))) || 'mochi'; }
 
 /* ---------- carrying ---------- */
 function carryKind(good, n, c = 0) { if (n >= CART_AT * (1 + c) || good === 'ore') return 'cart'; if (WARES[good]) return 'ware'; return good; }
 function setCarry(a, good, n) { a.carry = n > 0 ? { good, n, kind: carryKind(good, n, carryOf(a)) } : null; const c = Math.min(.9, carryOf(a)); a.speedMul = a.carry ? 1 - (1 - (a.carry.kind === 'cart' ? .78 : .9)) * (1 - c) : 1; }
-function depositCarry(a, b) {
+function depositCarryWarehouse(a, b) {
   const c = a.carry; if (!c) return; const B = b && BUILDINGS[b.id];
   if (WARES[c.good]) { G.wares[c.good] = (G.wares[c.good] || 0) + c.n; if (b) floater(b.x * 16 + B.w * 8, b.y * 16 - 4, '+' + c.n, 'w_' + c.good, '#f2d27a'); }
   else if (b && b.id === 'workshop' && activeWares().some(k => WARES[k].from[c.good])) { b.inbox = b.inbox || {}; const room = Math.max(0, INBOX_CAP + 4 - (b.inbox[c.good] || 0)), k = Math.min(room, c.n); b.inbox[c.good] = (b.inbox[c.good] || 0) + k; if (c.n > k) G.stock[c.good] = (G.stock[c.good] || 0) + c.n - k; floater(b.x * 16 + 16, b.y * 16 + 2, '+' + c.n, 'g_' + c.good, '#f2efe2'); }
@@ -8002,7 +8510,7 @@ function depositCarry(a, b) {
   setCarry(a, null, 0);
 }
 // a carrier whose destination vanished (or has no road) still delivers to the storehouse ledger
-function dropLost(a) { if (!a.carry) return; if (WARES[a.carry.good]) G.wares[a.carry.good] = (G.wares[a.carry.good] || 0) + a.carry.n; else G.stock[a.carry.good] = (G.stock[a.carry.good] || 0) + a.carry.n; setCarry(a, null, 0); }
+function dropLost(a) { a.shopSupply=null;if(!a.carry)return; if (WARES[a.carry.good]) G.wares[a.carry.good] = (G.wares[a.carry.good] || 0) + a.carry.n; else G.stock[a.carry.good] = (G.stock[a.carry.good] || 0) + a.carry.n; setCarry(a, null, 0); }
 
 /* ---------- what a worker does next ---------- */
 // returns a building to walk to (and sets a.mission), or null to wait
@@ -8011,23 +8519,24 @@ function workerPlan(a, v, J) {
   if (B.makes) { // field hand
     if ((J.pile || 0) >= Math.round(HAUL_AT * (1 + vStats(v).carry))) { const d = dropFor(B.makes, J);
       if (!d) { G.stock[B.makes] = (G.stock[B.makes] || 0) + J.pile; J.pile = 0; return J; }
-      const n = Math.floor(J.pile); J.pile -= n; setCarry(a, B.makes, n); a.mission = 'drop'; a.dest = d.uid; Sound.play('tap', { vol: .2 }); return d; }
+      const n=Math.min(Math.floor(J.pile),shopIs(d)?shopRoom(d,B.makes,a):Infinity);if(!(n>0))return J;J.pile-=n; setCarry(a, B.makes, n); a.mission = 'drop'; a.dest = d.uid; Sound.play('tap', { vol: .2 }); return d; }
     a.mission = 'work'; return J;
   }
   if (B.craft) { // artisan
     J.inbox = J.inbox || {}; J.outs = J.outs || {};
     const c = chooseCraft(J), ready = Object.keys(J.outs).filter(k => J.outs[k] > 0 && shopsFor(k).length).sort((p, q) => J.outs[q] - J.outs[p]);
     if (ready.length && (J.outs[ready[0]] >= 3 || !c || c.mode !== 'craft' || outTotal(J) >= OUT_CAP)) { const k = ready[0], shop = nearest(J, shopsFor(k));
-      if (shop) { const n = Math.min(J.outs[k], Math.round(6 * (1 + vStats(v).carry))); J.outs[k] -= n; setCarry(a, k, n); a.mission = 'deliver'; a.dest = shop.uid; return shop; } }
+      if (shop) { const n = Math.min(J.outs[k],Math.round(6*(1+vStats(v).carry)),shopIs(shop)?shopRoom(shop,k,a):Infinity); J.outs[k] -= n; setCarry(a, k, n); a.mission = 'deliver'; a.dest = shop.uid; return shop; } }
     if (c && c.mode === 'craft' && outTotal(J) < OUT_CAP) { a.mission = 'craft'; a.craftWare = c.w; return J; }
     if (c && c.mode === 'fetch') { const st = nearest(J, stores()); if (st) { a.mission = 'fetch'; a.fetch = c.g; a.fetchFor = c.w; a.dest = st.uid; a.home2 = J.uid; return st; } }
     a.bubble = { t: 1.6, icon: outTotal(J) >= OUT_CAP ? '!' : '…' }; a.mission = null; return null;
   }
   return null;
 }
-function missionArrive(a, v, b) {
+function missionArrive(a,v,b){
+  if(['shopFetch','shopDeliver','shopReturn'].includes(a.mission))return shopMissionArrive(a,v,b);
   const m = a.mission; a.mission = null;
-  if (m === 'drop' || m === 'deliver' || m === 'bring') { depositCarry(a, b); v.en = Math.max(0, (v.en ?? 100) - 4); if (m === 'deliver' && Math.random() < .3) a.bubble = { t: 1.4, icon: '♪' }; return true; }
+  if (m === 'drop' || m === 'deliver' || m === 'bring') { depositCarry(a,b);if(a.carry&&returnShopCarry(a))return 'walking';v.en = Math.max(0, (v.en ?? 100) - 4); if (m === 'deliver' && Math.random() < .3) a.bubble = { t: 1.4, icon: '♪' }; return true; }
   if (m === 'fetch') { const J = bByUid(a.home2), R = J && WARES[a.fetchFor]; if (!J || !R) return true; J.inbox = J.inbox || {};
     const g = a.fetch; if (!R.from[g]) return true;
     const want = Math.min(INBOX_CAP - (J.inbox[g] || 0), R.from[g] * Math.round(3 * (1 + vStats(v).carry))), n = Math.min(Math.floor((G.stock[g] || 0) - tradeHold(g)), Math.max(1, want));
@@ -8123,7 +8632,8 @@ function workshopInfoSprite(b) { return worksiteInfoSprite(b); }
 
 
 /* ---------- village drawing: piles, workshop stock, scaffolding ---------- */
-function drawLogi(ctx, b, B, px, py) {
+function drawLogi(ctx,b,B,px,py){
+  if(B.cat==='shop')drawShopStock(ctx,b,B,px,py);
   if (B.makes && b.pile >= 1) { const im = pileSprite(B.makes, Math.min(4, Math.ceil(b.pile / 6))); artDraw(ctx, im, px + B.w * 16 - im.width - 1, py + B.h * 16 - im.height + 2); }
   if (B.craft) { const inN = Object.values(b.inbox || {}).reduce((n, x) => n + x, 0);
     if (inN >= 1) { const g = Object.keys(b.inbox).find(k => b.inbox[k] >= 1); if (g) { const im = pileSprite(g, Math.min(3, Math.ceil(inN / 4))); artDraw(ctx, im, px - 2, py + B.h * 16 - im.height + 2); } }
@@ -8132,8 +8642,8 @@ function drawLogi(ctx, b, B, px, py) {
   if (b.reno) { const im = scaffoldSprite(B.w, B.h, ((RT.t * 3) | 0) % 2); artDraw(ctx, im, px - 2, py + B.h * 16 - im.height + 1);
     if (Math.random() < .08) { RT.particles.push({ x: px + rnd(4, B.w * 16 - 4), y: py - rnd(0, 14), vx: rnd(-6, 6), vy: -10, t: .5, kind: 'dust' }); if (Math.random() < .2 && RT.ready) Sound.play('tap', { vol: .15, pitch: rnd(1.4, 1.8) }); } }
 }
-function migrateLogistics() {
-  G.wares = G.wares || {};
+function migrateLogistics(){
+  G.wares=G.wares||{};migrateShopStock();
   G.villagers.forEach(v => { if (v.en == null) v.en = 100; });
   G.buildings.forEach(b => { if (b.id !== 'workshop') return; if (!b.recipe) b.recipe = defaultRecipe(); b.outs = b.outs || {}; if (b.out) { b.outs[b.recipe] = (b.outs[b.recipe] || 0) + b.out; b.out = 0; } });
   if (!G.logi) { G.logi = 1; const craft = G.buildings.filter(b => BUILDINGS[b.id].needWares);
@@ -8664,7 +9174,7 @@ const PET_KINDS = ['hound', 'fox', 'tosa', 'tanuki', 'boar', 'bear', 'monkey', '
 // a commander's strategy rating: their skill, +1 at the Honjin, +1 for a Jinbaori
 // a commander's level in a skill (first or second skill)
 function skv(c, k) { return c.sk ? c.sk[k] || 0 : c.skill === k ? c.slv || 0 : 0; }
-function stratOf(c) { let st = skv(c, 'strategy') * (c.aux ? .5 : 1); if (st > 0 && c.post === 'hq') st += 1; return Math.floor(st + (c.jin || 0)); }
+function stratOf(c) { let st = Math.max(skv(c,'strategy'),...equippedKeys(c).map(k=>ITEMS[k]?.command||0))*(c.aux?.5:1); if (st > 0 && c.post === 'hq') st += 1; return Math.floor(st + (c.jin || 0)); }
 // Commanders stack with diminishing returns: the best leads, the rest add less each. Militia (workers) count half.
 const CMD_W = [1, .75, .55, .42, .32, .25, .2, .16, .13, .11];
 // where a commander stands. Vanguard: own blows hit hardest and he bleeds for it. Line: full leadership and skills.
@@ -8706,38 +9216,12 @@ function finishArmy(A) {
   A.groups.forEach(g => { g.max = g.troops; g.start = g.troops; });
   return A;
 }
-function playerArmy() {
-  const A = { side: 0, clan: 'kage', name: 'Kage Clan', groups: [], ki: 1, strat: 0, mode: 'army' };
-  const units = ['inf', 'arc', 'gun', 'cav'].filter(t => unitOpen(t) && G.troops[t] > 0);
-  if (!units.length) return finishArmy(A);
-  const host = t => units.includes(t) ? t : units.includes('inf') ? 'inf' : units[0];
-  const by = {}, allC = []; A.recovering = [];
-  G.villagers.forEach(v => {
-    let c;
-    if (v.role === 'work' && G.allHands === false) return;
-    if (cmdWorn(v)) { A.recovering.push(v); return; } // still sleeping off the last battle
-    if (v.role === 'work') { c = cmdFrom(v); c.aux = true; (by[host(militiaType(v))] ||= []).push(c); }
-    else { c = cmdFrom(v); (by[host(v.role)] ||= []).push(c); }
-    c.hpMax = c.s.hp; c.hp = clamp(v.hp ?? c.hpMax, 0, c.hpMax);
-    allC.push(c);
-  });
-  allC.forEach(c => { c.retF = (c.ret || []).map(retFighter); });
-  units.forEach(t => {
-    const cmds = (by[t] || []).sort((a, b) => (a.aux ? 1 : 0) - (b.aux ? 1 : 0) || b.s.atk - a.s.atk), m = groupMuls(t, cmds);
-    // forged gear on the rank and file, and the commanders' retainers
-    const kf = kitFill(t, G.troops[t], G.kit[t] || {}), guards = cmds.reduce((n, c) => n + (c.guard || 0), 0);
-    const md = modsOf(cmds), g = { type: t, troops: G.troops[t], atkMul: m.atk, defMul: m.def * (1 + .08 * md.ironwall), cmds, mods: md, kitMul: kf.mul, guards, kitDist: playerKitDist(t, G.troops[t]), retAtk: cmds.reduce((n, c) => n + (c.retAtk || 0), 0), retDef: cmds.reduce((n, c) => n + (c.retDef || 0), 0) };
-    applyUnitExtras(g);
-    A.groups.push(g);
-  });
-  applyBonds(A); applyArmyWide(A, allC);
-  A.groups.forEach(g => recalcGroup(g, A)); // one formula for every unit, so a lost commander is recounted the same way later
-  return finishArmy(A);
-}
+
 function applyUnitExtras(g) { const ra = g.retAtk != null ? Math.min(.35, g.retAtk) : Math.min(.3, g.guards * .015), rd = g.retDef != null ? Math.min(.25, g.retDef) : Math.min(.2, g.guards * .01); g.atkMul *= g.kitMul.atk * (1 + ra); g.defMul *= g.kitMul.def * (1 + rd); }
 // A unit's multipliers, rebuilt from scratch: leadership of the commanders still standing, Iron Wall, the kit,
 // retainers, bonds, beasts, the enemy's difficulty calibration, and morale won or lost this battle. Both sides use it.
 function recalcGroup(g, A) {
+  if(g.heroOnly){refreshIndependent(g);return;}
   const act = (g.cmds || []).filter(c => !c.ko), m = groupMuls(g.type, act);
   g.mods = Object.assign(g.mods || {}, modsOf(act)); g.guards = act.reduce((n, c) => n + (c.guard || 0), 0);
   if (g.retAtk != null) { g.retAtk = act.reduce((n, c) => n + (c.retAtk || 0), 0); g.retDef = act.reduce((n, c) => n + (c.retDef || 0), 0); }
@@ -8752,10 +9236,10 @@ function recalcGroup(g, A) {
 // HP is endurance: a commander under heavy pressure wears down, and at zero is carried from the field for the rest of the battle
 const PRESS_K = 55;
 function cmdPressure(h) {
-  const T = h.to, si = sideOf(T), A = BT.A[si]; if (A.mode !== 'army' || h.kills <= 0) return [];
+  const T = h.to, si = sideOf(T), A = BT.A[si]; if (A.mode !== 'army' || T.heroOnly || h.kills <= 0) return [];
   const f = Math.min(1, h.kills / Math.max(1, T.troops)), atkF = Math.sqrt(Math.max(.5, h.from.atkMul)), ranged = h.from.type === 'arc' || h.from.type === 'gun', out = [];
   (T.cmds || []).forEach(c => { if (c.ko || c.hp == null || !c.s) return; const P = postFx(c); if (!P.expose) return;
-    const d = PRESS_K * f * atkF * P.expose * (ranged ? .7 : 1) * (h.counter ? .8 : 1) * 30 / (30 + Math.max(0, c.s.def)) * (1 - Math.min(.35, retLive(c).length * .07)) * rnd(.7, 1.3);
+    const d = PRESS_K * f * atkF * P.expose * (ranged ? .7 : 1) * (h.counter ? .8 : 1) * 30 / (30 + Math.max(0, c.s.def)) * (1 - Math.min(.35, retLive(c).length * .07)) * rnd(.7, 1.3)*(1-equipmentGuard(c,!ranged&&!h.grenade));
     if (d < .05) return; c.hp = Math.max(0, c.hp - d); c.dmgT = (c.dmgT || 0) + d; out.push([c, d]); });
   return out;
 }
@@ -8763,7 +9247,7 @@ function applyArmyWide(A, allC) {
   A.strat = Math.max(0, ...allC.map(stratOf)); A.intel = allC.some(c => c.intel);
   A.ki = 1 + Math.min(4, allC.reduce((n, c) => n + (c.vref ? (c.vref.eq.special === 'smoke') + (c.vref.eq.special2 === 'smoke') : 0) + Math.floor(skv(c, 'shadow') / 2), 0));
   A.siegecraft = Math.max(0, ...allC.map(c => skv(c, 'siegecraft'))); A.qm = Math.max(0, ...allC.map(c => skv(c, 'quartermaster')));
-  const bl = {}, bd = {}; let monkeys = 0; allC.forEach(c => { const sp = c.vref && c.vref.eq.mount, I = sp && ITEMS[sp]; if (!I) return; if (I.beast && I.bonus) (bl[I.beast] ||= []).push(I.bonus); if (I.beastDef) (bd[I.beastDefType || I.beast] ||= []).push(I.beastDef); if (I.ki) monkeys++; });
+  const bl = {}, bd = {}; let monkeys = 0; allC.forEach(c => { const sp = c.vref && c.vref.eq.mount, I = sp && ITEMS[sp]; if (!I) return; if(I.unitBonus){const g=A.groups.find(g=>g.cmds.includes(c));if(g)(bl[g.type]||=[]).push(I.unitBonus);} if (I.beast && I.bonus) (bl[I.beast] ||= []).push(I.bonus); if (I.beastDef) (bd[I.beastDefType || I.beast] ||= []).push(I.beastDef); if (I.ki) monkeys++; });
   A.beast = {}; Object.keys(bl).forEach(t => A.beast[t] = stackBeasts(bl[t]));
   A.beastDef = {}; Object.keys(bd).forEach(t => A.beastDef[t] = stackBeasts(bd[t])); A.groups.forEach(g => { if (A.beastDef[g.type]) g.defMul *= 1 + A.beastDef[g.type]; });
   A.ki = Math.min(5, A.ki + Math.min(2, monkeys)) + (A.side === 0 && G.boons ? G.boons.ki || 0 : 0); // a doctrine's Ki rides on top of the cap
@@ -8789,7 +9273,7 @@ function fighterGroup(type, c) {
     mods: Object.fromEntries(['chain', 'rapid', 'attackup', 'arrowres', 'bulletres', 'horseres', 'medic', 'shadow', 'ironwall', 'marksman', 'cavmaster', 'laststand', 'counter'].map(k => [k, skv(c, k)])) };
 }
 function armyPower(A) {
-  let p = 0; A.groups.forEach(g => { p += (g.troops + (A.mode === 'army' ? retEq(g) : 0)) * UNITS[g.type].atk * g.atkMul * Math.sqrt(g.defMul) * (1 + .05 * g.mods.attackup + .12 * (g.mods.chain + g.mods.rapid) / 2) * (1 + (A.beast && A.beast[g.type] || 0)) * (A.mode === 'skirmish' ? 1 : 1 + persShare(g)); });
+  let p = 0; A.groups.forEach(g => { p += (g.troops + (A.mode === 'army' ? retEq(g) : 0)) * UNITS[g.type].atk * g.atkMul * Math.sqrt(g.defMul) * (1 + .05 * g.mods.attackup + .12 * (g.mods.chain + g.mods.rapid) / 2) * (1 + (A.beast && A.beast[g.type] || 0)) * (A.mode==='skirmish'||g.heroOnly?1:1+persShare(g)); });
   return Math.round(p * (1 + A.strat * .05));
 }
 function enemyLook(clan,i,boss,type='inf',tier=1,site=null,lv=null){
@@ -8865,14 +9349,14 @@ const COHESION_STAGES=[
   {name:'Desperate',jp:'奮',col:'#e5a065'}, {name:'Last Stand',jp:'決',col:'#ec7c66'}
 ];
 function fightingStrength(g){return g.troops>0?Math.max(1,g.troops):0;}
-function combatCount(A){return A.groups.reduce((n,g)=>n+Math.ceil(Math.max(0,g.troops)),0);}
+
 function offensivePressure(){return 1+Math.min(1,Math.max(0,(BT?.round||0)-(BT?.maxR||3))*.16);}
 function cohesionState(g){return !g.coh||g.coh.troops!==g.troops?updateCohesion(g):g.coh;}
 function updateCohesion(g,announce=false){
   const prior=g.coh,cmds=g.cmds||[],active=cmds.filter(c=>!c.ko),ratio=clamp(g.troops/Math.max(1,g.start||g.max||g.troops),0,1),
     best=k=>Math.max(0,...active.map(c=>skv(c,k))),lost=cmds.length?1-active.length/cmds.length:0;
   const resilience=clamp((active.length?.035:0)+best('strategy')*.012+best('laststand')*.024+best('ironwall')*.008+
-    Math.max(0,...active.map(c=>c.bondLv||0))*.012,0,.22),stress=clamp(g.cohStress||0,0,.3),
+    Math.max(0,...active.map(c=>c.bondLv||0))*.012+supplyResilience(g),0,.22),stress=clamp(g.cohStress||0,0,.3),
     value=clamp(.22+.78*Math.sqrt(ratio)-lost*.14-stress+resilience*(1-ratio),.08,1);
   let stage=ratio<=.12?3:ratio<=.3||value<.39?2:ratio<=.65||value<.68?1:0;
   if(!(g.troops>0))stage=3;
@@ -8921,6 +9405,7 @@ function normalizeBattleHits(hits){
 function endRound(){
   const t0=totalOf(BT.A[0]),t1=totalOf(BT.A[1]);
   if(!(t0>0)||!(t1>0))return finishBattle(!(t0>0)&&!(t1>0)?'draw':!(t1>0)?'win':'lose',!(t0>0)&&!(t1>0)?'Neither army has combatants remaining.':undefined);
+  recoverEquipment();
   if(BT.cohRecoveredRound!==BT.round){BT.cohRecoveredRound=BT.round;
     BT.A.forEach(A=>A.groups.forEach(g=>{
       const lv=g.mods.medic||0;
@@ -8928,7 +9413,7 @@ function endRound(){
         // A finite reserve of wounded, rather than unlimited resurrection.
         const budget=g.start*Math.min(.24,.08+lv*.02),remaining=Math.max(0,budget-(g.cohRecovered||0)),
           amount=Math.min(Math.max(0,g.start-g.troops),g.start*.03*lv,remaining);
-        if(amount>0){g.troops+=amount;g.cohRecovered=(g.cohRecovered||0)+amount;syncRevive(g);}
+        if(amount>0){g.troops+=amount;if(g.heroOnly)g.solo.hp=Math.min(g.solo.hpMax,g.troops*3);g.cohRecovered=(g.cohRecovered||0)+amount;syncRevive(g);}
       }
       g.cohStress=Math.max(0,(g.cohStress||0)-.035-cohesionState(g).resilience*.05);updateCohesion(g,true);
     }));
@@ -9031,6 +9516,7 @@ function resolvePhase(phase, A, D, ctx) {
       if (phase === 'cav' && (t.type === 'gun' || t.type === 'arc')) mult *= 1.6;
       if (phase === 'inf' && (t.type === 'gun' || t.type === 'arc')) mult *= 1.35;
       if (phase === 'gun' && t.type === 'inf') mult *= 1.2;
+      mult*=personalDamageGuard(t,phase)*(g.solo?personalWeaponFactor(g.solo,t,phase):1);
       const need = left.get(t), kills = Math.min(need, battleDamage(dmg,res,mult,fightingStrength(g)));
       if (!(kills > 0)) break;
       hits.push({ from: g, to: t, kills, depth, retShare });
@@ -9051,11 +9537,11 @@ const COUNTER_K = .45;
 function counterHits(phase, hits, ctx) {
   if ((phase !== 'inf' && phase !== 'cav') || ctx.siege) return [];
   const out = [], seen = new Set();
-  hits.filter(h => h.depth === 0 && !h.icpt && !h.duelBonus && h.from.type === phase && h.to.type !== phase && (h.to.type === 'inf' || h.to.type === 'cav')).sort((a, b) => b.kills - a.kills).forEach(h => {
+  hits.filter(h => h.depth === 0 && !h.icpt && !h.duelBonus && !h.grenade && h.from.type === phase && h.to.type !== phase && (h.to.type === 'inf' || h.to.type === 'cav')).sort((a, b) => b.kills - a.kills).forEach(h => {
     const T = h.to, G = h.from; if (seen.has(T)) return; seen.add(T);
     const si = sideOf(T), A = BT.A[si], left = Math.max(0, T.troops - h.kills * .5);
     const dmg = Math.max(Math.min(1,T.troops),left) * battleAttack(T,true) * UNITS[T.type].atk * T.atkMul * TACTICS[ctx.tac[si]].mod.mel * rnd(.88, 1.12) * .26 * COUNTER_K * (1 + (A.strat || 0) * .05);
-    const kills = Math.min(G.troops * .5, battleDamage(dmg,battleResistance(G),TACTICS[ctx.tac[1-si]].mod.take,fightingStrength(T)*COUNTER_K));
+    const kills = Math.min(G.troops * .5, battleDamage(dmg,battleResistance(G),TACTICS[ctx.tac[1-si]].mod.take*(T.solo?personalWeaponFactor(T.solo,G,T.type):1)*personalDamageGuard(G,T.type),fightingStrength(T)*COUNTER_K));
     if (kills > 0) out.push({ from: T, to: G, kills, depth: 0, counter: true });
   });
   return out;
@@ -9223,33 +9709,12 @@ function showTacticPanel() {
   $('#bt-retreat').onclick = () => { if (BT.round === 0) { if (BT.battery) G.gold += BT.batteryPaid || 0; closeBattle(); openMap(); } else {BT.playerRetreat=true;finishBattle('lose','You sounded the retreat.');} };
 }
 
-function renderRunStrip() {
-  if (!BT || BT.state === 'done') return;
-  const cur = BT.phaseName && BT.state === 'run' ? BT.phaseName : null;
-  const cmds = BT.A[0].groups.flatMap(g => g.cmds.map(c => ({ c, type: g.type, alive: g.troops > 0 })));
-  $('#btac').innerHTML = `<div class="in lac"><div class="paper rstrip">
-    <div class="rs-ty" id="rs-ty">${typeRows()}</div>
-    <div class="row rs-bot"><div class="rs-cm">${cmds.map(({ c, type, alive }) => `<span class="rcm${c.aux ? ' aux' : ''}${cur === type ? ' on' : ''}${alive && !c.ko ? '' : ' dead'}"><img src="${pURL(c.look)}" alt="${esc(c.name)}" title="${esc(c.name)}${c.hpMax ? ` · HP ${Math.round(c.hp)}/${Math.round(c.hpMax)}` : ''}" class="px">${c.kills >= 1 ? `<i>${Math.round(c.kills)}</i>` : ''}${c.hpMax ? `<b class="hp" style="width:${Math.round(clamp(c.hp / c.hpMax, 0, 1) * 100)}%;background:${c.hp / c.hpMax < .3 ? '#e05a3a' : '#7ad06a'}"></b>` : ''}</span>`).join('')}</div>
-    <button class="btn ghost" id="rs-speed" style="min-height:32px">×${BT.speed}</button><button class="btn ghost" id="rs-auto" style="min-height:32px">Auto ${BT.auto ? 'on' : 'off'}</button></div></div></div>`;
-  $('#rs-speed').onclick = () => { BT.speed = BT.speed === 1 ? 2 : BT.speed === 2 ? 3 : 1; Sound.play('tap'); renderRunStrip(); };
-  $('#rs-auto').onclick = () => { BT.auto = !BT.auto; Sound.play('tap'); renderRunStrip(); };
-}
+
 // one row per unit type in phase order: our count and strength on the left, theirs on the right, the acting type lit
-function typeRows() {
-  const cur = BT.phaseName && BT.state === 'run' ? BT.phaseName : null;
-  const cell = (A, t, r) => { const gs = A.groups.filter(g => g.type === t); let n = '·', pct = 0;
-    if (gs.length) { const k = gs.reduce((s, g) => s + Math.max(0, g.troops), 0), m = gs.reduce((s, g) => s + (g.start || g.max || g.troops), 0); pct = m ? k / m * 100 : 0; n=k>0?fmt(Math.ceil(k)):'×'; }
-    const num = `<span class="n${r ? ' r' : ''}">${n}${gs.find(g=>g.troops>0)?cohesionBadge(gs.find(g=>g.troops>0)):''}</span>`, bar = `<i class="bar${r ? ' r' : ''}"><b style="width:${pct.toFixed(1)}%"></b></i>`; return r ? bar + num : num + bar; };
-  return UNIT_ORDER.filter(t => BT.A.some(A => A.groups.some(g => g.type === t))).map(t => `<div class="trow${cur === t ? ' on' : ''}">${cell(BT.A[0], t, 0)}<span class="ty">${icon('u_' + t)}<small>${UNITS[t].jp}</small></span>${cell(BT.A[1], t, 1)}</div>`).join('');
-}
+
 
 /* ---------- HUD ---------- */
-function renderBHUD() {
-  const side = (A, r) => { const tot = totalOf(A), pct = tot / A.start * 100, tac = BT.round ? `<small class="tj">${TACTICS[BT.tac[r]].jp}</small>` : '';
-    return `<div class="bside lac${r ? ' r' : ''}"><div class="nm">${r ? tac : icon('mon_' + A.clan)}${esc(A.name)}${r ? icon('mon_' + A.clan) : tac}</div><div class="tot">${fmt(combatCount(A))}</div><div class="hp"><i style="width:${pct}%;background:${r ? '#c8452c' : '#7cc0d8'}${r ? ';left:auto;right:0' : ''}"></i></div></div>`; };
-  $('#bhud').innerHTML = side(BT.A[0], 0) + `<div class="bround lac">${BT.round ? '第' + combatRoundName(BT.round) + '陣' : BT.siege ? '攻城' : '布陣'}<small>${BT.round ? 'Round '+BT.round+(BT.round>BT.maxR?' · +'+Math.round((offensivePressure()-1)*100)+'% pressure':'') : BT.siege ? 'Siege' : 'Deploy'}</small>${BT.siege ? `<div class="gaterow" title="Castle gate"><span>城門</span><div class="gatebar"><i style="width:${Math.max(0, BT.siege.hp / BT.siege.max * 100)}%"></i></div></div>` : ''}</div>` + side(BT.A[1], 1);
-  const ty = $('#rs-ty'); if (ty) ty.innerHTML = typeRows();
-}
+
 
 /* ---------- Finish ---------- */
 function finishBattle(res, note) {
@@ -9262,7 +9727,7 @@ function finishBattle(res, note) {
   // the wounded: part of the fallen limp home and rejoin (more when you hold the field)
   let wounded = 0; const wf = (res === 'win' ? .3 : res === 'draw' ? .2 : .1) + (pa.qm || 0) * .05;
   if (pa.mode === 'army' && !drill) pa.groups.forEach(g => g.cmds.forEach(c => { if (!c.vref || c.hp == null) return; if (c.hp >= c.hpMax - .5) delete c.vref.hp; else c.vref.hp = Math.max(0, Math.round(c.hp)); }));
-  if (pa.mode === 'army' && !drill) pa.groups.forEach(g => { const back = Math.round(Math.max(0,g.start-Math.ceil(g.troops))*wf); wounded += back; G.troops[g.type] = Math.max(0, Math.ceil(g.troops) + back); });
+  if (pa.mode === 'army' && !drill) pa.groups.filter(g=>!g.heroOnly).forEach(g => { const back = Math.round(Math.max(0,g.start-Math.ceil(g.troops))*wf); wounded += back; G.troops[g.type] = Math.max(0, Math.ceil(g.troops) + back); });
   const tier = Math.log2(1 + (drill ? (BT.A[1].power0 || armyPower(BT.A[1])) : (st.power || 60)) / 50);
   let xp = Math.round((res === 'win' ? 26 : res === 'draw' ? 14 : 8) * tier * (drill ? 1.4 : 1));
   const cmds = new Set(); pa.groups.forEach(g => g.cmds.forEach(c => c.vref && cmds.add(c.vref)));
@@ -9280,7 +9745,8 @@ function finishBattle(res, note) {
     G.trainCD = 2;
     const tot = Object.values(G.troops).reduce((a, b) => a + b, 0), gain = Math.max(5, Math.round(tot * (res === 'win' ? .06 : .025)));
     const types = ['inf', 'arc', 'gun', 'cav'].filter(t => unitOpen(t) && G.troops[t] > 0);
-    types.forEach(t => { const n = Math.max(1, Math.round(gain * G.troops[t] / Math.max(1, tot))); G.troops[t] += n; });
+    if(!types.length)G.troops.inf=(G.troops.inf||0)+gain;
+    else types.forEach(t=>{const n=Math.max(1,Math.round(gain*G.troops[t]/Math.max(1,tot)));G.troops[t]+=n;});
     rewards.push(`${icon('u_inf')} +${gain} recruits`);
     if (res === 'win') { G.gold += 120; rewards.push(`${icon('gold')} +120`); }
     unlockMsgs.length = 0;
@@ -9291,7 +9757,8 @@ function finishBattle(res, note) {
       if (R.troops) { G.troops.inf += R.troops; rewards.push(`${icon('u_inf')} +${R.troops} infantry`); }
       if (R.item) { G.items[R.item] = (G.items[R.item] || 0) + 1; rewards.push(`${icon('it_' + R.item)} ${ITEMS[R.item].name}`); }
       (R.items || []).forEach(k => { G.items[k] = (G.items[k] || 0) + 1; rewards.push(`${icon('it_' + k)} ${ITEMS[k].name}`); });
-      (R.recruits || []).forEach((id, i) => { if (vById(id)) return; rewards.push(`${icon('folk')} ${vData(id).name} freed · joins`); setTimeout(() => offerHire(id, 'rebel', 'A captive joins you'), 60 + i * 30); });
+      if(P.rebel)ensureRebelWorker(R);
+      (R.recruits||[]).forEach((id,i)=>{if(vById(id))return;if(P.rebel)releaseRecruit(id); rewards.push(`${icon('folk')} ${vData(id).name} freed · joins`); setTimeout(() => offerHire(id, 'rebel', 'A captive joins you'), 60 + i * 30); });
       if (P.rebel) { const RP = PROVINCES.find(p => p.id === P.rebel); if (RP) unlockMsgs.push(`<b>${esc(RP.name)}</b> is pacified. The rebels' arms are yours.`); }
       if (R.recruit && !vById(R.recruit)) { const fee = hireFee(R.recruit, 'captive'); rewards.push(`${icon('folk')} ${vData(R.recruit).name} ${fee ? `offers service · ${fmt(fee)}G` : 'joins'}`); setTimeout(() => offerHire(R.recruit, 'captive', 'A captive offers service'), 50); }
       G.camps = G.camps.filter(c => c.id !== P.id); G.campWins = (G.campWins || 0) + 1;
@@ -9349,7 +9816,7 @@ function finishBattle(res, note) {
     ${eOff.length ? `<div class="muted" style="grid-column:1/-1">Enemy officers: ${fmt(Math.round(eOff.reduce((n, c) => n + (c.pk || 0), 0)))} of ours fell to their own hands${eRet ? ` · <b>${eRet}</b> worn down and carried off` : ''}${foesLost.length ? ` · ${foesLost.length} beaten in duels` : ''}</div>` : ''}</div>` : '';
   rewards.push(`${icon('xp')} +${xp} XP × ${cmds.size} villagers`);
   if (wounded > 0) rewards.push(`${icon('u_inf')} ${fmt(wounded)} wounded recover and rejoin`);
-  const lost = pa.mode === 'army' && !drill ? Math.max(0,Math.round(pa.start)-combatCount(pa)) : 0;
+  const lost = pa.mode === 'army' && !drill ? pa.groups.filter(g=>!g.heroOnly).reduce((n,g)=>n+Math.max(0,Math.round(g.start)-Math.ceil(g.troops)),0) : 0;
   const kanji = res === 'win' ? '勝' : res === 'lose' ? '敗' : '引';
   const title = P.type === 'land' ? (res === 'win' ? `${LAND_NAME[P.land]} is ours!` : res === 'lose' ? 'Driven back' : 'They hold their ground') : P.type === 'hunt' ? (res === 'win' ? 'Captured!' : res === 'lose' ? 'The beast drove you off' : 'It got away into ' + P.name) : res === 'win' ? (note || (drill ? 'Training complete!' : 'Victory!')) : res === 'lose' ? (note || (drill ? 'Outfought — but wiser for it' : 'Defeat')) : 'Neither army has combatants remaining';
   const mvpHtml = mvp && mvp.kills > 0 ? `<div class="mvp"><img class="px" src="${pURL(mvp.look)}" alt=""><div><b>MVP · ${esc(mvp.name)}</b><span>${fmt(Math.round(mvp.kills))} foes struck down · +50% XP</span></div></div>` : '';
@@ -9513,6 +9980,7 @@ function layoutSprites() {
     if (sg) { BT.siege.x = BT.cx + 40; siegeWorks(mid, fh); }
     let front = sg ? BT.siege.x + 17 : BT.cx - face * 66;
     order.forEach((g, oi) => {
+      if(g.heroOnly){front=layoutIndependent(g,si,front,mid,fh);return;}
       if (oi && A.mode === 'army' && worksOf(g).length) front -= face * 12; // room for a commander's field work
       const onWall = sg && g.type === 'gun'; // gunners line the walkway; archers loose over the wall from behind it
       const nH = (g.cmds || []).filter(c => c.look && c.post !== 'hq').length;
@@ -9532,7 +10000,7 @@ function layoutSprites() {
       if (A.strat >= 3) BT.props.push({ k: 'maku', si, x: rear - face * 16, y: mid - span / 2 - 2 }); }
     // the Honjin: commanders posted at the command camp stand before the curtain, out of the fighting
     A.hqSpr = [];
-    A.groups.forEach(g => (g.cmds || []).filter(c => c.post === 'hq' && c.look).forEach(c => { const i = A.hqSpr.length, hx = si === 0 ? 30 + i * 15 : BT.WW - 30 - i * 15;
+    A.groups.filter(g=>!g.heroOnly).forEach(g => (g.cmds || []).filter(c => c.post === 'hq' && c.look).forEach(c => { const i = A.hqSpr.length, hx = si === 0 ? 30 + i * 15 : BT.WW - 30 - i * 15;
       const s = mkSprite(g, si, hx, BT.fy0 + 5 + (i % 2) * 3, c.look); s.hero = c; s.hq = true; s.g = g; A.hqSpr.push(s); }));
   });
   assignBattleSashimono();prepareBattleReactions();
@@ -9710,8 +10178,8 @@ function updGuards(hr, dt, g, si) {
 }
 // commanders carried off by their retainers rejoin at the start of the next round
 function returnHeroes() {
-  BT.A.forEach((A, si) => A.groups.forEach(g => (g.heroes || []).forEach(hr => { const c = hr.hero;
-    if (c.ko && c.koRound && c.koRound < BT.round && g.troops > 0) { c.ko = false; c.koRound = 0; delete hr.duelDown; delete hr.duelPose; hr.out = false; hr.fadeAt = 0; hr.q = []; const face = sideDir(si);
+  BT.A.forEach((A, si) => A.groups.forEach(g => independentHeroes(g).forEach(hr => { const c = hr.hero;
+    if (c.ko && c.koRound && c.koRound < BT.round && (g.troops>0||g.heroOnly&&totalOf(A)>0)) { c.ko = false; c.koRound = 0; delete hr.duelDown; delete hr.duelPose; hr.out = false; hr.fadeAt = 0; hr.q = []; const face = sideDir(si);
       hr.x = g.front - face * 80; hr.y = g.hy + hr.hdy; queueMove(hr, BT.t + .1, g.front + face * hr.hdx, g.hy + hr.hdy, 70);
       if (c.hp != null) c.hp = Math.max(c.hp, c.hpMax * .25); refreshGroup(g, .98);
       BT.labels.push({ x: g.front, y: g.hy - 30, text: `${c.name} ↩`, t: .3, side: si }); } })));
@@ -9744,9 +10212,9 @@ function regroup(types) {
   BT.A.forEach((A, si) => {
     const face = sideDir(si), lim = x => face > 0 ? Math.min(x, siegeHold() ? BT.siege.x - 20 : BT.cx - NO_MANS) : Math.max(x, BT.cx + NO_MANS);
     A.groups.forEach(g => {
-      if (types && !types.includes(g.type)) return;
+      if (types && !types.includes(g.type)||g.heroOnly&&g.troops<=0) return;
       const al = g.spr.filter(s => s.alive); if (!al.length) return;
-      if (A.mode === 'skirmish') { const s = al[0]; if (g.home == null) g.home = g.hx;
+      if (A.mode === 'skirmish'||g.heroOnly) { const s = al[0]; if (g.home == null) g.home = g.hx;
         let nx = lim(face > 0 ? Math.min(s.x, g.home + MAX_ADV) : Math.max(s.x, g.home - MAX_ADV)); nx = face > 0 ? Math.max(nx, g.home) : Math.min(nx, g.home);
         g.hx = g.front = nx; s.sx = nx; s.sy = g.hy; queueMove(s, BT.t + rnd(.05, .35), nx, g.hy, rnd(46, 56)); return; }
       if (g.post == null) g.post = g.front;
@@ -9768,8 +10236,9 @@ function regroup(types) {
   });
 }
 // a unit down to its last handful still shows that handful: at least min(3, troops) soldiers stand while it lives
-function visibleCount(g) { return g.troops <= 0 ? 0 : clamp(Math.max(Math.ceil(g.troops / BT.per), Math.min(3, Math.ceil(g.troops))), 1, BT.maxVis || 20); }
+function visibleCount(g) { if(g.heroOnly)return g.troops>0?1:0; return g.troops <= 0 ? 0 : clamp(Math.max(Math.ceil(g.troops / BT.per), Math.min(3, Math.ceil(g.troops))), 1, BT.maxVis || 20); }
 function syncSprites(g, kind = 'burn') {
+  independentDamage(g,null);
   updateCohesion(g,true);
   const want = visibleCount(g); const al = g.spr.filter(s => s.alive); let have = al.length;
   while (have > want && al.length) { const s = al.splice((Math.random() * al.length) | 0, 1)[0]; exitSprite(g,s,kind,-sideDir(sideOf(g)));have--; }
@@ -10104,6 +10573,7 @@ function runPhase(p) {
   const ih = p === 'inf' || p === 'cav' ? interceptHits(p) : [];
   ih.forEach(h => h.to.troops -= h.kills);updateArmyCohesion();
   const hits = ih.concat(resolvePhase(p, BT.A[0], BT.A[1], ctx), resolvePhase(p, BT.A[1], BT.A[0], ctx)); hits.push(...counterHits(p, hits, ctx));
+  equipmentGrenades(p,hits,ctx);
   ih.forEach(h => h.to.troops += h.kills);updateArmyCohesion();
   BT.camAnchor = null; clearCamKeys();
   finishPhase(p, hits, null);
@@ -10155,11 +10625,11 @@ function interceptHits(p) {
       const tac = TACTICS[BT.tac[si]].mod; let dmg = fightingStrength(g) * battleAttack(g,true) * UNITS[g.type].atk * g.atkMul * tac.rng * .26 * .28 * (screen ? .35 : 1) * (1 + (g.mods.counter || 0) * .3) * rnd(.85, 1.15);
       if (BT.jutsu[1 - si] === 'smoke') dmg *= .4; if (BT.siege && si === 1 && siegeHold()) dmg *= 1.3;
       const T = tg.slice().sort((a, b) => b.troops - a.troops)[0], ward = g.type === 'gun' ? T.mods.bulletres : T.mods.arrowres;
-      const kills = Math.min(T.troops * .22, battleDamage(dmg,battleResistance(T),1-Math.min(.6,(ward||0)*.1),fightingStrength(g)*.28));
+      const kills = Math.min(T.troops * .22, battleDamage(dmg,battleResistance(T),(1-Math.min(.6,(ward||0)*.1))*(g.solo?personalWeaponFactor(g.solo,T,g.type):1),fightingStrength(g)*.28));
       if (kills > 0) out.push({ from: g, to: T, kills, depth: 0, icpt: true, pk: g.type, open: !screen }); }); });
   return out;
 }
-function readyHeroes(g) { return (g.heroes || []).filter(x => !x.out && !x.hero.ko); }
+function readyHeroes(g){return independentHeroes(g).filter(x=>x.alive&&!x.out&&!x.hero.ko);}
 function duelCands(p, hits) { return hits.filter(h => !h.icpt && h.depth === 0 && sideOf(h.from) === 0 && h.to.type === p && hits.some(o => o.from === h.to && o.to === h.from && o.depth === 0) && readyHeroes(h.from).length && readyHeroes(h.to).length); }
 function boutOdds(a, b) { const pa = Math.pow(duelPow(a), 1.8), pb = Math.pow(duelPow(b), 1.8); return pa / (pa + pb); }
 function duelOdds(a, b) { const p = boutOdds(a, b), q = 1 - p; return p * p * p * (1 + 3 * q + 6 * q * q); } // win 3 exchanges before losing 3
@@ -10180,7 +10650,7 @@ function finishPhase(p, hits, spec) {
 // Offense, armour and HP all count: a hard hitter with thin HP can still fall to a sturdier foe.
 const DUEL_RMAX = 14, DUEL_RT = .9;
 function duelStats(c) { const s = c.s || {};
-  const off = (s.atk || 0) + (s.str || 0) * .5 + (s.duel || 0) + (c.lord ? 3 : 0) + (c.retDuel != null ? Math.min(8, c.retDuel) : Math.min(6, c.guard || 0)) + (c.post === 'van' ? 2 : 0) + (c.bondLv || 0) * 1.5 + skv(c, 'vanguard') * 1.5 + skv(c, 'duelist') * 3 + (c.vref && G.boons ? G.boons.duel || 0 : 0);
+  const off = (['gun','bow'].includes(weaponKind(commanderWeapon(c)))?(s.mrk||0)+(s.atk||0)*.3:(s.atk||0)+(s.str||0)*.5) + (s.duel || 0) + (c.lord ? 3 : 0) + (c.retDuel != null ? Math.min(8, c.retDuel) : Math.min(6, c.guard || 0)) + (c.post === 'van' ? 2 : 0) + (c.bondLv || 0) * 1.5 + skv(c, 'vanguard') * 1.5 + skv(c, 'duelist') * 3 + (c.vref && G.boons ? G.boons.duel || 0 : 0);
   const max = Math.max(12, Math.round(c.hpMax ?? s.hp ?? 0)), hp = c.hp != null ? Math.max(1, Math.round(c.hp)) : max; // wounds from the field come into the duel, and go back out of it
   return { off: Math.max(4, off), def: (s.def || 0) + (s.duel || 0) * .3, hp: Math.min(hp, max), max }; }
 // all you can read of a foe is what they wear
@@ -10237,50 +10707,8 @@ function preDuel() {
 /* Weapon-led duels V1. The simulator owns damage. Choreography only consumes
    its strike ledger; the finisher clock never stops BT.t or replays damage. */
 const DUEL_CINE_TIME=1.18,DUEL_IMPACT=[[],[.66],[.29,.67],[.22,.44,.69]];
-function duelWeapon(hr){
-  const type=hr._g?.type||BATTLE_RECIPES.get(hr.sprs)?.type;
-  const id=hr.hero?.look?.gear?.w||hr.look?.gear?.w||hr.artKit?.w||BATTLE_RECIPES.get(hr.sprs)?.wid||(type==='gun'?'tanegashima':type==='arc'?'yumi':'yari'),kind=weaponKind(id);
-  return {id,kind,style:id==='nodachi'?'nodachi':kind==='spear'?'yari':kind==='glaive'?'naginata':kind==='bow'?'bow':kind==='gun'?'gun':'katana',
-    reach:hr.sprs?.horse?27:kind==='spear'?25:kind==='glaive'?23:id==='nodachi'?22:kind==='bow'||kind==='gun'?32:17};
-}
-function simDuel(pairs){
-  const F=[];
-  pairs.forEach((p,k)=>[p.a,p.b].forEach((hr,si)=>{const d=duelStats(hr.hero);F.push({hr,g:hr._g,si,k,off:d.off,def:d.def,hp:d.hp,max:d.max,cur:d.hp,startHp:d.hp,by:null,weapon:duelWeapon(hr)});}));
-  pairs.forEach((p,k)=>{F[k*2].foe=F[k*2+1];F[k*2+1].foe=F[k*2];});
-  const up=si=>F.filter(f=>f.si===si&&f.hp>0&&!f.yield),weakest=si=>up(si).sort((a,b)=>a.hp/a.max-b.hp/b.max)[0];
-  const log=[];let r=0,chain=0;
-  for(;r<DUEL_RMAX&&up(0).length&&up(1).length;r++){
-    const grim=1+Math.max(0,r-7)*.4;
-    const order=F.filter(f=>f.hp>0).map(f=>({f,slot:(f.si?.42:0)+(f.foe.hp<=0?.2:0)+f.k*.05})).sort((a,b)=>a.slot-b.slot);
-    for(const o of order){
-      const f=o.f;if(f.hp<=0)continue;const t=f.foe.hp>0?f.foe:weakest(1-f.si);if(!t)break;
-      const help=t!==f.foe,skill=skv(f.hr.hero,'duelist'),counter=f.open===t,
-        style=f.weapon.style,reach=clamp((f.weapon.reach-t.weapon.reach)*.003,-.045,.045);
-      const chainId=chain++,opening=counter||help;
-      for(let j=0;j<3&&t.hp>0;j++){
-        // Follow-ups are fresh rolls, weaker than a committed first strike.
-        const pHit=clamp(.68+(f.off-t.def)*.006+(help?.08:0)+reach+(counter?.07:0)-j*.075,.4,.94),
-          hit=Math.random()<pHit,crit=hit&&Math.random()<clamp(.12+skill*.02,0,.4);
-        const hpBefore=t.hp;let dmg=0;
-        if(hit){dmg=Math.max(1,Math.round(Math.max(1,f.off*rnd(.6,1)-t.def*.3)*(crit?1.6:1)*grim*(j===0?1:j===1?.67:.52)));t.hp=Math.max(0,t.hp-dmg);if(!t.hp)t.by=f;}
-        const defense=hit?null:(Math.random()<clamp(.34+(t.hr.hero.s?.str||0)*.005-(style==='yari'?.12:0),.2,.6)?'dodge':'parry');
-        const feint=j===0&&skill>0&&((chainId+r)%4===0);
-        log.push({r,slot:o.slot,f,t,help,hit,crit,dmg,hpBefore,hp:t.hp,ko:!t.hp,chain:chainId,index:j,counter,defense,feint});
-        if(!hit){t.open=f;break;}f.open=null;
-        if(!t.hp||style==='gun'||style==='bow')break;
-        const follow=clamp(.18+skill*.07+(opening?.14:0)+(style==='katana'?.1:style==='naginata'?.08:style==='nodachi'?-.1:0)-j*.18,.05,.72);
-        if(Math.random()>=follow)break;
-      }
-    }
-  }
-  // A time-limit yield is not an invented fatal hit. Endurance and the usual
-  // defeat consequences remain, but it cannot produce a KO execution.
-  const yields=[];
-  if(up(0).length&&up(1).length){const frac=si=>up(si).reduce((n,f)=>n+f.hp/f.max,0)/F.filter(f=>f.si===si).length,
-    lose=frac(0)<frac(1)?0:1,w=up(1-lose).sort((a,b)=>b.hp-a.hp)[0];
-    up(lose).forEach(f=>{f.yield=true;f.by=w;yields.push(f);});}
-  return {F,log,yields,rounds:r,win:up(0).length?0:1,res:[],committed:0};
-}
+
+
 function startDuel(spec){
   BT.phaseName='duel';BT.pt0=BT.t;BT.state='run';
   if(spec.refused){spec.ga.shock=BT.round;const c=gCenter(spec.ga);BT.labels.push({x:c.x,y:c.y-34,text:'−10%',t:.1,side:0});
@@ -10294,9 +10722,10 @@ function startDuel(spec){
   let cursor=arr+.45;const chains=[];for(const e of D.log){let a=chains.at(-1);if(!a||a[0].chain!==e.chain)chains.push(a=[]);a.push(e);}
   const helpers=new Map();
   for(const a of chains){const first=a[0],last=a.at(-1),f=first.f,t=first.t,dir=sideDir(f.si),weapon=f.weapon;
+    if(first.reload){ev(cursor,'tdReload',{e:first,D,n,until:cursor+.34});cursor+=.3;continue;}
     if(first.help&&f.helpT!==t){f.helpT=t;const k=(helpers.get(t)||0)+1;helpers.set(t,k);
       f.spot={x:t.spot.x-dir*30,y:t.spot.y+(k%2?-10:10)};queueMove(f.hr,cursor,f.spot.x,f.spot.y,110,0,true);cursor+=.3;}
-    const wind=weapon.style==='nodachi'?.31:first.counter?.17:.23,gap=weapon.style==='nodachi'?.25:.2;
+    const heavy=['nodachi','zanbato'].includes(weapon.style),wind=heavy?.33:weapon.style==='claw'?.15:first.counter?.17:.23,gap=heavy?.27:weapon.style==='claw'||weapon.burst?.14:.2;
     const end=last.ko?cursor+DUEL_CINE_TIME*BATTLE_PACE+.12:cursor+wind+(a.length-1)*gap+.2;
     if(last.ko){ev(cursor,'tdFinish',{a,D,n});const beats=DUEL_IMPACT[a.length];
       a.forEach((e,i)=>{e.playAt=cursor+beats[i]*BATTLE_PACE;ev(e.playAt,'tdHit',{e,D,n});});}
@@ -10318,6 +10747,8 @@ function startDuel(spec){
 }
 function duelFinisher(a){
   const e=a.at(-1),w=e.f.weapon.style,v=(e.chain+e.r+e.dmg)%2;
+  if(w==='claw')return a.length===3?'tripleSlash':a.length===2?'zSlash':'passing';
+  if(w==='zanbato')return 'guardBreak';
   if(w==='bow'||w==='gun')return 'release';
   if(a.length===3)return w==='yari'?'tripleThrust':'tripleSlash';
   if(a.length===2)return w==='yari'?'doubleThrust':w==='naginata'?'reversal':w==='nodachi'?'guardBreak':'zSlash';
@@ -10350,12 +10781,12 @@ function duelEvent(e){
   }
   if(e.k==='tdHit'){
     const o=e.e;if(o.applied)return;o.applied=true;D.committed++;
-    const W=o.f.hr,L=o.t.hr,shot=BT.duelShot,inside=shot&&shot.a.includes(o);
+    const W=o.f.hr,L=o.t.hr,shot=BT.duelShot,inside=shot&&shot.a.includes(o);tacticalDuelShot(o);
     if(!o.hit){Sound.play('clash',{pitch:1.22,vol:.5});BT.pops.push({x:L.x,y:L.y-30,v:0,txt:o.defense==='dodge'?'Dodge':'Parry',t:0,side:o.t.si,duel:1});
       if(o.defense==='parry')duelSpark(L.x-sideDir(o.f.si)*6,L.y-12,4);return;}
     // The ledger is the single source of HP damage. Neither poses nor FX mutate
     // HP; repeated events and the finishing impact are explicitly idempotent.
-    o.t.cur=o.hp;if(L.hero.hp!=null)L.hero.hp=o.hp;
+    o.t.cur=o.hp;if(L.hero.hp!=null)L.hero.hp=o.hp;if(o.t.g.heroOnly)refreshIndependent(o.t.g);
     if(!inside){L.hurtAt=BT.t;L.hurtDur=.18;if(o.counter&&o.index===0)BT.pops.push({x:W.x,y:W.y-34,v:0,txt:'Counter',t:0,side:o.f.si,duel:1});}
     Sound.play('clash',{pitch:o.f.weapon.style==='nodachi'?.7:1,vol:o.ko?.9:.65});
     BT.pops.push({x:L.x,y:L.y-30,v:o.dmg,txt:o.crit?`${o.dmg}!`:null,t:0,side:o.t.si,hero:1,duel:1,big:o.crit});
@@ -10374,7 +10805,7 @@ function duelEvent(e){
     // morale and commanders' strategy are committed once at the actual KO.
     for(const R of D.res){const L=R.L,fd=sideDir(sideOf(R.gL));
       if(R.hb&&!R.hbDone){R.hbDone=true;R.gL.troops=Math.max(0,R.gL.troops-R.hb.kills);syncSprites(R.gL,'knock');addNum(R.gL,R.hb.kills);}
-      delete L.duelPose;delete L.duelDown;L.kd=0;
+      delete L.duelPose;delete L.duelDown;L.kd=0;independentDuelExit(R.gL);
       if(R.save==='ward'){L.out=false;L.glow=.7;const f=D.F.find(f=>f.hr===L);f.cur=L.hero.hp;queueMove(L,BT.t+.2,L.sx,L.sy,50);}
       else if(!L.out){L.out=true;L.q=[];L.state='idle';queueMove(L,BT.t+.18,L.x-fd*170,L.y,44,0,true);L.fadeAt=BT.t+3.6;
         if(R.save==='guard')(L.guards||[]).filter(q=>q.alive).slice(0,R.lost).forEach(q=>killSprite(R.gL,q,'inf',-fd));}
@@ -10408,7 +10839,7 @@ function releaseDuelCinema(){if(!BT)return;releaseDuelBackdrop(BT.duelShot);BT.d
    weapon helpers. Cached only for the (at most six) participating commanders. */
 function duelPoseFrame(s,g,pose,face){
   const r=reactionRecipe(s,g);if(!r||r.type==='cav'||r.type==='arc'||r.type==='gun'||['bow','gun'].includes(weaponKind(r.wid))){
-    const set=face===sideDir(s.si??sideOf(g))?s.sprs:flipSet(s);return (pose==='guard'?set.brace:pose==='high'?set.wind:pose==='recover'?set.recover:pose==='hurt'?set.hurt:pose==='cutUp'?set.follow:set.atk)||set.idle[0];}
+    const set=face===sideDir(s.si??sideOf(g))?s.sprs:flipSet(s);return (pose==='reload'?set.reload:pose==='guard'?set.brace:pose==='high'?set.wind:pose==='recover'?set.recover:pose==='hurt'?set.hurt:pose==='cutUp'?set.follow:set.atk)||set.idle[0];}
   r.duelFrames??=new Map();const key=pose+'|'+face;if(r.duelFrames.has(key))return r.duelFrames.get(key);
   const L=reactionLook(r,false),p=new ArtPB(FOOT_W,FOOT_H),cx=FOOT_W/2-2,base=FOOT_H-1,
     sk=L.skin||SKIN[1],cloth=L.cloth||'#3b4a7a',low=pose==='low'?2:pose==='thrust'||pose==='sweep'?1:0,
@@ -10420,7 +10851,7 @@ function duelPoseFrame(s,g,pose,face){
     thrust:[[tx+14,ty+3],[tx+2,ty+4]],low:[[tx+11,ty+4],[tx+5,ty+5]],recover:[[tx+9,ty+4],[tx+5,ty+5]],hurt:[[tx+7,ty+3],[tx-2,ty+4]]},[near,far]=hands[pose]||hands.guard;
   if(pole)gripSpear(weapon,far,near,SHAFT_FOOT,weaponKind(r.wid)==='glaive',r.wid);
   else{const angle={guard:-1.13,high:-1.95,cutUp:-.85,sweep:.45,thrust:-.03,low:.24,recover:-.3,hurt:-.2}[pose]??-.6;
-    sword(weapon,back,near[0]+1,near[1],angle,12+(r.wid==='nodachi'?5:0),r.wid);scabbard(back,tx+1,ty+4,r.wid);}
+    sword(weapon,back,near[0]+1,near[1],angle,12+(r.wid==='nodachi'?5:0),r.wid);scabbard(back,tx+1,ty+4,r.wid);if(r.wid==='ninja_claw')tacticalClaw(back,back,far[0],far[1],angle-.3);}
   if(L.horo)drawHoro(p,tx-1,ty+1,L.horo);p.draw(back,0,0);
   arm(p,tx,ty+1,far[0],far[1],shade(cloth,-.25),shade(sk,-.1),{tetsu:tetsuEquipment(L),happi:happiEquipment(L)});
   drawLegs(p,cx+lean,base,low?'lunge':pose==='high'?'walkB':'walkA',lp,low);
@@ -10570,8 +11001,9 @@ function heroPhase(p, hits, spec) {
     W.hero.duelWins = (W.hero.duelWins || 0) + 1; BT.duels = (BT.duels || 0) + 1;
     ex.duel = { a, b, W, L, gW, gL, odds: win ? odds : 1 - odds, pOdds: odds, pa, pb, hb, lord: !!C.lord, save, lost };
   }
-  const byFrom = new Map(); hits.forEach(h => { if (h.duelBonus || h.icpt || h.counter) return; if (!byFrom.has(h.from)) byFrom.set(h.from, []); byFrom.get(h.from).push(h); });
+  const byFrom = new Map(); hits.forEach(h => { if (h.duelBonus || h.icpt || h.counter || h.grenade) return; if (!byFrom.has(h.from)) byFrom.set(h.from, []); byFrom.get(h.from).push(h); });
   byFrom.forEach((hs, g) => {
+    if(g.heroOnly)return;
     const base = hs.reduce((n, h) => n + h.kills, 0); if (base < .5) return;
     const lv = p === 'inf' ? g.mods.chain : (p === 'gun' || p === 'arc') ? g.mods.rapid : 0;
     if (lv > 0 && Math.random() < Math.min(.85, .35 + .1 * lv)) { const got = add(hs, base * (.25 + .08 * lv)); if (got >= .5) ex.procs.push({ g, si: sideOf(g), name: p === 'inf' ? 'Chain Strike' : 'Rapid Shot', n: got, lv }); }
@@ -10580,7 +11012,7 @@ function heroPhase(p, hits, spec) {
     const mood=battleAttack(g);
     const coh = cohesion(g), L = persList(g); let cap = base * PERS_CAP + 2 * L.length; // a unit that is being beaten can't hide behind its officers for long
     L.forEach(({ c, p: pp, w }) => { const spr = (g.heroes || []).find(x => x.hero === c); if (spr && spr.out) return; if (cap <= .05) return;
-      const want = Math.min(cap, PERS_K * pp * w * coh * rnd(.75, 1.25) * sg * mood / battleResistance(T)), got = add(hs, want); cap -= got; if (got > .05) { c.pk = (c.pk || 0) + got; if (got > .2) ex.bonus.set(spr || c, (ex.bonus.get(spr || c) || 0) + got); } });
+      const want = Math.min(cap, PERS_K * pp * w * coh * rnd(.75, 1.25) * sg * mood * personalWeaponFactor(c,T,p) / battleResistance(T)), got = add(hs, want); cap -= got; if (got > .05) { c.pk = (c.pk || 0) + got; if (got > .2) ex.bonus.set(spr || c, (ex.bonus.get(spr || c) || 0) + got); } });
   });
   return ex;
 }
@@ -10589,9 +11021,10 @@ function buildScript(p, hits, ex = { procs: [], bonus: new Map() }) {
   if (melee) { brandish([0, 1].flatMap(si => alive(BT.A[si], p)), lead, true, .3); }
   // how many sprites each hit removes
   const byTo = new Map(); hits.forEach(h => { if (!byTo.has(h.to)) byTo.set(h.to, []); byTo.get(h.to).push(h); });
-  byTo.forEach((hs, T) => { const tot = hs.reduce((n, h) => n + h.kills, 0); let d = T.spr.filter(s => s.alive).length - visibleCount({ troops: Math.max(0, T.troops - tot) });
+  byTo.forEach((hs, T) => { const tot = hs.reduce((n, h) => n + h.kills, 0); let d = T.spr.filter(s => s.alive).length - visibleCount({heroOnly:T.heroOnly,troops:Math.max(0,T.troops-tot)});
     hs.forEach((h, i) => { h.deaths = i === hs.length - 1 ? d : Math.min(d, Math.round(d * h.kills / tot)); d -= h.deaths; }); });
   const ev = (t, k, o) => S.ev.push(Object.assign({ t, k }, o));
+  hits.filter(h=>h.grenade).forEach(h=>grenadeScript(h,S,planned,ev,T0));
   if (melee) {
     hits.filter(h => h.icpt).forEach(h => { const face = sideDir(sideOf(h.from)), sh = h.from.spr.filter(s => s.alive).sort((a, b) => (b.x - a.x) * face).slice(0, 10); if (!sh.length) return;
       const fl = h.pk === 'gun' ? .12 : .7, vic = shuffle(h.to.spr.filter(s => s.alive && !planned.has(s))).slice(0, h.deaths || 0), t0 = T0 + .35;
@@ -10605,7 +11038,7 @@ function buildScript(p, hits, ex = { procs: [], bonus: new Map() }) {
     const free = new Map(), plan = p === 'inf' && !siegeHold() ? infAdvance(hits, T0, ex.duel) : null;
     let firstContact = Infinity;
     for (let dep = 0; dep <= maxD; dep++) {
-      hits.filter(h => h.depth === dep && !h.duelBonus && !h.icpt && !h.counter).forEach(h => {
+      hits.filter(h => h.depth === dep && !h.duelBonus && !h.icpt && !h.counter && !h.grenade).forEach(h => {
         const g = h.from, T = h.to, si = sideOf(g), face = sideDir(si);
         let st = free.get(g); if (!st) { st = { at: T0 + rnd(.05, .2) }; free.set(g, st); }
         const atk = g.spr.filter(s => s.alive && (!planned.has(s) || planned.get(s) > st.at + .5));
@@ -10735,7 +11168,7 @@ function buildScript(p, hits, ex = { procs: [], bonus: new Map() }) {
       const tg = h.to.spr.filter(s => s.alive && !planned.has(s)), w = win[sideOf(h.to)];
       // the men who fall are the ones in view
       const victims = shuffle(tg).sort((a, b) => (w && (a.x < w.lo || a.x > w.hi) ? 1 : 0) - (w && (b.x < w.lo || b.x > w.hi) ? 1 : 0)).slice(0, h.deaths || 0);
-      const hs = (h.from.heroes || []).filter(x => !x.out && !x.hero.ko && x.shotId !== BT.phaseId);
+      const hs = (h.from.heroes || []).filter(x => !x.out && !x.hero.ko && burstReady(x.hero) && x.shotId !== BT.phaseId);
       victims.forEach((v, k) => { const hero = k < hs.length && k < victims.length * .6 ? hs[k] : null; if (hero) hero.shotId = BT.phaseId;
         const shooter = hero || pick(sh), tf = Tb + (hero ? fireAt - .1 + k * .09 : rankT(shooter)), td = tf + fl * (hero && p !== 'gun' ? .8 : 1); planned.set(v, td);
         ev(tf, 'shot', { g: h.from, shooter, h, s: v, lethal: true, hero, flight: fl * (hero && p !== 'gun' ? .8 : 1) }); ev(td, 'die', { s: v, h, hero, cred: h.kills / Math.max(1, victims.length) }); });
@@ -10756,6 +11189,7 @@ function buildScript(p, hits, ex = { procs: [], bonus: new Map() }) {
     else hr.kills = (hr.kills || 0) + k; });
   S.dur = Math.max(S.dur, ...S.ev.map(e => e.t - BT.t + .5).filter(isFinite));
   S.ev.forEach(e => { if (e.k !== 'hit') return; const first = Math.min(...S.ev.filter(o => o.k === 'die' && o.h === e.h).map(o => o.t)); if (isFinite(first) && first < e.t) e.t = first - .01; });
+  tacticalShotScript(S,p);S.dur=Math.max(S.dur,...S.ev.map(e=>e.t-BT.t+.5));
   S.ev.sort((a, b) => a.t - b.t);
   return S;
 }
@@ -10789,7 +11223,7 @@ function reachOf(g) { const ws = g.spr.filter(s => s.alive).map(s => s.wk || (g.
   const pole = ws.filter(w => WEAPON_KIND[w] === 'spear' || WEAPON_KIND[w] === 'glaive').length; return pole * 2 >= ws.length ? 24 : 14; }
 function lineEdge(gs, si) { const xs = gs.flatMap(g => g.spr.filter(s => s.alive).map(s => s.x)); return xs.length ? (si === 0 ? Math.max(...xs) : Math.min(...xs)) : null; }
 function infAdvance(hits, T0, duel) {
-  const plan = new Map(), live = h => !h.icpt && !h.duelBonus && !h.counter && h.from.type === 'inf';
+  const plan = new Map(), live = h => !h.icpt && !h.duelBonus && !h.counter && !h.grenade && h.from.type === 'inf';
   const infs = si => alive(BT.A[si], 'inf'), mv = [0, 1].map(si => hits.some(h => live(h) && sideOf(h.from) === si));
   const F = [lineEdge(infs(0), 0), lineEdge(infs(1), 1)], gap = Math.max(22, ...[0, 1].flatMap(si => infs(si).map(reachOf).map(r => r + 6))), tf = [null, null];
   if (F[0] != null && F[1] != null) {
@@ -10855,6 +11289,7 @@ function brandish(groups, dur, cry = true, brace = 0) {
 }
 function runScript() { const S = BT.script; if (!S) return; while (S.i < S.ev.length && S.ev[S.i].t <= BT.t) doEvent(S.ev[S.i++]); }
 function doEvent(e) {
+  if(tacticalEvent(e))return;
   const p = BT.phaseName;
   if (e.k === 'volley') { Sound.play('volley'); BT.flash = .08; BT.flashCol = '255,240,200'; BT.shake = Math.max(BT.shake, .25); BT.stop = .05; return; }
   if (e.k === 'bows') { Sound.play('bows'); return; }
@@ -10931,7 +11366,7 @@ function doEvent(e) {
     const h=e.h;if(h.applied)return;h.applied=true;h.kills=Math.min(Math.max(0,h.to.troops),h.kills);if(!(h.kills>0))return; if (BT.A[0].mode === 'army') { if (h.retShare) retCredit(h.from, h.kills * h.retShare);
       retHit(h.to, h.kills).forEach(([c, f]) => { const hr = (h.to.heroes || []).find(x => x.hero === c), q = hr && (hr.guards || []).find(x => x.retRef === f); if (q && q.alive) killSprite(h.to, q, 'knock', sideDir(sideOf(h.from))); const pc = q || hr || gCenter(h.to); BT.labels.push({ x: pc.x, y: pc.y - 24, text: '郎党↓', t: .3, side: sideOf(h.to) }); }); }
     cmdPressure(h).forEach(([c, d]) => cmdHurt(h.to, c, d, h.from));
-    h.to.troops = Math.max(0, h.to.troops - h.kills); if (h.from.solo) h.from.solo.kills = (h.from.solo.kills || 0) + h.kills;
+    h.to.troops=Math.max(0,h.to.troops-h.kills);independentDamage(h.to,h.from);if(h.to.solo&&!h.to.heroOnly&&BT.A[sideOf(h.to)].mode==='skirmish'&&h.to.solo.vref)h.to.solo.hp=Math.min(h.to.solo.hpMax||h.to.solo.s.hp,h.to.troops*3); if(h.from.heroOnly)h.from.solo.pk=(h.from.solo.pk||0)+h.kills;if (h.from.solo) h.from.solo.kills = (h.from.solo.kills || 0) + h.kills;
     if (h.kills >= 20 || BT.A[0].mode === 'skirmish' || h.to.troops <= 0) addNum(h.to, h.kills, h.depth);
     cohesionDamage(h.to,h.kills,h.from);unitBreak(h.to);
     BT.hudDirty = true; return;
@@ -11294,7 +11729,7 @@ function drawSoldier(x,s,g,si,sc){
       const show = BT.A[si].mode === 'skirmish' || busy || (si === 0 ? (BT.state !== 'run' || act) : (H.lord || (act && s.state === 'run')));
       _tags.push({ x: s.x + lunge, y: py + (H.beast ? 4 : g.type === 'cav' ? 10 : 11) * sc, name: H.name, si, show, pri: (busy ? 6 : 0) + (act ? 2 : 0) + (H.lord ? 3 : 0) + (si === 0 ? 1 : 0), aux: H.aux });
     } }
-  if (BT.A[si].mode === 'skirmish' && !s.guardOf) { const hpw = 14, f = clamp(g.troops / g.max, 0, 1), by = g.solo && g.solo.beast ? Math.round(s.y - (g.hpTop || (g.hpTop = ih)) - 4) : py + (g.type === 'cav' ? 15 : 14) * sc; x.fillStyle = '#1c1420'; x.fillRect(Math.round(s.x - hpw / 2) - 1, by, hpw + 2, 4); x.fillStyle = f > .5 ? '#7cd85a' : f > .25 ? '#f2d27a' : '#e05a3a'; x.fillRect(Math.round(s.x - hpw / 2), by + 1, Math.round(hpw * f), 2); }
+  if ((BT.A[si].mode==='skirmish'||g.heroOnly)&&!s.guardOf) { const hpw = 14, f = clamp(g.troops / g.max, 0, 1), by = g.solo && g.solo.beast ? Math.round(s.y - (g.hpTop || (g.hpTop = ih)) - 4) : py + (g.type === 'cav' ? 15 : 14) * sc; x.fillStyle = '#1c1420'; x.fillRect(Math.round(s.x - hpw / 2) - 1, by, hpw + 2, 4); x.fillStyle = f > .5 ? '#7cd85a' : f > .25 ? '#f2d27a' : '#e05a3a'; x.fillRect(Math.round(s.x - hpw / 2), by + 1, Math.round(hpw * f), 2); }
 }
 /* which frame a living soldier shows. Priorities: knocked down · brandish · running (a step out of idle, then the cycle)
    · fighting (the four-beat strike cycle) · aiming (settle → aim → fire → recoil, held) · a jab · a held pose · settling out of
@@ -11303,6 +11738,7 @@ const STRIKE_BEAT = [.1, .15, .15, .15], STRIKE_T = .55; // anticipation, blow, 
 function strikeFrame(set, u) { const S = set.strike || [set.wind || set.atk, set.atk, set.atk, set.idle[0]]; let a = 0; for (let i = 0; i < 4; i++) { a += STRIKE_BEAT[i]; if (u < a) return S[i]; } return S[3]; }
 function breath(set, s) { const n = set.idle.length, k = n >= 3 ? [0, 1, 2, 1] : [0, 1]; return set.idle[k[((BT.anim * 2.2 + s.ph) | 0) % k.length]]; }
 function pickFrame(s, set, g, t) {
+  if(s.reloadUntil>t)return set.reload||set.recover||set.idle[0];
   const cav = g.type === 'cav';
   if (s.kd) return set.hurt || set.idle[0];
   if (s.brandUntil > t && s.state !== 'run' && s.state !== 'fight' && set.spin) return cav || set.beast ? set.spin[((BT.anim * 13 + s.ph) | 0) % set.spin.length] : (set.cheer || set.spin[0]);
@@ -11371,6 +11807,7 @@ function warpProj(p) {
 function projX(p, u) { return p.xa == null ? lerp(p.x0, p.x1, u) : u < p.ua ? lerp(p.x0, p.xa, u / p.ua) : u < p.ub ? lerp(p.xa, p.xb, (u - p.ua) / (p.ub - p.ua)) : lerp(p.xb, p.x1, (u - p.ub) / (1 - p.ub)); }
 function drawProj(x, p, t) {
   const u = (t - p.t0) / p.dur; if (u < 0 || u > 1) return;
+  if(p.k==='pitch'){const xx=projX(p,u),yy=lerp(p.y0,p.y1,u)-Math.sin(u*Math.PI)*p.h;x.save();x.translate(Math.round(xx),Math.round(yy));x.rotate(u*5);x.fillStyle='#302723';x.fillRect(-2,-2,5,4);x.fillStyle='#967044';x.fillRect(-1,-2,2,1);x.fillStyle='#c6aa72';x.fillRect(-2,0,4,1);x.fillStyle='#efb352';x.fillRect(1,-4,1,2);x.restore();return;}
   if (p.k === 'shell' || p.k === 'rocket') { const at2 = uu => [lerp(p.x0, p.x1, uu), lerp(p.y0, p.y1, uu) - Math.sin(uu * Math.PI) * p.h];
     const [xx, yy] = at2(u);
     if (p.k === 'shell') { for (let k = 1; k < 6; k++) { const [tx, ty] = at2(Math.max(0, u - k * .025)); x.fillStyle = `rgba(90,80,80,${.35 - k * .05})`; x.fillRect(Math.round(tx) - 1, Math.round(ty) - 1, 3, 3); }
@@ -11675,7 +12112,7 @@ function rewardChips(R) {
 }
 function showProvCard(p) {
   const st = siteState(p), own = st.owner === 'kage', C = CLANS[p.clan], att = provAttackable(p), mode = siteMode(p);
-  const kind = p.type === 'clan' ? (p.capital || p.boss ? 'Siege · walls, gate & 4 rounds' : 'Castle battle · full army') : p.type === 'dojo' ? 'Sparring · full army, no losses' : p.type === 'home' ? 'Your village' : p.type === 'camp' ? (p.mode === 'army' ? 'Field battle · full army' : 'Field battle · small band') + (p.rebel ? ` · ⚑ quell in ${Math.max(1, p.expires - monthIdx())} mo or lose ${esc(p.near)}` : ` · leaves in ${Math.max(1, p.expires - monthIdx())} mo`) : 'Field battle · small band';
+  const kind = p.type === 'clan' ? (p.capital || p.boss ? 'Siege · walls & gate · no round limit' : 'Castle battle · full army') : p.type === 'dojo' ? 'Sparring · full army, no losses' : p.type === 'home' ? 'Your village' : p.type === 'camp' ? (p.mode === 'army' ? 'Field battle · full army' : 'Field battle · small band') + (p.rebel ? ` · ⚑ quell in ${Math.max(1, p.expires - monthIdx())} mo or lose ${esc(p.near)}` : ` · leaves in ${Math.max(1, p.expires - monthIdx())} mo`) : 'Field battle · small band';
   let body = `<div class="row"><img class="px" src="${ICONS['mon_' + (own ? 'kage' : p.clan)]}" alt="" style="width:36px"><div style="flex:1;min-width:0"><h3>${esc(p.name)}</h3><div class="muted">${own && p.type !== 'dojo' ? 'Held by the Kage clan' : esc(C.name)} · ${kind}</div></div><button class="x" id="pc-x" aria-label="Close" style="width:34px;height:34px;border:2px solid var(--line);background:var(--verm);color:#fff4dc">✕</button></div>`;
   if (p.type === 'home') body += `<div class="row"><span class="sp"></span><button class="btn gold" id="pc-home">Go to village</button></div>`;
   else if (own && p.type !== 'dojo') { const rb = (G.camps || []).find(c => c.rebel === p.id); body += `<p class="note">${icon('gold')} +${fmt(provTribute(p))}G / month${p.capital ? ' · seat' : ''}${rb ? ` · <b style="color:#a02a1a">⚑ Uprising! ${Math.max(1, rb.expires - monthIdx())} mo to quell it</b>` : ''}</p>`; }
@@ -11730,10 +12167,10 @@ function spawnRebellion(P) {
   const items=[];for(let i=rint(1,3);i>0&&table.length;i--)items.push(enemyWeightedPick(table));
   // spoils: their purse and arms, a handful of men won over (10–50: a top-up, not a second army), and captured people —
   // a fighter and/or a worker who join you for free
-  const R = { gold: Math.round(pw * rnd(.3, .5) / 10) * 10, items, troops: rint(10, 50), recruits: [] };
+  const R={gold:Math.round(pw*rnd(.3,.5)/10)*10,items,troops:rint(10,50),recruits:[]};ensureRebelWorker(R);
   { const reserved = new Set(PROVINCES.filter(p => G.prov[p.id].owner !== 'kage' && p.reward && p.reward.recruit).map(p => p.reward.recruit));
     const free = RECRUITS.filter(v => !vById(v.id) && !G.recruitQueue.includes(v.id) && !onHire(v.id) && !reserved.has(v.id) && !(G.boons && G.boons.pledge === v.id) && !G.camps.some(c => c.reward && (c.reward.recruit === v.id || (c.reward.recruits || []).includes(v.id))));
-    const fighters = free.filter(v => vData(v.id).role !== 'work'), workers = free.filter(v => vData(v.id).role === 'work');
+    const fighters=free.filter(v=>!R.recruits.includes(v.id)&&vData(v.id).role!=='work'),workers=free.filter(v=>!R.recruits.includes(v.id)&&vData(v.id).role==='work');
     if (fighters.length && Math.random() < .7) R.recruits.push(pick(fighters).id);
     if (workers.length && Math.random() < .7) R.recruits.push(pick(workers).id);
     if (!R.recruits.length && free.length) R.recruits.push(pick(free).id); }
@@ -11843,6 +12280,69 @@ function loop(now) {
   drawAtelier(performance.now());
   requestAnimationFrame(loop);
 }
+// Run after the existing art, arsenal, merchants and research registries exist.
+TACTICAL_GEAR.forEach(g=>{
+ if(g.research)RESEARCH.push({id:'r_'+g.id,item:g.id,...g.research});
+ if(g.pre)RES_PRE[g.id]=g.pre;
+ if(g.line){LINES[g.line].items.push(g.id);LINES[g.line].items.sort((a,b)=>ITEMS[a].tier-ITEMS[b].tier||ITEMS[a].cost-ITEMS[b].cost);}
+});
+Object.assign(WEAPON_KIND,{ninja_claw:'sword',ninjato:'sword',zanbato:'sword',repeater:'gun',rifle:'gun'});
+Object.assign(BLADE,{ninjato:'#bacacb',zanbato:'#b7c8cb'});
+Object.assign(SHEATH,{ninjato:'#252e36',zanbato:'#4e3330'});
+Object.assign(GUN_STYLE,{repeater:'repeater',rifle:'rifle'});
+Object.assign(ARMOR_PARTS,{
+ ninja_mail:{plate:'#374858',lace:'#728999',shoulder:false,skirt:false,rows:3,material:'ninjaMail'},
+ iga_mail:{plate:'#252f39',lace:'#b59b63',shoulder:false,skirt:false,rows:4,material:'ninjaMail'}
+});
+// Useful general armor can enter troop forging. Specialist arms stay personal.
+KIT.a.push('ninja_mail','iga_mail');ENEMY_ARMORY.a.push('ninja_mail','iga_mail');
+MERCHANTS.smith.stock.push('ninja_claw','ninjato','zanbato','happuri');
+MERCHANTS.sakai.stock.push('repeater','rifle','pitch_grenade','ninja_mail','iga_mail');
+MERCHANTS.nanban.stock.push('rifle');MERCHANTS.peddler.stock.push('rations','happuri','ninjato');
+MERCHANTS.horse.stock.push('wolf');
+ENEMY_UTILITY_LOOT.push('rations','pitch_grenade');
+PET_KINDS.push('wolf');
+HUNTS.push({k:'wolf',w:.55,n:2,type:'inf',name:'Mountain Wolf',where:'the misty cedar pass',s:[26,12,100,15],line:'Two grey wolves guard the misty cedar pass. Their leader watches every movement with a captain’s patience.'});
+LOOT_BEASTS.ookami=['stallion','wolf'];
+QUADS.wolf={...QUADS.hound,pal:{...BEAST_PAL.hound,c:'#87949b',l:'#bec9cb',d:'#45545f',w:'#e3e3d4',inner:'#695a58'},
+ bodyRx:7.8,bodyRy:3.3,chest:[5.5,.5,3.5],legL:7,legW:2,tail:'hang',neck:[5.5,1,4],
+ head:{...QUADS.hound.head,x:9.5,r:3.4,ml:4,mw:2.8},
+ extra:(t,f)=>{for(let i=0;i<4;i++)t.poly([[f.dx+1+i,f.by+1],[f.dx+3+i,f.by-2],[f.dx+4+i,f.by+2]],'#536470');},
+ face:(t,f)=>{t.set(f.hx+1,f.hy-1,'#e4ce79');t.set(f.m1[0]-1,f.m1[1]-2,'#e5e7db');t.set(f.m0[0]+1,f.m0[1]-2,'#e5e7db');}}
+
+NEW_EQUIPMENT_IDS.push(...TACTICAL_GEAR.map(g=>g.id));
+/* Three-shot rifle: one upper tube over two lower tubes. A shallow three-quarter
+   muzzle face exposes all three bores even in the game's side-on character rig.
+   P is the shared weapon-local projection, so aim, recoil, carry and dropped
+   equipment all use the same geometry. */
+function tacticalRifleCluster(p,P,n){
+ const tube=(start,end,v,near=false)=>{
+  P([[start,v-.7],[end,v-.7],[end+.3,v+.7],[start,v+.7]],'#26353e');
+  P([[start+.2,v-.55],[end,v-.55],[end+.15,v+.22],[start+.1,v+.22]],near?'#718994':'#536d7b');
+  P([[start+.25,v-.5],[end,v-.5],[end,v-.22],[start+.25,v-.22]],near?'#c6d5d1':'#a7bdbf');
+  P([[start,v+.33],[end+.2,v+.33],[end+.25,v+.65],[start,v+.65]],'#3b4d58');
+ };
+ // Far lower barrel, raised upper barrel, then the near lower barrel.
+ tube(7.8,n-.2,-1.35);tube(7.7,n+.95,-3.3);tube(7.3,n+2.6,-.55,true);
+ for(const u of [10,Math.max(12,n-4.3)]){
+  P([[u,-4.05],[u+.7,-4.05],[u+1.4,.3],[u+.6,.5]],'#354750');
+  P([[u+.1,-3.95],[u+.45,-3.95],[u+1.05,.1],[u+.8,.1]],'#b0b6a1');
+ }
+ // An iron triangular muzzle shoe, lit at the top and along its near edge.
+ P([[n+.9,-4.55],[n+2,-3.65],[n+3.9,-.15],[n+3.25,.65],[n-1.35,.65],[n-1.9,-.25],[n-.1,-3.65]],'#1d2d36');
+ P([[n+.9,-4.1],[n+1.7,-3.45],[n+3.35,-.2],[n+2.95,.25],[n-1.05,.25],[n-1.35,-.25],[n+.2,-3.45]],'#82999f');
+ P([[n+.9,-4.1],[n+1.6,-3.45],[n+3.35,-.2],[n+2.95,.25],[n+2.6,-.15],[n+1.15,-3.2]],'#c0ceca');
+ const ring=(u,v,r)=>{
+  const round=(radius,c)=>{const pts=[];for(let i=0;i<12;i++){const a=i*Math.PI/6;pts.push([u+Math.cos(a)*radius,v+Math.sin(a)*radius]);}P(pts,c);};
+  round(r+.21,'#d3dcd5');round(r,'#405560');round(r*.62,'#101b23');
+  P([[u-r*.52,v-r*.65],[u+r*.24,v-r*.65],[u+r*.47,v-r*.36],[u-r*.47,v-r*.36]],'#718a95');
+ };
+ ring(n+.95,-3.05,.78);ring(n-.15,-.85,.78);ring(n+2.2,-.85,.78);
+ // Keep the brass receiver and dark wood consistent with Sakai equipment.
+ P([[4,-1],[7,-1],[7,1.6],[4,1.6]],'#997b46');
+ P([[4.4,-.7],[5.7,-.7],[5.7,.9],[4.4,.9]],'#c6b078');
+}
+
 function boot() {
   buildTiles(); buildIcons(); buildItemIcons(); buildSkillIcons(); buildWareIcons(); loadIconImages();
   VIEW.cv = $('#view'); VIEW.ctx = VIEW.cv.getContext('2d');

@@ -42,6 +42,15 @@ The game is served by GitHub Pages straight from the `main` branch root (`/`), w
 |---|---|
 | `index.html` | The complete game: markup, styles, script, sprites and audio (audio is embedded as data URIs) |
 | `README.md` | This file |
+| `docs/` | Equipment notes and previews rendered from the procedural game assets |
+| `tests/` | Browser checks for equipment effects, research, saves, portraits and mobile layout |
+| `reports/` | Recorded validation results |
+
+## Current version: v19.1
+
+Includes the compact battle HUD, independent hero formations, physically delivered shop stock, guaranteed worker-calling rebellion captives, and the specialist arsenal. The three-shot rifle uses a one-over-two triangular barrel cluster. See [equipment notes](docs/equipment-v19.1.txt) and the [procedural preview](docs/arsenal-v19.1.png).
+
+Run the browser checks with `npm install`, `npx playwright install chromium`, then `npm test`. Set `CHROMIUM_PATH` to use an existing Chromium executable. The game itself has no installation or build requirement.
 
 ## Technical notes
 

@@ -1,0 +1,17 @@
+{
+  "warehouseSalesBlocked": true,
+  "materialPickupAndDelivery": true,
+  "warePickupAndDelivery": true,
+  "capacity": {
+    "materials": 10,
+    "wares": 10,
+    "rice": 5,
+    "veg": 5
+  },
+  "concurrentHaulers": true,
+  "physicalOverflowReturn": true,
+  "saveLoad": true,
+  "demolitionConservesStock": true,
+  "overCapMigrationConservesStock": true,
+  "errors": []
+}
