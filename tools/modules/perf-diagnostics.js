@@ -111,7 +111,7 @@ function diagProbe(dt){
  var d=SH_PERF.diag;if(!d)return;
  for(var a of RT.agents){if(a.kind!=='villager')continue;var v=vById(a.vid);if(!v||v.role!=='work')continue;
   var porter=typeof isPorter==='function'&&isPorter(v),category=a.state==='work'?0:a.state==='walk'?(a.carry?1:2):a.resting?3:4;
-  (porter?d.porter:d.worker)[category]+=dt;var b=v.job>=0?bByUid(v.job):null;
+  (porter?d.porter:d.worker)[category]+=dt;if(!porter&&category===2){var k=a.mission||'other';d.emptyByMission[k]=(d.emptyByMission[k]||0)+dt;}var b=v.job>=0?bByUid(v.job):null;
   if(!porter&&b&&(BUILDINGS[b.id].makes||BUILDINGS[b.id].craft))d.producer[category]+=dt;
  }
 }
@@ -119,7 +119,7 @@ function diagSale(a,b,result,before){var d=SH_PERF.diag;if(!d)return;d.visits++;
 function diagMapCopy(map){var out={};for(var k in map||{})out[k]=map[k];return out;}
 function diagMapDelta(before,after,create){if(!SH_PERF.diag||SH_PERF.ledgerHooked)return;for(var k in create?after:before){var n=create?(after[k]||0)-(before[k]||0):(before[k]||0)-(after[k]||0);if(n>0)diagGoods(k,n,create);}}
 function simStageStats(){
- return {created:{},destroyed:{},overflow:0,sales:0,visits:0,stockouts:0,turned:0,worker:[0,0,0,0,0],porter:[0,0,0,0,0],producer:[0,0,0,0,0],opening:{},ending:{},negatives:0,serialMs:0};
+ return {created:{},destroyed:{},overflow:0,sales:0,visits:0,stockouts:0,turned:0,emptyByMission:{},worker:[0,0,0,0,0],porter:[0,0,0,0,0],producer:[0,0,0,0,0],opening:{},ending:{},negatives:0,serialMs:0};
 }
 var SIM_CASES=[
  {id:'starter',tier:0,count:6,porters:0},{id:'small',tier:1,count:8,porters:0},
@@ -174,8 +174,9 @@ function simRestoreObject(o,b){for(var k in o)if(!(k in b))delete o[k];for(var k
 function simPrepare(){
  var S={G:G,RT:simSnapshotObject(RT),VIEW:simSnapshotObject(VIEW),UI:simSnapshotObject(UI),road:simSnapshotObject(ROAD_TRAFFIC),land:JSON.parse(JSON.stringify(LAND)),
  random:Math.random,save:saveGame,load:loadGame,modal:modal,announce:announce,toast:toast,noIntro:window.__noIntro,noQuick:window.__noQuick,
- sound:{},placeholder:BUILDINGS.porter||null,viewWidth:VIEW.cv.width,viewHeight:VIEW.cv.height,timer:setTimeout.bind(window),clear:clearTimeout.bind(window),rawTimer:setTimeout,rawClear:clearTimeout,timers:[],cancel:false,index:0,seedIndex:0,step:0,
+ data:[],sound:{},placeholder:BUILDINGS.porter||null,viewWidth:VIEW.cv.width,viewHeight:VIEW.cv.height,timer:setTimeout.bind(window),clear:clearTimeout.bind(window),rawTimer:setTimeout,rawClear:clearTimeout,timers:[],cancel:false,index:0,seedIndex:0,step:0,
  rows:[],steps:Math.round(52*WEEK_SEC/.1),weekMs:0,mutated:0,mem:null,canvas:gameCanvas()};
+ for(var o of PROVINCES.concat(PROVINCES.filter(function(p){return !!p.reward;}).map(function(p){return p.reward;}),Object.values(ITEMS),Object.values(UNITS),RESEARCH))S.data.push([o,simSnapshotObject(o)]);
  for(var k in Sound)if(typeof Sound[k]==='function'){S.sound[k]=Sound[k];Sound[k]=function(){};}
  saveGame=function(){return true;};loadGame=function(){return false;};modal=function(){};announce=function(){};toast=function(){};
  window.__noIntro=window.__noQuick=true;UI.panel=null;UI.render=null;UI.atelier=false;
@@ -185,11 +186,11 @@ function simPrepare(){
 function simRestore(S){
  for(var id of S.timers)S.clear(id);window.setTimeout=S.rawTimer;window.clearTimeout=S.rawClear;
  S.VIEW.cv.width=S.viewWidth;S.VIEW.cv.height=S.viewHeight;G=S.G;simRestoreObject(RT,S.RT);simRestoreObject(VIEW,S.VIEW);simRestoreObject(UI,S.UI);simRestoreObject(ROAD_TRAFFIC,S.road);
- for(var k in LAND)LAND[k]=S.land[k];Math.random=S.random;saveGame=S.save;loadGame=S.load;modal=S.modal;announce=S.announce;toast=S.toast;
+ for(var pair of S.data)simRestoreObject(pair[0],pair[1]);for(var k in LAND)LAND[k]=S.land[k];Math.random=S.random;saveGame=S.save;loadGame=S.load;modal=S.modal;announce=S.announce;toast=S.toast;
  for(var k in S.sound)Sound[k]=S.sound[k];window.__noIntro=S.noIntro;window.__noQuick=S.noQuick;
  if(!S.placeholder)delete BUILDINGS.porter;else BUILDINGS.porter=S.placeholder;
  S.canvas.width=S.canvas.height=0;SH_PERF.diag=null;SH_PERF.sim=false;SH_PERF.run=null;SH_PERF.last=0;
- if(SH_PERF.root)SH_PERF.root.querySelector('#perf-cancel').hidden=true;
+ if(G)updateHUD();if(SH_PERF.root)SH_PERF.root.querySelector('#perf-cancel').hidden=true;
 }
 function simFailureStep(S,spec){
  if(!spec.failure||S.mutated)return;
@@ -210,7 +211,7 @@ function simFinishRow(S,spec){
  var normalize=function(ar){var sum=0;for(var v of ar)sum+=v;return ar.map(function(v){return sum?v/sum*100:0;});};
  var at=performance.now(),json=JSON.stringify(G),saveMs=performance.now()-at,m=perfMemory();
  S.rows.push({scenario:spec.id,seed:S.seedIndex+1,gold:d.sales,travellers:G.stats.trav,stockout:d.visits?d.stockouts/d.visits*100:0,turnedAway:d.turned,
- worker:normalize(d.worker),porter:normalize(d.porter),producer:normalize(d.producer),overflowLost:d.overflow,residual:residual,residualByGood:detail,
+ emptyByMission:d.emptyByMission,worker:normalize(d.worker),porter:normalize(d.porter),producer:normalize(d.producer),overflowLost:d.overflow,residual:residual,residualByGood:detail,
  negatives:d.negatives,saveKB:new Blob([json]).size/1024,saveMs:Math.max(saveMs,d.serialMs),canvasStart:S.memStart.mb,canvasEnd:m.mb,caches:perfCacheSizes(),
  collections:perfCollections(),msPerWeek:S.weekMs/52,failureExercised:!spec.failure||!!S.mutated});
 }
@@ -228,9 +229,9 @@ function simReport(rows){
 }
 function simRenderReport(report){
  if(!SH_PERF.root)return;var box=SH_PERF.root.querySelector('#perf-results'),html='<table style="border-collapse:collapse;white-space:nowrap;font:10px monospace"><thead><tr>';
- for(var k of ['Scenario','Gold/52w','Trav','Stockout %','Away','Worker W/H/E/R/I %','Porter W/H/E/R/I %','Lost','Residual','Neg','KB','MB start/end','ms/wk'])html+='<th style="padding:5px;border-bottom:1px solid #846d4b">'+k+'</th>';
+ for(var k of ['Scenario','Gold/52w','Δ Gold %','Trav','Stockout %','Away','Worker W/H/E/R/I %','Porter W/H/E/R/I %','Lost','Residual','Neg','KB','MB start/end','ms/wk'])html+='<th style="padding:5px;border-bottom:1px solid #846d4b">'+k+'</th>';
  html+='</tr></thead><tbody>';
- for(var r of report.summary){var cells=[r.scenario,r.gold.toFixed(0),r.travellers.toFixed(0),r.stockout.toFixed(1),r.turnedAway.toFixed(0),r.worker.map(function(v){return v.toFixed(0);}).join('/'),r.porter.map(function(v){return v.toFixed(0);}).join('/'),r.overflowLost.toFixed(0),r.residual.toFixed(8),r.negatives.toFixed(0),r.saveKB.toFixed(1),r.canvasStart.toFixed(1)+'/'+r.canvasEnd.toFixed(1),r.msPerWeek.toFixed(1)];
+ for(var r of report.summary){var base=report.baseline&&report.baseline.summary.find(function(x){return x.scenario===r.scenario;});var cells=[r.scenario,r.gold.toFixed(0),base&&base.gold?((r.gold/base.gold-1)*100).toFixed(1):'—',r.travellers.toFixed(0),r.stockout.toFixed(1),r.turnedAway.toFixed(0),r.worker.map(function(v){return v.toFixed(0);}).join('/'),r.porter.map(function(v){return v.toFixed(0);}).join('/'),r.overflowLost.toFixed(0),r.residual.toFixed(8),r.negatives.toFixed(0),r.saveKB.toFixed(1),r.canvasStart.toFixed(1)+'/'+r.canvasEnd.toFixed(1),r.msPerWeek.toFixed(1)];
  html+='<tr>';for(var v of cells)html+='<td style="padding:5px;border-bottom:1px solid #493e30">'+v+'</td>';html+='</tr>';}
  box.innerHTML=html+'</tbody></table><p>52 weeks × five paired seeds. Loaded haul excludes empty pickup legs. P1 demand/service changes are not enabled.</p>';
 }
@@ -259,4 +260,17 @@ function perfRegisterCaches(){
  const seen=new WeakSet();
  function scan(o){if(!o||typeof o!=='object'||seen.has(o))return;seen.add(o);if(o instanceof HTMLCanvasElement){perfCanvas(o);if(o.detail)perfCanvas(o.detail);return;}if(o instanceof Map){for(const v of o.values())scan(v);return;}if(ArrayBuffer.isView(o))return;for(const k in o)if(typeof o[k]==='object')scan(o[k]);}
  for(const o of [TILES,_bldCache,_charCache,_portCache,_soldierCache,_soldierCache2,_battleArt,_villageRigCache,_villageToolCache,_carry,_pile,_workshopProductSprites,RT.ground,VIEW.cv])scan(o);
+}
+
+function perfDprExperiment(){
+ const V=simSnapshotObject(VIEW),R=Math.random,particles=RT.particles,floaters=RT.floaters;
+ let pixels3,pixels2;const w=VIEW.w,h=VIEW.h,zoom=2,cv=gameCanvas();
+ try{VIEW.cv=cv;VIEW.ctx=cv.getContext('2d');RT.particles=[];RT.floaters=[];
+  for(const d of [3,2]){VIEW.dpr=d;VIEW.scale=zoom*d;cv.width=Math.round(w*d);cv.height=Math.round(h*d);Math.random=seeded(0x445052);drawVillage();
+   const image=VIEW.ctx.getImageData(0,0,cv.width,cv.height);if(d===3)pixels3=image;else pixels2=image;RT.particles.length=0;}
+  let changed=0,total=0;const a=pixels3.data,b=pixels2.data;
+  for(let y=0;y<h*6;y++)for(let x=0;x<w*6;x++){const i=(Math.floor(y/2)*pixels3.width+Math.floor(x/2))*4,j=(Math.floor(y/3)*pixels2.width+Math.floor(x/3))*4;
+   if(a[i]!==b[j]||a[i+1]!==b[j+1]||a[i+2]!==b[j+2]||a[i+3]!==b[j+3])changed++;total++;}
+  return {defaultZoom:zoom,identical:changed===0,differentPercent:changed/total*100,adopted:false,backingDpr:3};
+ }finally{Math.random=R;RT.particles=particles;RT.floaters=floaters;cv.width=cv.height=0;simRestoreObject(VIEW,V);}
 }

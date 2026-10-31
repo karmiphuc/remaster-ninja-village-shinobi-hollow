@@ -5,12 +5,13 @@ function rep(a,b){if(s.split(a).length!==2)throw Error('Expected one occurrence:
 function fnRange(name){const at=s.indexOf('function '+name+'(');if(at<0)throw Error('Missing function '+name);const line=s.indexOf('\n',at);return [at,s.slice(at,line).trimEnd().endsWith('}')?line:s.indexOf('\n}',at)+2];}
 function edit(name,a,b){const r=fnRange(name),f=s.slice(...r);if(f.split(a).length!==2)throw Error(name+': missing '+a.slice(0,100));s=s.slice(0,r[0])+f.replace(a,()=>b)+s.slice(r[1]);}
 function remove(name){const r=fnRange(name);s=s.slice(0,r[0])+s.slice(r[1]);}
-for(const name of ['shopStock','shopTotal','shopIncoming','shopRoom','releaseShopStock','migrateShopStock','migrateLogistics','saveGame','removeBuilding','dropLost','depositCarry','depositCarryWarehouse','missionArrive','shopMissionArrive','planShopSupply','dropFor','workerPlan','produce','craftDone','perfBaseSell','sell','assignJobs'])remove(name);
+for(const name of ['outTotal','shopStock','shopTotal','shopIncoming','shopRoom','releaseShopStock','migrateShopStock','migrateLogistics','saveGame','removeBuilding','dropLost','depositCarry','depositCarryWarehouse','missionArrive','shopMissionArrive','planShopSupply','dropFor','workerPlan','produce','craftDone','perfBaseSell','sell','assignJobs'])remove(name);
 rep('if (window.claude && window.claude.hot && window.claude.hot.ready)',core+'\nif (window.claude && window.claude.hot && window.claude.hot.ready)');
 edit('resetRT','invalidateRoadTraffic();','invalidateRoadTraffic(); RT.eco=null;');
 edit('refreshBoosts',"  const envs =","  if(RT.eco)RT.eco.dirty=true;\n  const envs =");
-edit('chooseSite',"  const sites =","  if(isPorter(v))return null;const E=economyState();if(E.dirty)economyTopology();\n  if(E.porters&&v.job>=0){const J=bByUid(v.job);if(J&&!J.reno&&!economyFull(J)&&entranceOf(J)&&(BUILDINGS[J.id].makes||BUILDINGS[J.id].craft))return J;}\n  const sites =");
+edit('chooseSite',"  const sites =","  if(isPorter(v))return null;const E=economyState();if(E.dirty)economyTopology();\n  if(v.job>=0){const J=bByUid(v.job);if(J&&!J.reno&&entranceOf(J)&&(BUILDINGS[J.id].makes||BUILDINGS[J.id].craft))return J;}\n  const sites =");
 edit('updateVillagerAgent',"    const supply=planShopSupply(a,v),J=supply?null:chooseSite(a,v,v.role!=='work');\n    target=supply||(J&&workerPlan(a,v,J));","    if(isPorter(v))target=porterPlan(a,v);else {const supply=planShopSupply(a,v),J=supply?null:chooseSite(a,v,v.role!=='work');target=supply||(J&&workerPlan(a,v,J));}");
+edit('updateVillagerAgent',"  if (target && a.mission === 'rest'","  if(target&&target.uid===a.target&&(a.mission==='work'||a.mission==='craft')){arrive(a,v,target);return;}\n  if (target && a.mission === 'rest'");
 edit('updateVillagerAgent',"if (!v) { a.dead = true; return; }","if (!v) { dropLost(a);a.dead = true; return; }");
 edit('updateVillage',"    updateAgents(dt);","    economyTick(dt);updateAgents(dt);");
 edit('buildingSprite',"    case 'hut':","    case 'porter': res=porterHouseSprite();break;\n    case 'hut':");

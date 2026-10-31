@@ -52,7 +52,7 @@ const result=await p.evaluate(()=>{
  old.shopGoods={veg:12.5};old.shopWares={};delete old.shelf;delete G.economyV;w.out=2;w.recipe='bento';
  const invBefore=diagInventory({});migrateEconomy();const invAfter=diagInventory({});for(const k in invBefore)ok(Math.abs((invAfter[k]||0)-(invBefore[k]||0)-(k==='bento'?2:0))<1e-8,'legacy migration '+k);
  ok(G.v===1&&G.economyV===1&&!old.shopGoods&&old.shelf,'save version unchanged and shelf migration complete');out.migration=true;
- out.cacheSizes=perfCacheSizes();out.errors=[];
+ out.dprTrial=perfDprExperiment();out.cacheSizes=perfCacheSizes();out.errors=[];
  return out;
  }finally{simRestore(S);}
  });

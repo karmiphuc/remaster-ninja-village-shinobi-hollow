@@ -6,10 +6,10 @@ const browser=await engine.launch({headless:true,args:engine===chromium?['--no-s
 try{const p=await browser.newPage({viewport:{width:430,height:900},deviceScaleFactor:3}),errors=[];p.on('pageerror',e=>errors.push(e.message));
 p.on('console',m=>{if(m.text().startsWith('ECONOMY_REPORT='))console.log(m.text());else if(m.type()==='error'&&!m.text().includes('ERR_'))errors.push(m.text());});
 await p.addInitScript(()=>{window.__noIntro=true;window.__noQuick=true;});await p.goto('http://127.0.0.1:'+server.address().port+'/?perf=1');await p.waitForFunction(()=>typeof runEconomySim==='function');
-const before=await p.evaluate(()=>{newGame();G.tut=1;G.speed=0;G.boons.pending=null;afterLoad();return {json:JSON.stringify(G),save:localStorage.getItem(SAVE_KEY)};});
+const before=await p.evaluate(()=>{newGame();G.tut=1;G.speed=0;G.boons.pending=null;afterLoad();return {json:JSON.stringify(G),save:localStorage.getItem(SAVE_KEY),data:JSON.stringify([PROVINCES,ITEMS,UNITS,RESEARCH])};});
 const report=await p.evaluate(async()=>{return await runEconomySim();});
 const after=await p.evaluate(()=>({json:JSON.stringify(G),save:localStorage.getItem(SAVE_KEY)}));
-if(before.json!==after.json||before.save!==after.save)throw Error('Simulation changed real village/save');
+if(before.json!==after.json||before.save!==after.save||before.data!==after.data)throw Error('Simulation changed real village/save');
 if(report.rows.length!==50)throw Error('Missing seed/scenario results');
 if(report.rows.some(r=>!r.failureExercised))throw Error('Failure scenario did not execute');
 fs.mkdirSync(path.join(root,'reports'),{recursive:true});fs.writeFileSync(path.join(root,'reports','economy-'+report.version.toLowerCase()+'.json'),JSON.stringify({...report,engine:engine===webkit?'webkit':'chromium',isolation:true,errors},null,2));

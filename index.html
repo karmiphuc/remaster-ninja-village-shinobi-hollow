@@ -766,7 +766,7 @@ function diagProbe(dt){
  var d=SH_PERF.diag;if(!d)return;
  for(var a of RT.agents){if(a.kind!=='villager')continue;var v=vById(a.vid);if(!v||v.role!=='work')continue;
   var porter=typeof isPorter==='function'&&isPorter(v),category=a.state==='work'?0:a.state==='walk'?(a.carry?1:2):a.resting?3:4;
-  (porter?d.porter:d.worker)[category]+=dt;var b=v.job>=0?bByUid(v.job):null;
+  (porter?d.porter:d.worker)[category]+=dt;if(!porter&&category===2){var k=a.mission||'other';d.emptyByMission[k]=(d.emptyByMission[k]||0)+dt;}var b=v.job>=0?bByUid(v.job):null;
   if(!porter&&b&&(BUILDINGS[b.id].makes||BUILDINGS[b.id].craft))d.producer[category]+=dt;
  }
 }
@@ -774,7 +774,7 @@ function diagSale(a,b,result,before){var d=SH_PERF.diag;if(!d)return;d.visits++;
 function diagMapCopy(map){var out={};for(var k in map||{})out[k]=map[k];return out;}
 function diagMapDelta(before,after,create){if(!SH_PERF.diag||SH_PERF.ledgerHooked)return;for(var k in create?after:before){var n=create?(after[k]||0)-(before[k]||0):(before[k]||0)-(after[k]||0);if(n>0)diagGoods(k,n,create);}}
 function simStageStats(){
- return {created:{},destroyed:{},overflow:0,sales:0,visits:0,stockouts:0,turned:0,worker:[0,0,0,0,0],porter:[0,0,0,0,0],producer:[0,0,0,0,0],opening:{},ending:{},negatives:0,serialMs:0};
+ return {created:{},destroyed:{},overflow:0,sales:0,visits:0,stockouts:0,turned:0,emptyByMission:{},worker:[0,0,0,0,0],porter:[0,0,0,0,0],producer:[0,0,0,0,0],opening:{},ending:{},negatives:0,serialMs:0};
 }
 var SIM_CASES=[
  {id:'starter',tier:0,count:6,porters:0},{id:'small',tier:1,count:8,porters:0},
@@ -829,8 +829,9 @@ function simRestoreObject(o,b){for(var k in o)if(!(k in b))delete o[k];for(var k
 function simPrepare(){
  var S={G:G,RT:simSnapshotObject(RT),VIEW:simSnapshotObject(VIEW),UI:simSnapshotObject(UI),road:simSnapshotObject(ROAD_TRAFFIC),land:JSON.parse(JSON.stringify(LAND)),
  random:Math.random,save:saveGame,load:loadGame,modal:modal,announce:announce,toast:toast,noIntro:window.__noIntro,noQuick:window.__noQuick,
- sound:{},placeholder:BUILDINGS.porter||null,viewWidth:VIEW.cv.width,viewHeight:VIEW.cv.height,timer:setTimeout.bind(window),clear:clearTimeout.bind(window),rawTimer:setTimeout,rawClear:clearTimeout,timers:[],cancel:false,index:0,seedIndex:0,step:0,
+ data:[],sound:{},placeholder:BUILDINGS.porter||null,viewWidth:VIEW.cv.width,viewHeight:VIEW.cv.height,timer:setTimeout.bind(window),clear:clearTimeout.bind(window),rawTimer:setTimeout,rawClear:clearTimeout,timers:[],cancel:false,index:0,seedIndex:0,step:0,
  rows:[],steps:Math.round(52*WEEK_SEC/.1),weekMs:0,mutated:0,mem:null,canvas:gameCanvas()};
+ for(var o of PROVINCES.concat(PROVINCES.filter(function(p){return !!p.reward;}).map(function(p){return p.reward;}),Object.values(ITEMS),Object.values(UNITS),RESEARCH))S.data.push([o,simSnapshotObject(o)]);
  for(var k in Sound)if(typeof Sound[k]==='function'){S.sound[k]=Sound[k];Sound[k]=function(){};}
  saveGame=function(){return true;};loadGame=function(){return false;};modal=function(){};announce=function(){};toast=function(){};
  window.__noIntro=window.__noQuick=true;UI.panel=null;UI.render=null;UI.atelier=false;
@@ -840,11 +841,11 @@ function simPrepare(){
 function simRestore(S){
  for(var id of S.timers)S.clear(id);window.setTimeout=S.rawTimer;window.clearTimeout=S.rawClear;
  S.VIEW.cv.width=S.viewWidth;S.VIEW.cv.height=S.viewHeight;G=S.G;simRestoreObject(RT,S.RT);simRestoreObject(VIEW,S.VIEW);simRestoreObject(UI,S.UI);simRestoreObject(ROAD_TRAFFIC,S.road);
- for(var k in LAND)LAND[k]=S.land[k];Math.random=S.random;saveGame=S.save;loadGame=S.load;modal=S.modal;announce=S.announce;toast=S.toast;
+ for(var pair of S.data)simRestoreObject(pair[0],pair[1]);for(var k in LAND)LAND[k]=S.land[k];Math.random=S.random;saveGame=S.save;loadGame=S.load;modal=S.modal;announce=S.announce;toast=S.toast;
  for(var k in S.sound)Sound[k]=S.sound[k];window.__noIntro=S.noIntro;window.__noQuick=S.noQuick;
  if(!S.placeholder)delete BUILDINGS.porter;else BUILDINGS.porter=S.placeholder;
  S.canvas.width=S.canvas.height=0;SH_PERF.diag=null;SH_PERF.sim=false;SH_PERF.run=null;SH_PERF.last=0;
- if(SH_PERF.root)SH_PERF.root.querySelector('#perf-cancel').hidden=true;
+ if(G)updateHUD();if(SH_PERF.root)SH_PERF.root.querySelector('#perf-cancel').hidden=true;
 }
 function simFailureStep(S,spec){
  if(!spec.failure||S.mutated)return;
@@ -865,7 +866,7 @@ function simFinishRow(S,spec){
  var normalize=function(ar){var sum=0;for(var v of ar)sum+=v;return ar.map(function(v){return sum?v/sum*100:0;});};
  var at=performance.now(),json=JSON.stringify(G),saveMs=performance.now()-at,m=perfMemory();
  S.rows.push({scenario:spec.id,seed:S.seedIndex+1,gold:d.sales,travellers:G.stats.trav,stockout:d.visits?d.stockouts/d.visits*100:0,turnedAway:d.turned,
- worker:normalize(d.worker),porter:normalize(d.porter),producer:normalize(d.producer),overflowLost:d.overflow,residual:residual,residualByGood:detail,
+ emptyByMission:d.emptyByMission,worker:normalize(d.worker),porter:normalize(d.porter),producer:normalize(d.producer),overflowLost:d.overflow,residual:residual,residualByGood:detail,
  negatives:d.negatives,saveKB:new Blob([json]).size/1024,saveMs:Math.max(saveMs,d.serialMs),canvasStart:S.memStart.mb,canvasEnd:m.mb,caches:perfCacheSizes(),
  collections:perfCollections(),msPerWeek:S.weekMs/52,failureExercised:!spec.failure||!!S.mutated});
 }
@@ -883,9 +884,9 @@ function simReport(rows){
 }
 function simRenderReport(report){
  if(!SH_PERF.root)return;var box=SH_PERF.root.querySelector('#perf-results'),html='<table style="border-collapse:collapse;white-space:nowrap;font:10px monospace"><thead><tr>';
- for(var k of ['Scenario','Gold/52w','Trav','Stockout %','Away','Worker W/H/E/R/I %','Porter W/H/E/R/I %','Lost','Residual','Neg','KB','MB start/end','ms/wk'])html+='<th style="padding:5px;border-bottom:1px solid #846d4b">'+k+'</th>';
+ for(var k of ['Scenario','Gold/52w','Δ Gold %','Trav','Stockout %','Away','Worker W/H/E/R/I %','Porter W/H/E/R/I %','Lost','Residual','Neg','KB','MB start/end','ms/wk'])html+='<th style="padding:5px;border-bottom:1px solid #846d4b">'+k+'</th>';
  html+='</tr></thead><tbody>';
- for(var r of report.summary){var cells=[r.scenario,r.gold.toFixed(0),r.travellers.toFixed(0),r.stockout.toFixed(1),r.turnedAway.toFixed(0),r.worker.map(function(v){return v.toFixed(0);}).join('/'),r.porter.map(function(v){return v.toFixed(0);}).join('/'),r.overflowLost.toFixed(0),r.residual.toFixed(8),r.negatives.toFixed(0),r.saveKB.toFixed(1),r.canvasStart.toFixed(1)+'/'+r.canvasEnd.toFixed(1),r.msPerWeek.toFixed(1)];
+ for(var r of report.summary){var base=report.baseline&&report.baseline.summary.find(function(x){return x.scenario===r.scenario;});var cells=[r.scenario,r.gold.toFixed(0),base&&base.gold?((r.gold/base.gold-1)*100).toFixed(1):'—',r.travellers.toFixed(0),r.stockout.toFixed(1),r.turnedAway.toFixed(0),r.worker.map(function(v){return v.toFixed(0);}).join('/'),r.porter.map(function(v){return v.toFixed(0);}).join('/'),r.overflowLost.toFixed(0),r.residual.toFixed(8),r.negatives.toFixed(0),r.saveKB.toFixed(1),r.canvasStart.toFixed(1)+'/'+r.canvasEnd.toFixed(1),r.msPerWeek.toFixed(1)];
  html+='<tr>';for(var v of cells)html+='<td style="padding:5px;border-bottom:1px solid #493e30">'+v+'</td>';html+='</tr>';}
  box.innerHTML=html+'</tbody></table><p>52 weeks × five paired seeds. Loaded haul excludes empty pickup legs. P1 demand/service changes are not enabled.</p>';
 }
@@ -914,6 +915,19 @@ function perfRegisterCaches(){
  const seen=new WeakSet();
  function scan(o){if(!o||typeof o!=='object'||seen.has(o))return;seen.add(o);if(o instanceof HTMLCanvasElement){perfCanvas(o);if(o.detail)perfCanvas(o.detail);return;}if(o instanceof Map){for(const v of o.values())scan(v);return;}if(ArrayBuffer.isView(o))return;for(const k in o)if(typeof o[k]==='object')scan(o[k]);}
  for(const o of [TILES,_bldCache,_charCache,_portCache,_soldierCache,_soldierCache2,_battleArt,_villageRigCache,_villageToolCache,_carry,_pile,_workshopProductSprites,RT.ground,VIEW.cv])scan(o);
+}
+
+function perfDprExperiment(){
+ const V=simSnapshotObject(VIEW),R=Math.random,particles=RT.particles,floaters=RT.floaters;
+ let pixels3,pixels2;const w=VIEW.w,h=VIEW.h,zoom=2,cv=gameCanvas();
+ try{VIEW.cv=cv;VIEW.ctx=cv.getContext('2d');RT.particles=[];RT.floaters=[];
+  for(const d of [3,2]){VIEW.dpr=d;VIEW.scale=zoom*d;cv.width=Math.round(w*d);cv.height=Math.round(h*d);Math.random=seeded(0x445052);drawVillage();
+   const image=VIEW.ctx.getImageData(0,0,cv.width,cv.height);if(d===3)pixels3=image;else pixels2=image;RT.particles.length=0;}
+  let changed=0,total=0;const a=pixels3.data,b=pixels2.data;
+  for(let y=0;y<h*6;y++)for(let x=0;x<w*6;x++){const i=(Math.floor(y/2)*pixels3.width+Math.floor(x/2))*4,j=(Math.floor(y/3)*pixels2.width+Math.floor(x/3))*4;
+   if(a[i]!==b[j]||a[i+1]!==b[j+1]||a[i+2]!==b[j+2]||a[i+3]!==b[j+3])changed++;total++;}
+  return {defaultZoom:zoom,identical:changed===0,differentPercent:changed/total*100,adopted:false,backingDpr:3};
+ }finally{Math.random=R;RT.particles=particles;RT.floaters=floaters;cv.width=cv.height=0;simRestoreObject(VIEW,V);}
 }
 
 /* ================= CORE: utils, rng, game data ================= */
@@ -6902,6 +6916,7 @@ function updateVillagerAgent(a, dt) {
     if (dojos.length && !G.dojoOff && G.gold >= dojoFee(v) && Math.random() < .7) target = pick(dojos);
     else target = Math.random() < .5 ? G.buildings.find(b => b.id === 'hall') : (v.home >= 0 ? bByUid(v.home) : null);
   } else target = Math.random() < .5 && v.home >= 0 ? bByUid(v.home) : pick(G.buildings.filter(b => BUILDINGS[b.id].cat === 'shop') || []);
+  if(target&&target.uid===a.target&&(a.mission==='work'||a.mission==='craft')){arrive(a,v,target);return;}
   if (target && a.mission === 'rest' && !walkTo(a, target)) { const hall = G.buildings.find(b => b.id === 'hall'); if (hall && hall !== target && walkTo(a, hall)) return;
     a.mission = null; a.state = 'inside'; a.resting = true; a.hidden = false; return; } // nowhere to go: sit down where they are
   if (!target || !walkTo(a, target)) { if (a.mission && a.mission !== 'work' && a.mission !== 'craft') { dropLost(a); a.mission = null; } a.timer = rnd(1, 3); if (Math.random() < .2) a.bubble = { t: 1.5, icon: '?' }; }
@@ -8638,7 +8653,7 @@ function activeWares() {
   RT._aw = { t: RT.t, l }; return l;
 }
 function visWare(k) { return WARES[k] && WARES[k].base || k; }
-function outTotal(b) { return Object.values(b.outs || {}).reduce((n, x) => n + x, 0); }
+
 // what an artisan decides to make: the workshop's speciality half the time, otherwise whatever the shops can sell
 function chooseCraft(J) {
   const list = shuffle(activeWares().slice()); if (!list.length) return null;
@@ -8657,7 +8672,7 @@ function chooseCraft(J) {
 function occupancy(b) { let n = 0; for (const a of RT.agents) if (a.kind === 'villager' && a.target === b.uid && (a.state === 'work' || a.mission === 'work' || a.mission === 'craft')) n++; return n; }
 function chooseSite(a, v, casual) {
   if(isPorter(v))return null;const E=economyState();if(E.dirty)economyTopology();
-  if(E.porters&&v.job>=0){const J=bByUid(v.job);if(J&&!J.reno&&!economyFull(J)&&entranceOf(J)&&(BUILDINGS[J.id].makes||BUILDINGS[J.id].craft))return J;}
+  if(v.job>=0){const J=bByUid(v.job);if(J&&!J.reno&&entranceOf(J)&&(BUILDINGS[J.id].makes||BUILDINGS[J.id].craft))return J;}
   const sites = G.buildings.filter(b => (BUILDINGS[b.id].makes || BUILDINGS[b.id].craft) && !b.reno && entranceOf(b)); if (!sites.length) return null;
   const J = v.job >= 0 ? bByUid(v.job) : null, ax = a.x / 16, ay = a.y / 16;
   const w = sites.map(b => { const B = BUILDINGS[b.id], cx = b.x + B.w / 2, cy = b.y + B.h / 2;
@@ -12645,7 +12660,7 @@ function porterPlan(a,v){
  const E=economyState();if(E.dirty)economyTopology();let best=null,score=-Infinity;
  for(let i=0;i<E.jobCount;i++){const j=E.jobs[i],n=Math.min(j.n,economyAvailable(j.from,j.good),economyRoom(j.to,j.good),24);if(n<1)continue;
   const empty=Math.abs(a.x/16-j.source.x)+Math.abs(a.y/16-j.source.y),
-   loaded=Math.abs(j.source.x-j.target.x)+Math.abs(j.source.y-j.target.y),s=(j.rank+n*.6)/(8+empty+loaded*.7);
+   loaded=Math.abs(j.source.x-j.target.x)+Math.abs(j.source.y-j.target.y),s=(j.rank+n*.6+(WARES[j.good]?WARES[j.good].price/5:0))/(8+empty*1.5+loaded*.6);
   if(s>score){score=s;best=j;}}
  if(best)return economyStart(a,v,best.from,best.to,best.good,Math.min(best.n,24),best.source,best.target);
  a.timer=.75;return null;
@@ -12745,7 +12760,7 @@ function planShopSupply(a,v){
  if(a.carry||isPorter(v))return null;const E=economyState();if(E.dirty)economyTopology();
  let hauling=0;for(const c of E.claims.values())if(!isPorter(vById(c.agent.vid))&&c.to.kind==='shelf')hauling++;
  if(hauling>=Math.max(1,Math.ceil(E.workers*.35)))return null;
- if(E.porters&&E.claims.size<E.porters)return null;
+ if(E.porters)return null;
  let best=null,score=-Infinity;
  for(let i=0;i<E.jobCount;i++){const j=E.jobs[i];if(j.from.owner!==G||j.to.kind!=='shelf')continue;
   const n=Math.min(j.n,economyAvailable(j.from,j.good),economyRoom(j.to,j.good));if(n<1)continue;
@@ -12759,7 +12774,8 @@ function workerPlan(a,v,J){
  const B=BUILDINGS[J.id],E=economyState(),capacity=Math.max(1,Math.round(6*(1+vStats(v).carry)));
  if(B.makes){
   economyFlush(J);
-  if((J.pile||0)>=Math.round(HAUL_AT*(1+vStats(v).carry))&&(!E.porters||economyFull(J))){
+  const waiting=E.porters&&economyReserved(economyPoint(J,'pile'),B.makes,false)>0;
+  if(!waiting&&(J.pile||0)>=Math.round(HAUL_AT*(1+vStats(v).carry))&&(!E.porters||economyFull(J))){
    const to=dropFor(B.makes,J);if(to){const plan=economyStart(a,v,economyPoint(J,'pile'),economyDestination(to,B.makes),B.makes,E.porters?capacity:Math.max(capacity,J.pile||0),J,to);if(plan)return plan;}
   }
   if(economyFull(J)){a.bubble={t:1.5,icon:'!'};return null;}
@@ -12773,7 +12789,7 @@ function workerPlan(a,v,J){
   if(c&&c.mode==='craft'&&outTotal(J)<OUT_CAP){a.mission='craft';a.craftWare=c.w;return J;}
   if(c&&c.mode==='fetch'){
    const p=economyPoint(J,'inbox'),st=economyNearStore(J),want=Math.min(economyRoom(p,c.g),WARES[c.w].from[c.g]*Math.round(3*(1+vStats(v).carry)));
-   if(st&&(!E.porters||economyCount(p,c.g)<WARES[c.w].from[c.g])){const plan=economyStart(a,v,economyCentral(c.g),p,c.g,Math.max(1,want),st,J);if(plan)return plan;}
+   if(st&&(!E.porters||economyReserved(p,c.g,true)<WARES[c.w].from[c.g]-(J.inbox[c.g]||0))){const plan=economyStart(a,v,economyCentral(c.g),p,c.g,Math.max(1,want),st,J);if(plan)return plan;}
   }
   a.bubble={t:1.6,icon:outTotal(J)>=OUT_CAP?'!':'…'};return null;
  }
@@ -12845,7 +12861,7 @@ function porterHouseSprite(){
 function economyBadge(ctx,b,B,px,py){
  let kind=0;
  if((B.makes||B.craft)&&economyFull(b))kind=3;
- else if(B.cat==='shop'&&shopTotal(b,false)+shopTotal(b,true)<1)kind=2;
+ else if(B.cat==='shop'&&!economyCanSell(b))kind=2;
  else if(B.craft){const R=WARES[b.recipe];if(R)for(const g in R.from)if(((b.inbox||{})[g]||0)<R.from[g]){kind=1;break;}}
  if(!kind)return;const x=px+B.w*16-4,y=py+B.h*16-5;
  ctx.fillStyle='#342e29';ctx.fillRect(x-3,y-4,7,7);ctx.fillStyle=kind===3?'#d59f45':kind===2?'#b66a58':'#7c9eaa';ctx.fillRect(x-2,y-3,5,5);
@@ -12857,6 +12873,12 @@ function porterPanel(b){
  for(const v of ws){const bt=h('<button class="btn ghost">Release '+esc(vData(v.id).name)+'</button>');
  bt.onclick=()=>{const a=RT.agents.find(q=>q.vid===v.id);if(a){dropLost(a);a.mission=null;a.state='idle';a.timer=0;a.path.length=0;a.hidden=false;}v.job=-1;assignJobs();refreshSheet();};box.appendChild(bt);}
  return box;
+}
+
+function outTotal(b){let n=0;const map=b.outs;if(map)for(const k in map)n+=map[k];return n;}
+function economyCanSell(b){
+ const B=BUILDINGS[b.id],wares=shopStock(b,true);for(const w in wares)if(wares[w]>=1&&WARES[w]&&WARES[w].shops.includes(b.id))return true;
+ if(B.needWares)return false;const raw=shopStock(b,false);for(let i=0;i<B.sells.length;i++)if((raw[B.sells[i]]||0)<1)return false;return true;
 }
 
 if (window.claude && window.claude.hot && window.claude.hot.ready) window.claude.hot.ready(boot); else if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();

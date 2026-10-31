@@ -153,7 +153,7 @@ function porterPlan(a,v){
  const E=economyState();if(E.dirty)economyTopology();let best=null,score=-Infinity;
  for(let i=0;i<E.jobCount;i++){const j=E.jobs[i],n=Math.min(j.n,economyAvailable(j.from,j.good),economyRoom(j.to,j.good),24);if(n<1)continue;
   const empty=Math.abs(a.x/16-j.source.x)+Math.abs(a.y/16-j.source.y),
-   loaded=Math.abs(j.source.x-j.target.x)+Math.abs(j.source.y-j.target.y),s=(j.rank+n*.6)/(8+empty+loaded*.7);
+   loaded=Math.abs(j.source.x-j.target.x)+Math.abs(j.source.y-j.target.y),s=(j.rank+n*.6+(WARES[j.good]?WARES[j.good].price/5:0))/(8+empty*1.5+loaded*.6);
   if(s>score){score=s;best=j;}}
  if(best)return economyStart(a,v,best.from,best.to,best.good,Math.min(best.n,24),best.source,best.target);
  a.timer=.75;return null;
@@ -253,7 +253,7 @@ function planShopSupply(a,v){
  if(a.carry||isPorter(v))return null;const E=economyState();if(E.dirty)economyTopology();
  let hauling=0;for(const c of E.claims.values())if(!isPorter(vById(c.agent.vid))&&c.to.kind==='shelf')hauling++;
  if(hauling>=Math.max(1,Math.ceil(E.workers*.35)))return null;
- if(E.porters&&E.claims.size<E.porters)return null;
+ if(E.porters)return null;
  let best=null,score=-Infinity;
  for(let i=0;i<E.jobCount;i++){const j=E.jobs[i];if(j.from.owner!==G||j.to.kind!=='shelf')continue;
   const n=Math.min(j.n,economyAvailable(j.from,j.good),economyRoom(j.to,j.good));if(n<1)continue;
@@ -267,7 +267,8 @@ function workerPlan(a,v,J){
  const B=BUILDINGS[J.id],E=economyState(),capacity=Math.max(1,Math.round(6*(1+vStats(v).carry)));
  if(B.makes){
   economyFlush(J);
-  if((J.pile||0)>=Math.round(HAUL_AT*(1+vStats(v).carry))&&(!E.porters||economyFull(J))){
+  const waiting=E.porters&&economyReserved(economyPoint(J,'pile'),B.makes,false)>0;
+  if(!waiting&&(J.pile||0)>=Math.round(HAUL_AT*(1+vStats(v).carry))&&(!E.porters||economyFull(J))){
    const to=dropFor(B.makes,J);if(to){const plan=economyStart(a,v,economyPoint(J,'pile'),economyDestination(to,B.makes),B.makes,E.porters?capacity:Math.max(capacity,J.pile||0),J,to);if(plan)return plan;}
   }
   if(economyFull(J)){a.bubble={t:1.5,icon:'!'};return null;}
@@ -281,7 +282,7 @@ function workerPlan(a,v,J){
   if(c&&c.mode==='craft'&&outTotal(J)<OUT_CAP){a.mission='craft';a.craftWare=c.w;return J;}
   if(c&&c.mode==='fetch'){
    const p=economyPoint(J,'inbox'),st=economyNearStore(J),want=Math.min(economyRoom(p,c.g),WARES[c.w].from[c.g]*Math.round(3*(1+vStats(v).carry)));
-   if(st&&(!E.porters||economyCount(p,c.g)<WARES[c.w].from[c.g])){const plan=economyStart(a,v,economyCentral(c.g),p,c.g,Math.max(1,want),st,J);if(plan)return plan;}
+   if(st&&(!E.porters||economyReserved(p,c.g,true)<WARES[c.w].from[c.g]-(J.inbox[c.g]||0))){const plan=economyStart(a,v,economyCentral(c.g),p,c.g,Math.max(1,want),st,J);if(plan)return plan;}
   }
   a.bubble={t:1.6,icon:outTotal(J)>=OUT_CAP?'!':'…'};return null;
  }
@@ -353,7 +354,7 @@ function porterHouseSprite(){
 function economyBadge(ctx,b,B,px,py){
  let kind=0;
  if((B.makes||B.craft)&&economyFull(b))kind=3;
- else if(B.cat==='shop'&&shopTotal(b,false)+shopTotal(b,true)<1)kind=2;
+ else if(B.cat==='shop'&&!economyCanSell(b))kind=2;
  else if(B.craft){const R=WARES[b.recipe];if(R)for(const g in R.from)if(((b.inbox||{})[g]||0)<R.from[g]){kind=1;break;}}
  if(!kind)return;const x=px+B.w*16-4,y=py+B.h*16-5;
  ctx.fillStyle='#342e29';ctx.fillRect(x-3,y-4,7,7);ctx.fillStyle=kind===3?'#d59f45':kind===2?'#b66a58':'#7c9eaa';ctx.fillRect(x-2,y-3,5,5);
@@ -365,4 +366,10 @@ function porterPanel(b){
  for(const v of ws){const bt=h('<button class="btn ghost">Release '+esc(vData(v.id).name)+'</button>');
  bt.onclick=()=>{const a=RT.agents.find(q=>q.vid===v.id);if(a){dropLost(a);a.mission=null;a.state='idle';a.timer=0;a.path.length=0;a.hidden=false;}v.job=-1;assignJobs();refreshSheet();};box.appendChild(bt);}
  return box;
+}
+
+function outTotal(b){let n=0;const map=b.outs;if(map)for(const k in map)n+=map[k];return n;}
+function economyCanSell(b){
+ const B=BUILDINGS[b.id],wares=shopStock(b,true);for(const w in wares)if(wares[w]>=1&&WARES[w]&&WARES[w].shops.includes(b.id))return true;
+ if(B.needWares)return false;const raw=shopStock(b,false);for(let i=0;i<B.sells.length;i++)if((raw[B.sells[i]]||0)<1)return false;return true;
 }
