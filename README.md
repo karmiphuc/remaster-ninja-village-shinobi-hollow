@@ -39,6 +39,24 @@ At the start of Round 3, each formation led by an active strategist rolls once, 
 
 **Ninjutsu and Ki.** Ki is banked between battles. It recovers 1 each game month, up to a capacity of 1 plus smoke pouches, the Shadow skill, monkeys and the Shadow School doctrine, with a hard maximum of 3. Pick a preferred ninjutsu and turn on *Auto-cast*, and it is cast once per battle at a useful moment, provided enough Ki is banked and your share of the two armies' combined strength is between 33% and 67%. That window means Ki is also spent when you are the stronger side, to save troops. With Auto-cast off, Ki only accumulates.
 
+## Army forging
+
+Each formation forge (Training) makes its own sets of your **best researched gear** every month, for one focus: **Weapons**, or **Armor & helmets** (one set each).
+
+| Forge level | Sets a month | Upgrade cost |
+|---|---|---|
+| 1 | 40 | (build cost) |
+| 2 | 65 | 2× build cost + 20 Wood + 20 Ore, 2 weeks |
+| 3 | 90 | 4× build cost + 40 Wood + 40 Ore, 3 weeks |
+
+- **Output adds up.** Five Level 1 Gunner forges on armor make 200 sets a month and fully equip 1,000 Gunners with top armor and helmets in 10 months. At Level 3 it takes 5.
+- **A forge keeps working while carpenters upgrade it.**
+- **Forges add quantity, never quality.** Every set costs its usual gold and materials, and stops before the treasury drops below 150G.
+- **The village smiths add a small shared trickle on top**, split between formations: 20 a month, +30 per Smithy, +12 per Iron Mine.
+- **Forges only fill missing top-tier coverage.** Once every soldier carries the best researched gear they stop spending, and start again when research unlocks something better.
+- **Older and higher-quality gear stays in service** until it is replaced.
+- **Where to see it:** the Army screen shows each formation's coverage and forge rate. Each forge shows its level, output, time to full coverage and upgrade cost.
+
 ## The campaign hand
 
 Every new game deals a forced hand of three cards: a **House Doctrine**, a **Hardship** (or a two-sided **Twist**), and one more **Omen**, which can be a hardship, a twist or a blessing. You can redraw the whole hand once, then it stands. A reload does not buy another redraw. The hand is listed under *Campaign* in the Village panel.
@@ -100,7 +118,7 @@ The game is served by GitHub Pages straight from the `main` branch root (`/`), w
 | `index.html` | The complete game: markup, styles, script, sprites and audio (audio is embedded as data URIs) |
 | `README.md` | This file |
 | `docs/` | Equipment notes, [village art direction](docs/ART_DIRECTION.md), and previews rendered from the procedural game assets |
-| `tests/` | Browser checks for equipment effects, research, saves, portraits, formation tactics, Ki, the campaign hand, logistics and mobile layout |
+| `tests/` | Browser checks for equipment effects, research, saves, portraits, formation tactics, Ki, army forging, the campaign hand, logistics and mobile layout |
 | `reports/` | Recorded validation results |
 
 ## Current version: v19.1 + Logistics P0

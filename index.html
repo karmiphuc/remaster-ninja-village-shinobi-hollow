@@ -407,7 +407,7 @@ img.px, canvas.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 .trow > img { width: 30px; height: 30px; image-rendering: pixelated; } .trow.locked { opacity: .6; grid-template-columns: 34px 1fr; } .trow.locked .tmain { display: flex; gap: 8px; align-items: center; }
 .tline { display: flex; align-items: center; gap: 6px; min-width: 0; flex-wrap: wrap; } .tn { font-size: 20px; } .tname { font-size: 11px; color: var(--pine); }
 .trow .cmd { display: flex; gap: 2px; } .trow .cmdp img { width: 22px; height: 22px; } .trow .warn { color: #a02a1a; font-size: 12px; }
-.tkit { display: flex; gap: 8px; align-items: center; margin-top: 3px; padding: 2px 0; font: inherit; font-size: 11px; color: inherit; background: none; border: 0; cursor: pointer; } .tkit span { display: flex; align-items: center; gap: 2px; } .tkit img { width: 13px; height: 13px; } .tkit .kx { color: var(--pine); text-decoration: underline; }
+.tkit { display: flex; gap: 8px; align-items: center; margin-top: 3px; padding: 2px 0; font: inherit; font-size: 11px; color: inherit; background: none; border: 0; cursor: pointer; } .tkit span { display: flex; align-items: center; gap: 2px; } .tkit img { width: 13px; height: 13px; } .tkit .kx { color: var(--pine); } .tkit .cov { color: #a02a1a; } .tkit .cov.full { color: var(--pine); } .tkit .frate { color: #7c6143; }
 .tbuy { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; } .tbuy .btn { padding: 4px 6px; min-width: 46px; font-size: 12px; display: flex; flex-direction: column; align-items: center; line-height: 1.1; } .tbuy .btn small { font-size: 9px; opacity: .8; } .tbuy .btn.ghost { grid-column: span 2; }
 .tdetail { margin: -4px 0 8px; padding: 6px 8px; border: 2px solid var(--ink); border-top: 0; background: rgba(255, 250, 235, .7); }
 .afoot { display: flex; align-items: center; gap: 8px; padding: 8px 6px; font-size: 13px; flex-wrap: wrap; } .afoot img { width: 16px; height: 16px; vertical-align: -3px; } .afoot .btn { padding: 4px 12px; } .afoot small { opacity: .7; }
@@ -1055,7 +1055,7 @@ Object.entries(ARMY_FORGES).forEach(([id,F]) => {
   const formation = {inf:'Infantry',arc:'Archers',gun:'Gunners',cav:'Cavalry'}[F.type];
   BUILDINGS[id] = {
     name:F.name, jp:F.jp, cat:'train', w:3, h:2, cost:F.cost, appeal:2, forgeType:F.type,
-    desc:`${formation} workshop. Choose Weapons or Armor & helmets. Each connected workshop adds +100% forge quantity and +100% equipment quality to its focus; duplicates stack. Better sets use proportionally more gold and recipe materials. Needs a road.`
+    desc:`${formation} forge. Choose Weapons or Armor & helmets. Makes 40 sets a month (65 at Level 2, 90 at Level 3) of your best researched gear for its focus; forges add up. Each set costs its usual gold and materials. Needs a road.`
   };
 });
 
@@ -7836,7 +7836,7 @@ function renderBuild(body, tab) {
   const grid = h('<div class="grid"></div>');
   ids.forEach(id => {
     const B = BUILDINGS[id], un = isUnlocked(id), poor = G.gold < B.cost;
-    const extra = B.cat==='road' ? (B.w===1?'1×1 tile':`2×2 section · Save ${BUILDINGS[B.roadKind===2?'stone':'road'].cost*4-B.cost}G`) : B.forgeType ? `${UNITS[B.forgeType].name} · +100% output & quality · choose focus` : B.makes ? `Makes ${GOODS[B.makes].name}` : B.craft ? 'Crafts wares · 2 artisans' : B.store ? 'Drop-off for harvests' : id === 'tonya' ? 'Weekly supply contracts' : B.needWares ? `Sells ${waresOf(id).map(w => WARES[w].name).join(', ')}` : B.sells ? `Sells ${B.sells.map(g => GOODS[g].name).join(' + ')} · ${B.price}G` : B.cap ? `Homes ${B.cap}` : B.boost ? `+${Math.round(B.boost * 100)}% · r${B.radius}${B.draws ? ' · draws guests' : B.stay ? ' · longer stays' : ''}` : '';
+    const extra = B.cat==='road' ? (B.w===1?'1×1 tile':`2×2 section · Save ${BUILDINGS[B.roadKind===2?'stone':'road'].cost*4-B.cost}G`) : B.forgeType ? `${UNITS[B.forgeType].name} · 40 sets/month (Lv3: 90) · choose focus` : B.makes ? `Makes ${GOODS[B.makes].name}` : B.craft ? 'Crafts wares · 2 artisans' : B.store ? 'Drop-off for harvests' : id === 'tonya' ? 'Weekly supply contracts' : B.needWares ? `Sells ${waresOf(id).map(w => WARES[w].name).join(', ')}` : B.sells ? `Sells ${B.sells.map(g => GOODS[g].name).join(' + ')} · ${B.price}G` : B.cap ? `Homes ${B.cap}` : B.boost ? `+${Math.round(B.boost * 100)}% · r${B.radius}${B.draws ? ' · draws guests' : B.stay ? ' · longer stays' : ''}` : '';
     const c = h(`<button class="card${un ? '' : ' locked'}${poor ? ' poor' : ''}"><div class="thumb"><img src="${bThumb(id)}" alt=""></div><div class="nm">${esc(B.name)}</div>${B.forgeType?`<div class="sub" lang="ja">${esc(B.jp)}</div>`:''}<div class="sub">${esc(un ? extra : B.wins && G.wins < B.wins && (!B.lock || G.unlocked[B.lock]) ? `Needs ${B.wins} clan victories` : 'Unlock by conquering provinces')}</div><div class="cost">${icon('gold')}${fmt(B.cost)}${B.cat==='road'?(B.w===1?' / tile':' / section'):''}</div></button>`);
     c.onclick = () => { if (!un) { Sound.play('alert'); toast(`<b>${esc(B.name)}</b> is sealed. ${B.wins && G.wins < B.wins ? `Needs ${B.wins} clan victories.` : 'Conquer more provinces to unlock it.'}`); return; } Sound.play('tap'); startBuild(id); };
     grid.appendChild(c);
@@ -8034,7 +8034,7 @@ function kitRow(t) {
     return `<div class="kseg"><span class="kl">${lbl}</span><div class="kbar">${K[cat].map(([k, n, q]) => `<i style="flex:${n}" title="${esc(ITEMS[k].name)} ×${n}${q>1?' · '+q+'× quality':''}"><img class="px" src="${ICONS['it_' + k]}" alt="">${n}${q>1?`<small class="kit-quality">${q}×</small>`:''}</i>`).join('')}${plain ? `<i class="plain" style="flex:${plain}">${plain}</i>` : ''}</div></div>`; };
   const plan = forgePlan(t), on = G.forge[t] !== false;
   el.innerHTML = `<p class="forge-summary">${forgeSummary(t)}</p>` + seg('w', 'Arms') + seg('a', 'Armor') + (K.h.length ? seg('h', 'Helm') : '') +
-    `<div class="kfoot"><span class="muted">ATK +${Math.round((K.mul.atk - 1) * 100)}% · DEF +${Math.round((K.mul.def - 1) * 100)}% from gear. ${plan.length ? (on ? 'Smiths forge ' : 'Paused: ') + plan.map(x => `${x.reforge?'Retemper ':''}${esc(ITEMS[x.k].name)}${x.quality>1?' · '+x.quality+'× quality':''} (${forgeCostText(x)})`).join(', ') + ' per set.' : 'Fully equipped at current research and forge quality.'}</span><button class="btn ${on ? 'gold' : 'ghost'}">Forge ${on ? 'on' : 'off'}</button></div>`;
+    `<div class="kfoot"><span class="muted">ATK +${Math.round((K.mul.atk - 1) * 100)}% · DEF +${Math.round((K.mul.def - 1) * 100)}% from gear. ${plan.length ? (on ? 'Still missing: ' : 'Paused, still missing: ') + plan.map(x => `${fmt(x.need)} ${esc(ITEMS[x.k].name)} (${forgeCostText(x)} each)`).join(', ') + '.' : 'Everyone carries your best researched gear.'}</span><button class="btn ${on ? 'gold' : 'ghost'}">Forge ${on ? 'on' : 'off'}</button></div>`;
   el.querySelector('.kfoot button').onclick = () => { G.forge[t] = !on; Sound.play('tap'); refreshSheet(); };
   return el;
 }
@@ -8050,11 +8050,21 @@ const ARMY_TIPS = {
   strat: 'Strategy: your best commander anywhere. Each formation\'s own orders use the best Strategy within that formation.',
   upkeep: 'Monthly upkeep for your troops and retainers.',
   militia: 'Militia: workers march too, at half weight, with whatever weapon they hold. Battles take no village time.',
-  forge: 'Smiths and Iron Mines add base forge batches each month. Formation workshops in Training add +100% batch output and +100% gear quality per connected workshop in its selected focus. Each set costs gold and recipe materials multiplied by quality. Retempering costs the same as a new set. Forging stops before the treasury drops below 150G.',
+  forge: 'Village smiths: shared sets each month (20, +30 per Smithy, +12 per Iron Mine, up to 180), on top of the formation forges in Training (40/65/90 sets a month each by level). Every set is your best researched gear at its usual gold and material cost. Forging stops before the treasury drops below 150G.',
   order: 'Each round: Gunners fire, Archers loose, Infantry clash, Cavalry charge. Infantry shield the ranks behind. Prices rise as the army grows.',
   ki: 'Ki is banked between battles and recovers 1 each month, up to capacity: 1, plus smoke pouches, the Shadow skill, monkeys and doctrine, 3 at most.',
   autocast: 'Auto-cast: your preferred ninjutsu is cast once per battle at a useful moment, when enough Ki is banked and your share of the two armies\' combined strength is between 33% and 67%. Off: Ki only builds up.',
 };
+// top-tier coverage per slot, as the item icon and the share of soldiers carrying it
+function armyCoverage(t) {
+  const C = forgeCoverage(t);
+  return ['w', 'a', 'h'].filter(c => C[c].k).map(c => { const p = C[c].T ? Math.floor(C[c].have / C[c].T * 100) : 100; return `<span class="cov${p >= 100 ? ' full' : ''}">${icon('it_' + C[c].k)}${p}%</span>`; }).join('');
+}
+function armyGearTip(t, K) {
+  const C = forgeCoverage(t), line = c => C[c].k ? `${ITEMS[C[c].k].name} ${C[c].have}/${C[c].T}` : '';
+  const eta = f => { const e = forgeEta(t, f); return e == null ? 'covered' : e === Infinity ? 'no forge' : `~${e} mo`; };
+  return `Best gear carried: ${['w', 'a', 'h'].map(line).filter(Boolean).join(' · ')}. Forges: weapons ${forgeRate(t, 'weapon')}/mo (${eta('weapon')}), armor & helmets ${forgeRate(t, 'armor')}/mo (${eta('armor')}). Gear gives ATK +${Math.round((K.mul.atk - 1) * 100)}% · DEF +${Math.round((K.mul.def - 1) * 100)}%. Tap for details.`;
+}
 function armyStats(A) {
   const up = Math.ceil(A.total * 0.35 * upkeepMul()) + guardCount() * GUARD_UPKEEP;
   return `<div class="astat"><span${tipAttr(ARMY_TIPS.strength)}>${icon('army')}<b>${fmt(armyPower(A))}</b></span><span${tipAttr(ARMY_TIPS.ki)}>${icon('ki')}<b>${kiNow(A.kiCap)}/${A.kiCap ?? 1}</b></span><span${tipAttr(ARMY_TIPS.strat)}>${icon('sk_strategy')}<b>${A.strat}</b></span><span${tipAttr(ARMY_TIPS.upkeep)}>${icon('gold')}<b>${fmt(up)}</b><small>/mo</small></span></div>`;
@@ -8065,7 +8075,7 @@ function armyTroops(body, A) {
     if (!un) { body.appendChild(h(`<div class="trow locked"${tipAttr(`Research ${ITEMS['corps_' + t].name} in the Armory, or win it from a clan.`)}><img class="px" src="${ICONS['u_' + t]}" alt=""><div class="tmain"><span class="tname">${U.name}</span><span class="muted">🔒 ${esc(ITEMS['corps_' + t].name)}</span></div></div>`)); return; }
     const K = kitSummary(t), open = !!(UI.armyOpen && UI.armyOpen[t]);
     const row = h(`<div class="trow"><img class="px"${tipAttr(esc(U.desc))} src="${ICONS['u_' + t]}" alt="${U.name}"><div class="tmain"><div class="tline"><b class="tn">${fmt(G.troops[t])}</b><span class="tname">${U.name}</span><span class="cmd"></span></div>
-      <button class="tkit" aria-expanded="${open}"${tipAttr(forgeSummary(t).replace(/<[^>]+>/g, ''))}><span>${icon('armory')}+${Math.round((K.mul.atk - 1) * 100)}%</span><span>${icon('fam_wall')}+${Math.round((K.mul.def - 1) * 100)}%</span><span class="kx">Gear ${open ? '▴' : '▾'}</span></button></div>
+      <button class="tkit" aria-expanded="${open}"${tipAttr(armyGearTip(t, K))}>${armyCoverage(t)}<span class="frate">${icon('build')}${forgeRate(t, 'weapon') + forgeRate(t, 'armor')}/mo</span><span class="kx">${open ? '▴' : '▾'}</span></button></div>
       <div class="tbuy"></div></div>`);
     const cm = row.querySelector('.cmd');
     cmds.forEach(c => { const i = h(`<span class="cmdp ${c.post || 'line'}${c.aux ? ' aux' : ''}"${tipAttr(`${esc(c.name)}${c.aux ? ' (militia)' : ''} · ${POST_NAME[c.post || 'line']} · Strategy ${stratOf(c)}`)}><img src="${pURL(c.look)}" alt="${esc(c.name)}">${c.guard ? `<i>${c.guard}</i>` : ''}</span>`); i.onclick = () => openVillager(c.id); cm.appendChild(i); });
@@ -8313,10 +8323,23 @@ function migrateArsenal() {
 
 /* Army forging: focus is per building; quality belongs to the sets it produced. */
 function forgeFocus(b) { return b.forgeFocus === 'armor' ? 'armor' : 'weapon'; }
-function forgeProfile(type,cat) {
-  const focus=cat==='w'?'weapon':'armor';
-  const count=G.buildings.filter(b=>BUILDINGS[b.id].forgeType===type&&forgeFocus(b)===focus&&entranceOf(b)).length;
-  return {count,quantity:1+count,quality:1+count};
+/* Each formation forge makes its own sets every month, on its focus (weapons, or armor & helmets, one set each):
+ 40 at Level 1, 65 at Level 2, 90 at Level 3, and forges add up. Forges add quantity only: every set is the best
+ researched item at standard quality and its standard gold and material cost. The village smiths add a small shared
+ trickle on top. Missing top-tier coverage is all they work on: once every soldier carries the best researched gear
+ the forges stop spending, and older gear stays in service until it is replaced. */
+const FORGE_OUT = [40, 65, 90];
+function forgeLevel(b) { return clamp(bLv(b), 1, FORGE_OUT.length); }
+// a road-connected forge works at its current level, also while carpenters upgrade it
+function forgeOutput(b) { return BUILDINGS[b.id].forgeType && entranceOf(b) ? FORGE_OUT[forgeLevel(b) - 1] : 0; }
+function forgeRate(type, focus) { return G.buildings.reduce((n, b) => n + (BUILDINGS[b.id].forgeType === type && forgeFocus(b) === focus ? forgeOutput(b) : 0), 0); }
+function forgeUpgrade(b) { const B = BUILDINGS[b.id], lv = forgeLevel(b); if (lv >= 3) return null;
+  return lv === 1 ? { lv: 2, name: 'Level 2 forge', cost: B.cost * 2, res: { wood: 20, ore: 20 } } : { lv: 3, name: 'Level 3 forge', cost: B.cost * 4, res: { wood: 40, ore: 40 } }; }
+// how many soldiers carry the best researched item of each slot
+function forgeCoverage(type) {
+  const T = Math.max(0, Math.floor(G.troops[type] || 0)), out = {};
+  for (const cat of ['w', 'a', 'h']) { const k = bestResearched(cat, type), n = k ? Math.floor(G.kit[type][k] || 0) : 0; out[cat] = { k, T, have: Math.min(T, n), need: k ? Math.max(0, T - n) : 0 }; }
+  return out;
 }
 function migrateForgeWorkshops() {
   G.kitQuality=G.kitQuality||{};
@@ -8387,90 +8410,81 @@ function kitFill(type,troops,pool) {
   }
   return out;
 }
-function forgeSetCost(k,quality=1) { return setCost(k)*quality; }
-function forgeSetMaterials(k,quality=1) { return Object.fromEntries(Object.entries(ITEMS[k].res||{}).map(([r,n])=>[r,n*quality/8])); }
+function forgeSetCost(k) { return setCost(k); }
+function forgeSetMaterials(k) { return Object.fromEntries(Object.entries(ITEMS[k].res || {}).map(([r, n]) => [r, n / 8])); }
 function forgePlan(type) {
-  const T=Math.max(0,Math.floor(G.troops[type]||0)),plan=[];if(!unitOpen(type)||!T)return plan;
-  for(const cat of ['w','a','h']){
-    const k=bestResearched(cat,type);if(!k)continue;
-    const P=forgeProfile(type,cat),have=Math.floor(G.kit[type][k]||0),missing=Math.max(0,T-have);
-    if(missing)plan.push({k,need:missing,cat,quality:P.quality,quantity:P.quantity,reforge:false});
-    const good=kitGrades(type,k,G.kit[type]).filter(([q])=>q>=P.quality).reduce((n,[,c])=>n+c,0),reforge=Math.min(have,Math.max(0,T-good-missing));
-    if(reforge)plan.push({k,need:reforge,cat,quality:P.quality,quantity:P.quantity,reforge:true});
-  }
-  return plan;
+  if (!unitOpen(type)) return []; const C = forgeCoverage(type);
+  return ['w', 'a', 'h'].filter(c => C[c].k && C[c].need > 0).map(cat => ({ k: C[cat].k, need: C[cat].need, cat, quality: 1, reforge: false }));
 }
 function forgeTick() {
-  let cap=forgeCapacity(),spent=0;const made=[],short=new Set();
-  const plans=['inf','arc','gun','cav'].filter(t=>G.forge[t]!==false).map(t=>({t,list:forgePlan(t)})).filter(p=>p.list.length);
-  // Base capacity counts working batches. A focused workshop adds one set per batch.
-  let guard=cap*4+16;
-  while(cap>0&&plans.some(p=>p.list.length)&&guard-->0){
-    let progressed=false;
-    for(const P of plans){
-      if(cap<=0)break;const job=P.list[0];if(!job)continue;
-      const gold=forgeSetCost(job.k,job.quality),materials=forgeSetMaterials(job.k,job.quality),batch=Math.min(job.need,job.quantity);
-      let done=0,blocked=false;
-      for(let i=0;i<batch;i++){
-        if(G.gold-gold<150){short.add('gold');blocked=true;break;}
-        let enough=true;
-        for(const [r,n] of Object.entries(materials)){
-          const need=Math.floor((G.forgeDebt[r]||0)+n+1e-9);
-          if(spendableGood(r)<need){short.add(GOODS[r].name);enough=false;}
-        }
-        if(!enough){blocked=true;break;}
-        if(job.reforge&&kitTake(P.t,job.k,1,job.quality)!==1){blocked=true;break;}
-        for(const [r,n] of Object.entries(materials)){
-          const due=(G.forgeDebt[r]||0)+n,whole=Math.floor(due+1e-9);
-          destroyGoods(economyCentral(r),r,whole,'army-forge');G.forgeDebt[r]=Math.max(0,due-whole);
-        }
-        G.gold-=gold;spent+=gold;kitAdd(P.t,job.k,1,job.quality);job.need--;done++;
-      }
-      if(done){
-        cap--;progressed=true;
-        const line=made.find(m=>m.t===P.t&&m.k===job.k&&m.quality===job.quality&&m.reforge===job.reforge);
-        if(line)line.n+=done;else made.push({t:P.t,k:job.k,n:done,quality:job.quality,reforge:job.reforge});
-      }
-      if(job.need<=0||blocked){P.list.shift();progressed=true;}
-    }
-    if(!progressed)break;
+  const types = ['inf', 'arc', 'gun', 'cav'].filter(t => G.forge[t] !== false && unitOpen(t)), C = {}, short = new Set(), made = [];let spent = 0;
+  types.forEach(t => C[t] = forgeCoverage(t));
+  // the next slot to fill: the least covered one this lane may work on
+  const pickCat = (t, cats) => cats.filter(c => C[t][c].k && C[t][c].need > 0).sort((a, b) => C[t][a].have / Math.max(1, C[t][a].T) - C[t][b].have / Math.max(1, C[t][b].T))[0];
+  const makeOne = (t, cat) => {
+    const k = C[t][cat].k, gold = forgeSetCost(k), mats = forgeSetMaterials(k);
+    if (G.gold - gold < 150) { short.add('gold'); return false; }
+    for (const [r, n] of Object.entries(mats)) if (spendableGood(r) < Math.floor((G.forgeDebt[r] || 0) + n + 1e-9)) { short.add(GOODS[r].name); return false; }
+    for (const [r, n] of Object.entries(mats)) { const due = (G.forgeDebt[r] || 0) + n, whole = Math.floor(due + 1e-9); destroyGoods(economyCentral(r), r, whole, 'army-forge'); G.forgeDebt[r] = Math.max(0, due - whole); }
+    G.gold -= gold; spent += gold; kitAdd(t, k, 1, 1); C[t][cat].have++; C[t][cat].need--;
+    const line = made.find(m => m.t === t && m.k === k); if (line) line.n++; else made.push({ t, k, n: 1 });
+    return true;
+  };
+  // each formation's forges work their own focus; the village smiths' shared sets go round the formations
+  const lanes = [];
+  types.forEach(t => { const w = forgeRate(t, 'weapon'), a = forgeRate(t, 'armor'); if (w) lanes.push({ t, cats: ['w'], left: w }); if (a) lanes.push({ t, cats: ['a', 'h'], left: a }); });
+  lanes.push({ t: null, cats: ['w', 'a', 'h'], left: forgeCapacity(), turn: 0 });
+  let progressed = true;
+  while (progressed) { progressed = false;
+    for (const L of lanes) { if (L.left <= 0) continue;
+      let t = L.t, cat = null;
+      if (t) cat = pickCat(t, L.cats);
+      else for (let i = 0; i < types.length && !cat; i++) { t = types[(L.turn + i) % types.length]; cat = pickCat(t, L.cats); if (cat) L.turn = (L.turn + i + 1) % types.length; }
+      if (!cat) { L.left = 0; continue; } // nothing missing: this lane idles and spends nothing
+      if (!makeOne(t, cat)) { L.left = 0; continue; }
+      L.left--; progressed = true; }
   }
-  if(made.length){
-    toast(`${icon('it_'+made[0].k)} Smiths ${made.map(m=>`<b>${m.n} ${esc(ITEMS[m.k].name)}${m.quality>1?' · '+m.quality+'× quality':''}</b> ${m.reforge?'retempered':'forged'} for ${UNITS[m.t].name}`).slice(0,3).join(', ')} <span class="muted">(−${fmt(spent)}G)</span>`);
-    RT.forgeIdle=null;
-  }else if(short.size&&plans.length){
-    const key=[...short].join(',');if(RT.forgeIdle!==key)toast(`Smiths are idle — short of ${[...short].join(', ')}.`);RT.forgeIdle=key;
+  if (made.length) {
+    toast(`${icon('it_' + made[0].k)} Smiths forge ${made.slice(0, 3).map(m => `<b>${m.n} ${esc(ITEMS[m.k].name)}</b> for ${UNITS[m.t].name}`).join(', ')} <span class="muted">(−${fmt(spent)}G)</span>`);
+    RT.forgeIdle = null;
+  } else if (short.size && types.some(t => forgePlan(t).length)) {
+    const key = [...short].join(','); if (RT.forgeIdle !== key) toast(`Smiths are idle — short of ${[...short].join(', ')}.`); RT.forgeIdle = key;
   }
-  RT.forgeNote={made,short:[...short],spent};
+  RT.forgeNote = { made, short: [...short], spent };
 }
 function forgeCostText(job) {
-  const mats=Object.entries(forgeSetMaterials(job.k,job.quality)).map(([r,n])=>`${Number(n.toFixed(2))} ${GOODS[r].name}`);
-  return `${forgeSetCost(job.k,job.quality)}G${mats.length?' + '+mats.join(', '):''}`;
+  const mats = Object.entries(forgeSetMaterials(job.k)).map(([r, n]) => `${Number(n.toFixed(2))} ${GOODS[r].name}`);
+  return `${forgeSetCost(job.k)}G${mats.length ? ' + ' + mats.join(', ') : ''}`;
 }
 function forgeSummary(type) {
-  const w=forgeProfile(type,'w'),a=forgeProfile(type,'a');
-  return `Weapons ${w.quantity}× output / ${w.quality}× quality · Armor & helmets ${a.quantity}× output / ${a.quality}× quality`;
+  return `Forges: weapons ${forgeRate(type, 'weapon')} sets/month · armor & helmets ${forgeRate(type, 'armor')} sets/month, plus a share of the village smiths' ${forgeCapacity()}.`;
+}
+// months until the current shortfall is covered at the present rate (null: nothing missing, Infinity: no forge on it)
+function forgeEta(type, focus) {
+  const C = forgeCoverage(type), need = (focus === 'weapon' ? ['w'] : ['a', 'h']).reduce((n, c) => n + C[c].need, 0), rate = forgeRate(type, focus);
+  return need ? (rate ? Math.ceil(need / rate) : Infinity) : null;
 }
 function armyForgePanel(b) {
-  const B=BUILDINGS[b.id],type=B.forgeType,focus=forgeFocus(b),P=forgeProfile(type,focus==='weapon'?'w':'a'),connected=!!entranceOf(b);
-  const el=h(`<div class="army-forge-panel"><div class="sec">${icon('u_'+type)} ${UNITS[type].name} forge</div>
-    <div class="forge-focus" role="group" aria-label="Forge focus"><button class="btn ${focus==='weapon'?'gold':'ghost'}" data-forge-focus="weapon" aria-pressed="${focus==='weapon'}">Weapons</button><button class="btn ${focus==='armor'?'gold':'ghost'}" data-forge-focus="armor" aria-pressed="${focus==='armor'}">Armor & helmets</button></div>
-    <p class="note"${connected?'':' style="color:#a02a1a"'}>${connected?'Road connected · contributes +100% quantity and +100% quality.':'Inactive — connect this workshop to a road to enable its bonus.'}</p>
-    <div class="forge-metrics"><div><b>${P.quantity}×</b><span>Sets per batch</span></div><div><b>${P.quality}×</b><span>Equipment quality</span></div><div><b>${P.quality}×</b><span>Cost per set</span></div></div>
-    <p class="note">${P.count} connected workshop${P.count===1?'':'s'} on ${focus==='weapon'?'weapons':'armor & helmets'} for ${UNITS[type].name.toLowerCase()}. Bonuses add: one = 2×, two = 3×. Gold and recipe materials scale with quantity and quality; material-free recipes stay material-free.</p>
-    <p class="note">The smiths use your best researched gear, then retemper lower-quality sets already in service. Switching focus changes future work. Completed sets retain their quality.</p>
-    <div class="row"><span class="muted">${G.forge[type]===false?'Formation forging is paused.':'Formation forging is enabled.'}</span><button class="btn ${G.forge[type]===false?'gold':'ghost'}" data-forge-pause>${G.forge[type]===false?'Resume forging':'Pause forging'}</button></div></div>`);
-  el.querySelectorAll('[data-forge-focus]').forEach(button=>button.onclick=()=>{
-    b.forgeFocus=button.dataset.forgeFocus;Sound.play('tap');openBuildingInfo(b);updateHUD();
-  });
-  el.querySelector('[data-forge-pause]').onclick=()=>{G.forge[type]=G.forge[type]===false;Sound.play('tap');openBuildingInfo(b);};
+  const B = BUILDINGS[b.id], type = B.forgeType, focus = forgeFocus(b), lv = forgeLevel(b), connected = !!entranceOf(b), C = forgeCoverage(type), N = forgeUpgrade(b);
+  const cats = focus === 'weapon' ? ['w'] : ['a', 'h'], eta = forgeEta(type, focus);
+  const cov = cats.filter(c => C[c].k).map(c => `<span${tipAttr(`${ITEMS[C[c].k].name}: ${C[c].have} of ${C[c].T} ${UNITS[type].name.toLowerCase()} equipped`)}>${icon('it_' + C[c].k)} <b>${fmt(C[c].have)}</b>/${fmt(C[c].T)}</span>`).join(' ') || '<span class="muted">Research gear for this focus first</span>';
+  const el = h(`<div class="army-forge-panel"><div class="sec">${icon('u_' + type)} ${UNITS[type].name} forge · Level ${lv}</div>
+    <div class="forge-focus" role="group" aria-label="Forge focus"><button class="btn ${focus === 'weapon' ? 'gold' : 'ghost'}" data-forge-focus="weapon" aria-pressed="${focus === 'weapon'}">Weapons</button><button class="btn ${focus === 'armor' ? 'gold' : 'ghost'}" data-forge-focus="armor" aria-pressed="${focus === 'armor'}">Armor & helmets</button></div>
+    <p class="note"${connected ? '' : ' style="color:#a02a1a"'}>${connected ? 'Road connected and working.' : 'Inactive — connect this forge to a road.'}</p>
+    <div class="lvsteps">${FORGE_OUT.map((n, i) => `<span class="${i + 1 === lv ? 'on' : i + 1 < lv ? 'done' : ''}">Lv${i + 1} · ${n}/mo</span>`).join('<i>→</i>')}</div>
+    <div class="forge-metrics"><div><b>${forgeOutput(b)}</b><span>This forge, sets/month</span></div><div><b>${forgeRate(type, focus)}</b><span>All ${focus === 'weapon' ? 'weapon' : 'armor'} forges, sets/month</span></div><div><b>${eta == null ? 'Done' : eta === Infinity ? '—' : eta + ' mo'}</b><span>To full coverage</span></div></div>
+    <p class="note">${cov}</p>
+    ${b.reno ? `<p class="note">${icon('build')} Upgrading to Level ${b.reno.lv} — <b>${b.reno.w}</b> week${b.reno.w === 1 ? '' : 's'} left. It keeps forging at Level ${lv} meanwhile.</p>`
+      : N ? `<div class="row wrap" style="align-items:center;gap:8px"><div class="note" style="flex:1;margin:0"><b>Upgrade to Level ${N.lv}</b>: ${FORGE_OUT[N.lv - 1]} sets/month.<br>${icon('gold')}${fmt(N.cost)} ${Object.entries(N.res).map(([r, n]) => `${icon('g_' + r)}${n}`).join(' ')} · ${N.lv >= 3 ? 3 : 2} weeks</div><button class="btn gold" data-forge-up>Upgrade</button></div>`
+      : `<p class="note">Fully upgraded.</p>`}
+    <p class="note">Each set is your best researched gear at its usual cost. Armor and helmets take one set each. Older gear stays in service until replaced; once everyone is equipped the forge rests.</p>
+    <div class="row"><span class="muted">${G.forge[type] === false ? 'Formation forging is paused.' : 'Formation forging is enabled.'}</span><button class="btn ${G.forge[type] === false ? 'gold' : 'ghost'}" data-forge-pause>${G.forge[type] === false ? 'Resume forging' : 'Pause forging'}</button></div></div>`);
+  el.querySelectorAll('[data-forge-focus]').forEach(button => button.onclick = () => { b.forgeFocus = button.dataset.forgeFocus; Sound.play('tap'); openBuildingInfo(b); updateHUD(); });
+  const up = el.querySelector('[data-forge-up]'); if (up) { if (renoBlock(b, N)) up.classList.add('dim');
+    up.onclick = () => { const e = startReno(b); if (e) { Sound.play('alert'); toast(e); return; } Sound.play('build'); toast(`Carpenters start upgrading the ${esc(bName(b))}.`); openBuildingInfo(b); updateHUD(); }; }
+  el.querySelector('[data-forge-pause]').onclick = () => { G.forge[type] = G.forge[type] === false; Sound.play('tap'); openBuildingInfo(b); };
   return el;
 }
-
-
-/* ---------- troop kit ---------- */
-// How many of a unit carry each piece: best sets go first. Returns {w:[[k,n]], a:[[k,n]], h:[[k,n]], plain:{w,a,h}}
-
 function kitSummary(type) { return kitFill(type, G.troops[type], G.kit[type]); }
 function bestResearched(cat, type) { const l = kitList(cat, type).filter(k => G.researched[k] && !ITEMS[k].rare); l.sort((a,b)=>artKitScore(a,type)-artKitScore(b,type)||(ITEMS[a].hp||0)-(ITEMS[b].hp||0)||ITEMS[a].tier-ITEMS[b].tier); return l.length ? l[l.length - 1] : null; }
 function setCost(k) { return Math.max(3, Math.round(ITEMS[k].cost / 30)); }
@@ -8759,6 +8773,7 @@ function nextLv(b) {
   const B = BUILDINGS[b.id], lv = bLv(b);
   if (HOME_LV[b.id]) { const L = HOME_LV[b.id][lv]; return L ? Object.assign({ lv: lv + 1 }, L) : null; }
   if (B.cat === 'shop' && lv === 1) return Object.assign({ lv: 2, cost: Math.round(B.cost * 1.4 / 10) * 10 }, SHOP_LV2);
+  if (B.forgeType) return forgeUpgrade(b);
   return null;
 }
 function renoBlock(b, N) {
