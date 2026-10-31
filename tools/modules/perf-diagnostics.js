@@ -41,7 +41,7 @@ function perfCacheSizes(){
 }
 function perfCollections(){
  if(!G)return 0;var n=G.buildings.length+G.villagers.length+RT.agents.length;
- for(var b of G.buildings)n+=Object.keys(b.shelf||{}).length+Object.keys(b.inbox||{}).length+Object.keys(b.outs||{}).length;
+ for(var b of G.buildings)n+=(b.shelf?Object.keys(b.shelf.raw||{}).length+Object.keys(b.shelf.ware||{}).length:0)+Object.keys(b.inbox||{}).length+Object.keys(b.outs||{}).length;
  if(RT.eco)n+=(RT.eco.claims?RT.eco.claims.size:0)+(RT.eco.jobs?RT.eco.jobs.length:0);
  return n;
 }
@@ -76,7 +76,7 @@ function perfUI(){
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).catch(function(){perfCopyFallback(t);});else perfCopyFallback(t);};
 }
 function perfCopyFallback(t){var el=document.createElement('textarea');el.value=t;el.style.cssText='position:fixed;left:-9999px';document.body.appendChild(el);el.select();document.execCommand('copy');el.remove();}
-function perfOpen(){SH_PERF.on=true;SH_PERF.last=0;perfUI();SH_PERF.root.hidden=false;document.querySelectorAll('canvas').forEach(perfCanvas);}
+function perfOpen(){SH_PERF.on=true;SH_PERF.last=0;perfUI();SH_PERF.root.hidden=false;document.querySelectorAll('canvas').forEach(perfCanvas);perfRegisterCaches();}
 function perfInit(){
  var date=document.getElementById('hud-date'),timer=0;
  if(date){date.style.touchAction='manipulation';date.addEventListener('pointerdown',function(){timer=setTimeout(perfOpen,2000);});
@@ -96,15 +96,15 @@ function diagInventory(out){
  for(var k in out)delete out[k];
  var add=function(k,n){if(n)out[k]=(out[k]||0)+n;};
  for(var k in G.stock)add(k,G.stock[k]);for(var k in G.wares)add(k,G.wares[k]);
- for(var b of G.buildings){if(BUILDINGS[b.id].makes)add(BUILDINGS[b.id].makes,b.pile||0);
-  for(var key of ['inbox','outs','shopGoods','shopWares','shelf'])for(var k in b[key]||{})add(k,b[key][k]);}
+ for(var b of G.buildings){if(BUILDINGS[b.id].makes)add(BUILDINGS[b.id].makes,(b.pile||0)+(b.buffer||0));
+  for(var key of ['inbox','outs','shopGoods','shopWares'])for(var k in b[key]||{})add(k,b[key][k]);if(b.shelf)for(var side of ['raw','ware'])for(var k in b.shelf[side]||{})add(k,b.shelf[side][k]);}
  for(var a of RT.agents)if(a.carry)add(a.carry.good,a.carry.n);
  return out;
 }
 function diagNegatives(){
  var n=0,check=function(x){if(x<-.00000001)n++;};
  for(var k in G.stock)check(G.stock[k]);for(var k in G.wares)check(G.wares[k]);
- for(var b of G.buildings){check(b.pile||0);for(var key of ['inbox','outs','shopGoods','shopWares','shelf'])for(var k in b[key]||{})check(b[key][k]);}
+ for(var b of G.buildings){check(b.pile||0);check(b.buffer||0);for(var key of ['inbox','outs','shopGoods','shopWares'])for(var k in b[key]||{})check(b[key][k]);if(b.shelf)for(var side of ['raw','ware'])for(var k in b.shelf[side]||{})check(b.shelf[side][k]);}
  for(var a of RT.agents)if(a.carry)check(a.carry.n);return n;
 }
 function diagProbe(dt){
@@ -174,17 +174,17 @@ function simRestoreObject(o,b){for(var k in o)if(!(k in b))delete o[k];for(var k
 function simPrepare(){
  var S={G:G,RT:simSnapshotObject(RT),VIEW:simSnapshotObject(VIEW),UI:simSnapshotObject(UI),road:simSnapshotObject(ROAD_TRAFFIC),land:JSON.parse(JSON.stringify(LAND)),
  random:Math.random,save:saveGame,load:loadGame,modal:modal,announce:announce,toast:toast,noIntro:window.__noIntro,noQuick:window.__noQuick,
- sound:{},placeholder:BUILDINGS.porter||null,timer:setTimeout.bind(window),clear:clearTimeout.bind(window),rawTimer:setTimeout,rawClear:clearTimeout,timers:[],cancel:false,index:0,seedIndex:0,step:0,
+ sound:{},placeholder:BUILDINGS.porter||null,viewWidth:VIEW.cv.width,viewHeight:VIEW.cv.height,timer:setTimeout.bind(window),clear:clearTimeout.bind(window),rawTimer:setTimeout,rawClear:clearTimeout,timers:[],cancel:false,index:0,seedIndex:0,step:0,
  rows:[],steps:Math.round(52*WEEK_SEC/.1),weekMs:0,mutated:0,mem:null,canvas:gameCanvas()};
  for(var k in Sound)if(typeof Sound[k]==='function'){S.sound[k]=Sound[k];Sound[k]=function(){};}
  saveGame=function(){return true;};loadGame=function(){return false;};modal=function(){};announce=function(){};toast=function(){};
  window.__noIntro=window.__noQuick=true;UI.panel=null;UI.render=null;UI.atelier=false;
  window.setTimeout=function(fn,delay){var id=S.timer(function(){if(SH_PERF.sim)fn();},delay);S.timers.push(id);return id;};
- VIEW.cv=S.canvas;VIEW.ctx=S.canvas.getContext('2d');SH_PERF.sim=true;SH_PERF.run=S;return S;
+ S.VIEW.cv.width=S.VIEW.cv.height=0;VIEW.cv=S.canvas;VIEW.ctx=S.canvas.getContext('2d');SH_PERF.sim=true;SH_PERF.run=S;return S;
 }
 function simRestore(S){
  for(var id of S.timers)S.clear(id);window.setTimeout=S.rawTimer;window.clearTimeout=S.rawClear;
- G=S.G;simRestoreObject(RT,S.RT);simRestoreObject(VIEW,S.VIEW);simRestoreObject(UI,S.UI);simRestoreObject(ROAD_TRAFFIC,S.road);
+ S.VIEW.cv.width=S.viewWidth;S.VIEW.cv.height=S.viewHeight;G=S.G;simRestoreObject(RT,S.RT);simRestoreObject(VIEW,S.VIEW);simRestoreObject(UI,S.UI);simRestoreObject(ROAD_TRAFFIC,S.road);
  for(var k in LAND)LAND[k]=S.land[k];Math.random=S.random;saveGame=S.save;loadGame=S.load;modal=S.modal;announce=S.announce;toast=S.toast;
  for(var k in S.sound)Sound[k]=S.sound[k];window.__noIntro=S.noIntro;window.__noQuick=S.noQuick;
  if(!S.placeholder)delete BUILDINGS.porter;else BUILDINGS.porter=S.placeholder;
@@ -223,6 +223,7 @@ function simReport(rows){
   for(var r of list)for(var key of ['worker','porter','producer'])for(var i=0;i<5;i++)row[key][i]+=r[key][i]/list.length;
   report.summary.push(row);
  }
+ if(report.baseline){report.paired=rows.map(function(r){var b=report.baseline.rows.find(function(v){return v.scenario===r.scenario&&v.seed===r.seed;});return {scenario:r.scenario,seed:r.seed,goldChange:b&&b.gold?(r.gold/b.gold-1)*100:0,costRatio:b&&b.msPerWeek?r.msPerWeek/b.msPerWeek:0,saveRatio:b&&b.saveKB?r.saveKB/b.saveKB:0};});}
  return report;
 }
 function simRenderReport(report){
@@ -252,4 +253,10 @@ function runEconomySim(){
   }catch(e){simRestore(S);progress.textContent='Test stopped: '+e.message+'. Original village restored.';reject(e);}};
   S.timer(chunk,0);
  });
+}
+
+function perfRegisterCaches(){
+ const seen=new WeakSet();
+ function scan(o){if(!o||typeof o!=='object'||seen.has(o))return;seen.add(o);if(o instanceof HTMLCanvasElement){perfCanvas(o);if(o.detail)perfCanvas(o.detail);return;}if(o instanceof Map){for(const v of o.values())scan(v);return;}if(ArrayBuffer.isView(o))return;for(const k in o)if(typeof o[k]==='object')scan(o[k]);}
+ for(const o of [TILES,_bldCache,_charCache,_portCache,_soldierCache,_soldierCache2,_battleArt,_villageRigCache,_villageToolCache,_carry,_pile,_workshopProductSprites,RT.ground,VIEW.cv])scan(o);
 }

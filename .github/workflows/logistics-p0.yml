@@ -20,6 +20,7 @@ jobs:
         run: npm test
       - name: Run in-page economy baseline and P0 suite
         run: |
+          if test -f tests/logistics.cjs; then node tests/logistics.cjs; fi
           if test -f tests/economy-sim.cjs; then node tests/economy-sim.cjs; fi
       - uses: actions/upload-artifact@v4
         if: always()
