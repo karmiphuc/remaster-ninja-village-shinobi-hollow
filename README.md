@@ -64,6 +64,7 @@ Each formation forge (Training) makes its own sets of your **best researched gea
 
 - **Output adds up.** Five Level 1 Gunner forges on armor make 200 sets a month and fully equip 1,000 Gunners with top armor and helmets in 10 months. At Level 3 it takes 5.
 - **A forge keeps working while carpenters upgrade it.**
+- **Visible upgrades:** Level 1 has an open furnace; Levels 2 and 3 add one and two roof chimneys. Formation displays and the red weapon / green armor banners remain visible. See the [procedural level preview](docs/forge-upgrades-preview.png).
 - **Forges add quantity, never quality.** Every set costs its usual gold and materials, and stops before the treasury drops below 150G.
 - **The village smiths add a small shared trickle on top**, split between formations: 20 a month, +30 per Smithy, +12 per Iron Mine.
 - **Forges only fill missing top-tier coverage.** Once every soldier carries the best researched gear they stop spending, and start again when research unlocks something better.

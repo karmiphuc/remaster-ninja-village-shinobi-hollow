@@ -1846,6 +1846,7 @@ function roadTile(mask, kind = 'road', v = 0) {
    Keep left worker/tool displays and right output piles clear and grounded.
    Porter House MUST retain a clearly visible foreground cart/wheelbarrow even
    when unassigned; tray, handles and wheel must read separately from the sill.
+   Formation forge levels 1/2/3 have 0/1/2 roof chimneys; keep focus banners clear.
    Cache art, preserve logical footprints/entrances, and review beside existing
    buildings at the same zoom. Character/equipment art uses its own detail system.
 */
@@ -1924,7 +1925,7 @@ function treePB(kind, seed = 1) {
   }
 }
 /* Shared timber frame and tiled roofs, with formation-specific tools and racks. */
-function armyForgeArt(p,id,W,H,Y,variant=0) {
+function armyForgeArt(p,id,W,H,Y,variant=0,lv=1) {
   const F=ARMY_FORGES[id], floor=Y+H-2, wallY=floor-17, armor=variant>=4;
   const wood='#6b4a2e', dark='#352720', iron='#8d93a3', light='#d5dbe0';
   const modeColor=armor?'#3d7d45':'#b83f35';
@@ -1962,8 +1963,10 @@ function armyForgeArt(p,id,W,H,Y,variant=0) {
   p.rect(14,floor-2,6,2,'#413c3b');p.hline(15,floor-3,4,'#73717a');
   // Reuse the existing roof painter: matching ridges, tile highlights and eaves.
   roofTiles(p,0,wallY-19,W,22,F.roof);
-  p.rect(W-13,wallY-18,4,10,'#77716b');p.vline(W-13,wallY-18,10,'#a09a8b');
-  p.rect(W-14,wallY-20,6,2,'#3c3940');p.hline(W-13,wallY-20,4,'#8d8a86');
+  // Each completed upgrade adds one flue: Lv1 open forge, Lv2 one, Lv3 two.
+  // The taller drawing buffer adds headroom without moving the footprint or roof.
+  if(lv>=2)armyForgeChimney(p,W-13,wallY-28);
+  if(lv>=3)armyForgeChimney(p,9,wallY-28);
   // A roof plaque reads at village zoom, like the signs on existing shops.
   const bx=Math.floor(W/2-5),by=wallY-11;
   p.rect(bx-1,by-1,12,10,'#40312a');p.rect(bx,by,10,8,'#c9ad73');p.rect(bx+1,by+1,8,6,F.cloth);
@@ -1996,6 +1999,16 @@ function armyForgeArt(p,id,W,H,Y,variant=0) {
     p.rect(32,floor-3,8,2,wood);p.line(32,floor-4,39,floor-7,light);p.line(32,floor-5,34,floor-6,'#bf9e5a');
   }
   armyForgeBanner(p,W,Y,H,armor,modeColor);
+}
+
+function armyForgeChimney(p,x,y) {
+  // Native-pixel stone/clay flue: the original forge's material shades and cap.
+  p.rect(x-1,y+12,7,2,'#3c3940');
+  p.rect(x,y+2,5,11,'#77716b');p.vline(x,y+2,11,'#a09a8b');
+  p.vline(x+4,y+2,11,'#56515a');p.hline(x+1,y+6,3,'#655f5d');
+  p.hline(x+1,y+10,3,'#655f5d');
+  p.rect(x-1,y,7,3,'#3c3940');p.hline(x,y,5,'#8d8a86');
+  p.hline(x+1,y+1,3,'#211a1c');
 }
 
 // A tall right-hand nobori: red 武 for weapons, green 甲 for armor.
@@ -2207,9 +2220,12 @@ function fieldWorkPad(id) {
 
 
 function buildingSprite(id, variant = 0, lv = 1) {
+  const B = BUILDINGS[id];
+  // Formation forges have only 4 x 2 x 3 cached sprites: formation/focus/level.
+  if(B.forgeType){lv=clamp(Math.floor(lv)||1,1,3);variant=variant>=4?4:0;}
   if (lv > 1 && (HOME_LV[id] || BUILDINGS[id].cat === 'shop')) { const k2 = id + ':' + variant + ':L' + lv; return _bldCache[k2] || (_bldCache[k2] = buildingSpriteLv(id, variant, lv)); }
-  const key = id + ':' + variant; if (_bldCache[key]) return _bldCache[key];
-  const B = BUILDINGS[id], W = B.w * 16, H = B.h * 16, top = B.top || (id === 'hall' ? 28 : 10);
+  const key = id + ':' + variant + (B.forgeType?':L'+lv:''); if (_bldCache[key]) return _bldCache[key];
+  const W = B.w * 16, H = B.h * 16, top = B.forgeType&&lv>1?18:B.top || (id === 'hall' ? 28 : 10);
   let pb = new PB(W, H + top); const Y = top; // footprint starts at y=top
   const house = (o) => {
     const wallH = o.wallH || 11, roofH = H - wallH + top - 2 + (o.roofExtra || 0);
@@ -2227,7 +2243,7 @@ function buildingSprite(id, variant = 0, lv = 1) {
     case 'noodle': house({ roof: '#3a3a48', door: true, noren: '#c8452c' }); signIcon(pb, W / 2 - 4, Y + H - 22, 'noodle'); pb.rect(W - 8, Y + H - 14, 4, 6, '#f2efe2'); pb.rect(W - 8, Y + H - 15, 4, 1, '#c8452c'); pb.rect(W - 8, Y + H - 8, 4, 1, '#c8452c'); break;
     case 'teahouse': house({ roof: '#5a4a3a', door: true, noren: '#5f9e3e', plaster: '#f4ecd8' }); signIcon(pb, W / 2 - 4, Y + H - 22, 'tea'); pb.rect(2, Y + H - 4, 10, 3, '#c8452c'); pb.rect(3, Y + H - 9, 1, 6, '#6b4a2e'); pb.poly([[0, Y + H - 9], [8, Y + H - 9], [4, Y + H - 15]], '#c8452c'); break;
     case 'crafts': house({ roof: '#8a5a3a', door: true, noren: '#e0b54a' }); signIcon(pb, W / 2 - 4, Y + H - 22, 'wood'); pb.rect(W - 8, Y + H - 9, 3, 6, '#e8b070'); pb.circle(W - 6.5, Y + H - 10, 2, '#f6d2b0'); pb.rect(W - 8, Y + H - 12, 3, 1, '#222'); break;
-    case 'katana_kaji': case 'yumishi_kobo': case 'teppo_kaji': case 'bagu_kaji': armyForgeArt(pb,id,W,H,Y,variant); break;
+    case 'katana_kaji': case 'yumishi_kobo': case 'teppo_kaji': case 'bagu_kaji': armyForgeArt(pb,id,W,H,Y,variant,lv); break;
     case 'smithy': house({ roof: '#4a4a52', door: true, noren: '#2a2a33', plaster: '#c8c0b0' }); signIcon(pb, W / 2 - 4, Y + H - 22, 'ore'); pb.rect(W - 9, Y - 2 + 8, 4, 10, '#5a5a62'); pb.rect(W - 10, Y + 6, 6, 2, '#3a3a42'); pb.rect(3, Y + H - 6, 6, 3, '#3a3a42'); pb.rect(4, Y + H - 7, 4, 1, '#5a5a62'); break;
     case 'kimono': house({ roof: '#2a4a5a', door: true, noren: '#d0789a', plaster: '#f8f2e4' }); signIcon(pb, W / 2 - 4, Y + H - 22, 'silk'); pb.rect(3, Y + H - 12, 6, 9, '#d0789a'); pb.rect(3, Y + H - 9, 6, 1, '#e0b54a'); pb.hline(2, Y + H - 12, 8, '#6b4a2e'); break;
     case 'workshop': { // 工房: board roof weighted with stones, wide open front onto the bench and lamp, tool rack, lumber, water barrel, clay chimney
@@ -7191,7 +7207,16 @@ function drawVillage() {
       drawLogi(ctx,b,B,px,py);
       if(WORKSITE_DUTY[b.id])drawWorksiteDuty(ctx,b,px,py);
       if (b.id === 'stall' && G.merch && G.merch.cur && !G.merch.cur.visited) { const by = py - 30 + Math.sin(RT.t * 5) * 1.5; ctx.fillStyle = '#1c1420'; ctx.fillRect(px + 13, by - 1, 7, 9); ctx.fillStyle = '#f2d27a'; ctx.fillRect(px + 14, by, 5, 7); ctx.fillStyle = '#c8452c'; ctx.fillRect(px + 16, by + 1, 1, 3); ctx.fillRect(px + 16, by + 5, 1, 1); }
-      if ((b.id === 'smithy' || B.forgeType&&G.forge[B.forgeType]!==false&&entranceOf(b)) && Math.random() < 0.03) RT.particles.push({ x: px + B.w * 16 - 7, y: py - 4, vx: rnd(-2, 2), vy: -8, t: 2, kind: 'smoke' });
+      if ((b.id === 'smithy' || B.forgeType&&G.forge[B.forgeType]!==false&&entranceOf(b)) && Math.random() < 0.03) {
+        let sx=B.w*16-7,sy=-4;
+        // Reuse the same smoke budget; Lv3 alternates between its two real outlets.
+        if(B.forgeType){
+          const flues=clamp(bLv(b)-1,0,2);
+          sx=flues?B.w*16-11:18;sy=flues?-16:18;
+          if(flues===2&&((RT.t*2)|0)%2)sx=11;
+        }
+        RT.particles.push({ x: px + sx, y: py + sy, vx: rnd(-2, 2), vy: -8, t: 2, kind: 'smoke' });
+      }
       if ((B.cat === 'ind' || B.cat === 'shop' || B.forgeType) && !entranceOf(b)) { ctx.fillStyle = '#c8452c'; ctx.fillRect(px + B.w * 8 - 3, py - 10 + Math.sin(RT.t * 6) * 1, 6, 8); ctx.fillStyle = '#fff'; ctx.fillRect(px + B.w * 8 - 1, py - 9 + Math.sin(RT.t * 6), 2, 4); ctx.fillRect(px + B.w * 8 - 1, py - 4 + Math.sin(RT.t * 6), 2, 1); }
       if (RT.sel && RT.sel.uid === b.uid) { ctx.strokeStyle = '#f2d27a'; ctx.lineWidth = 1; ctx.strokeRect(px + .5, py + .5, B.w * 16 - 1, B.h * 16 - 1); showRange(b, b.id); }
     } else { const a = it.a; if (a.x < vx0 || a.x > vx1 || a.y < vy0 || a.y > vy1) continue;

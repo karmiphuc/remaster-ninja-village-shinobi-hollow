@@ -73,6 +73,16 @@ The current wooden wheelbarrow has an open/sloping tray, two handles, a support 
 
 The parked barrow is empty decoration. Actual porter cargo remains part of the existing physical goods and carrying system; the prop must not fabricate, duplicate or stockpile goods.
 
+### Formation forge upgrades
+
+The four Training forges share a procedural level progression: **Level 1 has no roof chimney, Level 2 has one, Level 3 has two**. Each completed upgrade adds one clearly readable stone/clay flue. Keep the existing roof colours, formation plaque and left equipment rack, and preserve the red weapon / green armour banners in both modes. The common level silhouette should be recognizable without opening the forge panel.
+
+The extra canvas headroom at Levels 2–3 is drawing space only. Roofs, doorways, racks and ground anchors stay at the same world coordinates; the logical footprint stays 3×2. During renovation, show the currently completed level until the existing renovation flow updates `b.lv`. Existing saves without a level use Level 1.
+
+`armyForgeArt()` and `armyForgeChimney()` draw into the existing building sprite cache. Forge cache keys are normalized to four formations × two focuses × three levels (24 sprites maximum). Repeated map and panel renders share those sprites. Smoke uses the existing particle budget, emerging from the open furnace at Level 1 and the visible flues at higher levels; Level 3 alternates outlets without doubling particle creation.
+
+See the [forge level comparison sheet](forge-upgrades-preview.png), generated from both focus modes with `node tools/preview-forges.cjs`. Forge throughput, prices, upgrade costs and timing are governed by the existing mechanics and must not be altered by this artwork.
+
 ## Procedural integration and performance
 
 - Keep artwork procedural in the standalone HTML. Reference PNGs are review artefacts, not runtime dependencies or replacement spritesheets.
