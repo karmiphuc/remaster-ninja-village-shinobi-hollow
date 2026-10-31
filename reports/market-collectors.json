@@ -1,0 +1,67 @@
+{
+  "materials": {
+    "defaultsPreserved": true,
+    "individualAndAll": true,
+    "craftedSalesUnaffected": true,
+    "mixedRecipesPaused": true,
+    "physicalReturns": true,
+    "mixedTripReroute": true
+  },
+  "weekly": {
+    "price": 500,
+    "rounds": 5,
+    "goods": [
+      "rice",
+      "veg",
+      "tea",
+      "wood",
+      "ore",
+      "silk"
+    ],
+    "received": {
+      "rice": 25,
+      "veg": 25,
+      "tea": 25,
+      "wood": 25,
+      "ore": 25,
+      "silk": 25
+    },
+    "noExtraWorkersOrCustomers": true
+  },
+  "dispatch": {
+    "peak": 8,
+    "staggered": true,
+    "sharedReservations": true,
+    "multipleStorehouses": true,
+    "savedVisitCap": 8
+  },
+  "recovery": {
+    "prePickupSave": true,
+    "loadedSaveExactlyOnce": true,
+    "sourceDemolition": true,
+    "storeDemolition": true,
+    "roadDemolition": true,
+    "crossings": true
+  },
+  "checks": 4104,
+  "conservationResidual": 0,
+  "negativeStock": 0,
+  "cacheSizes": {
+    "rig": 0,
+    "tools": 0,
+    "carry": 200,
+    "pile": 52,
+    "products": 0,
+    "portraits": 0,
+    "characters": 0,
+    "portraitURLs": 0,
+    "dolls": 0
+  },
+  "ui": {
+    "individualToggle": true,
+    "masterToggle": true,
+    "hireButton": true,
+    "chargedOnce": true,
+    "saveReload": true
+  }
+}
