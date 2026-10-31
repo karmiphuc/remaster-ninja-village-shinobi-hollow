@@ -160,5 +160,16 @@
     ],
     "alternatingOrder": true,
     "ratio": 0.812382531785826
+  },
+  "standaloneExport": {
+    "exactExportMatchesRepository": true,
+    "transport": "local HTTP",
+    "newGame": true,
+    "save": true,
+    "continue": true,
+    "version": 1,
+    "forgeEmblemsPreserved": true,
+    "errors": [],
+    "fileURL": "blocked by managed browser policy"
   }
 }

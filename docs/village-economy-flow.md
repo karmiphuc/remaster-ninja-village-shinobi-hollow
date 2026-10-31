@@ -31,3 +31,5 @@ The paired profile uses base `f22802e3c8d1cbf4f5e084bf39e81e927de2b3f6`, three s
 The final profile used 0.81× baseline simulation/draw time; this is a local measurement, not a promised FPS improvement. The largest observed economy collection count was 358, and the slowest stringify was 1.8 ms. Physical iPhone Safari and long app-switch sessions were not run here.
 
 Code paths: `roadPath` / `walkTo` / `economyComponents` handle worker connectivity; `chooseCraft` / `craftReserve` / `craftDone` handle automatic batches; `economyBundle` / `missionArrive` / `economyDeliverStop` handle destination-specific cargo. All goods changes still go through the existing ledger.
+
+The exported **Shinobi Hollow.html** was byte-compared with the repository source and tested over local HTTP at 430×932: New Game, saving, reloading and Continue all succeeded with no page errors. Direct `file://` navigation was blocked by this managed browser's administrator policy; it was not validated here. The game remains one HTML file with no new external dependencies.
