@@ -1,0 +1,53 @@
+{
+  "provinces": {
+    "holdable": 49,
+    "dojoExcluded": "Training Ground",
+    "completes": "49/49"
+  },
+  "dojoCard": "Archers recruits",
+  "dojo": {
+    "rolls": {
+      "horse": 75,
+      "person": 101,
+      "troops": 149,
+      "armor": 75
+    },
+    "partnerPower": {
+      "troops": 772,
+      "armor": 872,
+      "person": 1044
+    }
+  },
+  "dojoPayouts": {
+    "troopsOnWin": 16,
+    "armor": "Ginryū Gusoku",
+    "horse": "Black Stallion",
+    "personOffered": "Hikaru",
+    "lossConsolation": 5
+  },
+  "rebels": {
+    "lair": {
+      "name": "Yamato",
+      "before": 63,
+      "after": 470,
+      "uprising": 392,
+      "spoils": {
+        "items": [
+          "Hachigane",
+          "Leather Dō"
+        ],
+        "recruits": []
+      }
+    },
+    "castle": {
+      "name": "Ise",
+      "strengthKept": 144,
+      "spoilsGranted": [
+        "Quilted Haraate"
+      ],
+      "recruitOffered": "Shinpei"
+    }
+  },
+  "oldSave": true,
+  "errors": []
+}
