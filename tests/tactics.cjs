@@ -94,8 +94,9 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
       // Enemy forms Volley Line (Precise). Wall-family orders are countered by it, so a better order exists for everyone.
       const N = 4000; out.adapt = {};
       G.ftac = { inf: ['spear', 'spear', 'spear'], arc: ['harass', 'harass', 'harass'], gun: ['suppress', 'suppress', 'suppress'], cav: ['reserve', 'reserve', 'reserve'] };
+      startBattle(site.id); BT.round = 3; BT.tac[1] = 'volley'; // one battle serves all six levels: a battle start costs seconds
       for (let lv = 0; lv <= 5; lv++) {
-        setLv({ inf: lv, arc: lv, gun: lv, cav: lv }); startBattle(site.id); BT.round = 3; BT.tac[1] = 'volley';
+        setLv({ inf: lv, arc: lv, gun: lv, cav: lv }); FORM_TYPES.forEach(t => BT.flv[t] = lv);
         const sw = { inf: 0, arc: 0, gun: 0, cav: 0 }, ro = { inf: 0, arc: 0, gun: 0, cav: 0 };
         for (let i = 0; i < N; i++) { FORM_TYPES.forEach(t => BT.ftac[t] = formOrder(t, BT.flv[t], 3)); BT.adapt = null; adaptFormations();
           FORM_TYPES.forEach(t => { const a = BT.adapt[t]; if (a) { ro[t]++; if (a.to !== a.from) sw[t]++; } }); }
@@ -107,10 +108,9 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
           check(tacScore(FORM_TACTICS.gun[BT.ftac.gun].fam, 'volley') === 0, 'Gunners (no counter option) did not escape the counter'); }
         // one roll per battle: a second call does nothing
         if (lv >= 1) { const first = JSON.stringify(BT.adapt); adaptFormations(); check(JSON.stringify(BT.adapt) === first, 'Rerolled'); }
-        closeBattle();
       }
-      // a KO'd strategist cannot adapt; Rounds 1-2 never adapt; adaptation survives into Round 4+
-      setLv({ inf: 5, arc: 5, gun: 5, cav: 5 }); window.aiTactic = () => 'volley'; startBattle(site.id);
+      // a KO'd strategist cannot adapt; Rounds 1-2 never adapt; adaptation survives into Round 4+ (same battle, reset)
+      setLv({ inf: 5, arc: 5, gun: 5, cav: 5 }); window.aiTactic = () => 'volley'; FORM_TYPES.forEach(t => BT.flv[t] = 5); BT.adapt = null; BT.ftacLog = {}; BT.round = 0;
       BT.A[0].groups.filter(x => x.type === 'inf').forEach(x => x.cmds.forEach(c => c.ko = true));
       for (let r = 1; r <= 4; r++) { BT.round = r - 1; beginRound(); if (r < 3) check(!BT.adapt, 'Adapted before Round 3'); }
       check(!BT.adapt.inf, 'KO strategist rolled'); check(BT.adapt.arc && BT.adapt.arc.hit, 'Lv5 must hit');
@@ -132,23 +132,23 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
 
       // ---------- one useful cast per battle, actual cost, banked between battles ----------
       const realCast = castJutsu; let cast = []; window.castJutsu = (s, j) => { cast.push([s, j, BT.round]); return realCast(s, j); };
-      const fight = (opts) => { cast = []; startBattle(site.id); Object.assign(BT.autoKi, opts); const ki0 = BT.ki[0], g0 = G.ki;
-        for (let r = 1; r <= 4; r++) { BT.round = r - 1; beginRound(); } const mine = cast.filter(c => c[0] === 0); const res = { ki0, g0, after: G.ki, casts: mine, kiCast: BT.kiCast }; closeBattle(); return res; };
+      const rearm = () => { BT.round = 0; BT.kiCast = null; BT.jutsu = [null, null]; BT.ki[0] = Math.min(BT.kiCap, G.ki ?? BT.kiCap); Object.assign(BT.autoKi, { on: autoCastOn(), pref: jutsuPref() }); };
+      const fight = (opts, keep) => { cast = []; if (keep && BT) rearm(); else startBattle(site.id); check(BT.ki[1] === BT.A[1].ki, 'Enemy Ki changed'); Object.assign(BT.autoKi, opts); const ki0 = BT.ki[0], g0 = G.ki;
+        for (let r = 1; r <= 4; r++) { BT.round = r - 1; beginRound(); } const mine = cast.filter(c => c[0] === 0); const res = { ki0, g0, after: G.ki, casts: mine, kiCast: BT.kiCast }; if (!keep) closeBattle(); return res; };
       G.jutsuPref = 'clone'; G.autoCast = true; G.ki = 3;
-      const b1 = fight({ eligible: true }), b2 = fight({ eligible: true });
+      const b1 = fight({ eligible: true }), b2 = fight({ eligible: true }, true); // two real starts: spend, then no refill
       check(b1.casts.length === 1 && b1.casts[0][1] === 'clone' && b1.after === 1 && b1.kiCast.cost === 2, 'Cast once, cost 2: ' + JSON.stringify(b1));
       check(b2.ki0 === 1 && b2.casts.length === 0 && b2.after === 1, 'Ki refilled or cast without Ki: ' + JSON.stringify(b2));
-      G.ki = 3; const off = (G.autoCast = false, fight({ eligible: true, on: false })); G.autoCast = true;
+      G.ki = 3; const off = (G.autoCast = false, fight({ eligible: true, on: false }, true)); G.autoCast = true;
       check(off.casts.length === 0 && off.after === 3, 'Auto-cast off still cast');
-      G.ki = 3; const inel = fight({ eligible: false }); check(inel.casts.length === 0 && inel.after === 3, 'Ineligible still cast');
+      G.ki = 3; const inel = fight({ eligible: false }, true); check(inel.casts.length === 0 && inel.after === 3, 'Ineligible still cast');
       // not useful: Fire Scroll with no enemy archers or gunners
-      G.jutsuPref = 'fire'; G.ki = 3; cast = []; startBattle(site.id); BT.autoKi.eligible = true; BT.A[1].groups.filter(x => x.type === 'gun' || x.type === 'arc').forEach(x => x.troops = 0);
+      G.jutsuPref = 'fire'; G.ki = 3; cast = []; rearm(); BT.autoKi.eligible = true; BT.A[1].groups.filter(x => x.type === 'gun' || x.type === 'arc').forEach(x => x.troops = 0);
       for (let r = 1; r <= 3; r++) { BT.round = r - 1; beginRound(); } check(!cast.some(c => c[0] === 0) && G.ki === 3, 'Cast with nothing to burn'); closeBattle();
       window.castJutsu = realCast;
       out.cast = { first: { kiBefore: b1.g0, kiAfter: b1.after, casts: b1.casts.length, cost: b1.kiCast.cost }, nextBattleStartsWith: b2.ki0, autoCastOff: off.casts.length, ineligible: inel.casts.length };
 
-      // ---------- enemy Ki untouched ----------
-      startBattle(site.id); check(BT.ki[1] === BT.A[1].ki, 'Enemy Ki changed'); closeBattle();
+      // (enemy Ki untouched: checked at every battle start inside fight())
 
       // ---------- no pause between rounds; Retreat ends after the round ----------
       // seeded and retried: a battle that is decided outright in Round 1 never reaches the retreat, which is correct play

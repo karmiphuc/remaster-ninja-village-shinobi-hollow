@@ -115,7 +115,7 @@ Saved games keep version 1. Existing local shop stock migrates without losing go
 
 Optional diagnostics are off by default: use `?perf=1` or hold the date for two seconds. The seeded economy test is available manually in that panel or through `?simtest=1`. Regular CI runs functional checks; the full economy suite is manual. Long stress sessions and physical iPhone app-switch/Low Power Mode checks are deferred. P1 demand and service-capacity changes are outside this update.
 
-Run the browser checks with `npm install`, `npx playwright install chromium`, then `npm test`. Set `CHROMIUM_PATH` to use an existing Chromium executable. The game itself has no installation or build requirement.
+Run the browser checks with `npm install`, `npx playwright install chromium`, then `npm test`. It runs every suite in parallel and prints one pass/fail line with timing per suite, plus the full output of any suite that fails. Name suites to run only those (`node tests/run-all.cjs tactics omens`), and set `TEST_JOBS` to cap how many run at once (default: CPU cores, at most 4). Set `CHROMIUM_PATH` to use an existing Chromium executable. The game itself has no installation or build requirement.
 
 ## Technical notes
 
