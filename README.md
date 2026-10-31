@@ -18,7 +18,7 @@ The whole game is one self-contained HTML file. It has no build step, no server 
 - **Battle density** (Village → Options, saved per device): **Standard** 25, **Dense** 36 (default) or **Epic** 48 soldiers at most per formation.
   - At the start of each battle one soldier stands for a fixed number of men, so the largest formation fills the cap and smaller ones look smaller.
   - Troop numbers, casualties and combat results are the same at every setting. The tests run the same seeded battle at all three and compare every blow.
-- **Formations** stand in even, deterministic ranks spread over about 88% of the room between the HUD and the bottom of the screen, safe area included. Ranks stand at least 1.5 body heights apart (up to 2.25), so the rank in front never hides the weapons of the rank behind. The battlefield widens (up to about 3× its old width) so big armies keep their full size, and the camera pans further. Ranks keep their shape at rest and re-form after each clash. Charges, duels, casualties and routs still break them up for a moment.
+- **Formations** stand in even, deterministic ranks spread over about 88% of the room between the HUD and the bottom of the screen, safe area included. The lines of men one behind another stand 1.75 body widths apart (body measured from the sprites, weapon left out), so each line's weapons show clear of the line in front; the ranks keep their close order down the field. When a big army needs it, the battlefield widens (up to about 3× its old width) and the camera pans further. Ranks keep their shape at rest and re-form after each clash. Charges, duels, casualties and routs still break them up for a moment.
   - Infantry: tight ranks.
   - Gunners: straight firing lines.
   - Archers: staggered ranks.

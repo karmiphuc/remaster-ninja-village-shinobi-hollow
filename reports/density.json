@@ -10,12 +10,12 @@
   },
   "desktop": {
     "standard": {
-      "fieldWidth": 1122,
-      "rankSpacingInBodies": {
-        "inf": 1.81,
-        "arc": 1.81,
-        "gun": 2.1,
-        "cav": 1.71
+      "fieldWidth": 920,
+      "lineSpacingInBodies": {
+        "inf": 1.75,
+        "arc": 1.75,
+        "gun": 1.75,
+        "cav": 1.75
       },
       "per": 80,
       "scale": 0.91,
@@ -31,21 +31,21 @@
       },
       "fill": {
         "inf": "88%",
-        "arc": "88%",
+        "arc": "85%",
         "gun": "88%",
         "cav": "88%"
       },
-      "spriteSets": 36,
-      "startMs": 3580,
-      "frameMs": 4.56
+      "spriteSets": 40,
+      "startMs": 4210,
+      "frameMs": 5.15
     },
     "dense": {
-      "fieldWidth": 1413,
-      "rankSpacingInBodies": {
-        "inf": 1.81,
-        "arc": 1.81,
-        "gun": 2.1,
-        "cav": 1.71
+      "fieldWidth": 920,
+      "lineSpacingInBodies": {
+        "inf": 1.75,
+        "arc": 1.75,
+        "gun": 1.75,
+        "cav": 1.75
       },
       "per": 56,
       "scale": 0.91,
@@ -65,17 +65,17 @@
         "gun": "88%",
         "cav": "88%"
       },
-      "spriteSets": 36,
-      "startMs": 3406,
-      "frameMs": 4.16
+      "spriteSets": 35,
+      "startMs": 3459,
+      "frameMs": 6.27
     },
     "epic": {
-      "fieldWidth": 1679,
-      "rankSpacingInBodies": {
-        "inf": 1.81,
-        "arc": 1.81,
-        "gun": 2.1,
-        "cav": 1.71
+      "fieldWidth": 1116,
+      "lineSpacingInBodies": {
+        "inf": 1.75,
+        "arc": 1.75,
+        "gun": 1.75,
+        "cav": 1.75
       },
       "per": 42,
       "scale": 0.91,
@@ -95,9 +95,9 @@
         "gun": "88%",
         "cav": "88%"
       },
-      "spriteSets": 41,
-      "startMs": 3490,
-      "frameMs": 3.73
+      "spriteSets": 35,
+      "startMs": 2840,
+      "frameMs": 4.26
     }
   },
   "deterministic": true,
@@ -131,7 +131,7 @@
         "inf": 48
       },
       "biggestFill": "88%",
-      "armyWidth": 167,
+      "armyWidth": 93,
       "fieldWidth": 920,
       "filesSqueezed": 1
     },
@@ -141,8 +141,8 @@
         "gun": 48
       },
       "biggestFill": "88%",
-      "armyWidth": 347,
-      "fieldWidth": 1109,
+      "armyWidth": 173,
+      "fieldWidth": 920,
       "filesSqueezed": 1
     },
     "horse army": {
@@ -151,8 +151,8 @@
         "cav": 48
       },
       "biggestFill": "88%",
-      "armyWidth": 491,
-      "fieldWidth": 1300,
+      "armyWidth": 325,
+      "fieldWidth": 961,
       "filesSqueezed": 1
     },
     "balanced": {
@@ -163,8 +163,8 @@
         "cav": 47
       },
       "biggestFill": "88%",
-      "armyWidth": 1058,
-      "fieldWidth": 2434,
+      "armyWidth": 625,
+      "fieldWidth": 1560,
       "filesSqueezed": 1
     },
     "siege": {
@@ -186,44 +186,44 @@
   },
   "devices": {
     "390x844": {
-      "fieldWidth": 1277,
+      "fieldWidth": 920,
       "scale": 1.25,
       "band": [
         130,
         412
       ],
       "infFill": "88%",
-      "frameMs": 4.58
+      "frameMs": 3.54
     },
     "844x390": {
-      "fieldWidth": 1355,
+      "fieldWidth": 920,
       "scale": 0.85,
       "band": [
         68,
         184
       ],
       "infFill": "88%",
-      "frameMs": 5.8
+      "frameMs": 6.06
     },
     "768x1024": {
-      "fieldWidth": 1528,
+      "fieldWidth": 971,
       "scale": 1.04,
       "band": [
         94,
         248
       ],
       "infFill": "88%",
-      "frameMs": 2.8
+      "frameMs": 2.81
     },
     "1024x768": {
-      "fieldWidth": 1607,
+      "fieldWidth": 1009,
       "scale": 1.13,
       "band": [
         75,
         242
       ],
       "infFill": "88%",
-      "frameMs": 5.39
+      "frameMs": 5.64
     }
   },
   "resize": {
@@ -233,7 +233,7 @@
         412
       ],
       "infFill": "88%",
-      "infRows": 8
+      "infRows": 13
     },
     "toLandscapePhone": {
       "band": [
@@ -241,7 +241,7 @@
         184
       ],
       "infFill": "88%",
-      "infRows": 8
+      "infRows": 13
     },
     "backToDesktop": {
       "band": [
@@ -249,7 +249,7 @@
         199
       ],
       "infFill": "88%",
-      "infRows": 8
+      "infRows": 13
     },
     "midBattle": "win"
   },
