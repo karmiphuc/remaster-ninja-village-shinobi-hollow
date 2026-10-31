@@ -1,0 +1,53 @@
+{
+  "pause": {
+    "initial": true,
+    "speedControlsLocked": true,
+    "simulationFrozen": true,
+    "cancelKeepsPause": true
+  },
+  "placement": {
+    "blockedAndAtomic": true,
+    "roadsPreserved": true,
+    "oreRequired": true
+  },
+  "identity": {
+    "sameObjectAndUID": true,
+    "upgrades": true,
+    "renovation": true,
+    "recipes": true,
+    "stock": true,
+    "jobsAndHomes": true,
+    "overlap": true,
+    "occupants": true,
+    "disconnectedAssignmentHold": true
+  },
+  "logistics": {
+    "unpickedSource": true,
+    "loadedDestination": true,
+    "activeBatchExactlyOnce": true,
+    "paidCollectors": true
+  },
+  "navigation": {
+    "revisionInvalidation": true,
+    "oldCrossingRemoved": true
+  },
+  "save": {
+    "version": 1,
+    "committedPosition": true,
+    "uncommittedPreviewDiscarded": true,
+    "assignmentsAndStock": true,
+    "noTransientMoveState": true
+  },
+  "checks": 72,
+  "conservationResidual": 0,
+  "negativeStock": 0,
+  "ui": {
+    "buildMenuTool": true,
+    "buildingInfoButton": true,
+    "canvasPlacement": true,
+    "free": true,
+    "staysPaused": true,
+    "cancel": true,
+    "browserSaveReload": true
+  }
+}
