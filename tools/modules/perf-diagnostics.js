@@ -174,7 +174,7 @@ function simRestoreObject(o,b){for(var k in o)if(!(k in b))delete o[k];for(var k
 function simPrepare(){
  var S={G:G,RT:simSnapshotObject(RT),VIEW:simSnapshotObject(VIEW),UI:simSnapshotObject(UI),road:simSnapshotObject(ROAD_TRAFFIC),land:JSON.parse(JSON.stringify(LAND)),
  random:Math.random,save:saveGame,load:loadGame,modal:modal,announce:announce,toast:toast,noIntro:window.__noIntro,noQuick:window.__noQuick,
- sound:{},placeholder:BUILDINGS.porter||null,timer:setTimeout,clear:clearTimeout,timers:[],cancel:false,index:0,seedIndex:0,step:0,
+ sound:{},placeholder:BUILDINGS.porter||null,timer:setTimeout.bind(window),clear:clearTimeout.bind(window),rawTimer:setTimeout,rawClear:clearTimeout,timers:[],cancel:false,index:0,seedIndex:0,step:0,
  rows:[],steps:Math.round(52*WEEK_SEC/.1),weekMs:0,mutated:0,mem:null,canvas:gameCanvas()};
  for(var k in Sound)if(typeof Sound[k]==='function'){S.sound[k]=Sound[k];Sound[k]=function(){};}
  saveGame=function(){return true;};loadGame=function(){return false;};modal=function(){};announce=function(){};toast=function(){};
@@ -183,7 +183,7 @@ function simPrepare(){
  VIEW.cv=S.canvas;VIEW.ctx=S.canvas.getContext('2d');SH_PERF.sim=true;SH_PERF.run=S;return S;
 }
 function simRestore(S){
- for(var id of S.timers)S.clear(id);window.setTimeout=S.timer;window.clearTimeout=S.clear;
+ for(var id of S.timers)S.clear(id);window.setTimeout=S.rawTimer;window.clearTimeout=S.rawClear;
  G=S.G;simRestoreObject(RT,S.RT);simRestoreObject(VIEW,S.VIEW);simRestoreObject(UI,S.UI);simRestoreObject(ROAD_TRAFFIC,S.road);
  for(var k in LAND)LAND[k]=S.land[k];Math.random=S.random;saveGame=S.save;loadGame=S.load;modal=S.modal;announce=S.announce;toast=S.toast;
  for(var k in S.sound)Sound[k]=S.sound[k];window.__noIntro=S.noIntro;window.__noQuick=S.noQuick;
