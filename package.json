@@ -3,7 +3,7 @@
   "private": true,
   "version": "19.1.0",
   "scripts": {
-    "test": "node tests/equipment.cjs && node tests/integration.cjs"
+    "test": "node tests/equipment.cjs && node tests/integration.cjs && node tests/tactics.cjs"
   },
   "devDependencies": {
     "playwright": "^1.56.1"
