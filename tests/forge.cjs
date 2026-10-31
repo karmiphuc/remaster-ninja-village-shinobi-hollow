@@ -96,6 +96,15 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
         const said = []; const T = window.toast; window.toast = m => said.push(m); try { forgeTick(); } finally { window.toast = T; }
         const made = cov('gun').a.have + cov('gun').h.have; check(made > 0 && made < 200 && RT.forgeNote.short.includes(GOODS[scarce].name) && said.some(m => new RegExp('stopped short of ' + GOODS[scarce].name).test(m)), 'Shortage not reported: ' + said.join(' | '));
         out.spill = { weaponForgesOnArmor: 200, armorForgeOnWeapons: 40, focusFirst: true, shortOf: GOODS[scarce].name, madeWithShortage: made }; }
+      // a short material is shared in proportion to forge capacity (reported: 260 sets of Gunner forges got 8 Silk sets,
+      // the same handful as a single Infantry or Cavalry forge)
+      fresh({ inf: 1000, gun: 1000, cav: 1000 }); slot = 0; for (let i = 0; i < 5; i++) forge('teppo_kaji', 'armor'); forge('katana_kaji', 'armor'); forge(Object.keys(BUILDINGS).find(k => BUILDINGS[k].forgeType === 'cav'), 'armor');
+      { const need = t => cov(t).a.have + cov(t).h.have, silkOf = t => ['a', 'h'].reduce((n, c) => n + ((ITEMS[cov(t)[c].k].res || {}).silk || 0) / 8, 0) / 2;
+        check(['inf', 'gun', 'cav'].every(t => silkOf(t) > 0), 'Test needs Silk-hungry armor for every arm');
+        economyWrite(economyCentral('silk'), 'silk', 60); G.stock.silk = 60; G.forgeDebt = {}; forgeTick();
+        const got = { inf: need('inf'), gun: need('gun'), cav: need('cav') }; check(RT.forgeNote.short.includes(GOODS.silk.name), 'Silk did not run short');
+        check(got.gun >= 3 * got.inf && got.gun >= 3 * got.cav && got.inf > 0 && got.cav > 0, 'Scarce Silk not shared by capacity: ' + JSON.stringify(got));
+        out.scarceShare = { capacity: { gun: 200, inf: 40, cav: 40 }, silk: 60, sets: got }; }
 
       // ---------- research, treasury and pause ----------
       fresh({ gun: 100 }); slot = 0; forge(); const top = cov('gun').a.k; delete G.researched[top]; const next = cov('gun').a.k;

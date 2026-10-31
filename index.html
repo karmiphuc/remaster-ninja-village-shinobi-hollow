@@ -8545,15 +8545,18 @@ function forgeTick() {
   const lanes = [];
   types.forEach(t => { const w = forgeRate(t, 'weapon'), a = forgeRate(t, 'armor'); if (w) lanes.push({ t, cats: ['w'], spill: ['a', 'h'], left: w }); if (a) lanes.push({ t, cats: ['a', 'h'], spill: ['w'], left: a }); });
   lanes.push({ t: null, cats: ['w', 'a', 'h'], left: forgeCapacity(), turn: 0 });
-  let progressed = true;
-  while (progressed) { progressed = false;
-    for (const L of lanes) { if (L.left <= 0) continue;
+  // when a material runs short, it is shared in proportion to capacity: each step the lane furthest behind its own
+  // monthly output works next, so 260 sets of forges get 6.5× the Silk of a 40-set forge, not an equal turn
+  lanes.forEach(L => { L.cap = L.left; });
+  const nextLane = () => { let best = null, r = -1; for (const L of lanes) { if (L.left <= 0) continue; const f = L.left / L.cap; if (f > r + 1e-12 || Math.abs(f - r) <= 1e-12 && L.cap > best.cap) { r = f; best = L; } } return best; };
+  for (let L = nextLane(), guard = 0; L && guard < 100000; L = nextLane(), guard++) {
+    {
       let t = L.t, cat = null;
       if (t) cat = pickCat(t, L.cats) || pickCat(t, L.spill); // focus first; with it fully equipped, the other job
       else for (let i = 0; i < types.length && !cat; i++) { t = types[(L.turn + i) % types.length]; cat = pickCat(t, L.cats); if (cat) L.turn = (L.turn + i + 1) % types.length; }
       if (!cat) { L.left = 0; continue; } // nothing missing: this lane idles and spends nothing
       if (!makeOne(t, cat)) { L.left = 0; continue; }
-      L.left--; progressed = true; }
+      L.left--; }
   }
   if (made.length) {
     toast(`${icon('it_' + made[0].k)} Smiths forge ${made.slice(0, 3).map(m => `<b>${m.n} ${esc(ITEMS[m.k].name)}</b> for ${UNITS[m.t].name}`).join(', ')}${made.length > 3 ? ` and ${made.slice(3).reduce((n, m) => n + m.n, 0)} more` : ''} <span class="muted">(−${fmt(spent)}G)</span>${short.size ? ` · <b style="color:#a02a1a">stopped short of ${[...short].join(', ')}</b>` : ''}`);
