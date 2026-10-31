@@ -19,7 +19,7 @@ const output = path.resolve(process.argv[2] || path.join(root, 'docs/forge-upgra
     await page.addInitScript(() => { window.__noIntro = window.__noQuick = true; });
     await page.goto('http://127.0.0.1:' + server.address().port);
     const png = await page.evaluate(() => {
-      const canvas = gameCanvas(); canvas.width = 1200; canvas.height = 1110;
+      const canvas = gameCanvas(); canvas.width = 1200; canvas.height = 1510;
       const ctx = canvas.getContext('2d'); ctx.imageSmoothingEnabled = false;
       ctx.fillStyle = '#e8d8b0'; ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = '#342a2a'; ctx.font = 'bold 22px monospace';
@@ -43,6 +43,23 @@ const output = path.resolve(process.argv[2] || path.join(root, 'docs/forge-upgra
           ctx.fillStyle = '#762a26'; ctx.font = '14px monospace'; ctx.fillText('Weapons', col + 72, y + 216);
           ctx.fillStyle = '#254e30'; ctx.fillText('Armor', col + 265, y + 216);
         }
+      }
+      // Judge recognition at normal village zoom and from farther away as well.
+      let rowY = 1134;
+      for (const scale of [2, 1]) {
+        ctx.fillStyle = '#342a2a'; ctx.font = 'bold 18px monospace';
+        ctx.fillText(scale === 2 ? 'At village zoom (2x)' : 'Distant overview (1x)', 26, rowY);
+        let col = 0;
+        for (const id of Object.keys(ARMY_FORGES)) {
+          const x = col++ * 300;
+          ctx.font = '14px monospace'; ctx.fillText(BUILDINGS[id].name, x + 26, rowY + 26);
+          for (const armor of [false, true]) {
+            const sprite = buildingSprite(id, armor ? 4 : 0, 3);
+            ctx.save();ctx.translate(x + (armor ? 170 : 35), rowY + 78);ctx.scale(scale, scale);
+            artDraw(ctx,sprite.cv,sprite.ox,sprite.oy);ctx.restore();
+          }
+        }
+        rowY += 190;
       }
       const png = canvas.toDataURL('image/png').split(',')[1];
       canvas.width = canvas.height = 0;
