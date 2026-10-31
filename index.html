@@ -401,6 +401,26 @@ img.px, canvas.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 .intel img { width: 28px; height: 28px; image-rendering: pixelated; }
 .intel .muted { display: block; font-size: 10px; }
 .tac.ctr { border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold), 0 0 12px rgba(224, 181, 74, .6); }
+.astat { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; margin: 0 0 10px; padding: 8px 6px; background: var(--ink); color: var(--gold-l); }
+.astat span { display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 13px; white-space: nowrap; min-width: 0; } .astat img { width: 16px; height: 16px; } .astat small { opacity: .7; font-size: 10px; }
+.trow { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 8px 6px; border: 2px solid var(--ink); background: rgba(255, 250, 235, .9); margin-bottom: 6px; }
+.trow > img { width: 30px; height: 30px; image-rendering: pixelated; } .trow.locked { opacity: .6; grid-template-columns: 34px 1fr; } .trow.locked .tmain { display: flex; gap: 8px; align-items: center; }
+.tline { display: flex; align-items: center; gap: 6px; min-width: 0; flex-wrap: wrap; } .tn { font-size: 20px; } .tname { font-size: 11px; color: var(--pine); }
+.trow .cmd { display: flex; gap: 2px; } .trow .cmdp img { width: 22px; height: 22px; } .trow .warn { color: #a02a1a; font-size: 12px; }
+.tkit { display: flex; gap: 8px; align-items: center; margin-top: 3px; padding: 2px 0; font: inherit; font-size: 11px; color: inherit; background: none; border: 0; cursor: pointer; } .tkit span { display: flex; align-items: center; gap: 2px; } .tkit img { width: 13px; height: 13px; } .tkit .kx { color: var(--pine); text-decoration: underline; }
+.tbuy { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; } .tbuy .btn { padding: 4px 6px; min-width: 46px; font-size: 12px; display: flex; flex-direction: column; align-items: center; line-height: 1.1; } .tbuy .btn small { font-size: 9px; opacity: .8; } .tbuy .btn.ghost { grid-column: span 2; }
+.tdetail { margin: -4px 0 8px; padding: 6px 8px; border: 2px solid var(--ink); border-top: 0; background: rgba(255, 250, 235, .7); }
+.afoot { display: flex; align-items: center; gap: 8px; padding: 8px 6px; font-size: 13px; flex-wrap: wrap; } .afoot img { width: 16px; height: 16px; vertical-align: -3px; } .afoot .btn { padding: 4px 12px; } .afoot small { opacity: .7; }
+.tgrid { display: grid; grid-template-columns: 32px 30px repeat(3, minmax(0, 1fr)); gap: 5px; align-items: stretch; } .tgrid .th { font-size: 10px; color: var(--pine); text-align: center; align-self: end; }
+.tu { display: flex; align-items: center; justify-content: center; } .tu img { width: 28px; height: 28px; image-rendering: pixelated; }
+.tlv { display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid var(--ink); background: var(--ink); color: var(--gold-l); } .tlv.zero { background: transparent; color: #7c6143; }
+.tcell { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 52px; padding: 4px 2px; font: inherit; color: inherit; background: rgba(255, 250, 235, .9); border: 2px solid var(--ink); cursor: pointer; min-width: 0; }
+.tcell img, .topt img { width: 24px; height: 24px; image-rendering: pixelated; } .tcell small { font-size: 10px; line-height: 1.1; text-align: center; overflow-wrap: anywhere; } .tcell.on { background: #fff3c8; box-shadow: 0 0 0 2px var(--gold); } .tcell.none { color: #7c6143; font-size: 11px; cursor: default; background: transparent; border-style: dashed; }
+.tcell.fam-charge, .topt.fam-charge { border-color: #a02a1a; } .tcell.fam-volley, .topt.fam-volley { border-color: #b8862a; } .tcell.fam-wall, .topt.fam-wall { border-color: #3b4a7a; }
+.tpick { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; padding: 6px; background: rgba(42, 34, 54, .08); } .topt { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px; font: inherit; color: inherit; background: #fffaf0; border: 2px solid var(--ink); cursor: pointer; min-width: 0; } .topt b { font-size: 11px; text-align: center; } .topt small { font-size: 9px; color: #7c6143; } .topt.on { background: #fff3c8; }
+.tlegend { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 10px; font-size: 11px; } .tlegend span { display: flex; align-items: center; gap: 3px; } .tlegend img { width: 16px; height: 16px; }
+.kirow { display: flex; align-items: center; gap: 6px; padding: 6px; font-size: 15px; } .kirow .kp img { width: 22px; height: 22px; opacity: .25; filter: grayscale(1); } .kirow .kp.f img { opacity: 1; filter: none; } .kirow small { color: #7c6143; font-size: 11px; }
+.jgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; } .jcard { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 10px 4px; font: inherit; color: inherit; background: rgba(255, 250, 235, .9); border: 2px solid var(--ink); cursor: pointer; } .jcard img { width: 30px; height: 30px; image-rendering: pixelated; } .jcard b { font-size: 12px; } .jcard small { font-size: 10px; color: #7c6143; } .jcard.on { background: #fff3c8; box-shadow: 0 0 0 2px var(--gold); }
 .ftac { margin-top: 6px; border-top: 1px dashed var(--line); padding-top: 6px; font-size: 12px; } .ftac .ftl { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
 .fsel { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 6px; margin: 4px 0; } .fsel label { display: grid; gap: 2px; font-size: 10px; color: var(--pine); min-width: 0; }
 .ftac select, .ninj select { display: block; width: 100%; min-width: 0; margin-top: 4px; font-size: 12px; font-family: inherit; padding: 6px 4px; border: 1px solid var(--line); background: #f7ebd0; color: #2a2236; border-radius: 0; }
@@ -2314,6 +2334,15 @@ function buildIcons() {
   mk('map', 14, 14, p => { p.rect(2, 2, 10, 10, '#e8d8b0'); p.rect(0, 1, 2, 12, '#8a5a2a'); p.rect(12, 1, 2, 12, '#8a5a2a'); p.poly([[4, 9], [6, 4], [9, 7], [10, 5], [11, 10], [4, 10]], '#5f9e3e'); p.set(7, 6, '#c8452c'); });
   mk('scroll', 14, 14, p => { p.rect(2, 3, 10, 8, '#e8d8b0'); p.rect(1, 2, 12, 2, '#8a5a2a'); p.rect(1, 10, 12, 2, '#8a5a2a'); p.hline(4, 6, 6, '#6b4a2e'); p.hline(4, 8, 4, '#6b4a2e'); });
   mk('menu', 14, 14, p => { p.poly([[7, 13], [0, 4], [3, 1], [7, 0], [11, 1], [14, 4]], '#c8452c'); p.line(7, 13, 3, 1, '#a02a1a'); p.line(7, 13, 11, 1, '#a02a1a'); p.line(7, 13, 7, 0, '#a02a1a'); p.circle(7, 12, 1.2, '#e0b54a'); });
+  // tactic families: sword & shield (Steady), crossed swords (Aggressive), crosshair (Precise), shield (Defensive)
+  mk('fam_steady', 12, 12, p => { p.poly([[1, 3], [6, 3], [6, 8], [3.5, 11], [1, 8]], '#3b4a7a'); p.rect(2, 4, 3, 1, '#5a6ea8'); p.rect(3, 5, 1, 4, '#e0b54a'); p.line(6, 10, 11, 1, '#d8dce6'); p.line(5, 9, 8, 9, '#e0b54a'); p.set(5, 11, '#7a5230'); });
+  mk('fam_charge', 12, 12, p => { p.line(1, 1, 10, 10, '#d8dce6'); p.line(10, 1, 1, 10, '#d8dce6'); p.line(1, 8, 4, 11, '#e0b54a'); p.line(10, 8, 7, 11, '#e0b54a'); p.set(0, 11, '#7a5230'); p.set(11, 11, '#7a5230'); });
+  mk('fam_volley', 12, 12, p => { for (let a = 0; a < 32; a++) { const t = a / 32 * Math.PI * 2; p.set(Math.round(5.5 + Math.cos(t) * 4.6), Math.round(5.5 + Math.sin(t) * 4.6), '#c8452c'); } p.vline(5, 0, 4, '#2a2630'); p.vline(5, 8, 4, '#2a2630'); p.hline(0, 5, 4, '#2a2630'); p.hline(8, 5, 4, '#2a2630'); p.rect(5, 5, 2, 2, '#c8452c'); });
+  mk('fam_wall', 12, 12, p => { p.poly([[1, 1], [11, 1], [11, 6], [6, 11], [1, 6]], '#3b4a7a'); p.rect(2, 2, 8, 1, '#5a6ea8'); p.vline(6, 2, 8, '#e0b54a'); p.hline(2, 5, 8, '#e0b54a'); p.rect(5, 4, 3, 3, '#e0b54a'); });
+  mk('j_smoke', 12, 12, p => { p.circle(4, 7, 3, '#a8a8b0'); p.circle(7.5, 6, 3.2, '#c8c8d0'); p.circle(6, 3.5, 2.4, '#dcdce2'); p.rect(2, 9, 8, 2, '#8a8a92'); });
+  mk('j_fire', 12, 12, p => { p.poly([[6, 0], [10, 6], [9, 10], [3, 10], [2, 6], [4, 4]], '#c8452c'); p.poly([[6, 4], [8, 7], [7, 10], [5, 10], [4, 7]], '#f2a03a'); p.rect(5, 8, 2, 2, '#f2d27a'); });
+  mk('j_clone', 12, 12, p => { p.circle(3.5, 3, 2, '#5a5a6a'); p.rect(1, 5, 5, 6, '#5a5a6a'); p.circle(8, 3, 2, '#2a2630'); p.rect(5.5, 5, 5, 6, '#2a2630'); });
+  mk('j_wind', 12, 12, p => { p.hline(0, 3, 8, '#9ec8e0'); p.set(8, 2, '#9ec8e0'); p.set(9, 1, '#9ec8e0'); p.hline(2, 6, 9, '#d8ecf6'); p.set(11, 5, '#d8ecf6'); p.hline(0, 9, 7, '#9ec8e0'); p.set(7, 10, '#9ec8e0'); });
   mk('u_inf', 12, 12, p => { p.poly([[6, 1], [12, 6], [0, 6]], '#2a2630'); p.rect(0, 5, 12, 1, '#e0b54a'); p.rect(3, 6, 6, 5, '#f6d2b0'); p.rect(4, 8, 1, 1, '#222'); p.rect(7, 8, 1, 1, '#222'); });
   mk('u_arc', 12, 12, p => { p.line(3, 0, 7, 3, '#7a5230'); p.line(7, 3, 7, 8, '#7a5230'); p.line(7, 8, 3, 11, '#7a5230'); p.vline(3, 0, 12, '#e8e0c8'); p.line(1, 6, 11, 6, '#c8b88a'); p.rect(10, 5, 2, 3, '#d8dce6'); });
   mk('u_gun', 12, 12, p => { p.line(0, 10, 11, 3, '#3a2a22'); p.line(0, 11, 11, 4, '#5a3a2a'); p.line(8, 5, 11, 3, '#8d93a3'); p.circle(10, 2, 1.5, '#d8d8e0'); });
@@ -7400,7 +7429,7 @@ function openPanel(p) {
   UI.panel = p;
   if (p === 'build') openSheet('普請 <small>Build</small>', Object.entries(CAT_LABEL).map(([k, l]) => [k, l]), renderBuild, UI.lastBuildTab || 'shop');
   if (p === 'folk') openSheet('里人 <small>Villagers</small>', null, renderFolk);
-  if (p === 'army') openSheet('軍勢 <small>Army</small>', null, renderArmy);
+  if (p === 'army') openSheet('軍勢 <small>Army</small>', ARMY_TABS, renderArmy, UI.armyTab || 'troops');
   if (p === 'armory') openSheet('武具 <small>Armory</small>', [['shop', 'Buy gear'], ['research', 'Research'], ['owned', 'Owned']], renderArmory);
   if (p === 'menu') openSheet('里 <small>Village</small>', [['stats', 'Ledger'], ['combos', 'Combos'], ['help', 'How to play'], ['opts', 'Options']], renderMenu);
 }
@@ -8009,50 +8038,92 @@ function kitRow(t) {
   el.querySelector('.kfoot button').onclick = () => { G.forge[t] = !on; Sound.play('tap'); refreshSheet(); };
   return el;
 }
-// a formation's orders: as many dropdowns as its best active commander's Strategy allows (Lv1: 1, Lv2: 2, Lv3+: 3)
-function formRow(A, t) {
-  const lv = formLevel(A, t), n = orderSlots(lv), plan = orderPlan(t), O = FORM_TACTICS[t];
-  const labels = n === 1 ? ['Rounds 1–3'] : n === 2 ? ['Round 1', 'Rounds 2–3'] : ['Round 1', 'Round 2', 'Round 3'], idx = labels.map((_, i) => i);
-  const shown = idx.map(i => plan[i]).filter((k, i, a) => a.indexOf(k) === i);
-  const el = h(`<div class="ftac"><div class="ftl">${icon('sk_strategy')} Tactics · Strategy ${lv} ${ib(n ? `Orders for each round, set before battle; rounds after the 3rd keep the last order. At the start of Round 3 this formation has a ${Math.min(100, lv * 20)}% chance to switch once to an order that beats the enemy's.` : 'No commander with Strategy leads this formation, so it fights in its default formation. Assign one with Strategy Lv1+ to give it orders.', 'Formation tactics')}</div>${n ? `<div class="fsel">${idx.map(i => `<label>${labels[i]}<select data-fslot="${i}" aria-label="${UNITS[t].name} · ${labels[i]}">${Object.entries(O).map(([k, T]) => `<option value="${k}"${plan[i] === k ? ' selected' : ''}>${T.jp} ${T.name}</option>`).join('')}</select></label>`).join('')}</div><div class="muted ftd">${shown.map(k => `<b>${O[k].name}</b>: ${esc(O[k].desc)}`).join('<br>')}</div>` : `<div class="muted ftd">Default formation · no orders</div>`}</div>`);
-  el.querySelectorAll('select').forEach(sel => sel.onchange = () => { const p = orderPlan(t), i = +sel.dataset.fslot, v = sel.value;
-    // a slot covers every round it governs at this level, so a later Strategy rise keeps the same plan
-    if (n === 1) p[0] = p[1] = p[2] = v; else if (n === 2 && i === 1) p[1] = p[2] = v; else p[i] = v;
-    (G.ftac ||= {})[t] = p; Sound.play('tap'); refreshSheet(); });
-  return el;
+/* ---------- Army screen ----------
+ Three short tabs instead of one long scroll: Troops, Tactics, Ninjutsu. Numbers and icons on the face; every
+ explanation sits in a long-press (or hover) tip, and the full gear breakdown is one tap away. */
+const ARMY_TABS = [['troops', 'Troops'], ['tactics', 'Tactics'], ['ninjutsu', 'Ninjutsu']];
+const FAM_ICON = { steady: 'fam_steady', charge: 'fam_charge', volley: 'fam_volley', wall: 'fam_wall' };
+const FAM_TIP = { steady: 'Steady: no bonus or penalty, and cannot be countered.', charge: 'Aggressive: deal +15%, take +20%. Beats Precise orders.', volley: 'Precise: deal +5%, take +5%. Beats Defensive orders.', wall: 'Defensive: deal −20%, take −15%. Beats Aggressive orders.' };
+const JUTSU_ICON = { smoke: 'j_smoke', fire: 'j_fire', clone: 'j_clone', wind: 'j_wind' };
+const ARMY_TIPS = {
+  strength: 'Army strength: your whole army, troops and commanders, as the battle reckons it.',
+  strat: 'Strategy: your best commander anywhere. Each formation\'s own orders use the best Strategy within that formation.',
+  upkeep: 'Monthly upkeep for your troops and retainers.',
+  militia: 'Militia: workers march too, at half weight, with whatever weapon they hold. Battles take no village time.',
+  forge: 'Smiths and Iron Mines add base forge batches each month. Formation workshops in Training add +100% batch output and +100% gear quality per connected workshop in its selected focus. Each set costs gold and recipe materials multiplied by quality. Retempering costs the same as a new set. Forging stops before the treasury drops below 150G.',
+  order: 'Each round: Gunners fire, Archers loose, Infantry clash, Cavalry charge. Infantry shield the ranks behind. Prices rise as the army grows.',
+  ki: 'Ki is banked between battles and recovers 1 each month, up to capacity: 1, plus smoke pouches, the Shadow skill, monkeys and doctrine, 3 at most.',
+  autocast: 'Auto-cast: your preferred ninjutsu is cast once per battle at a useful moment, when enough Ki is banked and your share of the two armies\' combined strength is between 33% and 67%. Off: Ki only builds up.',
+};
+function armyStats(A) {
+  const up = Math.ceil(A.total * 0.35 * upkeepMul()) + guardCount() * GUARD_UPKEEP;
+  return `<div class="astat"><span${tipAttr(ARMY_TIPS.strength)}>${icon('army')}<b>${fmt(armyPower(A))}</b></span><span${tipAttr(ARMY_TIPS.ki)}>${icon('ki')}<b>${kiNow(A.kiCap)}/${A.kiCap ?? 1}</b></span><span${tipAttr(ARMY_TIPS.strat)}>${icon('sk_strategy')}<b>${A.strat}</b></span><span${tipAttr(ARMY_TIPS.upkeep)}>${icon('gold')}<b>${fmt(up)}</b><small>/mo</small></span></div>`;
 }
-// banked Ki, the preferred ninjutsu and the Auto-cast switch
-function ninjutsuRow(A) {
-  const kc = A.kiCap ?? 1, kn = kiNow(kc), pj = jutsuPref(), on = autoCastOn();
-  const el = h(`<div class="troop ninj" style="grid-template-columns:1fr auto"><div style="min-width:0"><div>${icon('ki')} Ninjutsu ${ib('Ki is banked between battles and recovers 1 each month, up to capacity: 1, plus smoke pouches, the Shadow skill, monkeys and doctrine, to 3 at most. With Auto-cast on, your preferred ninjutsu is cast once per battle at a useful moment, when enough Ki is banked and neither army holds more than 67% of the combined strength.', 'Ninjutsu')}</div><div class="muted">Ki <b>${kn}</b>/${kc} · +1 each month</div><select id="ar-jutsu" aria-label="Preferred ninjutsu">${Object.entries(JUTSU).map(([k, J]) => `<option value="${k}"${k === pj ? ' selected' : ''}>${J.jp} ${J.name} · ${J.ki} Ki</option>`).join('')}</select><div class="muted ftd">${esc(JUTSU[pj].desc)}</div></div><button class="btn ${on ? 'gold' : 'ghost'}" id="ar-autocast" aria-pressed="${on}">Auto-cast ${on ? 'On' : 'Off'}</button></div>`);
-  el.querySelector('#ar-jutsu').onchange = e => { G.jutsuPref = e.target.value; Sound.play('tap'); refreshSheet(); };
-  el.querySelector('#ar-autocast').onclick = () => { G.autoCast = !autoCastOn(); Sound.play('tap'); refreshSheet(); };
-  return el;
-}
-function renderArmy(body) {
-  const A = playerArmy(); const P = armyPower(A);
-  body.appendChild(h(`<div class="power"><span>Army strength</span><b>${fmt(P)}</b><span class="sp"></span><span style="font-size:12px">Ki ${kiNow(A.kiCap)}/${A.kiCap} · Strategy ${A.strat} · upkeep ${fmt(Math.ceil(A.total * 0.35 * upkeepMul()) + guardCount() * GUARD_UPKEEP)}G/mo</span></div>`));
-  body.appendChild(h(`<p class="note" style="margin-top:0">${icon('build')} ${forgeCapacity()} base forge batches/month ${ib('Smiths and Iron Mines add base batches. Formation workshops in Training add +100% batch output and +100% gear quality per connected workshop in its selected focus. Each set costs gold and recipe materials multiplied by quality. Retempering costs the same as a new set. Forging stops before the treasury drops below 150G.')}</p>`));
-  const marching = A.groups.reduce((n, g) => n + g.cmds.length, 0), workers = G.villagers.filter(v => v.role === 'work').length;
-  const tg = h(`<div class="troop" style="grid-template-columns:1fr auto"><div><div>Militia ${ib('Workers march too, at half weight, with whatever weapon they hold. Battles take no village time.')}</div><div class="muted">${G.allHands !== false ? `${G.villagers.length} march` : `${marching} march · ${workers} stay`}</div></div><button class="btn ${G.allHands !== false ? 'gold' : 'ghost'}" id="ar-all">${G.allHands !== false ? 'On' : 'Off'}</button></div>`);
-  tg.querySelector('#ar-all').onclick = () => { G.allHands = G.allHands === false; Sound.play('tap'); refreshSheet(); };
-  body.appendChild(tg);
-  body.appendChild(ninjutsuRow(A));
+function armyTroops(body, A) {
   ['inf', 'arc', 'gun', 'cav'].forEach(t => {
     const U = UNITS[t], un = troopsOpen(t), grp = A.groups.find(g => g.type === t), cmds = grp ? grp.cmds : G.villagers.filter(v => v.role === t).map(cmdFrom), cost = troopCost(t);
-    const row = h(`<div class="troop${un ? '' : ' locked'}"><img src="${ICONS['u_' + t]}" alt=""><div style="min-width:0"><div class="row"><span>${U.name}</span><span class="muted">${U.jp}</span></div><div class="n">${un ? fmt(G.troops[t]) : 'Sealed'}</div><div class="muted">${un ? '' : `🔒 <img class="px" style="width:14px;height:14px;vertical-align:-2px" src="${ICONS['it_corps_' + t]}" alt=""> ${ITEMS['corps_' + t].name}`} ${ib(un ? esc(U.desc) : `Research ${ITEMS['corps_' + t].name} in the Armory, or win it from a clan.`)}</div><div class="cmd"></div></div><div class="buy"></div></div>`);
+    if (!un) { body.appendChild(h(`<div class="trow locked"${tipAttr(`Research ${ITEMS['corps_' + t].name} in the Armory, or win it from a clan.`)}><img class="px" src="${ICONS['u_' + t]}" alt=""><div class="tmain"><span class="tname">${U.name}</span><span class="muted">🔒 ${esc(ITEMS['corps_' + t].name)}</span></div></div>`)); return; }
+    const K = kitSummary(t), open = !!(UI.armyOpen && UI.armyOpen[t]);
+    const row = h(`<div class="trow"><img class="px"${tipAttr(esc(U.desc))} src="${ICONS['u_' + t]}" alt="${U.name}"><div class="tmain"><div class="tline"><b class="tn">${fmt(G.troops[t])}</b><span class="tname">${U.name}</span><span class="cmd"></span></div>
+      <button class="tkit" aria-expanded="${open}"${tipAttr(forgeSummary(t).replace(/<[^>]+>/g, ''))}><span>${icon('armory')}+${Math.round((K.mul.atk - 1) * 100)}%</span><span>${icon('fam_wall')}+${Math.round((K.mul.def - 1) * 100)}%</span><span class="kx">Gear ${open ? '▴' : '▾'}</span></button></div>
+      <div class="tbuy"></div></div>`);
     const cm = row.querySelector('.cmd');
-    cmds.forEach(c => { const i = h(`<span class="cmdp ${c.post || 'line'}${c.aux ? ' aux' : ''}"><img src="${pURL(c.look)}" alt="${esc(c.name)}" title="${esc(c.name)}${c.aux ? ' (militia)' : ''} · ${POST_NAME[c.post || 'line']}">${c.guard ? `<i>${c.guard}</i>` : ''}</span>`); i.onclick = () => openVillager(c.id); cm.appendChild(i); });
-    if (un) row.querySelector('div[style]').appendChild(kitRow(t));
-    if (A.groups.some(g => g.type === t)) row.querySelector('div[style]').appendChild(formRow(A, t));
-    if (un && !cmds.length) cm.appendChild(h(`<span class="muted" style="color:#a02a1a"${tipAttr('No commander: half strength')}>⚠ ½</span>`));
-
-    const by = row.querySelector('.buy');
-    if (un) { [[10, '+10'], [50, '+50']].forEach(([n, l]) => { const b = h(`<button class="btn gold">${l} · ${fmt(cost * n)}G</button>`); b.classList.toggle('dim', G.gold < cost * n); b.onclick = () => { const c2 = troopCost(t); if (G.gold < c2 * n) { Sound.play('alert'); toast('Not enough gold'); return; } G.gold -= c2 * n; G.troops[t] += n; Sound.play('taiko', { vol: .6 }); refreshSheet(); updateHUD(); }; by.appendChild(b); });
-      const d = h('<button class="btn ghost">−10</button>'); d.disabled = G.troops[t] < 10; d.onclick = () => { G.troops[t] = Math.max(0, G.troops[t] - 10); Sound.play('tap'); refreshSheet(); updateHUD(); }; by.appendChild(d); }
+    cmds.forEach(c => { const i = h(`<span class="cmdp ${c.post || 'line'}${c.aux ? ' aux' : ''}"${tipAttr(`${esc(c.name)}${c.aux ? ' (militia)' : ''} · ${POST_NAME[c.post || 'line']} · Strategy ${stratOf(c)}`)}><img src="${pURL(c.look)}" alt="${esc(c.name)}">${c.guard ? `<i>${c.guard}</i>` : ''}</span>`); i.onclick = () => openVillager(c.id); cm.appendChild(i); });
+    if (!cmds.length) cm.appendChild(h(`<span class="warn"${tipAttr('No commander: this formation fights at half strength.')}>⚠ ½</span>`));
+    row.querySelector('.tkit').onclick = () => { (UI.armyOpen ||= {})[t] = !open; Sound.play('tap'); refreshSheet(); };
+    const by = row.querySelector('.tbuy');
+    [[10, '+10'], [50, '+50']].forEach(([n, l]) => { const b = h(`<button class="btn gold"${tipAttr(`${l} ${U.name} for ${fmt(cost * n)}G`)}>${l}<small>${fmt(cost * n)}G</small></button>`); b.classList.toggle('dim', G.gold < cost * n);
+      b.onclick = () => { const c2 = troopCost(t); if (G.gold < c2 * n) { Sound.play('alert'); toast('Not enough gold'); return; } G.gold -= c2 * n; G.troops[t] += n; Sound.play('taiko', { vol: .6 }); refreshSheet(); updateHUD(); }; by.appendChild(b); });
+    const d = h(`<button class="btn ghost"${tipAttr('Dismiss 10 troops')}>−10</button>`); d.disabled = G.troops[t] < 10; d.onclick = () => { G.troops[t] = Math.max(0, G.troops[t] - 10); Sound.play('tap'); refreshSheet(); updateHUD(); }; by.appendChild(d);
     body.appendChild(row);
+    if (open) { const k = kitRow(t); k.classList.add('tdetail'); body.appendChild(k); }
   });
-  body.appendChild(h(`<p class="note">${ib('Each round: Gunners fire, Archers loose, Infantry clash, Cavalry charge. Infantry shield the ranks behind. Prices rise as the army grows.', 'Battle order')}</p>`));
+  const marching = A.groups.reduce((n, g) => n + g.cmds.length, 0), workers = G.villagers.filter(v => v.role === 'work').length, all = G.allHands !== false;
+  const foot = h(`<div class="afoot"><span${tipAttr(ARMY_TIPS.militia)}>${icon('folk')} Militia <b>${all ? G.villagers.length : marching}</b>${all ? '' : `<small> · ${workers} stay</small>`}</span><button class="btn ${all ? 'gold' : 'ghost'}" id="ar-all">${all ? 'On' : 'Off'}</button><span class="sp"></span><span${tipAttr(ARMY_TIPS.forge)}>${icon('build')} <b>${forgeCapacity()}</b><small>/mo</small></span><span class="ib"${tipAttr(ARMY_TIPS.order)}>ⓘ</span></div>`);
+  foot.querySelector('#ar-all').onclick = () => { G.allHands = !all; Sound.play('tap'); refreshSheet(); };
+  body.appendChild(foot);
+}
+// one grid for every formation's orders: Strategy decides how many cells it has (Lv1 one, Lv2 two, Lv3+ three)
+function armyTactics(body, A) {
+  const legend = Object.keys(FAM_ICON).map(f => `<span${tipAttr(FAM_TIP[f])}>${icon(FAM_ICON[f])}${TACTICS[f].fam}</span>`).join('');
+  const grid = h(`<div class="tgrid"><div class="th"></div><div class="th">Str</div><div class="th">Round 1</div><div class="th">Round 2</div><div class="th">Round 3</div></div>`);
+  FORM_TYPES.forEach(t => {
+    const U = UNITS[t], has = A.groups.some(g => g.type === t), lv = has ? formLevel(A, t) : 0, n = orderSlots(lv), plan = orderPlan(t), O = FORM_TACTICS[t];
+    grid.appendChild(h(`<div class="tu"${tipAttr(U.name)}><img class="px" src="${ICONS['u_' + t]}" alt="${U.name}"></div>`));
+    grid.appendChild(h(`<div class="tlv${lv ? '' : ' zero'}"${tipAttr(has ? (n ? `Strategy ${lv}: ${n === 1 ? 'one order for Rounds 1–3' : n === 2 ? 'Round 1, then one order for Rounds 2–3' : 'each round set separately'}. At the start of Round 3 it has a ${Math.min(100, lv * 20)}% chance to switch once to an order that beats the enemy's. Rounds after the 3rd keep the last order.` : 'No commander with Strategy leads this formation, so it fights in its default formation. Assign one with Strategy 1+ to give orders.') : `No ${U.name.toLowerCase()} in the army.`)}>${lv}</div>`));
+    if (!has || !n) { grid.appendChild(h(`<div class="tcell none" style="grid-column:span 3">${has ? '🔒 Default formation' : '—'}</div>`)); return; }
+    const spans = n === 1 ? [3] : n === 2 ? [1, 2] : [1, 1, 1];
+    spans.forEach((sp, i) => { const k = plan[i], T = O[k], pick = UI.ftPick && UI.ftPick.t === t && UI.ftPick.i === i;
+      const b = h(`<button class="tcell fam-${T.fam}${pick ? ' on' : ''}" style="grid-column:span ${sp}" data-t="${t}" data-slot="${i}" aria-label="${U.name} · ${sp === 3 ? 'Rounds 1–3' : sp === 2 ? 'Rounds 2–3' : 'Round ' + (i + 1)}: ${T.name}"${tipAttr(`${T.name}: ${T.desc}`)}>${icon(FAM_ICON[T.fam])}<small>${T.name}</small></button>`);
+      b.onclick = () => { UI.ftPick = pick ? null : { t, i }; Sound.play('tap'); refreshSheet(); }; grid.appendChild(b); });
+    if (UI.ftPick && UI.ftPick.t === t) {
+      const i = UI.ftPick.i, row = h(`<div class="tpick" style="grid-column:1 / -1"></div>`);
+      Object.entries(O).forEach(([k, T]) => { const o = h(`<button class="topt fam-${T.fam}${plan[i] === k ? ' on' : ''}" data-opt="${k}"${tipAttr(T.desc)}>${icon(FAM_ICON[T.fam])}<b>${T.name}</b><small>${TACTICS[T.fam].fam}</small></button>`);
+        o.onclick = () => { const p = orderPlan(t); // a cell covers every round it governs, so a later Strategy rise keeps the plan
+          if (n === 1) p[0] = p[1] = p[2] = k; else if (n === 2 && i === 1) p[1] = p[2] = k; else p[i] = k;
+          (G.ftac ||= {})[t] = p; UI.ftPick = null; Sound.play('tap'); refreshSheet(); };
+        row.appendChild(o); });
+      grid.appendChild(row);
+    }
+  });
+  body.appendChild(grid);
+  body.appendChild(h(`<div class="tlegend">${legend}</div>`));
+}
+function armyNinjutsu(body, A) {
+  const kc = A.kiCap ?? 1, kn = kiNow(kc), pj = jutsuPref(), on = autoCastOn();
+  body.appendChild(h(`<div class="kirow"${tipAttr(ARMY_TIPS.ki)}>${Array.from({ length: kc }, (_, i) => `<span class="kp${i < kn ? ' f' : ''}">${icon('ki')}</span>`).join('')}<b>${kn}/${kc}</b><small>+1 / month</small></div>`));
+  const g = h('<div class="jgrid"></div>');
+  Object.entries(JUTSU).forEach(([k, J]) => { const b = h(`<button class="jcard${k === pj ? ' on' : ''}" data-j="${k}" aria-pressed="${k === pj}"${tipAttr(J.desc)}>${icon(JUTSU_ICON[k])}<b>${J.name}</b><small>${'◆'.repeat(J.ki)} ${J.ki} Ki</small></button>`);
+    b.onclick = () => { G.jutsuPref = k; Sound.play('tap'); refreshSheet(); }; g.appendChild(b); });
+  body.appendChild(g);
+  const ac = h(`<div class="afoot"><span${tipAttr(ARMY_TIPS.autocast)}>${icon(JUTSU_ICON[pj])} Auto-cast</span><span class="sp"></span><button class="btn ${on ? 'gold' : 'ghost'}" id="ar-autocast" aria-pressed="${on}">${on ? 'On' : 'Off'}</button></div>`);
+  ac.querySelector('#ar-autocast').onclick = () => { G.autoCast = !autoCastOn(); Sound.play('tap'); refreshSheet(); };
+  body.appendChild(ac);
+}
+function renderArmy(body, tab) {
+  tab = tab || UI.tab || 'troops'; UI.armyTab = tab; if (tab !== 'tactics') UI.ftPick = null;
+  const A = playerArmy(); body.appendChild(h(armyStats(A)));
+  if (tab === 'tactics') armyTactics(body, A); else if (tab === 'ninjutsu') armyNinjutsu(body, A); else armyTroops(body, A);
 }
 
 /* ---------- Armory ---------- */
