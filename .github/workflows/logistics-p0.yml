@@ -1,0 +1,28 @@
+name: Logistics P0 validation
+on:
+  push:
+    branches: [feat/logistics-p0]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install
+      - run: npx playwright install --with-deps chromium webkit
+      - name: Validate equipment and integration
+        run: npm test
+      - name: Run in-page economy baseline and P0 suite
+        run: |
+          if test -f tests/economy-sim.cjs; then node tests/economy-sim.cjs; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: logistics-p0-reports
+          path: reports/
