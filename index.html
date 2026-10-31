@@ -8061,7 +8061,7 @@ function armyCoverage(t) {
   return ['w', 'a', 'h'].filter(c => C[c].k).map(c => { const p = C[c].T ? Math.floor(C[c].have / C[c].T * 100) : 100; return `<span class="cov${p >= 100 ? ' full' : ''}">${icon('it_' + C[c].k)}${p}%</span>`; }).join('');
 }
 function armyGearTip(t, K) {
-  const C = forgeCoverage(t), line = c => C[c].k ? `${ITEMS[C[c].k].name} ${C[c].have}/${C[c].T}` : '';
+  const C = forgeCoverage(t), line = c => C[c].k ? `${ITEMS[C[c].k].name} or as good ${C[c].have}/${C[c].T}` : '';
   const eta = f => { const e = forgeEta(t, f); return e == null ? 'covered' : e === Infinity ? 'no forge' : `~${e} mo`; };
   return `Best gear carried: ${['w', 'a', 'h'].map(line).filter(Boolean).join(' · ')}. Forges: weapons ${forgeRate(t, 'weapon')}/mo (${eta('weapon')}), armor & helmets ${forgeRate(t, 'armor')}/mo (${eta('armor')}). Gear gives ATK +${Math.round((K.mul.atk - 1) * 100)}% · DEF +${Math.round((K.mul.def - 1) * 100)}%. Tap for details.`;
 }
@@ -8335,10 +8335,17 @@ function forgeOutput(b) { return BUILDINGS[b.id].forgeType && entranceOf(b) ? FO
 function forgeRate(type, focus) { return G.buildings.reduce((n, b) => n + (BUILDINGS[b.id].forgeType === type && forgeFocus(b) === focus ? forgeOutput(b) : 0), 0); }
 function forgeUpgrade(b) { const B = BUILDINGS[b.id], lv = forgeLevel(b); if (lv >= 3) return null;
   return lv === 1 ? { lv: 2, name: 'Level 2 forge', cost: B.cost * 2, res: { wood: 20, ore: 20 } } : { lv: 3, name: 'Level 3 forge', cost: B.cost * 4, res: { wood: 40, ore: 40 } }; }
-// how many soldiers carry the best researched item of each slot
+// How many soldiers carry gear at least as strong as a fresh top-tier set: the best researched item itself, or any set
+// (older or looted) whose strength × quality matches or beats it. kitFill hands out sets in that same order, so
+// these are the sets soldiers actually wear, and the forges never spend on a set that would not improve anyone.
 function forgeCoverage(type) {
-  const T = Math.max(0, Math.floor(G.troops[type] || 0)), out = {};
-  for (const cat of ['w', 'a', 'h']) { const k = bestResearched(cat, type), n = k ? Math.floor(G.kit[type][k] || 0) : 0; out[cat] = { k, T, have: Math.min(T, n), need: k ? Math.max(0, T - n) : 0 }; }
+  const T = Math.max(0, Math.floor(G.troops[type] || 0)), out = {}, pool = G.kit[type] || {};
+  for (const cat of ['w', 'a', 'h']) {
+    const k = bestResearched(cat, type); if (!k) { out[cat] = { k, T, have: 0, need: 0 }; continue; }
+    const top = artKitScore(k, type);
+    const n = kitList(cat, type).reduce((sum, i) => sum + kitGrades(type, i, pool).reduce((m, [q, c]) => m + (i === k || top > 0 && artKitScore(i, type) * q >= top - 1e-9 ? c : 0), 0), 0);
+    out[cat] = { k, T, have: Math.min(T, n), need: Math.max(0, T - n) };
+  }
   return out;
 }
 function migrateForgeWorkshops() {
@@ -8467,7 +8474,7 @@ function forgeEta(type, focus) {
 function armyForgePanel(b) {
   const B = BUILDINGS[b.id], type = B.forgeType, focus = forgeFocus(b), lv = forgeLevel(b), connected = !!entranceOf(b), C = forgeCoverage(type), N = forgeUpgrade(b);
   const cats = focus === 'weapon' ? ['w'] : ['a', 'h'], eta = forgeEta(type, focus);
-  const cov = cats.filter(c => C[c].k).map(c => `<span${tipAttr(`${ITEMS[C[c].k].name}: ${C[c].have} of ${C[c].T} ${UNITS[type].name.toLowerCase()} equipped`)}>${icon('it_' + C[c].k)} <b>${fmt(C[c].have)}</b>/${fmt(C[c].T)}</span>`).join(' ') || '<span class="muted">Research gear for this focus first</span>';
+  const cov = cats.filter(c => C[c].k).map(c => `<span${tipAttr(`${ITEMS[C[c].k].name} or gear as strong (strength × quality): ${C[c].have} of ${C[c].T} ${UNITS[type].name.toLowerCase()} equipped`)}>${icon('it_' + C[c].k)} <b>${fmt(C[c].have)}</b>/${fmt(C[c].T)}</span>`).join(' ') || '<span class="muted">Research gear for this focus first</span>';
   const el = h(`<div class="army-forge-panel"><div class="sec">${icon('u_' + type)} ${UNITS[type].name} forge · Level ${lv}</div>
     <div class="forge-focus" role="group" aria-label="Forge focus"><button class="btn ${focus === 'weapon' ? 'gold' : 'ghost'}" data-forge-focus="weapon" aria-pressed="${focus === 'weapon'}">Weapons</button><button class="btn ${focus === 'armor' ? 'gold' : 'ghost'}" data-forge-focus="armor" aria-pressed="${focus === 'armor'}">Armor & helmets</button></div>
     <p class="note"${connected ? '' : ' style="color:#a02a1a"'}>${connected ? 'Road connected and working.' : 'Inactive — connect this forge to a road.'}</p>
@@ -8477,7 +8484,7 @@ function armyForgePanel(b) {
     ${b.reno ? `<p class="note">${icon('build')} Upgrading to Level ${b.reno.lv} — <b>${b.reno.w}</b> week${b.reno.w === 1 ? '' : 's'} left. It keeps forging at Level ${lv} meanwhile.</p>`
       : N ? `<div class="row wrap" style="align-items:center;gap:8px"><div class="note" style="flex:1;margin:0"><b>Upgrade to Level ${N.lv}</b>: ${FORGE_OUT[N.lv - 1]} sets/month.<br>${icon('gold')}${fmt(N.cost)} ${Object.entries(N.res).map(([r, n]) => `${icon('g_' + r)}${n}`).join(' ')} · ${N.lv >= 3 ? 3 : 2} weeks</div><button class="btn gold" data-forge-up>Upgrade</button></div>`
       : `<p class="note">Fully upgraded.</p>`}
-    <p class="note">Each set is your best researched gear at its usual cost. Armor and helmets take one set each. Older gear stays in service until replaced; once everyone is equipped the forge rests.</p>
+    <p class="note">Each set is your best researched gear at its usual cost. Armor and helmets take one set each. A soldier whose gear is already as strong (strength × quality) counts as equipped; older gear stays in service until replaced, and once everyone is equipped the forge rests.</p>
     <div class="row"><span class="muted">${G.forge[type] === false ? 'Formation forging is paused.' : 'Formation forging is enabled.'}</span><button class="btn ${G.forge[type] === false ? 'gold' : 'ghost'}" data-forge-pause>${G.forge[type] === false ? 'Resume forging' : 'Pause forging'}</button></div></div>`);
   el.querySelectorAll('[data-forge-focus]').forEach(button => button.onclick = () => { b.forgeFocus = button.dataset.forgeFocus; Sound.play('tap'); openBuildingInfo(b); updateHUD(); });
   const up = el.querySelector('[data-forge-up]'); if (up) { if (renoBlock(b, N)) up.classList.add('dim');
