@@ -44,23 +44,30 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
       }
       check([0, 1, 2, 3, 4, 5].map(orderSlots).join() === '0,1,2,3,3,3', 'Slots per level');
 
-      // ---------- Army screen: dropdowns per level, all formations, mobile width ----------
+      // ---------- Army screen, Tactics tab: order cells per level, all formations, mobile width ----------
+      const tacticsTab = () => { openPanel('army'); UI.tab = 'tactics'; refreshSheet(); };
+      const cells = t => [...document.querySelectorAll(`#sh-body .tcell[data-t="${t}"]`)];
       out.dropdowns = {};
       for (let lv = 0; lv <= 5; lv++) {
-        setLv({ inf: lv, arc: lv, gun: lv, cav: lv }); openPanel('army');
-        const rows = [...document.querySelectorAll('#sh-body .ftac')].map(f => f.querySelectorAll('select').length);
-        check(rows.length === 4 && rows.every(n => n === orderSlots(lv)), `Lv${lv} dropdowns ${rows}`);
+        setLv({ inf: lv, arc: lv, gun: lv, cav: lv }); tacticsTab();
+        const rows = FORM_TYPES.map(t => cells(t).length);
+        check(rows.every(n => n === orderSlots(lv)), `Lv${lv} order cells ${rows}`);
         check(document.documentElement.scrollWidth <= innerWidth, `Army screen overflows at Lv${lv}`);
+        check($('#sh-body').scrollHeight <= 900, `Tactics tab too tall at Lv${lv}: ${$('#sh-body').scrollHeight}`);
         out.dropdowns['Lv' + lv] = rows; closeSheet();
       }
-      // a dropdown edit reaches the plan; Lv1 sets all three rounds, Lv2's second slot sets Rounds 2-3
-      setLv({ inf: 1, arc: 2, gun: 3, cav: 0 }); G.ftac = {}; openPanel('army');
-      const sel = t => [...document.querySelectorAll('#sh-body .troop')].find(r => r.querySelector(`select[aria-label^="${UNITS[t].name} "]`))?.querySelectorAll('.ftac select');
-      const pickSel = (s, v) => { s.value = v; s.onchange(); };
-      pickSel(sel('inf')[0], 'spear'); check(orderPlan('inf').join() === 'spear,spear,spear', 'Lv1 edit');
-      pickSel(sel('arc')[1], 'harass'); check(orderPlan('arc').join() === 'aimed,harass,harass', 'Lv2 edit');
-      pickSel(sel('gun')[2], 'suppress'); check(orderPlan('gun')[2] === 'suppress' && orderPlan('gun')[0] === 'controlled', 'Lv3 edit');
-      check(!sel('cav') || sel('cav').length === 0, 'Lv0 has no dropdown');
+      // picking an order reaches the plan; Lv1 sets all three rounds, Lv2's second cell sets Rounds 2-3
+      setLv({ inf: 1, arc: 2, gun: 3, cav: 0 }); G.ftac = {}; tacticsTab();
+      const pick = (t, slot, k) => { cells(t)[slot].click(); const o = document.querySelector(`#sh-body .tpick .topt[data-opt="${k}"]`); check(o, 'No picker for ' + t); o.click(); };
+      pick('inf', 0, 'spear'); check(orderPlan('inf').join() === 'spear,spear,spear', 'Lv1 edit');
+      pick('arc', 1, 'harass'); check(orderPlan('arc').join() === 'aimed,harass,harass', 'Lv2 edit');
+      pick('gun', 2, 'suppress'); check(orderPlan('gun')[2] === 'suppress' && orderPlan('gun')[0] === 'controlled', 'Lv3 edit');
+      check(cells('cav').length === 0, 'Lv0 has order cells');
+      check(!/[\u3040-\u30ff\u3400-\u9fff]/.test($('#sh-body').textContent), 'Japanese text in the Tactics tab');
+      // the other tabs: troops on one compact page, ninjutsu picks the preferred jutsu and toggles Auto-cast
+      for (const t of ['troops', 'ninjutsu']) { UI.tab = t; refreshSheet(); check(document.documentElement.scrollWidth <= innerWidth, t + ' tab overflows'); check($('#sh-body').scrollHeight <= 900, t + ' tab too tall: ' + $('#sh-body').scrollHeight); }
+      document.querySelector('#sh-body .jcard[data-j="fire"]').click(); check(G.jutsuPref === 'fire', 'Ninjutsu pick');
+      const ac = autoCastOn(); $('#ar-autocast').click(); check(autoCastOn() === !ac, 'Auto-cast toggle'); $('#ar-autocast').click(); G.jutsuPref = 'smoke';
       closeSheet();
 
       // ---------- no cross-formation sharing ----------
@@ -144,8 +151,12 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
       startBattle(site.id); check(BT.ki[1] === BT.A[1].ki, 'Enemy Ki changed'); closeBattle();
 
       // ---------- no pause between rounds; Retreat ends after the round ----------
-      G.ki = 3; startBattle(site.id); { const even = totalOf(BT.A[0]) * 5 / Math.max(1, totalOf(BT.A[1])); BT.A.forEach((A, i) => A.groups.forEach(x => { if (!x.heroOnly) { x.troops *= i ? even : 5; x.start = x.max = x.troops; } })); } beginRound(); const states = new Set(); let n = 0, retreated = false;
-      while (BT && BT.state !== 'done' && n++ < 60000) { states.add(BT.state); if (BT.round === 1 && BT.state === 'run' && !retreated) { renderBHUD(); const b = $('#rs-retreat'); check(b, 'No Retreat button'); b.click(); retreated = true; } updateBattle(1 / 30); }
+      // seeded and retried: a battle that is decided outright in Round 1 never reaches the retreat, which is correct play
+      const states = new Set(); let retreated = false; const R0 = Math.random;
+      for (let attempt = 0; attempt < 6 && !(BT && BT.playerRetreat); attempt++) { if (BT) closeBattle(); Math.random = seeded(0x7e7 + attempt);
+        G.ki = 3; startBattle(site.id); { const even = totalOf(BT.A[0]) * 20 / Math.max(1, totalOf(BT.A[1])); BT.A.forEach((A, i) => A.groups.forEach(x => { if (!x.heroOnly) { x.troops *= i ? even : 20; x.start = x.max = x.troops; } })); } beginRound(); let n = 0; retreated = false;
+        while (BT && BT.state !== 'done' && n++ < 60000) { states.add(BT.state); if (BT.round === 1 && BT.state === 'run' && !retreated) { renderBHUD(); const b = $('#rs-retreat'); check(b, 'No Retreat button'); b.click(); retreated = true; } updateBattle(1 / 30); } }
+      Math.random = R0;
       out.flow = { states: [...states], endedRound: BT && BT.round, result: BT && BT.result, retreated: !!(BT && BT.playerRetreat) };
       check(!states.has('tactic'), 'Battle paused for orders');
       check(BT.playerRetreat && BT.round === 1 && BT.result === 'lose', 'Retreat did not land at end of round: ' + JSON.stringify(out.flow));
