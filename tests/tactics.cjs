@@ -96,7 +96,8 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
         FORM_TYPES.forEach(t => { if (lv === 0) check(ro[t] === 0, 'Lv0 rolled'); else { check(ro[t] === N, 'Missing roll'); near(sw[t] / N, want, .03, `${t} Lv${lv} adapt rate`); } });
         out.adapt['Lv' + lv] = { expected: want, rates: Object.fromEntries(FORM_TYPES.map(t => [t, +(sw[t] / N).toFixed(3)])) };
         // the switch is the beneficial one
-        if (lv === 5) check(BT.ftac.inf === 'assault' && BT.ftac.arc === 'rapid' && BT.ftac.cav === 'charge' && BT.ftac.gun === 'controlled', 'Adapted order not beneficial');
+        if (lv === 5) { check(BT.ftac.inf === 'assault' && BT.ftac.arc === 'rapid' && BT.ftac.cav === 'charge', 'Adapted order not beneficial');
+          check(tacScore(FORM_TACTICS.gun[BT.ftac.gun].fam, 'volley') === 0, 'Gunners (no counter option) did not escape the counter'); }
         // one roll per battle: a second call does nothing
         if (lv >= 1) { const first = JSON.stringify(BT.adapt); adaptFormations(); check(JSON.stringify(BT.adapt) === first, 'Rerolled'); }
         closeBattle();
@@ -143,11 +144,12 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
       startBattle(site.id); check(BT.ki[1] === BT.A[1].ki, 'Enemy Ki changed'); closeBattle();
 
       // ---------- no pause between rounds; Retreat ends after the round ----------
-      G.ki = 3; startBattle(site.id); beginRound(); const states = new Set(); let n = 0, retreated = false;
+      G.ki = 3; startBattle(site.id); { const even = totalOf(BT.A[0]) * 5 / Math.max(1, totalOf(BT.A[1])); BT.A.forEach((A, i) => A.groups.forEach(x => { if (!x.heroOnly) { x.troops *= i ? even : 5; x.start = x.max = x.troops; } })); } beginRound(); const states = new Set(); let n = 0, retreated = false;
       while (BT && BT.state !== 'done' && n++ < 60000) { states.add(BT.state); if (BT.round === 1 && BT.state === 'run' && !retreated) { renderBHUD(); const b = $('#rs-retreat'); check(b, 'No Retreat button'); b.click(); retreated = true; } updateBattle(1 / 30); }
       out.flow = { states: [...states], endedRound: BT && BT.round, result: BT && BT.result, retreated: !!(BT && BT.playerRetreat) };
       check(!states.has('tactic'), 'Battle paused for orders');
-      if (retreated) check(BT.playerRetreat && BT.round === 1, 'Retreat did not land at end of round');
+      check(BT.playerRetreat && BT.round === 1 && BT.result === 'lose', 'Retreat did not land at end of round: ' + JSON.stringify(out.flow));
+      check(retreated, 'Retreat never offered');
       closeBattle();
 
       // ---------- an old save without the new fields loads and fights ----------

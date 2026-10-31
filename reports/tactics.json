@@ -1,0 +1,211 @@
+{
+  "options": {
+    "inf": [
+      "Hold Line",
+      "Aggressive Assault",
+      "Spear Wall"
+    ],
+    "arc": [
+      "Aimed Volley",
+      "Rapid Fire",
+      "Harassment"
+    ],
+    "gun": [
+      "Focused Fire",
+      "Suppressive Volley",
+      "Controlled Fire"
+    ],
+    "cav": [
+      "Full Charge",
+      "Flanking Attack",
+      "Defensive Reserve"
+    ]
+  },
+  "orders": {
+    "inf": "Lv0-5 ok",
+    "arc": "Lv0-5 ok",
+    "gun": "Lv0-5 ok",
+    "cav": "Lv0-5 ok"
+  },
+  "dropdowns": {
+    "Lv0": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "Lv1": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "Lv2": [
+      2,
+      2,
+      2,
+      2
+    ],
+    "Lv3": [
+      3,
+      3,
+      3,
+      3
+    ],
+    "Lv4": [
+      3,
+      3,
+      3,
+      3
+    ],
+    "Lv5": [
+      3,
+      3,
+      3,
+      3
+    ]
+  },
+  "levels": {
+    "inf": 5,
+    "arc": 2,
+    "gun": 0,
+    "cav": 1
+  },
+  "battleOrders": {
+    "1": {
+      "inf": "assault",
+      "arc": "rapid",
+      "gun": null,
+      "cav": "charge"
+    },
+    "2": {
+      "inf": "spear",
+      "arc": "harass",
+      "gun": null,
+      "cav": "charge"
+    },
+    "3": {
+      "inf": "hold",
+      "arc": "harass",
+      "gun": null,
+      "cav": "charge"
+    },
+    "4": {
+      "inf": "hold",
+      "arc": "harass",
+      "gun": null,
+      "cav": "charge"
+    },
+    "5": {
+      "inf": "hold",
+      "arc": "harass",
+      "gun": null,
+      "cav": "charge"
+    }
+  },
+  "adapt": {
+    "Lv0": {
+      "expected": 0,
+      "rates": {
+        "inf": 0,
+        "arc": 0,
+        "gun": 0,
+        "cav": 0
+      }
+    },
+    "Lv1": {
+      "expected": 0.2,
+      "rates": {
+        "inf": 0.192,
+        "arc": 0.207,
+        "gun": 0.201,
+        "cav": 0.194
+      }
+    },
+    "Lv2": {
+      "expected": 0.4,
+      "rates": {
+        "inf": 0.391,
+        "arc": 0.392,
+        "gun": 0.398,
+        "cav": 0.409
+      }
+    },
+    "Lv3": {
+      "expected": 0.6000000000000001,
+      "rates": {
+        "inf": 0.584,
+        "arc": 0.587,
+        "gun": 0.594,
+        "cav": 0.589
+      }
+    },
+    "Lv4": {
+      "expected": 0.8,
+      "rates": {
+        "inf": 0.801,
+        "arc": 0.798,
+        "gun": 0.8,
+        "cav": 0.8
+      }
+    },
+    "Lv5": {
+      "expected": 1,
+      "rates": {
+        "inf": 1,
+        "arc": 1,
+        "gun": 1,
+        "cav": 1
+      }
+    }
+  },
+  "ki": {
+    "capacity": {
+      "base": 1,
+      "withDoctrine": 3,
+      "doctrineOverflow": 3
+    },
+    "monthly": [
+      1,
+      2,
+      3,
+      3
+    ]
+  },
+  "eligibility": {
+    "200v100": true,
+    "100v200": true,
+    "300v100": false,
+    "100v300": false,
+    "33v67": true,
+    "67v33": true,
+    "32v68": false,
+    "68v32": false,
+    "100v100": true
+  },
+  "cast": {
+    "first": {
+      "kiBefore": 3,
+      "kiAfter": 1,
+      "casts": 1,
+      "cost": 2
+    },
+    "nextBattleStartsWith": 1,
+    "autoCastOff": 0,
+    "ineligible": 0
+  },
+  "flow": {
+    "states": [
+      "run",
+      "between"
+    ],
+    "endedRound": 1,
+    "result": "lose",
+    "retreated": true
+  },
+  "oldSave": {
+    "loaded": true,
+    "battle": "win"
+  },
+  "errors": []
+}
