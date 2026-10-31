@@ -10457,11 +10457,12 @@ function gCenter(g) { const al = g.spr.filter(s => s.alive); if (!al.length) ret
 const DENSITY = { standard: { n: 25, name: 'Standard' }, dense: { n: 36, name: 'Dense' }, epic: { n: 48, name: 'Epic' } };
 function densityKey() { try { const k = localStorage.getItem('sh-density'); if (DENSITY[k]) return k; } catch (e) { } return 'dense'; }
 function setDensity(k) { if (!DENSITY[k]) return false; try { localStorage.setItem('sh-density', k); } catch (e) { } return true; }
-// per arm, in world px at sprite scale 1: file spacing, body height (head to feet, measured from the sprites), stagger,
-// distinct looks. Ranks stand at least 1.5 bodies apart so the rank in front never hides the weapons of the rank behind,
-// and open up to 2.25 bodies when the field has room to spare.
-const FORM_SHAPE = Object.fromEntries(Object.entries({ inf: { col: 15, body: 24, stag: 0, pool: 5 }, gun: { col: 18, body: 31, stag: 0, pool: 4 },
-  arc: { col: 17, body: 24, stag: .5, pool: 4 }, cav: { col: 24, body: 38, stag: 0, pool: 3 } }).map(([k, F]) => [k, Object.assign(F, { rMin: F.body * 1.5, rMax: F.body * 2.25 })]));
+// per arm, in world px at sprite scale 1: body width (measured from the sprites, weapon left out), closest and widest
+// rank spacing, stagger, distinct looks. The lines of men one behind another stand 1.75 body widths apart, so each
+// line's weapons show clear of the line in front; the ranks keep their close order down the field.
+const FORM_FILES = 1.75;
+const FORM_SHAPE = Object.fromEntries(Object.entries({ inf: { bodyW: 14, rMin: 11, rMax: 20, stag: 0, pool: 5 }, gun: { bodyW: 17.5, rMin: 12, rMax: 22, stag: 0, pool: 4 },
+  arc: { bodyW: 18.5, rMin: 11, rMax: 21, stag: .5, pool: 4 }, cav: { bodyW: 26, rMin: 15, rMax: 26, stag: 0, pool: 3 } }).map(([k, F]) => [k, Object.assign(F, { col: F.bodyW * FORM_FILES })]));
 const FORM_FILL = .88, FORM_MAX_COLS = 6, FORM_HEAD = 34, WW_MAX = 3000; // share of the band the ranks span; preferred widest block; head room; widest field
 let _safeProbe = null;
 function safeBottomPx() { try { if (!_safeProbe) { _safeProbe = document.createElement('div'); _safeProbe.style.cssText = 'position:fixed;left:0;bottom:0;width:0;height:env(safe-area-inset-bottom,0px);pointer-events:none;visibility:hidden'; document.body.appendChild(_safeProbe); } return _safeProbe.getBoundingClientRect().height || 0; } catch (e) { return 0; } }
