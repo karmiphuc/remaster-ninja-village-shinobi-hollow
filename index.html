@@ -653,6 +653,262 @@ img.px, canvas.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 
 <script>
 'use strict';
+/* Built-in diagnostics. Off by default; no sampling, canvas registry or UI
+   updates until requested. The in-page runner owns a fully isolated village. */
+var SH_PERF={on:/(?:[?&])perf=1(?:&|$)/.test(location.search),sim:false,diag:null,
+ frame:new Float32Array(120),fi:0,fn:0,last:0,stamp:0,rigDraws:0,lastRig:0,
+ refs:new Map(),ids:new WeakMap(),uid:1,root:null,body:null,result:null,run:null,
+ ledgerHooked:false,baseline:null,cacheLimits:{rig:1000,tools:96,carry:512,pile:160,products:48}};
+function gameCanvas(){
+ var c=document.createElement('canvas');
+ if(SH_PERF.on||SH_PERF.sim)perfCanvas(c);
+ return c;
+}
+function perfCanvas(c){
+ if(!c||SH_PERF.ids.has(c)||typeof WeakRef!=='function')return c;
+ var id=SH_PERF.uid++;SH_PERF.ids.set(c,id);SH_PERF.refs.set(id,new WeakRef(c));return c;
+}
+function perfRelease(value){
+ if(!value)return;
+ if(value instanceof HTMLCanvasElement){value.width=0;value.height=0;if(value.detail){value.detail.width=0;value.detail.height=0;}return;}
+ if(value.cv)perfRelease(value.cv);
+ if(value.img)perfRelease(value.img);
+ if(value.hands)perfRelease(value.hands);
+}
+function perfLRU(M,max){
+ var get=Map.prototype.get,set=Map.prototype.set;
+ M.get=function(k){var v=get.call(this,k);if(v!==undefined){this.delete(k);set.call(this,k,v);}return v;};
+ M.set=function(k,v){if(!this.has(k)&&this.size>=max){var old=this.keys().next().value;perfRelease(get.call(this,old));this.delete(old);}return set.call(this,k,v);};
+ return M;
+}
+function perfObjectLRU(max){
+ var data=Object.create(null),order=new Map();
+ return new Proxy(data,{get:function(o,k){var v=o[k];if(v!==undefined){order.delete(k);order.set(k,1);}return v;},
+ set:function(o,k,v){if(!Object.prototype.hasOwnProperty.call(o,k)&&order.size>=max){var old=order.keys().next().value;perfRelease(o[old]);delete o[old];order.delete(old);}o[k]=v;order.delete(k);order.set(k,1);return true;}});
+}
+function perfMemory(){
+ var count=0,bytes=0;
+ for(var pair of SH_PERF.refs){var c=pair[1].deref();if(!c){SH_PERF.refs.delete(pair[0]);continue;}if(c.width&&c.height){count++;bytes+=c.width*c.height*4;}}
+ return {canvases:count,mb:bytes/1048576};
+}
+function perfCacheSizes(){
+ return {rig:_villageRigCache.size,tools:_villageToolCache.size,carry:Object.keys(_carry).length,pile:Object.keys(_pile).length,products:Object.keys(_workshopProductSprites).length};
+}
+function perfCollections(){
+ if(!G)return 0;var n=G.buildings.length+G.villagers.length+RT.agents.length;
+ for(var b of G.buildings)n+=Object.keys(b.shelf||{}).length+Object.keys(b.inbox||{}).length+Object.keys(b.outs||{}).length;
+ if(RT.eco)n+=(RT.eco.claims?RT.eco.claims.size:0)+(RT.eco.jobs?RT.eco.jobs.length:0);
+ return n;
+}
+function perfFrame(now){
+ if(!SH_PERF.on)return;
+ if(SH_PERF.last){var d=now-SH_PERF.last;if(d>0&&d<1000){SH_PERF.frame[SH_PERF.fi]=d;SH_PERF.fi=(SH_PERF.fi+1)%120;SH_PERF.fn=Math.min(120,SH_PERF.fn+1);}}
+ SH_PERF.last=now;if(now-SH_PERF.stamp<750||SH_PERF.sim)return;
+ var elapsed=Math.max(.001,(now-SH_PERF.stamp)/1000),redraw=(SH_PERF.rigDraws-SH_PERF.lastRig)/elapsed;
+ SH_PERF.lastRig=SH_PERF.rigDraws;SH_PERF.stamp=now;
+ var ar=Array.from(SH_PERF.frame.slice(0,SH_PERF.fn)).sort(function(a,b){return a-b;}),sum=0;
+ for(var v of ar)sum+=v;
+ var m=perfMemory(),cs=perfCacheSizes(),kb=0,ms=0;
+ if(G){var at=performance.now(),json=JSON.stringify(G);ms=performance.now()-at;kb=new Blob([json]).size/1024;}
+ if(SH_PERF.body)SH_PERF.body.textContent=
+  'FPS '+(sum?1000*ar.length/sum:0).toFixed(1)+' · p95 '+(ar.length?ar[Math.min(ar.length-1,Math.floor(ar.length*.95))]:0).toFixed(1)+' ms\n'+
+  'Agents '+(RT.agents?RT.agents.length:0)+' · canvases '+m.canvases+' · '+m.mb.toFixed(1)+' MB\n'+
+  'Rig redraws '+redraw.toFixed(1)+'/s · rig '+cs.rig+'/'+SH_PERF.cacheLimits.rig+' · tools '+cs.tools+'\n'+
+  'Cargo '+cs.carry+' · piles '+cs.pile+' · products '+cs.products+'\n'+
+  'Save '+kb.toFixed(1)+' KB / '+ms.toFixed(1)+' ms · economy entries '+perfCollections()+
+  (redraw>150?' \nRig redraws high: compare cache limit and canvas MB.':'');
+}
+function perfUI(){
+ if(SH_PERF.root)return;
+ var root=document.createElement('section');root.id='perf-panel';
+ root.style.cssText='position:fixed;z-index:190;right:max(8px,env(safe-area-inset-right));top:calc(58px + env(safe-area-inset-top));max-width:min(94vw,600px);max-height:80vh;overflow:auto;padding:10px;background:#211c20ed;color:#efdfb7;border:1px solid #b7955b;border-radius:4px;font:11px monospace;white-space:normal;box-shadow:0 4px 20px #0006';
+ root.innerHTML='<div style="display:flex;gap:7px;align-items:center"><b style="flex:1">Village diagnostics</b><button id="perf-close">×</button></div><pre id="perf-metrics" style="white-space:pre-wrap;line-height:1.5"></pre><div style="display:flex;gap:6px;flex-wrap:wrap"><button id="perf-sim">Run sim test</button><button id="perf-copy">Copy report</button><button id="perf-cancel" hidden>Cancel</button></div><div id="perf-progress" style="margin-top:7px"></div><div id="perf-results" style="overflow:auto"></div>';
+ document.body.appendChild(root);SH_PERF.root=root;SH_PERF.body=root.querySelector('#perf-metrics');
+ root.querySelector('#perf-close').onclick=function(){root.hidden=true;SH_PERF.on=false;SH_PERF.last=0;};
+ root.querySelector('#perf-sim').onclick=function(){runEconomySim();};
+ root.querySelector('#perf-cancel').onclick=function(){if(SH_PERF.run)SH_PERF.run.cancel=true;};
+ root.querySelector('#perf-copy').onclick=function(){var t=SH_PERF.result?JSON.stringify(SH_PERF.result,null,2):SH_PERF.body.textContent;
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).catch(function(){perfCopyFallback(t);});else perfCopyFallback(t);};
+}
+function perfCopyFallback(t){var el=document.createElement('textarea');el.value=t;el.style.cssText='position:fixed;left:-9999px';document.body.appendChild(el);el.select();document.execCommand('copy');el.remove();}
+function perfOpen(){SH_PERF.on=true;SH_PERF.last=0;perfUI();SH_PERF.root.hidden=false;document.querySelectorAll('canvas').forEach(perfCanvas);}
+function perfInit(){
+ var date=document.getElementById('hud-date'),timer=0;
+ if(date){date.style.touchAction='manipulation';date.addEventListener('pointerdown',function(){timer=setTimeout(perfOpen,2000);});
+ for(var k of ['pointerup','pointercancel','pointerleave'])date.addEventListener(k,function(){clearTimeout(timer);});}
+ if(SH_PERF.on)perfOpen();
+ if(/(?:[?&])simtest=1(?:&|$)/.test(location.search))setTimeout(function(){perfOpen();runEconomySim();},100);
+}
+function perfPrewarm(){
+ var goods=Object.keys(GOODS).concat(Object.keys(WARES)),dirs=['up','down','right','left'];
+ for(var good of goods){var k=visWare(good),one=carryKind(good,1),large=carryKind(good,30);
+  for(var dir of dirs)for(var f=0;f<2;f++){carrySprite(one,dir,f,k);if(large!==one)carrySprite(large,dir,f,k);}
+  for(var n=1;n<=4;n++)pileSprite(WARES[good]?'w_'+k:k,n);
+ }
+}
+function diagGoods(key,n,created){var d=SH_PERF.diag;if(!d||!n)return;var map=created?d.created:d.destroyed;map[key]=(map[key]||0)+n;}
+function diagInventory(out){
+ for(var k in out)delete out[k];
+ var add=function(k,n){if(n)out[k]=(out[k]||0)+n;};
+ for(var k in G.stock)add(k,G.stock[k]);for(var k in G.wares)add(k,G.wares[k]);
+ for(var b of G.buildings){if(BUILDINGS[b.id].makes)add(BUILDINGS[b.id].makes,b.pile||0);
+  for(var key of ['inbox','outs','shopGoods','shopWares','shelf'])for(var k in b[key]||{})add(k,b[key][k]);}
+ for(var a of RT.agents)if(a.carry)add(a.carry.good,a.carry.n);
+ return out;
+}
+function diagNegatives(){
+ var n=0,check=function(x){if(x<-.00000001)n++;};
+ for(var k in G.stock)check(G.stock[k]);for(var k in G.wares)check(G.wares[k]);
+ for(var b of G.buildings){check(b.pile||0);for(var key of ['inbox','outs','shopGoods','shopWares','shelf'])for(var k in b[key]||{})check(b[key][k]);}
+ for(var a of RT.agents)if(a.carry)check(a.carry.n);return n;
+}
+function diagProbe(dt){
+ var d=SH_PERF.diag;if(!d)return;
+ for(var a of RT.agents){if(a.kind!=='villager')continue;var v=vById(a.vid);if(!v||v.role!=='work')continue;
+  var porter=typeof isPorter==='function'&&isPorter(v),category=a.state==='work'?0:a.state==='walk'?(a.carry?1:2):a.resting?3:4;
+  (porter?d.porter:d.worker)[category]+=dt;var b=v.job>=0?bByUid(v.job):null;
+  if(!porter&&b&&(BUILDINGS[b.id].makes||BUILDINGS[b.id].craft))d.producer[category]+=dt;
+ }
+}
+function diagSale(a,b,result,before){var d=SH_PERF.diag;if(!d)return;d.visits++;if(!result)d.stockouts++;d.sales+=G.stats.sales-before;}
+function diagMapCopy(map){var out={};for(var k in map||{})out[k]=map[k];return out;}
+function diagMapDelta(before,after,create){if(!SH_PERF.diag||SH_PERF.ledgerHooked)return;for(var k in create?after:before){var n=create?(after[k]||0)-(before[k]||0):(before[k]||0)-(after[k]||0);if(n>0)diagGoods(k,n,create);}}
+function simStageStats(){
+ return {created:{},destroyed:{},overflow:0,sales:0,visits:0,stockouts:0,turned:0,worker:[0,0,0,0,0],porter:[0,0,0,0,0],producer:[0,0,0,0,0],opening:{},ending:{},negatives:0,serialMs:0};
+}
+var SIM_CASES=[
+ {id:'starter',tier:0,count:6,porters:0},{id:'small',tier:1,count:8,porters:0},
+ {id:'mature',tier:2,count:12,porters:0},{id:'mature_2porters_same',tier:2,count:12,porters:2},
+ {id:'mature_2porters_plus2',tier:2,count:14,porters:2},
+ {id:'early_duplicates',tier:0,count:6,porters:0,duplicates:true},
+ {id:'late',tier:3,count:20,porters:2},{id:'late_second_chain',tier:3,count:26,porters:2,chain:true},
+ {id:'late_duplicate_shops',tier:3,count:20,porters:2,duplicates:true},
+ {id:'demolish_and_roundtrip',tier:2,count:12,porters:2,failure:true}
+];
+function simPlace(id,x,y){var b=place(id,x,y,true);if(b)b.born=-9;return b;}
+function simFixture(spec,seed){
+ Math.random=seeded(seed);newGame();G.roll.v=false;G.tut=1;G.endYear=99;G.speed=1;G.gold=100000;
+ G.villagers=[];G.buildings=[];G.bmap.fill(-1);G.roads.fill(0);G.tiles.fill('grass');
+ for(var k in G.land)G.land[k]=true;
+ for(var x=0;x<MAP_W;x++)for(var y of [10,11,22,23,34,35])G.roads[idx(x,y)]=1;
+ for(var y=0;y<MAP_H;y++)for(var x of [20,21])G.roads[idx(x,y)]=1;
+ G.gates=[[GATE[0],MAP_H-1,'S']];for(var y=35;y<MAP_H;y++)for(var x of [GATE[0]-1,GATE[0]])G.roads[idx(x,y)]=1;
+ if(spec.tier>=2)G.gates.push([0,10,'W']);if(spec.tier>=3)G.gates.push([MAP_W-1,22,'E']);
+ G.stock={rice:6,veg:0,tea:0,wood:0,ore:0,silk:0};G.wares={};G.troops={inf:0,arc:0,gun:0,cav:0};G.allHands=false;
+ G.recruitQueue=[];G.camps=[];G.campSeeded=1;G.merch=null;G.research=null;G.resQ=[];G.hire=null;G.boons.pending=null;G.boons.doc=null;
+ G.researched={bokken:1,hankyu:1,hemp:1,bandana:1};
+ for(var k in ITEMS)if((ITEMS[k].tier||0)<=Math.max(1,spec.tier)&&k.indexOf('rcp_')!==0)G.researched[k]=1;
+ G.forge={inf:false,arc:false,gun:false,cav:false};G.wins=spec.tier===3?16:spec.tier===2?5:0;
+ var owned=spec.tier===3?24:spec.tier===2?6:0;
+ for(var p of PROVINCES){G.prov[p.id]={owner:p.clan,power:p.power||0};if(p.type==='clan'&&owned-->0)G.prov[p.id].owner='kage';}
+ simPlace('hall',17,7);
+ var paddy=simPlace('paddy',2,8);simPlace('paddy',5,8);simPlace('onigiri',24,8);
+ if(spec.tier>=1){simPlace('veggie',8,8);simPlace('pickle',27,8);simPlace('noodle',30,8);var w=simPlace('workshop',11,12);w.recipe='bento';}
+ if(spec.tier>=2){simPlace('paddy',11,8);simPlace('veggie',14,8);simPlace('teafield',2,12);simPlace('lumber',5,12);simPlace('mine',8,12);
+  var w=simPlace('workshop',14,12);w.recipe='kokeshi';simPlace('teahouse',33,8);simPlace('crafts',36,8);simPlace('smithy',39,8);simPlace('kura',17,12);
+  for(var pt of [[4,14],[6,14],[7,15],[3,15]])simPlace('pine',pt[0],pt[1]);}
+ if(spec.tier>=3){simPlace('paddy',2,20);simPlace('veggie',5,20);simPlace('teafield',8,20);simPlace('silkhut',11,20);simPlace('kimono',33,20);
+  var w=simPlace('workshop',14,20);w.recipe='kimono';simPlace('kura',24,20);
+  for(var pt of [[1,15],[9,15],[12,15],[15,15],[27,15],[30,15],[33,15],[36,15]])simPlace('sakura',pt[0],pt[1]);
+  for(var pt of [[25,15],[28,15],[31,15],[34,15]])simPlace('lantern',pt[0],pt[1]);}
+ if(spec.duplicates){simPlace('onigiri',24,24);simPlace(spec.tier>=3?'noodle':'onigiri',27,24);}
+ if(spec.chain){simPlace('paddy',2,24);simPlace('paddy',5,24);simPlace('veggie',8,24);var w=simPlace('workshop',11,24);w.recipe='bento';}
+ for(var i=0;i<Math.ceil(spec.count/4);i++)simPlace('longhouse',2+i*3,32);
+ if(spec.porters){if(!BUILDINGS.porter)BUILDINGS.porter={name:'Porter House (baseline placeholder)',cat:'special',w:2,h:2,cost:0,noBuild:true};
+  var depot=simPlace('porter',22,12);}
+ var roster=VILLAGER_POOL.concat(RECRUITS);for(var i=0;i<spec.count;i++){var v=addVillager(roster[i].id,true);v.role='work';v.lv=spec.tier>=3?8:spec.tier>=2?4:1;v.en=100;v.eq={weapon:null,armor:spec.tier?'hemp':null,head:spec.tier?'bandana':null,special:spec.tier>=2?'tenbin':null,special2:null,mount:null};}
+ resetRT();RT.t=0;RT.ready=false;RT._aw=null;assignHomes();assignJobs();
+ if(depot&&typeof isPorter==='function'){var sorted=G.villagers.slice().sort(function(a,b){return vStats(a).wrk-vStats(b).wrk;});for(var i=0;i<spec.porters;i++)sorted[i].job=depot.uid;assignJobs();}
+ afterLoad();RT.ready=true;refreshBoosts();RT.paused=false;G.speed=1;
+ VIEW.cx=21*16;VIEW.cy=17*16;VIEW.w=430;VIEW.h=739;VIEW.dpr=2;VIEW.zoom=2;VIEW.scale=4;
+ VIEW.cv.width=860;VIEW.cv.height=1478;VIEW.ctx=VIEW.cv.getContext('2d');RT.groundDirty=true;
+ return {depot:depot?depot.uid:-1,first:paddy.uid};
+}
+function simSnapshotObject(o){var r={};for(var k in o)r[k]=o[k];return r;}
+function simRestoreObject(o,b){for(var k in o)if(!(k in b))delete o[k];for(var k in b)o[k]=b[k];}
+function simPrepare(){
+ var S={G:G,RT:simSnapshotObject(RT),VIEW:simSnapshotObject(VIEW),UI:simSnapshotObject(UI),road:simSnapshotObject(ROAD_TRAFFIC),land:JSON.parse(JSON.stringify(LAND)),
+ random:Math.random,save:saveGame,load:loadGame,modal:modal,announce:announce,toast:toast,noIntro:window.__noIntro,noQuick:window.__noQuick,
+ sound:{},placeholder:BUILDINGS.porter||null,timer:setTimeout,clear:clearTimeout,timers:[],cancel:false,index:0,seedIndex:0,step:0,
+ rows:[],steps:Math.round(52*WEEK_SEC/.1),weekMs:0,mutated:0,mem:null,canvas:gameCanvas()};
+ for(var k in Sound)if(typeof Sound[k]==='function'){S.sound[k]=Sound[k];Sound[k]=function(){};}
+ saveGame=function(){return true;};loadGame=function(){return false;};modal=function(){};announce=function(){};toast=function(){};
+ window.__noIntro=window.__noQuick=true;UI.panel=null;UI.render=null;UI.atelier=false;
+ window.setTimeout=function(fn,delay){var id=S.timer(function(){if(SH_PERF.sim)fn();},delay);S.timers.push(id);return id;};
+ VIEW.cv=S.canvas;VIEW.ctx=S.canvas.getContext('2d');SH_PERF.sim=true;SH_PERF.run=S;return S;
+}
+function simRestore(S){
+ for(var id of S.timers)S.clear(id);window.setTimeout=S.timer;window.clearTimeout=S.clear;
+ G=S.G;simRestoreObject(RT,S.RT);simRestoreObject(VIEW,S.VIEW);simRestoreObject(UI,S.UI);simRestoreObject(ROAD_TRAFFIC,S.road);
+ for(var k in LAND)LAND[k]=S.land[k];Math.random=S.random;saveGame=S.save;loadGame=S.load;modal=S.modal;announce=S.announce;toast=S.toast;
+ for(var k in S.sound)Sound[k]=S.sound[k];window.__noIntro=S.noIntro;window.__noQuick=S.noQuick;
+ if(!S.placeholder)delete BUILDINGS.porter;else BUILDINGS.porter=S.placeholder;
+ S.canvas.width=S.canvas.height=0;SH_PERF.diag=null;SH_PERF.sim=false;SH_PERF.run=null;SH_PERF.last=0;
+ if(SH_PERF.root)SH_PERF.root.querySelector('#perf-cancel').hidden=true;
+}
+function simFailureStep(S,spec){
+ if(!spec.failure||S.mutated)return;
+ var found=null;
+ for(var a of RT.agents)if(a.kind==='villager'&&a.carry){var b=bByUid(a.target);if(b&&(b.id==='kura'||BUILDINGS[b.id].cat==='shop')){found=b;break;}}
+ if(S.step<900||!found&&S.step<1500)return;
+ if(found)removeBuilding(found);else {var shops=G.buildings.filter(function(b){return BUILDINGS[b.id].cat==='shop';});if(shops.length)removeBuilding(shops[0]);}
+ var d=SH_PERF.diag;
+ for(var a of RT.agents)if(a.carry){dropLost(a);a.mission=null;}
+ if(typeof economyBeforeSave==='function')economyBeforeSave();
+ var start=performance.now(),json=JSON.stringify(G);d.serialMs=Math.max(d.serialMs,performance.now()-start);
+ G=JSON.parse(json);resetRT();afterLoad();G.speed=1;RT.paused=false;UI.panel=null;S.mutated=1;
+}
+function simFinishRow(S,spec){
+ var d=SH_PERF.diag;diagInventory(d.ending);var residual=0,detail={};
+ var keys=new Set(Object.keys(d.opening).concat(Object.keys(d.ending),Object.keys(d.created),Object.keys(d.destroyed)));
+ for(var key of keys){var n=(d.ending[key]||0)-(d.opening[key]||0)-(d.created[key]||0)+(d.destroyed[key]||0);if(Math.abs(n)<1e-8)n=0;if(n)detail[key]=n;residual+=Math.abs(n);}
+ var normalize=function(ar){var sum=0;for(var v of ar)sum+=v;return ar.map(function(v){return sum?v/sum*100:0;});};
+ var at=performance.now(),json=JSON.stringify(G),saveMs=performance.now()-at,m=perfMemory();
+ S.rows.push({scenario:spec.id,seed:S.seedIndex+1,gold:d.sales,travellers:G.stats.trav,stockout:d.visits?d.stockouts/d.visits*100:0,turnedAway:d.turned,
+ worker:normalize(d.worker),porter:normalize(d.porter),producer:normalize(d.producer),overflowLost:d.overflow,residual:residual,residualByGood:detail,
+ negatives:d.negatives,saveKB:new Blob([json]).size/1024,saveMs:Math.max(saveMs,d.serialMs),canvasStart:S.memStart.mb,canvasEnd:m.mb,caches:perfCacheSizes(),
+ collections:perfCollections(),msPerWeek:S.weekMs/52,failureExercised:!spec.failure||!!S.mutated});
+}
+function simReport(rows){
+ var report={version:typeof ECONOMY_P0!=='undefined'?'P0':'baseline',weeks:52,seeds:5,
+ timeOrder:['work','haul-loaded','walk-empty','rest','idle'],rows:rows,summary:[],baseline:SH_PERF.baseline||null};
+ for(var spec of SIM_CASES){var list=rows.filter(function(r){return r.scenario===spec.id;});if(!list.length)continue;
+  var row={scenario:spec.id};for(var key of ['gold','travellers','stockout','turnedAway','overflowLost','residual','negatives','saveKB','canvasStart','canvasEnd','msPerWeek','collections']){var sum=0;for(var r of list)sum+=r[key];row[key]=sum/list.length;}
+  row.worker=[0,0,0,0,0];row.porter=[0,0,0,0,0];row.producer=[0,0,0,0,0];
+  for(var r of list)for(var key of ['worker','porter','producer'])for(var i=0;i<5;i++)row[key][i]+=r[key][i]/list.length;
+  report.summary.push(row);
+ }
+ return report;
+}
+function simRenderReport(report){
+ if(!SH_PERF.root)return;var box=SH_PERF.root.querySelector('#perf-results'),html='<table style="border-collapse:collapse;white-space:nowrap;font:10px monospace"><thead><tr>';
+ for(var k of ['Scenario','Gold/52w','Trav','Stockout %','Away','Worker W/H/E/R/I %','Porter W/H/E/R/I %','Lost','Residual','Neg','KB','MB start/end','ms/wk'])html+='<th style="padding:5px;border-bottom:1px solid #846d4b">'+k+'</th>';
+ html+='</tr></thead><tbody>';
+ for(var r of report.summary){var cells=[r.scenario,r.gold.toFixed(0),r.travellers.toFixed(0),r.stockout.toFixed(1),r.turnedAway.toFixed(0),r.worker.map(function(v){return v.toFixed(0);}).join('/'),r.porter.map(function(v){return v.toFixed(0);}).join('/'),r.overflowLost.toFixed(0),r.residual.toFixed(8),r.negatives.toFixed(0),r.saveKB.toFixed(1),r.canvasStart.toFixed(1)+'/'+r.canvasEnd.toFixed(1),r.msPerWeek.toFixed(1)];
+ html+='<tr>';for(var v of cells)html+='<td style="padding:5px;border-bottom:1px solid #493e30">'+v+'</td>';html+='</tr>';}
+ box.innerHTML=html+'</tbody></table><p>52 weeks × five paired seeds. Loaded haul excludes empty pickup legs. P1 demand/service changes are not enabled.</p>';
+}
+function runEconomySim(){
+ if(SH_PERF.sim)return Promise.reject(new Error('A simulation is already running'));
+ perfOpen();var S=simPrepare();SH_PERF.root.querySelector('#perf-cancel').hidden=false;
+ SH_PERF.root.querySelector('#perf-results').textContent='';var progress=SH_PERF.root.querySelector('#perf-progress');
+ return new Promise(function(resolve,reject){
+  var begin=function(){var spec=SIM_CASES[S.index];SH_PERF.diag=null;simFixture(spec,0x534800+S.seedIndex+1);S.step=0;S.weekMs=0;S.mutated=0;
+   SH_PERF.diag=simStageStats();diagInventory(SH_PERF.diag.opening);S.memStart=perfMemory();S.createdRig=SH_PERF.rigDraws;};
+  var chunk=function(){try{
+   if(S.cancel){simRestore(S);progress.textContent='Cancelled. Original village restored.';resolve({cancelled:true});return;}
+   if(S.step===0&&S.weekMs===0)begin();var until=performance.now()+12,spec=SIM_CASES[S.index],n=0;
+   while(S.step<S.steps&&performance.now()<until&&n++<150){var at=performance.now();updateVillage(.1);diagProbe(.1);simFailureStep(S,spec);S.step++;
+    if(S.step%10===0)drawVillage();if(S.step%90===0)SH_PERF.diag.negatives+=diagNegatives();S.weekMs+=performance.now()-at;}
+   progress.textContent=(SH_PERF.ledgerHooked?'P0':'Baseline')+' · '+spec.id+' · seed '+(S.seedIndex+1)+'/5 · week '+Math.min(52,Math.floor(S.step*.1/WEEK_SEC))+'/52';
+   if(S.step>=S.steps){simFinishRow(S,spec);S.seedIndex++;if(S.seedIndex>=5){S.seedIndex=0;S.index++;}S.step=0;S.weekMs=0;
+    if(S.index>=SIM_CASES.length){var report=simReport(S.rows);simRestore(S);SH_PERF.result=report;simRenderReport(report);progress.textContent='Complete. Original village restored.';console.log('ECONOMY_REPORT='+JSON.stringify(report));resolve(report);return;}}
+   S.timer(chunk,0);
+  }catch(e){simRestore(S);progress.textContent='Test stopped: '+e.message+'. Original village restored.';reject(e);}};
+  S.timer(chunk,0);
+ });
+}
+
 /* ================= CORE: utils, rng, game data ================= */
 const TILE = 16;
 const MAP_W = 42, MAP_H = 43;
@@ -1274,7 +1530,7 @@ class PB {
       if (has(x - 1, y) || has(x + 1, y) || has(x, y - 1) || has(x, y + 1)) n.d[y * n.w + x] = oc; }
     return n;
   }
-  canvas() { const c = document.createElement('canvas'); c.width = this.w; c.height = this.h; const x = c.getContext('2d'); if (!x) return c; /* out of canvas memory: a blank frame beats a crash */ const id = x.createImageData(this.w, this.h); new Uint32Array(id.data.buffer).set(this.d); x.putImageData(id, 0, 0); return c; }
+  canvas() { const c = gameCanvas(); c.width = this.w; c.height = this.h; const x = c.getContext('2d'); if (!x) return c; /* out of canvas memory: a blank frame beats a crash */ const id = x.createImageData(this.w, this.h); new Uint32Array(id.data.buffer).set(this.d); x.putImageData(id, 0, 0); return c; }
   draw(pb, ox, oy) { for (let y = 0; y < pb.h; y++) for (let x = 0; x < pb.w; x++) { const v = pb.d[y * pb.w + x]; if (v) this.set(ox + x, oy + y, v); } }
 }
 
@@ -2547,7 +2803,7 @@ function x2CartFront(f, good, ahead) { // seen along the axle: ahead = cart is n
   }, !ahead);
 }
 
-const _carry = {};
+const _carry = perfObjectLRU(512);
 function carrySprite(kind, dir, frame, good) {
   const key = kind + dir + frame + good; if (_carry[key]) return _carry[key];
   if (dir === 'left') return (_carry[key] = _csFlip(carrySprite(kind, 'right', frame, good)));
@@ -2615,7 +2871,7 @@ function x2Stack(rows, w, h, gap, ov, fn) {
   rows.forEach((c, r) => { const rw = c * (w + gap) - gap, x0 = Math.round((W - rw) / 2), y = H - h - r * (h - ov); for (let i = 0; i < c; i++) fn(pb, x0 + i * (w + gap), y, k++); });
   return pb;
 }
-const _pile = {};
+const _pile = perfObjectLRU(160);
 function pileSprite(good, n) {
   const key = good + n; if (_pile[key]) return _pile[key];
   n = clamp(n | 0, 1, 4); let pb;
@@ -2685,7 +2941,7 @@ function buildWareIcons() { Object.keys(WARES).forEach(k=>{
   if(WARES[k].res)ICONS['it_'+WARES[k].res]=ICONS['w_'+k];
 }); }
 /* White product nobori above the stock yards, on the workshop's right eave. */
-const _workshopProductSprites = Object.create(null);
+const _workshopProductSprites = perfObjectLRU(48);
 function workshopBannerRecipe(b) { return WARES[b.recipe] ? b.recipe : defaultRecipe(); }
 function workshopProductBanner(k) {
   const p=new PB(22,19),wood='#62472f',woodL='#ad8951',paper='#fffdf7';
@@ -2706,7 +2962,7 @@ function workshopProductSprite(k) {
   const ox=Math.min(base.ox,flag.ox),oy=Math.min(base.oy,flag.oy);
   const width=Math.max(base.ox+base.cv.width,flag.ox+flag.cv.width)-ox;
   const height=Math.max(base.oy+base.cv.height,flag.oy+flag.cv.height)-oy;
-  const cv=document.createElement('canvas');cv.width=width;cv.height=height;
+  const cv=gameCanvas();cv.width=width;cv.height=height;
   const ctx=cv.getContext('2d');ctx.imageSmoothingEnabled=false;
   ctx.drawImage(base.cv,base.ox-ox,base.oy-oy);ctx.drawImage(flag.cv,flag.ox-ox,flag.oy-oy);
   return (_workshopProductSprites[k]={cv,ox,oy,product:k});
@@ -3122,7 +3378,7 @@ const _pet2 = {};
 function petSprite2(kind) {
   if (_pet2[kind]) return _pet2[kind];
   if (kind === 'nanbu') { const r=artNanbuPet(); return (_pet2[kind]={r,l:flipCanvas(r)}); }
-  if(kind==='wolf'){const src=beastSprites(kind).idle[0],r=document.createElement('canvas');r.width=20;r.height=16;const x=r.getContext('2d');x.imageSmoothingEnabled=false;x.drawImage(src,0,0,20,16);return (_pet2[kind]={r,l:flipCanvas(r)});}
+  if(kind==='wolf'){const src=beastSprites(kind).idle[0],r=gameCanvas();r.width=20;r.height=16;const x=r.getContext('2d');x.imageSmoothingEnabled=false;x.drawImage(src,0,0,20,16);return (_pet2[kind]={r,l:flipCanvas(r)});}
   let p;
   if (kind === 'kiso' || kind === 'ashige' || kind === 'yoroiuma' || kind === 'akayoroi' || kind === 'jiba' || kind === 'nanbu') { p = new PB(16, 12); petHorse(p, kind === 'ashige' ? COATS[4] : kind === 'kiso' ? COATS[5] : kind === 'akayoroi' ? COATS[3] : kind === 'jiba' ? COATS[1] : kind === 'nanbu' ? COATS[2] : COATS[0], kind === 'yoroiuma' ? 'lamellar' : kind === 'akayoroi' ? 'oyoroi' : null); }
   else if (kind === 'tosa') { const C = BEAST_PAL.tosa; p = new PB(13, 9); p.ellipse(5.5, 4.5, 4.5, 2.6, C.c); p.rect(8, 1, 4, 4, C.c); p.rect(9, 0, 3, 2, C.c); p.rect(11, 2, 2, 2, C.mask); p.set(12, 3, X3.eye); p.set(11, 1, X3.eye); p.set(8, 1, C.d);
@@ -4233,7 +4489,7 @@ class ArtPB {
   scaled(pb,x,y,sx,sy=sx) { x+=(pb.originX||0)*sx;y+=(pb.originY||0)*sy; const src=pb instanceof ArtPB?pb._p:pb, factor=pb instanceof ArtPB?3:1, w=Math.round(pb.w*sx*3),h=Math.round(pb.h*sy*3);for(let yy=0;yy<h;yy++)for(let xx=0;xx<w;xx++){const v=src.get(Math.floor(xx/(sx*3/factor)),Math.floor(yy/(sy*3/factor)));if(v)this._p.set(Math.round(x*3)+xx,Math.round(y*3)+yy,v);} return this; }
   shadeEdges(d=.9,l=1.05) { this._p.shadeEdges(d,l); return this; }
   outlined(col='#251b1b') { const out=new ArtPB(this.w+2,this.h+2);out.draw(this,1,1); const p=out._p,copy=p.d.slice(),r=1,oc=toRGBA(col);for(let y=0;y<p.h;y++)for(let x=0;x<p.w;x++){if(copy[y*p.w+x])continue;let found=false;for(let dy=-r;dy<=r&&!found;dy++)for(let dx=-r;dx<=r;dx++){if(dx*dx+dy*dy>r*r+1)continue;const xx=x+dx,yy=y+dy;if(xx>=0&&yy>=0&&xx<p.w&&yy<p.h&&copy[yy*p.w+xx]){found=true;break;}}if(found)p.set(x,y,oc);}return out; }
-  canvas() { const detail=this._p.canvas(),c=document.createElement('canvas');c.width=this.w;c.height=this.h;const x=c.getContext('2d');x.drawImage(detail,0,0,c.width,c.height);c.detail=detail;return c; }
+  canvas() { const detail=this._p.canvas(),c=gameCanvas();c.width=this.w;c.height=this.h;const x=c.getContext('2d');x.drawImage(detail,0,0,c.width,c.height);c.detail=detail;return c; }
 }
 /* Explicit drawing adapter, limited to tagged art canvases; no browser prototypes modified.
    Existing sprite widths, hit boxes and world positions remain logical pixels. */
@@ -4490,8 +4746,8 @@ function artHorseFinish(p,C,tack,oy,hx,hy,gait){
 function finishSet(frames){let half=0,above=0;for(const f of frames){const {pb,ax}=f;for(let y=0;y<pb.h;y++)for(let x=0;x<pb.w;x++)if(pb.get(x,y)){half=Math.max(half,ax-x+3,x-ax+4);above=Math.max(above,pb.h-y+2);}}
  const cache=new Map();return f=>{if(cache.has(f))return cache.get(f);const {pb,ax,minW,smear}=f,W=Math.min(pb.w,Math.max(minW,2*Math.ceil(half)+2)),H=Math.min(pb.h,Math.max(f.minH||pb.h,above)),ax2=ax===pb.w/2?W/2:W/2-2,x0=ax-ax2,y0=pb.h-H,c=new ArtPB(W,H);c.draw(pb,-x0,-y0);const out=c.outlined();if(smear){const shifted=artOffset(out,0,-y0);smear(shifted,1-x0);}const cv=out.canvas();if(f.rig&&f.rig.sashimono){const a=f.rig.sashimono;cv.sashimonoSocket={x:a.x-x0+1,y:a.y-y0+1};}cache.set(f,cv);return cv;};}
 
-function flipCanvas(c){const n=document.createElement('canvas');n.width=c.width;n.height=c.height;const x=n.getContext('2d');x.translate(c.width,0);x.scale(-1,1);x.drawImage(c,0,0);if(c.detail){const d=document.createElement('canvas');d.width=c.detail.width;d.height=c.detail.height;const dx=d.getContext('2d');dx.translate(d.width,0);dx.scale(-1,1);dx.drawImage(c.detail,0,0);n.detail=d;}if(c.sashimonoSocket)n.sashimonoSocket={x:c.width-c.sashimonoSocket.x,y:c.sashimonoSocket.y};return n;}
-function dataURL(c,scale=1){const n=document.createElement('canvas');n.width=c.width*scale;n.height=c.height*scale;const x=n.getContext('2d');x.imageSmoothingEnabled=false;artDraw(x,c,0,0,n.width,n.height);return n.toDataURL();}
+function flipCanvas(c){const n=gameCanvas();n.width=c.width;n.height=c.height;const x=n.getContext('2d');x.translate(c.width,0);x.scale(-1,1);x.drawImage(c,0,0);if(c.detail){const d=gameCanvas();d.width=c.detail.width;d.height=c.detail.height;const dx=d.getContext('2d');dx.translate(d.width,0);dx.scale(-1,1);dx.drawImage(c.detail,0,0);n.detail=d;}if(c.sashimonoSocket)n.sashimonoSocket={x:c.width-c.sashimonoSocket.x,y:c.sashimonoSocket.y};return n;}
+function dataURL(c,scale=1){const n=gameCanvas();n.width=c.width*scale;n.height=c.height*scale;const x=n.getContext('2d');x.imageSmoothingEnabled=false;artDraw(x,c,0,0,n.width,n.height);return n.toDataURL();}
 /* Reuse the same head and body modules for village directions and close-up portraits. */
 function artVillage(p,L,view,mods=[]){return artPaintVillage(p,L,view,mods||[]);}
 
@@ -4576,11 +4832,11 @@ function artBambooIcon(p){artBambooSpear(p,1.1,10.8,7.2,4.7,4.3);}
 const _ironPetTrot=new WeakMap();
 function artTrotFrame(cv){
  const cached=_ironPetTrot.get(cv);if(cached)return cached;
- const src=cv.detail,S=3,w=cv.width,h=cv.height,mid=Math.floor(w/2),d=document.createElement('canvas');d.width=w*S;d.height=h*S;const x=d.getContext('2d');
+ const src=cv.detail,S=3,w=cv.width,h=cv.height,mid=Math.floor(w/2),d=gameCanvas();d.width=w*S;d.height=h*S;const x=d.getContext('2d');
  x.drawImage(src,0,0,w*S,(h-3)*S,0,0,w*S,(h-3)*S);
  x.drawImage(src,0,(h-3)*S,mid*S,3*S,-S,(h-3)*S,mid*S,3*S);
  x.drawImage(src,mid*S,(h-3)*S,(w-mid)*S,3*S,(mid+1)*S,(h-3)*S,(w-mid)*S,3*S);
- const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(d,0,0,w,h);c.detail=d;_ironPetTrot.set(cv,c);return c;
+ const c=gameCanvas();c.width=w;c.height=h;c.getContext('2d').drawImage(d,0,0,w,h);c.detail=d;_ironPetTrot.set(cv,c);return c;
 }
 
 /* ================= IDENTITIES & HEADGEAR v6 =================
@@ -5180,9 +5436,10 @@ function artPaintVillage(p,L,view,mods=[],pose=artVillagePose(view,mods)){
  return pose;
 }
 const _villageRigCache=new Map(),_villageToolCache=new Map();
+perfLRU(_villageRigCache,1000);perfLRU(_villageToolCache,96);
 function artLiveVillager(L,dir,mods,carry){
  L=artEquipmentLook(L);
- const key=JSON.stringify([L,dir,mods,carry]);if(_villageRigCache.has(key))return _villageRigCache.get(key);
+ const key=JSON.stringify([L,dir,mods,carry]);if(_villageRigCache.has(key))return _villageRigCache.get(key);if(SH_PERF.on||SH_PERF.sim)SH_PERF.rigDraws++;
  if(dir==='left'){const r=artLiveVillager(L,'right',mods,carry),img=flipCanvas(r.img),hands=r.hands&&flipCanvas(r.hands);img.ox=-(r.img.ox+img.width);img.oy=r.img.oy;if(hands){hands.ox=-(r.hands.ox+hands.width);hands.oy=r.hands.oy;}const out={img,hands,pose:r.pose};_villageRigCache.set(key,out);return out;}
  const view=dir==='right'?'side':dir,pb=new ArtPB(28,26),p=artOffset(pb,8,8),pose=artVillagePose(view,mods,carry),phase=pose.phase;
  const legs=mods.includes('sit')?LEGS.sit:pose.action==='walk'||carry?view==='side'?(phase===0?LEGS.s1:phase===2?LEGS.s2:LEGS.ss):(phase===0?LEGS.f1:phase===2?LEGS.f2:LEGS.fs):view==='side'?LEGS.ss:LEGS.fs;
@@ -5192,7 +5449,7 @@ function artLiveVillager(L,dir,mods,carry){
  if(L.prop)propCarry(p,L,view);
  const img=pb.outlined().canvas();img.ox=-15;img.oy=-25;let hands=null;
  if(carry||pose.action==='work'){const hp=new ArtPB(28,26),h=artOffset(hp,8,8);artHand(h,...pose.far,L.skin||SKIN[0],true);artHand(h,...pose.near,L.skin||SKIN[0],true);hands=hp.canvas();hands.ox=-14;hands.oy=-24;}
- const out={img,hands,pose};if(_villageRigCache.size>=256)_villageRigCache.delete(_villageRigCache.keys().next().value);_villageRigCache.set(key,out);return out;
+ const out={img,hands,pose};_villageRigCache.set(key,out);return out;
 }
 function artWorkTool(kind,dir,phase,pose){
  if(!kind)return null;const key=kind+dir+phase;if(_villageToolCache.has(key))return _villageToolCache.get(key);
@@ -5278,10 +5535,10 @@ function initAtelier(){const layer=document.createElement('section');layer.id='a
  if(new URLSearchParams(location.search).has('atelier'))openAtelier();
 }
 
-function artTrim(img){const src=img.detail||img,x=src.getContext('2d'),d=x.getImageData(0,0,src.width,src.height).data;let x0=src.width,y0=src.height,x1=0,y1=0;for(let y=0;y<src.height;y++)for(let xx=0;xx<src.width;xx++)if(d[(y*src.width+xx)*4+3]){x0=Math.min(x0,xx);y0=Math.min(y0,y);x1=Math.max(x1,xx);y1=Math.max(y1,y);}if(x1<x0)return img;x0=Math.max(0,Math.floor(x0/3)-1);y0=Math.max(0,Math.floor(y0/3)-1);x1=Math.min(img.width,Math.ceil((x1+1)/3)+1);y1=Math.min(img.height,Math.ceil((y1+1)/3)+1);const c=document.createElement('canvas');c.width=x1-x0;c.height=y1-y0;c.getContext('2d').drawImage(img,x0,y0,c.width,c.height,0,0,c.width,c.height);const detail=document.createElement('canvas');detail.width=c.width*3;detail.height=c.height*3;detail.getContext('2d').drawImage(src,x0*3,y0*3,detail.width,detail.height,0,0,detail.width,detail.height);c.detail=detail;c.artBounds={x:x0,y:y0,w:c.width,h:c.height};return c;}
+function artTrim(img){const src=img.detail||img,x=src.getContext('2d'),d=x.getImageData(0,0,src.width,src.height).data;let x0=src.width,y0=src.height,x1=0,y1=0;for(let y=0;y<src.height;y++)for(let xx=0;xx<src.width;xx++)if(d[(y*src.width+xx)*4+3]){x0=Math.min(x0,xx);y0=Math.min(y0,y);x1=Math.max(x1,xx);y1=Math.max(y1,y);}if(x1<x0)return img;x0=Math.max(0,Math.floor(x0/3)-1);y0=Math.max(0,Math.floor(y0/3)-1);x1=Math.min(img.width,Math.ceil((x1+1)/3)+1);y1=Math.min(img.height,Math.ceil((y1+1)/3)+1);const c=gameCanvas();c.width=x1-x0;c.height=y1-y0;c.getContext('2d').drawImage(img,x0,y0,c.width,c.height,0,0,c.width,c.height);const detail=gameCanvas();detail.width=c.width*3;detail.height=c.height*3;detail.getContext('2d').drawImage(src,x0*3,y0*3,detail.width,detail.height,0,0,detail.width,detail.height);c.detail=detail;c.artBounds={x:x0,y:y0,w:c.width,h:c.height};return c;}
 
 // A shared envelope keeps feet and hand sockets stable throughout a preview animation.
-function artFrameEnvelope(frames){if(frames.length===1)return [artTrim(frames[0])];const W=Math.max(...frames.map(f=>f.width)),H=Math.max(...frames.map(f=>f.height)),union=document.createElement('canvas');union.width=W;union.height=H;const ud=document.createElement('canvas');ud.width=W*3;ud.height=H*3;union.detail=ud;const aligned=frames.map(f=>{const c=document.createElement('canvas');c.width=W;c.height=H;const d=document.createElement('canvas');d.width=W*3;d.height=H*3;const x=Math.floor((W-f.width)/2),y=H-f.height;c.getContext('2d').drawImage(f,x,y);d.getContext('2d').drawImage(f.detail,x*3,y*3);c.detail=d;union.getContext('2d').drawImage(c,0,0);ud.getContext('2d').drawImage(d,0,0);return c;});const b=artTrim(union).artBounds;return aligned.map(f=>{const c=document.createElement('canvas');c.width=b.w;c.height=b.h;c.getContext('2d').drawImage(f,b.x,b.y,b.w,b.h,0,0,b.w,b.h);const d=document.createElement('canvas');d.width=b.w*3;d.height=b.h*3;d.getContext('2d').drawImage(f.detail,b.x*3,b.y*3,b.w*3,b.h*3,0,0,b.w*3,b.h*3);c.detail=d;return c;});}
+function artFrameEnvelope(frames){if(frames.length===1)return [artTrim(frames[0])];const W=Math.max(...frames.map(f=>f.width)),H=Math.max(...frames.map(f=>f.height)),union=gameCanvas();union.width=W;union.height=H;const ud=gameCanvas();ud.width=W*3;ud.height=H*3;union.detail=ud;const aligned=frames.map(f=>{const c=gameCanvas();c.width=W;c.height=H;const d=gameCanvas();d.width=W*3;d.height=H*3;const x=Math.floor((W-f.width)/2),y=H-f.height;c.getContext('2d').drawImage(f,x,y);d.getContext('2d').drawImage(f.detail,x*3,y*3);c.detail=d;union.getContext('2d').drawImage(c,0,0);ud.getContext('2d').drawImage(d,0,0);return c;});const b=artTrim(union).artBounds;return aligned.map(f=>{const c=gameCanvas();c.width=b.w;c.height=b.h;c.getContext('2d').drawImage(f,b.x,b.y,b.w,b.h,0,0,b.w,b.h);const d=gameCanvas();d.width=b.w*3;d.height=b.h*3;d.getContext('2d').drawImage(f.detail,b.x*3,b.y*3,b.w*3,b.h*3,0,0,b.w*3,b.h*3);c.detail=d;return c;});}
 
 /* Shinobi Hollow - procedural sound & music (Web Audio only, no assets). */
 (function () {
@@ -6675,6 +6932,7 @@ function produce(b, v) {
   if (s.sk.strongback) amt *= 1 + 0.2 * s.sk.strongback; if (s.sk.greenthumb) amt *= 1 + .15 * s.sk.greenthumb;
   if (B.needTrees) amt *= clamp(treesNear(b, 2) / 4, 0.25, 1.5);
   amt = Math.max(1, Math.round(amt * 1.4 * workMul(v) * boonFarm()));
+  if(SH_PERF.diag&&!SH_PERF.ledgerHooked){const kept=Math.min(amt,Math.max(0,PILE_CAP-(b.pile||0)));diagGoods(B.makes,kept,true);SH_PERF.diag.overflow+=amt-kept;}
   b.pile = Math.min(PILE_CAP, (b.pile || 0) + amt);
   b.prog = (b.prog + 1) % 4; b.var = b.prog >= 2 ? 1 : 0;
   floater(b.x * 16 + B.w * 8, b.y * 16 + 4, '+' + amt, 'g_' + B.makes, '#f2efe2');
@@ -6798,7 +7056,7 @@ function hasSave() { try { return !!localStorage.getItem(SAVE_KEY); } catch (e) 
 const VIEW = { cv: null, ctx: null, cx: 0, cy: 0, scale: 3, dpr: 1, w: 0, h: 0 };
 function roadMask(x, y) { let m = 0; const r = (xx, yy) => inMap(xx, yy) && G.roads[idx(xx, yy)]; if (r(x, y - 1)) m |= 1; if (r(x + 1, y)) m |= 2; if (r(x, y + 1)) m |= 4; if (r(x - 1, y)) m |= 8; if (y === MAP_H - 1) m |= 4; return m; }
 function rebuildGround() {
-  const c = RT.ground || document.createElement('canvas'); c.width = MAP_W * 16; c.height = MAP_H * 16; const x = c.getContext('2d');
+  const c = RT.ground || gameCanvas(); c.width = MAP_W * 16; c.height = MAP_H * 16; const x = c.getContext('2d');
   RT.waterTiles = [];
   for (let ty = 0; ty < MAP_H; ty++) for (let tx = 0; tx < MAP_W; tx++) {
     const t = G.tiles[idx(tx, ty)], h = hash2(tx, ty);
@@ -6989,7 +7247,7 @@ function toolSprite(kind, dir, k) {
 const _trot = new WeakMap();
 function trotFrame(cv, step) {
   if (!step) return cv; if(cv.detail)return artTrotFrame(cv); let f = _trot.get(cv); if (f) return f;
-  f = document.createElement('canvas'); f.width = cv.width; f.height = cv.height; const x = f.getContext('2d'), h = cv.height, lh = 3, mid = cv.width >> 1;
+  f = gameCanvas(); f.width = cv.width; f.height = cv.height; const x = f.getContext('2d'), h = cv.height, lh = 3, mid = cv.width >> 1;
   artDraw(x, cv, 0, 0, cv.width, h - lh, 0, 0, cv.width, h - lh);
   artDraw(x, cv, 0, h - lh, mid, lh, -1, h - lh, mid, lh); artDraw(x, cv, mid, h - lh, cv.width - mid, lh, mid + 1, h - lh, cv.width - mid, lh);
   _trot.set(cv, f); return f;
@@ -7253,7 +7511,7 @@ function shopMissionArrive(a,v,b){
   ledger[request.good]-=n;request.n=n;setCarry(a,request.good,n);a.mission='shopDeliver';a.dest=target.uid;
   if(walkTo(a,target))return 'walking';dropLost(a);a.mission=null;return true;
 }
-function sell(a,b){
+function perfBaseSell(a,b){
   const B=BUILDINGS[b.id],qty=rint(1,2+(a.wallet>2?1:0))+(likes(a,b)?1:0),L=lvInfo(b),ws=waresOf(b.id),wares=shopStock(b,true),goods=shopStock(b);
   let base=0,n=0,wn=0;
   for(let i=0;i<qty;i++){
@@ -7391,7 +7649,7 @@ function tacticalEquipmentLook(id){
 }
 function artPreview(source,pose='idle',trim=true){
  const c=artPreviewBase(source,pose,trim);if(source.gear?.m!=='wolf')return c;
- const pet=beastSprites('wolf').idle[0],w=c.width+19,h=Math.max(c.height,pet.height),out=document.createElement('canvas'),d=document.createElement('canvas');
+ const pet=beastSprites('wolf').idle[0],w=c.width+19,h=Math.max(c.height,pet.height),out=gameCanvas(),d=gameCanvas();
  out.width=w;out.height=h;d.width=w*3;d.height=h*3;out.detail=d;
  const x=d.getContext('2d');x.scale(3,3);x.imageSmoothingEnabled=false;artDraw(x,c,0,h-c.height);artDraw(x,pet,w-26,h-21,26,21);
  out.getContext('2d').drawImage(d,0,0,w,h);return out;
@@ -8548,8 +8806,9 @@ function missionArrive(a,v,b){
 function craftDone(b, v, w) {
   w = w && WARES[w] ? w : b.recipe; const R = WARES[w]; if (!R) return; b.inbox = b.inbox || {}; b.outs = b.outs || {};
   if (!Object.entries(R.from).every(([g, n]) => (b.inbox[g] || 0) >= n)) return;
-  Object.entries(R.from).forEach(([g, n]) => b.inbox[g] -= n);
+  Object.entries(R.from).forEach(([g,n])=>{if(SH_PERF.diag&&!SH_PERF.ledgerHooked)diagGoods(g,n,false);b.inbox[g]-=n;});
   const s = vStats(v), amt = 1 + (Math.random() < clamp((s.wrk - 6) / 30 * workMul(v) * (1 + (b.boost || 0)) + s.craft, 0, .75) ? 1 : 0);
+  if(SH_PERF.diag&&!SH_PERF.ledgerHooked)diagGoods(w,amt,true);
   b.outs[w] = (b.outs[w] || 0) + amt; b.prog = ((b.prog || 0) + 1) % 4;
   floater(b.x * 16 + 16, b.y * 16 - 2, '+' + amt, 'w_' + w, '#f2d27a');
   if (Math.random() < .3) giveXP(v, 1);
@@ -8620,11 +8879,11 @@ function worksiteInfoSprite(b) {
   const width=Math.max(base.ox+base.cv.width,gx+g.cv.width)-ox;
   const height=Math.max(base.oy+base.cv.height,gy+g.cv.height)-oy;
   const density=base.cv.detail||g.cv.detail?ART_DENSITY:1;
-  const render=document.createElement('canvas');render.width=width*density;render.height=height*density;
+  const render=gameCanvas();render.width=width*density;render.height=height*density;
   const ctx=render.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.scale(density,density);
   artDraw(ctx,base.cv,base.ox-ox,base.oy-oy);drawWorksiteDuty(ctx,b,-ox,-oy);
   if(density===1)return {cv:render,ox,oy};
-  const cv=document.createElement('canvas');cv.width=width;cv.height=height;
+  const cv=gameCanvas();cv.width=width;cv.height=height;
   cv.getContext('2d').drawImage(render,0,0,width,height);cv.detail=render;
   return {cv,ox,oy};
 }
@@ -9855,7 +10114,7 @@ function resizeBattle() {
   const portrait = r.width < r.height;
   const S = Math.max(1, portrait ? r.width / 198 : Math.min(r.width / 344, r.height / 200));
   BT.vw = Math.round(r.width / S); BT.vh = Math.round(r.height / S); BT.S = S;
-  BT.buf = BT.buf || document.createElement('canvas'); BT.buf.width = BT.vw*ART_DENSITY; BT.buf.height = BT.vh*ART_DENSITY; BT.bx = BT.buf.getContext('2d', { alpha: false }); BT.bx._artDensity=ART_DENSITY;
+  BT.buf = BT.buf || gameCanvas(); BT.buf.width = BT.vw*ART_DENSITY; BT.buf.height = BT.vh*ART_DENSITY; BT.bx = BT.buf.getContext('2d', { alpha: false }); BT.bx._artDensity=ART_DENSITY;
   const tall = BT.vh > 260;
   const fieldH = tall ? Math.min(280, BT.vh * .56) : BT.vh * .52;
   BT.horizon = Math.round(tall ? BT.vh * .22 + 26 : BT.vh * .25); // landscape: sky kept short so the ranks clear the run strip
@@ -9877,7 +10136,7 @@ function onBattleResize() {
 }
 
 /* ---------- background layers ---------- */
-function cvs(w, h) { const c = document.createElement('canvas'); c.width = Math.max(1, Math.ceil(w)); c.height = Math.max(1, Math.ceil(h)); return c; }
+function cvs(w, h) { const c = gameCanvas(); c.width = Math.max(1, Math.ceil(w)); c.height = Math.max(1, Math.ceil(h)); return c; }
 function buildBattleBG() {
   const W = BT.vw, H = BT.vh, hz = BT.horizon, WW = BT.WW, sk = SKIES[BT.sky], R = seeded(BT.seed);
   // sky (static)
@@ -11585,7 +11844,7 @@ function camTarget() {
 
 /* ---------- render ---------- */
 const _white = new WeakMap();
-function whiteOf(img) { let w = _white.get(img); if (w) return w; w = document.createElement('canvas'); w.width = img.width; w.height = img.height; const c = w.getContext('2d'); artDraw(c, img, 0, 0); c.globalCompositeOperation = 'source-in'; c.fillStyle = '#fff'; c.fillRect(0, 0, w.width, w.height); _white.set(img, w); return w; }
+function whiteOf(img) { let w = _white.get(img); if (w) return w; w = gameCanvas(); w.width = img.width; w.height = img.height; const c = w.getContext('2d'); artDraw(c, img, 0, 0); c.globalCompositeOperation = 'source-in'; c.fillStyle = '#fff'; c.fillRect(0, 0, w.width, w.height); _white.set(img, w); return w; }
 function spriteScale() { return BT.A[0].mode === 'skirmish' && BT.fy1 - BT.fy0 >= 120 ? 2 : 1; }
 const _draws = [];
 function drawBattle() {
@@ -11763,7 +12022,7 @@ const HERO_COL = [{ hex: '#ffd86a', rgb: '255,216,106' }, { hex: '#eef2fa', rgb:
 const _outl = new WeakMap();
 function outlineOf(img, col) {
   let m = _outl.get(img); if (!m) _outl.set(img, m = {}); if (m[col]) return m[col];
-  const c = document.createElement('canvas'); c.width = img.width + 2; c.height = img.height + 2; const x = c.getContext('2d');
+  const c = gameCanvas(); c.width = img.width + 2; c.height = img.height + 2; const x = c.getContext('2d');
   for (const [dx, dy] of [[0, 1], [2, 1], [1, 0], [1, 2]]) artDraw(x, img, dx, dy);
   x.globalCompositeOperation = 'source-in'; x.fillStyle = col; x.fillRect(0, 0, c.width, c.height);
   return (m[col] = c);
@@ -11874,7 +12133,7 @@ function provAttackable(p) {
   return p.links.some(l => G.prov[l].owner === 'kage');
 }
 function buildMapArt(rot) {
-  const W = MAP_WW / 2, H = MAP_HH / 2, c = document.createElement('canvas'); c.width = rot ? H : W; c.height = rot ? W : H; const CW = c.width, CH = c.height, x = c.getContext('2d');
+  const W = MAP_WW / 2, H = MAP_HH / 2, c = gameCanvas(); c.width = rot ? H : W; c.height = rot ? W : H; const CW = c.width, CH = c.height, x = c.getContext('2d');
   const up = (px, py, f) => { x.save(); x.translate(px, py); if (rot) x.rotate(Math.PI / 2); f(); x.restore(); }; // glyphs stay upright on a turned sheet
   // sea: indigo washi with seigaiha waves
   x.fillStyle = '#c9d6d8'; x.fillRect(0, 0, CW, CH);
@@ -12232,7 +12491,7 @@ function afterLoad() {
   if ((G.campV || 1) < 2) { G.campV = 2; G.camps = []; G.campSeeded = 0; }
   if (!G.camps) G.camps = []; if (G.allHands === undefined) G.allHands = true; if (!G.campSeeded) { G.campSeeded = 1; if (!G.camps.length) spawnCamp(true); }
   RT.ready = false; RT.agents = []; ensureVillagerAgents(); refreshBoosts(); RT.ready = true;
-  centerOnHall(); updateHUD(); Sound.music('village');
+  perfPrewarm();centerOnHall(); updateHUD(); Sound.music('village');
   if (!G.tut) { G.tut = 1; const k = vData('kaede');
     announce('隠れ里へようこそ', `Master, the Shogun has fallen and the clans tear Akitsu apart. Our hidden village is small, but it is ours.<br><br>Grow rice, sell to travellers, and raise an army. Then march on the provinces and unify the islands within <b>${G.endYear} years</b> — take your time, but not forever.`, null, k);
     announce('First steps', `• Open <b>Build</b> and add a <b>Daikon Patch</b> and a <b>Pickle Shop</b> beside the road.<br>• Scenery near shops raises sales. Wide streets add <b>+5% shop sales</b> and <b>+5% home rest</b>.<br>• Field hands carry each harvest to the Clan Hall — a <b>Storehouse</b> near far-off fields saves the walk, and a <b>Workshop</b> turns goods into wares worth far more.<br>• Tap a home or shop to <b>renovate</b> it.<br>• In <b>Army</b>, hire infantry. Then open the <b>Campaign</b> and take <b>Mistwood Pass</b>.`, 'build'); }
@@ -12244,7 +12503,7 @@ function drawTitle(t) {
   if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; TITLE.bg = null; }
   const x = cv.getContext('2d'); x.imageSmoothingEnabled = false;
   if (!TITLE.bg) {
-    const c = document.createElement('canvas'); c.width = W; c.height = H; const b = c.getContext('2d');
+    const c = gameCanvas(); c.width = W; c.height = H; const b = c.getContext('2d');
     for (let y = 0; y < H; y++) { const u = y / H; b.fillStyle = u < .55 ? lerpCol('#1a1430', '#5a2a4a', u / .55) : lerpCol('#5a2a4a', '#c8604a', (u - .55) / .45); b.fillRect(0, y, W, 1); }
     for (let i = 0; i < 60; i++) { b.fillStyle = 'rgba(255,255,255,' + rnd(.3, .9) + ')'; b.fillRect(rnd(W) | 0, rnd(H * .5) | 0, 1, 1); }
     b.fillStyle = '#f8ecc8'; circleFill(b, W * .7, H * .32, Math.min(W, H) * .14); b.fillStyle = 'rgba(200,180,140,.35)'; circleFill(b, W * .7 + 4, H * .32 - 3, Math.min(W, H) * .04);
@@ -12269,6 +12528,7 @@ const TITLE = { bg: null, p: [] };
 
 let last = performance.now(), hudT = 0, agentT = 0;
 function loop(now) {
+  if(SH_PERF.on)perfFrame(now);if(SH_PERF.sim){requestAnimationFrame(loop);return;}
   const rdt = Math.min(0.05, (now - last) / 1000); last = now;
   if (ATELIER.open) { drawAtelier(now); requestAnimationFrame(loop); return; }
   try {
@@ -12343,10 +12603,11 @@ function tacticalRifleCluster(p,P,n){
  P([[4.4,-.7],[5.7,-.7],[5.7,.9],[4.4,.9]],'#c6b078');
 }
 
+function sell(a,b){if(!SH_PERF.diag)return perfBaseSell(a,b);var before=G.stats.sales,w=diagMapCopy(shopStock(b,true)),g=diagMapCopy(shopStock(b,false)),n=perfBaseSell(a,b);diagMapDelta(w,shopStock(b,true),false);diagMapDelta(g,shopStock(b,false),false);diagSale(a,b,n,before);return n;}
 function boot() {
   buildTiles(); buildIcons(); buildItemIcons(); buildSkillIcons(); buildWareIcons(); loadIconImages();
   VIEW.cv = $('#view'); VIEW.ctx = VIEW.cv.getContext('2d');
-  initUI(); bindVillageInput(); bindMapInput(); initAtelier();
+  initUI(); bindVillageInput(); bindMapInput(); initAtelier();perfInit();
   const app = $('#app'); app.addEventListener('scroll', () => { app.scrollTop = 0; app.scrollLeft = 0; });
   try { if (localStorage.getItem('sh-mus') === '0') Sound.musicOn = false; if (localStorage.getItem('sh-sfx') === '0') Sound.sfxOn = false; } catch (e) { }
   const hot = window.claude && window.claude.hot && window.claude.hot.data;
