@@ -28,6 +28,9 @@ jobs:
         run: |
           if test -f tests/logistics.cjs; then node tests/logistics.cjs; fi
           if test -f tests/economy-sim.cjs; then node tests/economy-sim.cjs; fi
+      - name: Real-time 15-minute Safari and Chromium stress session
+        if: contains(github.event.head_commit.message, '[soak]')
+        run: node tests/perf-soak.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

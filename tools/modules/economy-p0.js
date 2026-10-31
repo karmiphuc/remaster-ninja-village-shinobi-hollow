@@ -287,6 +287,7 @@ function workerPlan(a,v,J){
  const B=BUILDINGS[J.id],E=economyState(),capacity=Math.max(1,Math.round(6*(1+vStats(v).carry)));
  if(B.makes){
   economyFlush(J);
+  if(E.porters&&economyFull(J)){if(a.haulSite!==J.uid){a.haulSite=J.uid;a.haulWait=E.t+6;}if(E.t<a.haulWait)return economyWait(a,J);}else a.haulSite=0;
   const waiting=E.porters&&economyReserved(economyPoint(J,'pile'),B.makes,false)>0;
   if(!waiting&&(J.pile||0)>=Math.round(HAUL_AT*(1+vStats(v).carry))&&(!E.porters||economyFull(J))){
    const to=dropFor(B.makes,J);if(to){const plan=economyStart(a,v,economyPoint(J,'pile'),economyDestination(to,B.makes),B.makes,E.porters?capacity:Math.max(capacity,J.pile||0),J,to);if(plan)return plan;}
@@ -295,7 +296,9 @@ function workerPlan(a,v,J){
   a.mission='work';return J;
  }
  if(B.craft){
-  J.inbox=J.inbox||{};J.outs=J.outs||{};const c=chooseCraft(J);
+  J.inbox=J.inbox||{};J.outs=J.outs||{};
+  if(E.porters&&economyFull(J)){if(a.haulSite!==J.uid){a.haulSite=J.uid;a.haulWait=E.t+6;}if(E.t<a.haulWait)return economyWait(a,J);}else a.haulSite=0;
+  const c=chooseCraft(J);
   let ready=null,n=0;for(const g in J.outs)if(J.outs[g]>n&&shopsFor(g).length){ready=g;n=J.outs[g];}
   if(ready&&outTotal(J)>=OUT_CAP&&E.porters&&economyReserved(economyPoint(J,'outs'),ready,false)>0)return economyWait(a,J);
   if(ready&&(n>=3||!c||c.mode!=='craft'||outTotal(J)>=OUT_CAP)&&(!E.porters||outTotal(J)>=OUT_CAP)){
@@ -378,7 +381,7 @@ function economyBadge(ctx,b,B,px,py){
  if((B.makes||B.craft)&&economyFull(b))kind=3;
  else if(B.cat==='shop'&&!economyCanSell(b))kind=2;
  else if(B.craft){const R=WARES[b.recipe];if(R)for(const g in R.from)if(((b.inbox||{})[g]||0)<R.from[g]){kind=1;break;}}
- if(!kind)return;const x=px+B.w*16-4,y=py+B.h*16-5;
+ if(!kind)return;const x=px+B.w*16-4,y=py+6;
  ctx.fillStyle='#342e29';ctx.fillRect(x-3,y-4,7,7);ctx.fillStyle=kind===3?'#d59f45':kind===2?'#b66a58':'#7c9eaa';ctx.fillRect(x-2,y-3,5,5);
  ctx.fillStyle='#fff0cf';if(kind===3){ctx.fillRect(x,y-2,1,2);ctx.fillRect(x,y+1,1,1);}else if(kind===2){ctx.fillRect(x-1,y-1,3,1);}else{ctx.fillRect(x-1,y-2,3,1);ctx.fillRect(x,y-1,1,2);}
 }

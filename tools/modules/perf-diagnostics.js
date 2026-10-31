@@ -3,7 +3,7 @@
 var SH_PERF={on:/(?:[?&])perf=1(?:&|$)/.test(location.search),sim:false,diag:null,
  frame:new Float32Array(120),fi:0,fn:0,last:0,stamp:0,rigDraws:0,lastRig:0,
  refs:new Map(),ids:new WeakMap(),uid:1,root:null,body:null,result:null,run:null,
- ledgerHooked:false,baseline:null,cacheLimits:{rig:1000,tools:96,carry:512,pile:160,products:48}};
+ ledgerHooked:false,baseline:null,cacheLimits:{rig:1000,tools:96,carry:512,pile:160,products:48,portraits:96,characters:2,portraitURLs:128,dolls:128}};
 function gameCanvas(){
  var c=document.createElement('canvas');
  if(SH_PERF.on||SH_PERF.sim)perfCanvas(c);
@@ -20,10 +20,11 @@ function perfRelease(value){
  if(value.img)perfRelease(value.img);
  if(value.hands)perfRelease(value.hands);
 }
-function perfLRU(M,max){
+function perfLRU(M,max,release){
+ release=release||perfRelease;
  var get=Map.prototype.get,set=Map.prototype.set;
  M.get=function(k){var v=get.call(this,k);if(v!==undefined){this.delete(k);set.call(this,k,v);}return v;};
- M.set=function(k,v){if(!this.has(k)&&this.size>=max){var old=this.keys().next().value;perfRelease(get.call(this,old));this.delete(old);}return set.call(this,k,v);};
+ M.set=function(k,v){if(!this.has(k)&&this.size>=max){var old=this.keys().next().value;release(get.call(this,old));this.delete(old);}return set.call(this,k,v);};
  return M;
 }
 function perfObjectLRU(max){
@@ -37,7 +38,7 @@ function perfMemory(){
  return {canvases:count,mb:bytes/1048576};
 }
 function perfCacheSizes(){
- return {rig:_villageRigCache.size,tools:_villageToolCache.size,carry:Object.keys(_carry).length,pile:Object.keys(_pile).length,products:Object.keys(_workshopProductSprites).length};
+ return {rig:_villageRigCache.size,tools:_villageToolCache.size,carry:Object.keys(_carry).length,pile:Object.keys(_pile).length,products:Object.keys(_workshopProductSprites).length,portraits:_portCache.size,characters:_charCache.size,portraitURLs:Object.keys(_pt).length,dolls:Object.keys(_doll).length};
 }
 function perfCollections(){
  if(!G)return 0;var n=G.buildings.length+G.villagers.length+RT.agents.length;
@@ -273,4 +274,16 @@ function perfDprExperiment(){
    if(a[i]!==b[j]||a[i+1]!==b[j+1]||a[i+2]!==b[j+2]||a[i+3]!==b[j+3])changed++;total++;}
   return {defaultZoom:zoom,identical:changed===0,differentPercent:changed/total*100,adopted:false,backingDpr:3};
  }finally{Math.random=R;RT.particles=particles;RT.floaters=floaters;cv.width=cv.height=0;simRestoreObject(VIEW,V);}
+}
+
+/* Trim transparent rig margins before creating the two backing canvases.
+   Logical origins move by the same integer amount; painted pixels stay put. */
+function perfRigCanvas(pb,ox,oy){
+ const p=pb._p,d=p.d,S=ART_DENSITY,ow=p.w;let minX=ow,minY=p.h,maxX=-1,maxY=-1;
+ for(let y=0;y<p.h;y++)for(let x=0;x<ow;x++)if(d[y*ow+x]){if(x<minX)minX=x;if(x>maxX)maxX=x;if(y<minY)minY=y;if(y>maxY)maxY=y;}
+ const left=maxX<0?0:Math.floor(minX/S),top=maxY<0?0:Math.floor(minY/S),
+  width=maxX<0?1:Math.ceil((maxX+1)/S)-left,height=maxY<0?1:Math.ceil((maxY+1)/S)-top,nw=width*S,nh=height*S;
+ if(left||top||width!==pb.w||height!==pb.h){for(let y=0;y<nh;y++){const at=(top*S+y)*ow+left*S;d.copyWithin(y*nw,at,at+nw);p.tag.copyWithin(y*nw,at,at+nw);}
+  p.w=nw;p.h=nh;p.d=d.subarray(0,nw*nh);p.tag=p.tag.subarray(0,nw*nh);pb.w=width;pb.h=height;}
+ const image=pb.canvas();image.ox=ox+left;image.oy=oy+top;return image;
 }

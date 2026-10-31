@@ -7,6 +7,12 @@ function edit(name,a,b){const r=fnRange(name),f=s.slice(...r);if(f.split(a).leng
 function remove(name){const r=fnRange(name);s=s.slice(0,r[0])+s.slice(r[1]);}
 for(const name of ['outTotal','shopStock','shopTotal','shopIncoming','shopRoom','releaseShopStock','migrateShopStock','migrateLogistics','saveGame','removeBuilding','dropLost','depositCarry','depositCarryWarehouse','missionArrive','shopMissionArrive','planShopSupply','dropFor','workerPlan','produce','craftDone','perfBaseSell','sell','assignJobs'])remove(name);
 rep('if (window.claude && window.claude.hot && window.claude.hot.ready)',core+'\nif (window.claude && window.claude.hot && window.claude.hot.ready)');
+edit('dollHTML'," _doll[k] = ["," const chars=charSprites(L);_doll[k] = [");
+edit('dollHTML',"dataURL(charSprites(L).down[0], 4)","dataURL(chars.down[0], 4)");
+edit('dollHTML',"dataURL(charSprites(L).right[0], 4)];","dataURL(chars.right[0], 4)];_charCache.delete(artLookSignature(artEquipmentLook(L)));freeCanvases(chars);if(t&&!BT){const key=JSON.stringify([t,0,0,artLookSignature(L),null]);dropSet(key);}");
+edit('releaseBattleSprites',"retired.forEach(r=>freeCanvases(r));","retired.forEach(r=>freeCanvases(r));for(const key of _soldierCache2.keys())dropSet(key);");
+edit('artLiveVillager',"const img=pb.outlined().canvas();img.ox=-15;img.oy=-25;","const img=perfRigCanvas(pb.outlined(),-15,-25);");
+edit('artLiveVillager',"hands=hp.canvas();hands.ox=-14;hands.oy=-24;","hands=perfRigCanvas(hp,-14,-24);");
 edit('resetRT','invalidateRoadTraffic();','invalidateRoadTraffic(); RT.eco=null;');
 edit('refreshBoosts',"  const envs =","  if(RT.eco)RT.eco.dirty=true;\n  const envs =");
 edit('chooseSite',"  const sites =","  if(isPorter(v))return null;const E=economyState();if(E.dirty)economyTopology();const component=economyAgentComponent(a);\n  if(v.job>=0){const J=bByUid(v.job);if(J&&!J.reno&&economyBuildingComponent(J)===component&&entranceOf(J)&&(BUILDINGS[J.id].makes||BUILDINGS[J.id].craft))return J;}\n  const sites =");

@@ -4,7 +4,8 @@ const root=path.resolve(__dirname,'..');
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
 try{const p=await browser.newPage({viewport:{width:430,height:900}}),errors=[];p.on('pageerror',e=>errors.push(e.message));
 await p.addInitScript(()=>{window.__noIntro=true;window.__noQuick=true;});await p.goto('http://127.0.0.1:'+server.address().port+'/?perf=1');await p.waitForFunction(()=>typeof ECONOMY_P0!=='undefined');
-const result=await p.evaluate(()=>{
+const rawHtml=fs.readFileSync(path.join(root,'baseline/v19.1.html'),'utf8'),at=rawHtml.indexOf('function artLiveVillager('),end=rawHtml.indexOf('\n}',at)+2,uncroppedSource=rawHtml.slice(at,end).replaceAll('artLiveVillager','uncroppedRig').replace('const key=JSON.stringify','const key=\'uncropped|\'+JSON.stringify').replace('if(_villageRigCache.size>=256)_villageRigCache.delete(_villageRigCache.keys().next().value);','');
+const result=await p.evaluate((uncroppedSource)=>{
  function ok(v,m){if(!v)throw Error(m);}
  const S=simPrepare(),out={};
  try{
@@ -59,10 +60,16 @@ const result=await p.evaluate(()=>{
  old.shopGoods={veg:12.5};old.shopWares={};delete old.shelf;delete G.economyV;w.out=2;w.recipe='bento';
  const invBefore=diagInventory({});migrateEconomy();const invAfter=diagInventory({});for(const k in invBefore)ok(Math.abs((invAfter[k]||0)-(invBefore[k]||0)-(k==='bento'?2:0))<1e-8,'legacy migration '+k);
  ok(G.v===1&&G.economyV===1&&!old.shopGoods&&old.shelf,'save version unchanged and shelf migration complete');out.migration=true;
- out.dprTrial=perfDprExperiment();out.cacheSizes=perfCacheSizes();out.errors=[];
+ const oldRig=eval('('+uncroppedSource+')'),one=gameCanvas(),two=gameCanvas();one.width=two.width=180;one.height=two.height=144;const ca=one.getContext('2d'),cb=two.getContext('2d');let frames=0;
+ const base=vLook(G.villagers[0]),looks=[base,{...base,gear:{w:'nodachi',a:'kokuryu_gusoku',h:'eboshi_samurai'}},{...base,gear:{w:'rifle',a:'nanbando',h:'happuri'}}];
+ function paint(x,r){x.setTransform(3,0,0,3,0,0);x.imageSmoothingEnabled=false;x.clearRect(0,0,60,48);artDraw(x,r.img,30+r.img.ox,32+r.img.oy);if(r.hands)artDraw(x,r.hands,30+r.hands.ox,32+r.hands.oy);return new Uint32Array(x.getImageData(0,0,180,144).data.buffer);}
+ for(const L of looks)for(const dir of ['up','down','right','left'])for(const mods of [[],['walk0'],['raise'],['sit']])for(const carry of [null,'cart']){
+  const a=paint(ca,oldRig(L,dir,mods,carry)),b=paint(cb,artLiveVillager(L,dir,mods,carry));for(let i=0;i<a.length;i++)ok(a[i]===b[i],'rig crop changed a painted pixel in '+dir+' '+mods+' '+carry);frames++;}
+ one.width=one.height=two.width=two.height=0;for(const [key,r] of _villageRigCache)if(key.startsWith('uncropped|')){freeCanvases(r);_villageRigCache.delete(key);}
+ out.identicalRigFrames=frames;out.dprTrial=perfDprExperiment();out.cacheSizes=perfCacheSizes();out.errors=[];
  return out;
  }finally{simRestore(S);}
- });
+ },uncroppedSource);
 const preview=await p.evaluate(()=>{const c=gameCanvas();c.width=960;c.height=340;const x=c.getContext('2d');x.fillStyle='#e5d4ae';x.fillRect(0,0,960,340);x.imageSmoothingEnabled=false;
  for(const it of [['Porter House','porter'],['Workshop','workshop'],['Storehouse','kura']].entries()){const i=it[0],label=it[1][0],id=it[1][1],im=buildingSprite(id,0);x.save();x.translate(64+i*306,106);x.scale(5,5);artDraw(x,im.cv,im.ox,im.oy);x.restore();x.font='18px monospace';x.fillStyle='#403324';x.fillText(label,50+i*306,292);}
  const url=c.toDataURL('image/png');c.width=c.height=0;return url.split(',')[1];});
