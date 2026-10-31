@@ -92,7 +92,8 @@ function economyTopology(){
  const E=economyState();if(E.roadRevision!==ROAD_TRAFFIC.revision)economyComponents(E);E.shops.length=E.producers.length=E.crafts.length=E.stores.length=0;E.porters=E.workers=0;
  for(const b of G.buildings){const B=BUILDINGS[b.id];E.entrances.set(b,b.reno?null:entranceOf(b));if(!E.entrances.get(b))continue;
   if(shopIs(b))E.shops.push(b);if(B.makes)E.producers.push(b);if(B.craft)E.crafts.push(b);if(B.store||b.id==='hall')E.stores.push(b);}
- for(const v of G.villagers)if(v.role==='work'){E.workers++;if(isPorter(v))E.porters++;}
+ E.porterComps=new Set();
+ for(const v of G.villagers)if(v.role==='work'){E.workers++;if(isPorter(v)){E.porters++;const h=bByUid(v.job),c=h&&economyBuildingComponent(h);if(c)E.porterComps.add(c);}}
  E.dirty=false;
 }
 function economyNearStore(from){
@@ -128,7 +129,7 @@ function economyFlush(b){
 function economyJobs(){
  const E=economyState();E.jobCount=0;
  for(let i=0;i<E.producers.length;i++){const b=E.producers[i],g=BUILDINGS[b.id].makes,p=economyPoint(b,'pile');economyFlush(b);
-  if(economyAvailable(p,g)<2)continue;const target=economyOutputTarget(g,b);if(target)economyJob(p,economyDestination(target,g),g,24,economyFull(b)?10:5,b,target);}
+  if(economyAvailable(p,g)<2)continue;const target=economyOutputTarget(g,b);if(target)economyJob(p,economyDestination(target,g),g,24,economyFull(b)?18:(b.pile||0)>=PILE_CAP*.6?12:5,b,target);}
  for(let i=0;i<E.crafts.length;i++){const b=E.crafts[i];economyFlush(b);
   for(const g in b.outs||{}){const p=economyPoint(b,'outs');if(economyAvailable(p,g)<1)continue;const target=economyOutputTarget(g,b);
    if(target)economyJob(p,economyDestination(target,g),g,20,economyFull(b)?13:9,b,target);}
@@ -162,7 +163,7 @@ function porterPlan(a,v){
  const E=economyState();if(E.dirty)economyTopology();const component=economyAgentComponent(a);let best=null,score=-Infinity;
  for(let i=0;i<E.jobCount;i++){const j=E.jobs[i];if(economyBuildingComponent(j.source)!==component)continue;const n=Math.min(j.n,economyAvailable(j.from,j.good),economyRoom(j.to,j.good),24);if(n<1)continue;
   const empty=Math.abs(a.x/16-j.source.x)+Math.abs(a.y/16-j.source.y),
-   loaded=Math.abs(j.source.x-j.target.x)+Math.abs(j.source.y-j.target.y),s=(j.rank+n*.6+(WARES[j.good]?WARES[j.good].price/5:0))/(8+empty*1.5+loaded*.6);
+   loaded=Math.abs(j.source.x-j.target.x)+Math.abs(j.source.y-j.target.y),s=(j.rank+n*.6+(WARES[j.good]?Math.min(3,WARES[j.good].price/20):0))/(8+empty*1.5+loaded*.6);
   if(s>score){score=s;best=j;}}
  if(best){const source=economyStart(a,v,best.from,best.to,best.good,Math.min(best.n,24),best.source,best.target);if(source)economyBundle(a);return source;}
  a.timer=.75;return null;
@@ -273,43 +274,46 @@ function planShopSupply(a,v){
  if(a.carry||isPorter(v))return null;const E=economyState();if(E.dirty)economyTopology();
  let hauling=0;for(const c of E.claims.values())if(!isPorter(vById(c.agent.vid))&&c.to.kind==='shelf')hauling++;
  if(hauling>=Math.max(1,Math.ceil(E.workers*.35)))return null;
- if(E.porters)return null;
  const component=economyAgentComponent(a);let best=null,score=-Infinity;
  for(let i=0;i<E.jobCount;i++){const j=E.jobs[i];if(economyBuildingComponent(j.source)!==component||j.from.owner!==G||j.to.kind!=='shelf')continue;
   const n=Math.min(j.n,economyAvailable(j.from,j.good),economyRoom(j.to,j.good));if(n<1)continue;
-  if(E.porters&&shopTotal(j.target,!!WARES[j.good])>0)continue;
+  if(porterReach(j.target)&&shopTotal(j.target,!!WARES[j.good])>0)continue;
   const d=Math.abs(a.x/16-j.source.x)+Math.abs(a.y/16-j.source.y)+Math.abs(j.source.x-j.target.x)+Math.abs(j.source.y-j.target.y),s=(j.rank+Math.min(8,n))/(10+d);
   if(s>score){score=s;best=j;}}
  if(!best)return null;return economyStart(a,v,best.from,best.to,best.good,Math.round(6*(1+vStats(v).carry)),best.source,best.target);
 }
 function dropFor(g,fromB){const E=economyState();if(E.dirty)economyTopology();return economyOutputTarget(g,fromB);}
+// Everyone shares the hauling. Porters get first call on output they can reach (workers leave a pile to them until
+// it is well filled); a full pile, or one no porter can reach, the worker carries away himself, taking whatever no
+// porter has already claimed. A worker only waits when porters have claimed everything left to move.
+function porterReach(b){const E=economyState();if(E.dirty)economyTopology();return !!(E.porterComps&&E.porterComps.has(economyBuildingComponent(b)));}
 function workerPlan(a,v,J){
- const B=BUILDINGS[J.id],E=economyState(),capacity=Math.max(1,Math.round(6*(1+vStats(v).carry)));
+ const B=BUILDINGS[J.id],E=economyState(),capacity=Math.max(1,Math.round(6*(1+vStats(v).carry)));a.haulSite=0;
  if(B.makes){
   economyFlush(J);
-  if(E.porters&&economyFull(J)){if(a.haulSite!==J.uid){a.haulSite=J.uid;a.haulWait=E.t+6;}if(E.t<a.haulWait)return economyWait(a,J);}else a.haulSite=0;
-  const waiting=E.porters&&economyReserved(economyPoint(J,'pile'),B.makes,false)>0;
-  if(!waiting&&(J.pile||0)>=Math.round(HAUL_AT*(1+vStats(v).carry))&&(!E.porters||economyFull(J))){
-   const to=dropFor(B.makes,J);if(to){const plan=economyStart(a,v,economyPoint(J,'pile'),economyDestination(to,B.makes),B.makes,E.porters?capacity:Math.max(capacity,J.pile||0),J,to);if(plan)return plan;}
+  const pile=economyPoint(J,'pile'),avail=economyAvailable(pile,B.makes),reach=porterReach(J),full=economyFull(J);
+  const haulAt=reach?Math.round(PILE_CAP*.6):Math.round(HAUL_AT*(1+vStats(v).carry));
+  if(avail>=1&&(avail>=haulAt||full)){
+   const to=dropFor(B.makes,J);if(to){const plan=economyStart(a,v,pile,economyDestination(to,B.makes),B.makes,Math.max(capacity,avail),J,to);if(plan)return plan;}
   }
-  if(economyFull(J)){a.bubble={t:1.5,icon:'!'};return waiting?economyWait(a,J):null;}
+  if(full){a.bubble={t:1.5,icon:'!'};return economyReserved(pile,B.makes,false)>0?economyWait(a,J):null;}
   a.mission='work';return J;
  }
  if(B.craft){
   J.inbox=J.inbox||{};J.outs=J.outs||{};
-  if(E.porters&&economyFull(J)){if(a.haulSite!==J.uid){a.haulSite=J.uid;a.haulWait=E.t+6;}if(E.t<a.haulWait)return economyWait(a,J);}else a.haulSite=0;
-  const c=chooseCraft(J);
-  let ready=null,n=0;for(const g in J.outs)if(J.outs[g]>n&&shopsFor(g).length){ready=g;n=J.outs[g];}
-  if(ready&&outTotal(J)>=OUT_CAP&&E.porters&&economyReserved(economyPoint(J,'outs'),ready,false)>0)return economyWait(a,J);
-  if(ready&&(n>=3||!c||c.mode!=='craft'||outTotal(J)>=OUT_CAP)&&(!E.porters||outTotal(J)>=OUT_CAP)){
-   const to=dropFor(ready,J);if(to){const plan=economyStart(a,v,economyPoint(J,'outs'),economyDestination(to,ready),ready,capacity,J,to);if(plan)return plan;}}
-  if(c&&c.mode==='craft'&&outTotal(J)<OUT_CAP){a.mission='craft';a.craftWare=c.w;return J;}
+  const c=chooseCraft(J),outs=economyPoint(J,'outs'),reach=porterReach(J),full=outTotal(J)>=OUT_CAP;
+  let ready=null,n=0;for(const g in J.outs){const k=economyAvailable(outs,g);if(k>n&&shopsFor(g).length){ready=g;n=k;}}
+  if(ready&&(full||(reach?n>=Math.ceil(OUT_CAP*.5):n>=3||!c||c.mode!=='craft'))){
+   const to=dropFor(ready,J);if(to){const plan=economyStart(a,v,outs,economyDestination(to,ready),ready,capacity,J,to);if(plan)return plan;}}
+  if(full&&Object.keys(J.outs).some(g=>economyReserved(outs,g,false)>0))return economyWait(a,J);
+  if(c&&c.mode==='craft'&&!full){a.mission='craft';a.craftWare=c.w;return J;}
   if(c&&c.mode==='fetch'){
-   if(E.porters&&economyReserved(economyPoint(J,'inbox'),c.g,true)>0)return economyWait(a,J);
-   const p=economyPoint(J,'inbox'),st=economyNearStore(J),want=Math.min(economyRoom(p,c.g),WARES[c.w].from[c.g]*Math.round(3*(1+vStats(v).carry)));
-   if(st&&(!E.porters||economyReserved(p,c.g,true)<WARES[c.w].from[c.g]-(J.inbox[c.g]||0))){const plan=economyStart(a,v,economyCentral(c.g),p,c.g,Math.max(1,want),st,J);if(plan)return plan;}
+   const p=economyPoint(J,'inbox'),need=WARES[c.w].from[c.g]-(J.inbox[c.g]||0);
+   if(economyReserved(p,c.g,true)>=need)return economyWait(a,J);
+   const st=economyNearStore(J),want=Math.min(economyRoom(p,c.g),WARES[c.w].from[c.g]*Math.round(3*(1+vStats(v).carry)));
+   if(st){const plan=economyStart(a,v,economyCentral(c.g),p,c.g,Math.max(1,want),st,J);if(plan)return plan;}
   }
-  a.bubble={t:1.6,icon:outTotal(J)>=OUT_CAP?'!':'…'};return null;
+  a.bubble={t:1.6,icon:full?'!':'…'};return null;
  }
  return null;
 }
