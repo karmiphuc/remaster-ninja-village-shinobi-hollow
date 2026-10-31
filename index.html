@@ -10350,7 +10350,7 @@ function resizeBattle() {
   const fieldH = tall ? Math.min(280, BT.vh * .56) : BT.vh * .52;
   BT.horizon = Math.round(tall ? BT.vh * .22 + 26 : BT.vh * .25); // landscape: sky kept short so the ranks clear the run strip
   BT.fy0 = BT.horizon + 6; BT.fy1 = Math.round(BT.horizon + fieldH);
-  BT.WW = Math.max(WORLD_W, BT.vw); BT.cx = BT.WW / 2;
+  BT.WW = Math.max(WORLD_W, BT.vw, BT.WWneed || 0); BT.cx = BT.WW / 2;
   if (!BT.cam) BT.cam = { x: BT.cx };
   clampCamB();
 }
@@ -10375,7 +10375,7 @@ function refitFormations() {
   const rest = ['prep', 'between', 'autowait', 'intro'].includes(BT.state) && !BT.script;
   BT.A.forEach((A, si) => { const face = sideDir(si); A.groups.forEach(g => { if (g.heroOnly || !g.R) return;
     const F = FORM_SHAPE[g.type] || FORM_SHAPE.inf, nTot = (g.nVis0 || 0) + (g.heroes || []).length, cols = R => Math.ceil(nTot / Math.max(1, Math.min(R, nTot)));
-    const GM = formGeom(g.type, nTot, g.onWall, (BT.fit && BT.fit[si] || {}).tight || 1);
+    const GM = formGeom(g.type, nTot, g.onWall);
     if (nTot && cols(GM.R) <= cols(g.R)) { g.R = GM.R; g.halfW = (cols(g.R) - 1) * g.colStep / 2; } // more room: more ranks, never a wider block (less room: the same ranks, closer)
     g.rowStep = g.R > 1 ? Math.min(F.rMax * Math.max(BT.armySc, BT.band.sc), BT.band.span / (g.R - 1)) : 0; // the sprites keep their size; the ranks may open up to the new room
     g.hy = BT.band.mid;
@@ -10457,10 +10457,12 @@ function gCenter(g) { const al = g.spr.filter(s => s.alive); if (!al.length) ret
 const DENSITY = { standard: { n: 25, name: 'Standard' }, dense: { n: 36, name: 'Dense' }, epic: { n: 48, name: 'Epic' } };
 function densityKey() { try { const k = localStorage.getItem('sh-density'); if (DENSITY[k]) return k; } catch (e) { } return 'dense'; }
 function setDensity(k) { if (!DENSITY[k]) return false; try { localStorage.setItem('sh-density', k); } catch (e) { } return true; }
-// per arm, in world px at sprite scale 1: file spacing, closest and widest rank spacing, stagger, distinct looks
-const FORM_SHAPE = { inf: { col: 15, rMin: 11, rMax: 20, stag: 0, pool: 5 }, gun: { col: 18, rMin: 12, rMax: 22, stag: 0, pool: 4 },
-  arc: { col: 17, rMin: 11, rMax: 21, stag: .5, pool: 4 }, cav: { col: 27, rMin: 15, rMax: 26, stag: 0, pool: 3 } };
-const FORM_FILL = .88, FORM_MAX_COLS = 6, FORM_HEAD = 34; // share of the band the ranks span; widest block; head room over the feet
+// per arm, in world px at sprite scale 1: file spacing, body height (head to feet, measured from the sprites), stagger,
+// distinct looks. Ranks stand at least 1.5 bodies apart so the rank in front never hides the weapons of the rank behind,
+// and open up to 2.25 bodies when the field has room to spare.
+const FORM_SHAPE = Object.fromEntries(Object.entries({ inf: { col: 15, body: 24, stag: 0, pool: 5 }, gun: { col: 18, body: 31, stag: 0, pool: 4 },
+  arc: { col: 17, body: 24, stag: .5, pool: 4 }, cav: { col: 24, body: 38, stag: 0, pool: 3 } }).map(([k, F]) => [k, Object.assign(F, { rMin: F.body * 1.5, rMax: F.body * 2.25 })]));
+const FORM_FILL = .88, FORM_MAX_COLS = 6, FORM_HEAD = 34, WW_MAX = 3000; // share of the band the ranks span; preferred widest block; head room; widest field
 let _safeProbe = null;
 function safeBottomPx() { try { if (!_safeProbe) { _safeProbe = document.createElement('div'); _safeProbe.style.cssText = 'position:fixed;left:0;bottom:0;width:0;height:env(safe-area-inset-bottom,0px);pointer-events:none;visibility:hidden'; document.body.appendChild(_safeProbe); } return _safeProbe.getBoundingClientRect().height || 0; } catch (e) { return 0; } }
 // where feet may stand: below the HUD (with room for heads) and above the bottom edge and safe area
@@ -10492,6 +10494,19 @@ function lookPool(g, si) {
   const P = (FORM_SHAPE[g.type] || FORM_SHAPE.inf).pool, d = g.kitDist, at = (list, q) => { for (const [k, f] of list || []) { if (q < f) return k; q -= f; } return null; };
   return Array.from({ length: P }, (_, i) => { const q = (i + .5) / P; return { v: (i * 3 + si * 5 + g.type.length) % ART_TROOP_VARIANTS, kit: d ? { w: at(d.w, q), a: at(d.a, (q + .31) % 1), h: at(d.h, (q + .62) % 1) } : null }; });
 }
+// how deep an army stands, front file of the first block to the rear of the last (lanes included)
+function formLane(g, cols) { return (g.type === 'cav' ? 40 : 32) + Math.min(cols, 8) * 2; }
+function armyWidth(A, si, sq) {
+  const order = A.groups.slice().sort((a, b) => grpOrder(a, si) - grpOrder(b, si));
+  return order.reduce((w, g, oi) => { if (g.heroOnly) return w + 28; const n = visibleCount(g) + (g.cmds || []).filter(c => c.look && c.post !== 'hq').length, GM = formGeom(g.type, n, false), cols = Math.ceil(n / Math.max(1, Math.min(GM.R, n)));
+    return w + ((cols - 1) * GM.colStep + formLane(g, cols)) * sq + (oi && worksOf(g).length ? 12 : 0); }, 0);
+}
+// widen the battlefield until both armies fit their halves (up to WW_MAX); returns true if it changed
+function fitField() {
+  const need = Math.max(...BT.A.map((A, si) => A.mode === 'army' && !(BT.siege && si === 1) ? armyWidth(A, si, 1) : 0)) + 66 + 40;
+  const WW = Math.round(clamp(2 * need, Math.max(WORLD_W, BT.vw), WW_MAX)); if (WW === BT.WW) return false;
+  BT.WWneed = WW; BT.WW = WW; BT.cx = WW / 2; BT.cam.x = BT.cx; clampCamB(); return true;
+}
 /* captains take places in the formation itself: evenly spread down the front file (a second file only when there are
    more captains than rows), so they never stand on top of their own men nor a stride out in front of them */
 function formPlan(g, nT, nH, front, face, mid) {
@@ -10508,7 +10523,7 @@ function layoutSprites() {
   const maxT = Math.max(...BT.A.flatMap(a => a.groups.map(g => g.troops)));
   if (!BT.per) BT.per = skirm ? 1e9 : Math.max(1, Math.ceil(maxT / BT.maxVis));
   BT.fy1Base = BT.fy1Base || BT.fy1;
-  if (!skirm) { const B = BT.band = formationBand(); BT.armySc = B.sc; BT.fy1 = Math.max(BT.fy1Base, Math.round(B.y1 + 2)); }
+  if (!skirm) { const B = BT.band = formationBand(); BT.armySc = B.sc; BT.fy1 = Math.max(BT.fy1Base, Math.round(B.y1 + 2)); if (fitField()) buildBattleBG(); }
   const fh = BT.fy1 - BT.fy0, mid = skirm ? BT.fy0 + (BT.fy1Base - BT.fy0) * .52 : BT.band.mid;
   BT.rows = 8; BT.rowStep = FORM_SHAPE.inf.rMin * (BT.armySc || 1); BT.colStep = FORM_SHAPE.inf.col * (BT.armySc || 1);
   BT.props = [];
@@ -10529,19 +10544,16 @@ function layoutSprites() {
     BT.midY = mid;
     if (sg) { BT.siege.x = BT.cx + 40; siegeWorks(mid, fh); }
     let front = sg ? BT.siege.x + 17 : BT.cx - face * 66;
-    // a big army must fit its half of the field: first close the ranks up (more rows), then the files and lanes
-    const nHof = g => (g.cmds || []).filter(c => c.look && c.post !== 'hq').length, lane = (g, cols) => (g.type === 'cav' ? 46 : 38) + cols * 3;
-    const armyW = (tight, sq) => order.reduce((w, g, oi) => { if (g.heroOnly) return w + 28; const n = visibleCount(g) + nHof(g), GM = formGeom(g.type, n, false, tight), cols = Math.ceil(n / Math.max(1, Math.min(GM.R, n)));
-      return w + ((cols - 1) * GM.colStep + lane(g, cols)) * sq + (oi && A.mode === 'army' && worksOf(g).length ? 12 : 0); }, 0);
-    const fit = { tight: 1, sq: 1 };
-    if (!sg && !skirm) { const room = (face > 0 ? front : BT.WW - front) - 24; if (armyW(1, 1) > room) { fit.tight = .8; const w = armyW(.8, 1); if (w > room) fit.sq = Math.max(.6, room / w); } }
+    const lane = formLane, fit = { tight: 1, sq: 1 };
+    // the field was widened to hold both armies (fitField); only past the widest field do the files close up
+    if (!sg && !skirm) { const room = (face > 0 ? front : BT.WW - front) - 24, w = armyWidth(A, si, 1); if (w > room) fit.sq = Math.max(.6, room / w); }
     BT.fit = BT.fit || []; BT.fit[si] = fit;
     order.forEach((g, oi) => {
       if(g.heroOnly){front=layoutIndependent(g,si,front,mid,fh);return;}
       if (oi && A.mode === 'army' && worksOf(g).length) front -= face * 12; // room for a commander's field work
       const onWall = sg && g.type === 'gun'; // gunners line the walkway; archers loose over the wall from behind it
       const nH = (g.cmds || []).filter(c => c.look && c.post !== 'hq').length;
-      const n = visibleCount(g), GM = formGeom(g.type, n + nH, onWall, fit.tight); Object.assign(g, { R: GM.R, rowStep: GM.rowStep, colStep: GM.colStep * (onWall ? 1 : fit.sq), stag: GM.stag, nVis0: n });
+      const n = visibleCount(g), GM = formGeom(g.type, n + nH, onWall); Object.assign(g, { R: GM.R, rowStep: GM.rowStep, colStep: GM.colStep * (onWall ? 1 : fit.sq), stag: GM.stag, nVis0: n });
       const rows = formRows(g, n + nH), cols = Math.ceil((n + nH) / rows), colStep = g.colStep;
       g.front = g.post = front; g.halfW = (cols - 1) * colStep / 2; g.hx = front - face * g.halfW; g.hy = mid;
       const FP = formPlan(g, n, nH, front, face, mid), pool = lookPool(g, si); g._hp = FP.H;

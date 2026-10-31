@@ -18,12 +18,12 @@ The whole game is one self-contained HTML file. It has no build step, no server 
 - **Battle density** (Village → Options, saved per device): **Standard** 25, **Dense** 36 (default) or **Epic** 48 soldiers at most per formation.
   - At the start of each battle one soldier stands for a fixed number of men, so the largest formation fills the cap and smaller ones look smaller.
   - Troop numbers, casualties and combat results are the same at every setting. The tests run the same seeded battle at all three and compare every blow.
-- **Formations** stand in even, deterministic ranks spread over about 88% of the room between the HUD and the bottom of the screen, safe area included. Ranks keep their shape at rest and re-form after each clash. Charges, duels, casualties and routs still break them up for a moment.
+- **Formations** stand in even, deterministic ranks spread over about 88% of the room between the HUD and the bottom of the screen, safe area included. Ranks stand at least 1.5 body heights apart (up to 2.25), so the rank in front never hides the weapons of the rank behind. The battlefield widens (up to about 3× its old width) so big armies keep their full size, and the camera pans further. Ranks keep their shape at rest and re-form after each clash. Charges, duels, casualties and routs still break them up for a moment.
   - Infantry: tight ranks.
   - Gunners: straight firing lines.
   - Archers: staggered ranks.
   - Cavalry: wider ranks.
-- **Sizing:** rows, files, spacing and sprite size (0.85–1.25×) adapt to the screen. A big army closes its ranks, then its files, to stay inside its half of the field. On resize, the ranks refit to the new room.
+- **Sizing:** rows, files, spacing and sprite size (0.85–1.25×) adapt to the screen. Only past the widest field do the files close up. On resize, the ranks refit to the new room; on a shorter screen they close up until the next battle.
 - **Commanders and banners:** commanders take places in the front file, and their guards stand just ahead of it rather than on the ranks. Back-flags are carried by whole ranks, so they line up.
 - **Drawing:** each formation's rank and file share a few looks (3–5), so sprite art stays bounded at Epic: about 35–40 sprite sets per battle at any density.
 
