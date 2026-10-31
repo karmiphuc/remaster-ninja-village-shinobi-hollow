@@ -13,6 +13,20 @@ The whole game is one self-contained HTML file. It has no build step, no server 
 - **Top bar:** date (year, season, month, week), village appeal and star rating, population, coin, and time controls (pause, play, fast-forward, music).
 - **Input:** mouse, touch and scroll wheel. It works on desktop and phone-sized screens. In the Warrior Atelier, `Esc` closes the panel and `Tab` cycles focus.
 
+## Wooden Tate (盾) for Gunners
+
+- **Unlock:** conquer **Yamashiro Castle**, next to your home valley. Saves that already hold Yamashiro get it automatically.
+- **Buying:** Army → Gunners (tap the gear row) → **Defensive Support**.
+  - Each Tate covers 10 Gunners and costs 40G + 4 Timber. No forging, upkeep or durability.
+  - The panel shows Tate owned / needed, coverage, protection, attack penalty, missing Tate and their cost.
+  - **Buy / Replenish** buys exactly the missing Tate at the same price (or as many as you can afford). Coverage never goes above 100%.
+- **In battle:** at full coverage your Gunners take 20% fewer arrow casualties and deal 8% less damage; both scale with coverage and multiply with every other defence. Bullets, melee, cavalry and ninjutsu ignore the Tate. Wooden pavises stand in front of the Gunner line, one per covered row.
+- **Losses:** every 10 Gunners actually killed breaks one Tate.
+  - Wounded who return and men who fled don't count. Fled men are told apart using the battle's own record of who fell and who fled.
+  - The remainder carries to the next battle: 27 killed breaks 2 and carries 7.
+  - Nothing is restored for free.
+- **The AI:** armies in the field get 5% coverage per clan victory, up to 50%, under the same rules. Castle garrisons never get Tate (they have walls), and neither do the dojo's partners.
+
 ## The map: provinces, the dojo and uprisings
 
 - **Winning the map:** 49 provinces can be held (41 clan castles, 7 bandit lairs and your home village). The **Training Ground** dojo is sparred at, never taken, so it does not count; the map and the Ledger show *held / 49*. The war ends when you take the Shogun's keep.
@@ -132,7 +146,7 @@ The game is served by GitHub Pages straight from the `main` branch root (`/`), w
 | `index.html` | The complete game: markup, styles, script, sprites and audio (audio is embedded as data URIs) |
 | `README.md` | This file |
 | `docs/` | Equipment notes, [village art direction](docs/ART_DIRECTION.md), and previews rendered from the procedural game assets |
-| `tests/` | Browser checks for equipment effects, research, saves, portraits, formation tactics, Ki, army forging, the campaign hand, logistics, the province count, dojo prizes, uprisings and mobile layout |
+| `tests/` | Browser checks for equipment effects, research, saves, portraits, formation tactics, Ki, army forging, the campaign hand, logistics, the province count, dojo prizes, uprisings, Wooden Tate and mobile layout |
 | `reports/` | Recorded validation results |
 
 ## Current version: v19.1 + Logistics P0
