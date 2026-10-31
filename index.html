@@ -390,6 +390,7 @@ img.px, canvas.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 .kfoot { display: flex; gap: 8px; align-items: center; justify-content: space-between; font-size: 11px; }
 .tate { margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(90,60,30,.35); font-size: 11px; display: grid; gap: 4px; } .tate .kl { font-weight: bold; } .tate img { width: 16px; height: 16px; vertical-align: middle; } .tate-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; } .tate .cov { color: #a02a1a; } .tate .cov.full { color: var(--pine); } .tate.locked { display: flex; gap: 8px; align-items: center; }
 .engines { display: grid; gap: 6px; margin: 8px 10px 0; } .engine { display: flex; gap: 8px; align-items: center; font-size: 12px; } .engine img { width: 24px; height: 24px; } .engine .en-txt { flex: 1; min-width: 0; } .engine .paid { color: var(--pine); font-weight: bold; } .engine .btn { min-height: 30px; padding: 2px 9px; } .engine.on b { color: #a02a1a; }
+.dens { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; width: 100%; font-size: 12px; } .dens .btn small { opacity: .7; }
 .kfoot .btn { min-height: 28px; padding: 2px 8px; font-size: 11px; flex: 0 0 auto; }
 .skl { display: grid; grid-template-columns: 40px 1fr; gap: 8px; align-items: start; }
 .skl img { width: 40px; height: 40px; image-rendering: pixelated; background: rgba(42, 29, 26, .1); border: 1px solid rgba(42, 29, 26, .35); margin-top: 8px; }
@@ -4099,7 +4100,9 @@ function assignBattleSashimono() {
     A.groups.forEach(g=>{
       const troops=(g.spr||[]).filter(s=>!s.hero&&!s.guardOf&&!s.petOf),n=troops.length;
       const wanted=policy.ratio&&n>=3?Math.max(1,Math.min(n-1,Math.round(n*policy.ratio))):0;
-      troops.forEach((s,i)=>s.sashimono=Math.floor((i+1)*wanted/n)>Math.floor(i*wanted/n)?troopSashimono(A,g,s):null);
+      // in ranked formations whole ranks carry flags (same share), so the banners line up instead of scattering
+      const ranked=wanted&&troops.every(s=>s.rank!=null),r0=policy.ratio;
+      troops.forEach((s,i)=>s.sashimono=(ranked?Math.floor((s.rank+1)*r0)>Math.floor(s.rank*r0):Math.floor((i+1)*wanted/n)>Math.floor(i*wanted/n))?troopSashimono(A,g,s):null);
       for(const s of [...(g.spr||[]),...(g.heroes||[])])if(s.hero)s.sashimono=officerSashimono(A,g,s.hero,policy);
     });
     for(const s of A.hqSpr||[])s.sashimono=officerSashimono(A,s.g,s.hero,policy);
@@ -8283,10 +8286,11 @@ function renderMenu(body, tab) {
       <p><b>5 · Unify.</b> Take the Iron Keep before the end of Year ${G.endYear || 25}. Every clan you beat makes the rest a little stronger, so do not dawdle.</p>
       <p>Tips: drag to pan, pinch or scroll to zoom. Tap villagers and buildings to inspect them.</p></div>`));
   } else {
-    const r = h(`<div class="row wrap"><button class="btn" id="o-mus">Music: ${Sound.musicOn ? 'On' : 'Off'}</button><button class="btn" id="o-sfx">Sound: ${Sound.sfxOn ? 'On' : 'Off'}</button><button class="btn gold" id="o-save">Save now</button><button class="btn red" id="o-new">New game</button></div>`);
+    const r = h(`<div class="row wrap"><button class="btn" id="o-mus">Music: ${Sound.musicOn ? 'On' : 'Off'}</button><button class="btn" id="o-sfx">Sound: ${Sound.sfxOn ? 'On' : 'Off'}</button><span class="dens"${tipAttr('Battle density: how many soldiers stand for each formation on the battlefield. Troop numbers and results are the same at every setting; Epic draws the most.')}>Battle density ${Object.keys(DENSITY).map(k => `<button class="btn ${densityKey() === k ? 'gold' : 'ghost'}" data-dens="${k}">${DENSITY[k].name} <small>${DENSITY[k].n}</small></button>`).join('')}</span><button class="btn gold" id="o-save">Save now</button><button class="btn red" id="o-new">New game</button></div>`);
     body.appendChild(r);
     $('#o-mus', r).onclick = () => { Sound.setMusic(!Sound.musicOn); try { localStorage.setItem('sh-mus', Sound.musicOn ? '1' : '0'); } catch (e) { } refreshSheet(); };
     $('#o-sfx', r).onclick = () => { Sound.setSfx(!Sound.sfxOn); try { localStorage.setItem('sh-sfx', Sound.sfxOn ? '1' : '0'); } catch (e) { } refreshSheet(); };
+    r.querySelectorAll('[data-dens]').forEach(b => b.onclick = () => { setDensity(b.dataset.dens); Sound.play('tap'); toast(`Battle density: ${DENSITY[b.dataset.dens].name} (${DENSITY[b.dataset.dens].n} per formation), from the next battle.`); refreshSheet(); });
     $('#o-save', r).onclick = () => { toast(saveGame() ? 'Saved.' : 'Saving is not available in this browser.'); };
     $('#o-new', r).onclick = () => { modal('Start over?', 'This replaces your current village. Your saved game will be overwritten.', [['Cancel', null], ['Start over', () => { try { localStorage.removeItem(SAVE_KEY); } catch (e) { } newGame(); closeSheet(); afterLoad(); }, 'red']]); };
     body.appendChild(h('<p class="note">The game autosaves every few months and after battles, in this browser only.</p>'));
@@ -10048,7 +10052,7 @@ function startBattle(provId, opt) {
     BT.autoKi = { on: autoCastOn(), pref: jutsuPref(), share: pp / Math.max(1, pp + ep), eligible: autoKiEligible(pp, ep) }; }
   for (let i = 0; i < 6; i++) BT.clouds.push({ x: rnd(0, 1), y: rnd(.05, .3), s: rnd(.6, 1.4), v: rnd(.002, .006) });
   $('#battle-layer').hidden = false; $('#map-layer').hidden = true;
-  resizeBattle(); buildBattleBG(); layoutSprites(); marchIn();
+  resizeBattle(); renderBHUD(); buildBattleBG(); layoutSprites(); marchIn();
   Sound.music('battle');
   // Warhorn first, on its own, before the pre-combat animatic below (battleIntro).
   // The shout used to fire at the same instant and masked it.
@@ -10352,14 +10356,34 @@ function resizeBattle() {
 }
 function clampCamB() { const h = BT.vw / 2; BT.cam.x = BT.WW <= BT.vw ? BT.WW / 2 : clamp(BT.cam.x, h, BT.WW - h); }
 function onBattleResize() {
-  const o0 = BT.fy0, o1 = BT.fy1; resizeBattle(); buildBattleBG();
-  const k = (BT.fy1 - BT.fy0) / Math.max(1, o1 - o0), m = y => BT.fy0 + (y - o0) * k;
+  const ob = BT.band, o0 = ob ? ob.y0 : BT.fy0, o1 = ob ? ob.y1 : BT.fy1; BT.fy1Base = null; resizeBattle(); BT.fy1Base = BT.fy1;
+  if (ob && BT.A[0].mode !== 'skirmish') { BT.band = formationBand(); BT.fy1 = Math.max(BT.fy1Base, Math.round(BT.band.y1 + 2)); }
+  buildBattleBG();
+  const n0 = ob ? BT.band.y0 : BT.fy0, n1 = ob ? BT.band.y1 : BT.fy1, k = (n1 - n0) / Math.max(1, o1 - o0), m = y => n0 + (y - o0) * k;
   BT.A.forEach(A => { A.groups.forEach(g => { g.hy = m(g.hy); g.spr.concat(g.heroes || [], ...(g.heroes || []).map(h => (h.guards || []).concat(h.pet ? [h.pet] : []))).forEach(s => { s.y = m(s.y); s.sy = m(s.sy); s.ty = m(s.ty); s.q.forEach(c => c.y = m(c.y)); }); });
     (A.hqSpr || []).forEach((s, i) => { s.y = s.sy = s.ty = BT.fy0 + 5 + (i % 2) * 3; s.q = []; }); });
   BT.A.forEach(A=>A.groups.forEach(g=>[...g.spr,...g.heroes,...(g.heroes||[]).flatMap(h=>h.guards||[])].forEach(s=>{if(s.fate){const sc=spriteScale(),r=sc/s.fate.scale;s.fate.scale=sc;if(Number.isFinite(s.fate.travel))s.fate.travel*=r;s.fate.dx*=r;s.fate.lift*=r;}})));
   resizeAftermath(m);
   if(BT.duelRun){for(const f of BT.duelRun.D.F){f.spot.y=m(f.spot.y);f.initialSpot.y=m(f.initialSpot.y);}}
   if(BT.cine)BT.cine.y=m(BT.cine.y);releaseDuelBackdrop(BT.duelShot);
+  if (ob) refitFormations();
+}
+// after a resize: re-space each formation's ranks for the new band (sprite size and files stay as they were). At rest the
+// men step straight into the new ranks; mid-phase they keep their place and re-form at the next regroup.
+function refitFormations() {
+  if (!BT || !BT.band || BT.A[0].mode === 'skirmish') return;
+  const rest = ['prep', 'between', 'autowait', 'intro'].includes(BT.state) && !BT.script;
+  BT.A.forEach((A, si) => { const face = sideDir(si); A.groups.forEach(g => { if (g.heroOnly || !g.R) return;
+    const F = FORM_SHAPE[g.type] || FORM_SHAPE.inf, nTot = (g.nVis0 || 0) + (g.heroes || []).length, cols = R => Math.ceil(nTot / Math.max(1, Math.min(R, nTot)));
+    const GM = formGeom(g.type, nTot, g.onWall, (BT.fit && BT.fit[si] || {}).tight || 1);
+    if (nTot && cols(GM.R) <= cols(g.R)) { g.R = GM.R; g.halfW = (cols(g.R) - 1) * g.colStep / 2; } // more room: more ranks, never a wider block (less room: the same ranks, closer)
+    g.rowStep = g.R > 1 ? Math.min(F.rMax * Math.max(BT.armySc, BT.band.sc), BT.band.span / (g.R - 1)) : 0; // the sprites keep their size; the ranks may open up to the new room
+    g.hy = BT.band.mid;
+    const al = g.spr.filter(s => s.alive && !s.fate), act = (g.heroes || []).filter(h => !h.out); if (!al.length && !act.length) return;
+    const FP = formPlan(g, al.length, act.length, g.front, face, g.hy); al.sort((p, q) => p.y - q.y); FP.T.sort((p, q) => p.y - q.y);
+    al.forEach((s, i) => { s.sx = FP.T[i].x; s.sy = FP.T[i].y; if (rest) { s.x = s.tx = s.sx; s.y = s.ty = s.sy; s.q = []; } });
+    act.sort((p, q) => p.y - q.y).forEach((hr, i) => { hr.hdx = face * (FP.H[i].x - g.front); hr.hdy = FP.H[i].y - g.hy; hr.sx = g.front + face * hr.hdx; hr.sy = g.hy + hr.hdy;
+      if (rest) { hr.x = hr.tx = hr.sx; hr.y = hr.ty = hr.sy; hr.q = []; (hr.guards || []).forEach(q => { q.x = q.tx = hr.x + q.gx; q.y = q.ty = hr.y + q.gy; q.q = []; }); if (hr.pet) { hr.pet.x = hr.pet.tx = hr.x + hr.pet.gx; hr.pet.y = hr.pet.ty = hr.y + hr.pet.gy; } } }); }); });
 }
 
 /* ---------- background layers ---------- */
@@ -10424,29 +10448,69 @@ function buildBattleBG() {
 /* ---------- formations ---------- */
 function sideDir(si) { return si === 0 ? 1 : -1; } // direction this side faces (toward the enemy)
 function gCenter(g) { const al = g.spr.filter(s => s.alive); if (!al.length) return { x: g.hx, y: g.hy }; let x = 0, y = 0; al.forEach(s => { x += s.x; y += s.y; }); return { x: x / al.length, y: y / al.length }; }
-// ranks: gunners stand in dead-straight files (volley lines); everyone else in a loose staggered block
-function formSlots(n, front, face, mid, rowStep, colStep, type) {
-  const rows = Math.max(1, Math.min(BT.rows || 5, n)), out = [], drill = type === 'gun';
-  for (let i = 0; i < n; i++) { const r = i % rows, c = (i / rows) | 0;
-    out.push(drill ? { x: front - face * c * colStep, y: mid + (r - (rows - 1) / 2) * rowStep }
-      : { x: front - face * (c * colStep + (r % 2 ? colStep * .45 : 0)) + rnd(-2, 2), y: mid + (r - (rows - 1) / 2) * rowStep + rnd(-1.2, 1.2) }); }
+/* ---------- battle density & formation geometry ----------
+ How many soldiers stand for each formation is a per-device setting (Options): Standard 25, Dense 36 or Epic 48 at
+ most. At the start of a battle one soldier is made to stand for a fixed number of men (the largest formation on the
+ field fills the cap), so smaller formations look smaller; the troop counts, casualties and damage are untouched.
+ Formations stand in even, deterministic ranks spread over ~88% of the room between the HUD and the bottom of the
+ screen: infantry in tight ranks, gunners in straight firing lines, archers in staggered ranks, cavalry wider apart. */
+const DENSITY = { standard: { n: 25, name: 'Standard' }, dense: { n: 36, name: 'Dense' }, epic: { n: 48, name: 'Epic' } };
+function densityKey() { try { const k = localStorage.getItem('sh-density'); if (DENSITY[k]) return k; } catch (e) { } return 'dense'; }
+function setDensity(k) { if (!DENSITY[k]) return false; try { localStorage.setItem('sh-density', k); } catch (e) { } return true; }
+// per arm, in world px at sprite scale 1: file spacing, closest and widest rank spacing, stagger, distinct looks
+const FORM_SHAPE = { inf: { col: 15, rMin: 11, rMax: 20, stag: 0, pool: 5 }, gun: { col: 18, rMin: 12, rMax: 22, stag: 0, pool: 4 },
+  arc: { col: 17, rMin: 11, rMax: 21, stag: .5, pool: 4 }, cav: { col: 27, rMin: 15, rMax: 26, stag: 0, pool: 3 } };
+const FORM_FILL = .88, FORM_MAX_COLS = 6, FORM_HEAD = 34; // share of the band the ranks span; widest block; head room over the feet
+let _safeProbe = null;
+function safeBottomPx() { try { if (!_safeProbe) { _safeProbe = document.createElement('div'); _safeProbe.style.cssText = 'position:fixed;left:0;bottom:0;width:0;height:env(safe-area-inset-bottom,0px);pointer-events:none;visibility:hidden'; document.body.appendChild(_safeProbe); } return _safeProbe.getBoundingClientRect().height || 0; } catch (e) { return 0; } }
+// where feet may stand: below the HUD (with room for heads) and above the bottom edge and safe area
+function formationBand() {
+  const cv = $('#battle-cv'), r = cv ? cv.getBoundingClientRect() : { top: 0, height: 0 }, S = BT.S || 1;
+  let hud = 0; for (const id of ['#bhud', '#bformations']) { const e = $(id); if (!e) continue; const b = e.getBoundingClientRect(); if (b.height > 0 && b.bottom > r.top) hud = Math.max(hud, (b.bottom - r.top) / S); }
+  const y1 = Math.round(BT.vh - Math.max(16, safeBottomPx() / S + 8)), top = sc => Math.max(BT.fy0 + 4, hud + FORM_HEAD * sc);
+  let sc = clamp((y1 - top(1)) * FORM_FILL / 130, .85, 1.25); const y0 = Math.min(y1 - 40, top(sc)); sc = clamp((y1 - y0) * FORM_FILL / 130, .85, 1.25);
+  return { y0, y1, span: (y1 - y0) * FORM_FILL, mid: (y0 + y1) / 2, sc, hud };
+}
+// rows and files for one formation of n figures (soldiers and captains)
+function formGeom(type, n, onWall, tight = 1) {
+  const F = FORM_SHAPE[type] || FORM_SHAPE.inf, sc = BT.armySc || 1, span = BT.band ? BT.band.span : 100;
+  const maxR = Math.max(1, Math.floor(span / (F.rMin * sc * tight)) + 1);
+  let C = Math.min(FORM_MAX_COLS, Math.max(Math.ceil(n / maxR), n >= 30 ? 3 : n >= 8 ? 2 : 1)); C = Math.max(1, Math.min(C, n || 1));
+  let R = Math.ceil(Math.max(1, n) / C); if (R > maxR) { R = maxR; C = Math.ceil(n / R); }
+  return { R, C, rowStep: R > 1 ? Math.min(F.rMax * sc, span / (R - 1)) : 0, colStep: onWall ? 4 : F.col * sc, stag: onWall ? 0 : F.stag };
+}
+function formRows(g, n) { return Math.max(1, Math.min(g.R || BT.rows || 5, n)); }
+// the figures of a block, front file first; a short last file is spread evenly down its rows
+function formSlots(n, front, face, mid, g) {
+  const rows = formRows(g, n), cols = Math.ceil(n / rows), last = n - (cols - 1) * rows, out = [], rs = g.rowStep ?? BT.rowStep, cs = g.colStep || BT.colStep, st = g.stag || 0;
+  for (let i = 0; i < n; i++) { const c = (i / rows) | 0, j = i - c * rows, r = c === cols - 1 && last < rows ? Math.round((j + .5) * rows / last - .5) : j;
+    out.push({ x: front - face * (c * cs + (r % 2 ? cs * st : 0)), y: mid + (r - (rows - 1) / 2) * rs, r, c }); }
   return out;
+}
+// a formation's rank and file share a few looks, dealt out so neighbours differ: bounded art for any density
+function lookPool(g, si) {
+  const P = (FORM_SHAPE[g.type] || FORM_SHAPE.inf).pool, d = g.kitDist, at = (list, q) => { for (const [k, f] of list || []) { if (q < f) return k; q -= f; } return null; };
+  return Array.from({ length: P }, (_, i) => { const q = (i + .5) / P; return { v: (i * 3 + si * 5 + g.type.length) % ART_TROOP_VARIANTS, kit: d ? { w: at(d.w, q), a: at(d.a, (q + .31) % 1), h: at(d.h, (q + .62) % 1) } : null }; });
 }
 /* captains take places in the formation itself: evenly spread down the front file (a second file only when there are
    more captains than rows), so they never stand on top of their own men nor a stride out in front of them */
 function formPlan(g, nT, nH, front, face, mid) {
-  const rows = Math.max(1, Math.min(BT.rows || 5, nT + nH)), all = formSlots(nT + nH, front, face, mid, BT.rowStep, g.colStep || BT.colStep, g.type), hi = [];
+  const rows = formRows(g, nT + nH), all = formSlots(nT + nH, front, face, mid, g), hi = [];
   for (let k = 0; k < nH; k++) { const file = (k / rows) | 0, inF = Math.min(rows, nH - file * rows), j = k - file * rows; hi.push(Math.min(all.length - 1, file * rows + Math.min(rows - 1, Math.floor((j + .5) * rows / inF)))); }
   const H = hi.map((i, k) => ({ x: front - face * (((k / rows) | 0) * (g.colStep || BT.colStep) - 3), y: all[i].y })), T = all.filter((_, i) => !hi.includes(i));
+  // keep the army's head room: a band refit (resize) may have squeezed it
+  if (BT.band && g.R > 1) { const lo = BT.band.y0, hiY = BT.band.y1; [...T, ...H].forEach(p => { p.y = clamp(p.y, lo, hiY); }); }
   return { T, H };
 }
 function layoutSprites() {
   const skirm = BT.A[0].mode === 'skirmish';
-  BT.maxVis = 20;
+  BT.density = densityKey(); BT.maxVis = DENSITY[BT.density].n;
   const maxT = Math.max(...BT.A.flatMap(a => a.groups.map(g => g.troops)));
   if (!BT.per) BT.per = skirm ? 1e9 : Math.max(1, Math.ceil(maxT / BT.maxVis));
-  const fh = BT.fy1 - BT.fy0, mid = BT.fy0 + fh * .52;
-  BT.rows = clamp(Math.floor((fh - 18) / 15) + 1, 5, 8); BT.rowStep = clamp((fh - 18) / (BT.rows - 1), 10, 24); BT.colStep = 23; // airy files: men need elbow room to swing
+  BT.fy1Base = BT.fy1Base || BT.fy1;
+  if (!skirm) { const B = BT.band = formationBand(); BT.armySc = B.sc; BT.fy1 = Math.max(BT.fy1Base, Math.round(B.y1 + 2)); }
+  const fh = BT.fy1 - BT.fy0, mid = skirm ? BT.fy0 + (BT.fy1Base - BT.fy0) * .52 : BT.band.mid;
+  BT.rows = 8; BT.rowStep = FORM_SHAPE.inf.rMin * (BT.armySc || 1); BT.colStep = FORM_SHAPE.inf.col * (BT.armySc || 1);
   BT.props = [];
   BT.A.forEach((A, si) => {
     const face = sideDir(si);
@@ -10465,25 +10529,32 @@ function layoutSprites() {
     BT.midY = mid;
     if (sg) { BT.siege.x = BT.cx + 40; siegeWorks(mid, fh); }
     let front = sg ? BT.siege.x + 17 : BT.cx - face * 66;
+    // a big army must fit its half of the field: first close the ranks up (more rows), then the files and lanes
+    const nHof = g => (g.cmds || []).filter(c => c.look && c.post !== 'hq').length, lane = (g, cols) => (g.type === 'cav' ? 46 : 38) + cols * 3;
+    const armyW = (tight, sq) => order.reduce((w, g, oi) => { if (g.heroOnly) return w + 28; const n = visibleCount(g) + nHof(g), GM = formGeom(g.type, n, false, tight), cols = Math.ceil(n / Math.max(1, Math.min(GM.R, n)));
+      return w + ((cols - 1) * GM.colStep + lane(g, cols)) * sq + (oi && A.mode === 'army' && worksOf(g).length ? 12 : 0); }, 0);
+    const fit = { tight: 1, sq: 1 };
+    if (!sg && !skirm) { const room = (face > 0 ? front : BT.WW - front) - 24; if (armyW(1, 1) > room) { fit.tight = .8; const w = armyW(.8, 1); if (w > room) fit.sq = Math.max(.6, room / w); } }
+    BT.fit = BT.fit || []; BT.fit[si] = fit;
     order.forEach((g, oi) => {
       if(g.heroOnly){front=layoutIndependent(g,si,front,mid,fh);return;}
       if (oi && A.mode === 'army' && worksOf(g).length) front -= face * 12; // room for a commander's field work
       const onWall = sg && g.type === 'gun'; // gunners line the walkway; archers loose over the wall from behind it
       const nH = (g.cmds || []).filter(c => c.look && c.post !== 'hq').length;
-      const n = visibleCount(g), rows = Math.max(1, Math.min(BT.rows || 5, n + nH)), cols = Math.ceil((n + nH) / rows);
-      const colStep = onWall ? 4 : g.type === 'cav' ? 32 : g.type === 'gun' ? 20 : g.type === 'arc' ? 21 : BT.colStep;
-      g.front = g.post = front; g.halfW = (cols - 1) * colStep / 2; g.hx = front - face * g.halfW; g.hy = mid; g.colStep = colStep;
-      const FP = formPlan(g, n, nH, front, face, mid); g._hp = FP.H;
-      g.spr = FP.T.map(p => mkSprite(g, si, p.x, p.y, null, g.kitDist ? rollKit(g.kitDist) : null));
+      const n = visibleCount(g), GM = formGeom(g.type, n + nH, onWall, fit.tight); Object.assign(g, { R: GM.R, rowStep: GM.rowStep, colStep: GM.colStep * (onWall ? 1 : fit.sq), stag: GM.stag, nVis0: n });
+      const rows = formRows(g, n + nH), cols = Math.ceil((n + nH) / rows), colStep = g.colStep;
+      g.front = g.post = front; g.halfW = (cols - 1) * colStep / 2; g.hx = front - face * g.halfW; g.hy = mid;
+      const FP = formPlan(g, n, nH, front, face, mid), pool = lookPool(g, si); g._hp = FP.H;
+      g.spr = FP.T.map(p => { const L = pool[(p.r * 2 + p.c * 3) % pool.length], q = mkSprite(g, si, p.x, p.y, null, L.kit, ART_TROOP_VARIANTS, L.v); q.rank = p.r; return q; });
       if (onWall) { g.onWall = true; g.spr.forEach(q => q.lift = WALL_LIFT); }
       if (A.mode === 'army' && g.type === 'gun' && g.tateCov > 0 && !onWall && g.spr.length) { const ys = g.spr.map(q => q.y), lo = Math.min(...ys), hi = Math.max(...ys), k = Math.max(1, Math.round(g.tateCov * rows)), xs = g.spr.map(q => q.x), fx = face > 0 ? Math.max(...xs) : Math.min(...xs);
         for (let i = 0; i < k; i++) BT.props.push({ k: 'pavise', si, g, tate: 1, x: fx + face * 6, y: (k === 1 ? (lo + hi) / 2 : lo + i * (hi - lo) / (k - 1)) + 2 }); }
       g.heroes = heroSlots(g, face, mid, fh); fieldWorks(g, si, front, face, mid); if (onWall) g.heroes.forEach(q => { q.lift = WALL_LIFT; q.hdx = Math.min(q.hdx, 4); q.x = q.sx = front + face * q.hdx; });
       g.heroes.forEach(hr => mkGuards(g, si, hr));
-      front -= face * ((cols - 1) * colStep + (onWall ? 24 : (g.type === 'cav' ? 46 : 38) + cols * 3)); // bigger blocks, wider lanes between them
+      front -= face * ((cols - 1) * colStep + (onWall ? 24 : lane(g, cols) * fit.sq)); // bigger blocks, wider lanes between them
     });
     // strategy: one planted nobori per level at the rear of the army, a curtained camp at level 3+
-    if (A.strat > 0) { const rear = front + face * 10, n = Math.min(5, A.strat), span = BT.rowStep * (BT.rows - 1);
+    if (A.strat > 0) { const rear = front + face * 10, n = Math.min(5, A.strat), span = BT.band ? BT.band.span * .8 : BT.rowStep * (BT.rows - 1);
       for (let k = 0; k < n; k++) BT.props.push({ k: 'nobori', si, x: rear - face * (k % 2) * 6, y: mid - span / 2 + (n === 1 ? span / 2 : k * span / (n - 1)) + 4 });
       if (A.strat >= 3) BT.props.push({ k: 'maku', si, x: rear - face * 16, y: mid - span / 2 - 2 }); }
     // the Honjin: commanders posted at the command camp stand before the curtain, out of the fighting
@@ -10628,7 +10699,7 @@ function mkGuards(g, si, hr, count) {
   const dist = g.kitDist || {}, best = cat => (dist[cat] && dist[cat][0] && dist[cat][0][0]) || (cat === 'w' ? KIT.w[g.type][0] : cat === 'a' ? 'lamellar' : 'kabuto');
   for (let k = 0; k < n; k++) { const F = live && live[k], R = F && F.gear; // a player's retainers wear exactly what you gave them
     const s = mkSprite(g, si, hr.x, hr.y, null, R ? { w: R.w || KIT.w[g.type][0], a: R.a || null, h: R.h || null, horo: HORO_COL[(hr.hero.id || '').length % 2] } : { w: best('w'), a: best('a'), h: 'kabuto', horo: HORO_COL[si === 0 ? (hr.hero.id || '').length % 2 : 1] }, ART_RET_VARIANTS); // retainers: a wider spread of faces than the rank and file
-    s.guardOf = hr; s.retRef = F || null; s.gx = sideDir(si) * [-5, -5, -14, -14][k]; s.gy = [-10, 10, -5, 5][k]; s.x = hr.x + s.gx; s.y = hr.y + s.gy; hr.guards.push(s); }
+    s.guardOf = hr; s.retRef = F || null; s.gx = sideDir(si) * [6, 6, 12, 12][k]; s.gy = [-6, 6, -3, 3][k]; s.x = hr.x + s.gx; s.y = hr.y + s.gy; hr.guards.push(s); }
 }
 // a commander's beast companion (boar, hound, bear, hawk…) fights at their side: it trails them, lunges as they strike
 function mkPet(g, si, hr, kind) {
@@ -10679,13 +10750,13 @@ function heroSlots(g, face, mid, fh) {
   const cs = (g.cmds || []).filter(c => c.look && c.post !== 'hq'), n = cs.length; if (!n) return [];
   if (g._hp && g._hp.length === n) return cs.map((c, i) => { const P = g._hp[i], dx = face * (P.x - g.front), dy = P.y - mid;
     const s = mkSprite(g, sideOf(g), P.x, P.y, c.look); s.hero = c; s.hdx = dx; s.hdy = dy; if (c.pet) mkPet(g, sideOf(g), s, c.pet); return s; });
-  const cols = n > 4 ? 2 : 1, rows = Math.ceil(n / cols), step = Math.min(BT.rowStep * 1.25, (fh - 12) / Math.max(1, rows));
+  const cols = n > 4 ? 2 : 1, rows = Math.ceil(n / cols), step = Math.min((g.rowStep || BT.rowStep) * 1.25, (fh - 12) / Math.max(1, rows));
   return cs.map((c, i) => { const col = i % cols, r = (i / cols) | 0;
     const dx = 5 - col * 12, dy = (r - (rows - 1) / 2) * step + 8 + (col ? step * .5 : 0); // captains lead from the front file, not a stride into no-man's-land
     const s = mkSprite(g, sideOf(g), g.front + face * dx, mid + dy, c.look); s.hero = c; s.hdx = dx; s.hdy = dy; if (c.pet) mkPet(g, sideOf(g), s, c.pet); return s; });
 }
-function mkSprite(g, si, x, y, look, kit, nv = ART_TROOP_VARIANTS) {
-  const artVariant=look||g.solo&&g.solo.beast?0:(Math.random()*nv)|0; // faces/builds per rank-and-file set: more variety costs canvas memory
+function mkSprite(g, si, x, y, look, kit, nv = ART_TROOP_VARIANTS, variant = null) {
+  const artVariant=look||g.solo&&g.solo.beast?0:variant!=null?variant%nv:(Math.random()*nv)|0; // faces/builds per rank-and-file set: more variety costs canvas memory
   const sprs = g.solo && g.solo.beast && !look ? beastSet(g.solo.beast, si) : soldierSprites(g.type, si, look || null, artVariant, look ? null : kit);
   return { artVariant, artKit:kit?Object.assign({},kit):null, si, x, y, sx: x, sy: y, tx: x, ty: y, spd: 40, state: 'idle', face: sideDir(si), alive: true, die: 0, ph: Math.random() * 6, look, sprs, q: [], fightUntil: 0, hurtUntil: 0, aimFrom: 0, aimUntil: 0, fireAt: 0, flash: 0, jab: 0, hop: 0, cheer: 0, runAt: -9, stopAt: -9, fightAt: 0, poseUntil: 0, kd: 0, wk: kit && kit.w || null };
 }
@@ -11752,7 +11823,7 @@ function lineClash(h, P, S, planned, ev, p) {
   victims.forEach((v, k) => { const td = lerp(t0 + .25, t1 - .15, victims.length > 1 ? k / (victims.length - 1) : .3) + rnd(-.05, .05); planned.set(v, td);
     const e = { t: td, k: 'die', s: v, h, cred: h.kills / Math.max(1, victims.length) }; S.ev.push(e); vEvs.push(e);
     const vx = v._ax ?? v.x, vy = v._ay ?? v.y;
-    const nx = T.spr.filter(q => q.alive && q !== v && !victims.includes(q) && !stepped.has(q) && Math.abs((q._ay ?? q.y) - vy) < BT.rowStep * .55 && tface * (vx - (q._ax ?? q.x)) > 2)
+    const nx = T.spr.filter(q => q.alive && q !== v && !victims.includes(q) && !stepped.has(q) && Math.abs((q._ay ?? q.y) - vy) < (T.rowStep || BT.rowStep) * .55 && tface * (vx - (q._ax ?? q.x)) > 2)
       .sort((a, b) => tface * ((b._ax ?? b.x) - (a._ax ?? a.x)))[0];
     if (nx) { stepped.add(nx); queueMove(nx, td + .15, vx, vy, 40, t1); nx._ax = vx; } });
   return { pairs, t0, t1, vEvs };
@@ -12082,7 +12153,7 @@ function camTarget() {
 /* ---------- render ---------- */
 const _white = new WeakMap();
 function whiteOf(img) { let w = _white.get(img); if (w) return w; w = gameCanvas(); w.width = img.width; w.height = img.height; const c = w.getContext('2d'); artDraw(c, img, 0, 0); c.globalCompositeOperation = 'source-in'; c.fillStyle = '#fff'; c.fillRect(0, 0, w.width, w.height); _white.set(img, w); return w; }
-function spriteScale() { return BT.A[0].mode === 'skirmish' && BT.fy1 - BT.fy0 >= 120 ? 2 : 1; }
+function spriteScale() { return BT.A[0].mode === 'skirmish' ? ((BT.fy1Base || BT.fy1) - BT.fy0 >= 120 ? 2 : 1) : BT.armySc || 1; }
 const _draws = [];
 function drawBattle() {
   if (!BT) return;

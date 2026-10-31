@@ -1,0 +1,240 @@
+{
+  "setting": {
+    "default": "dense",
+    "options": [
+      "Standard 25",
+      "Dense 36",
+      "Epic 48"
+    ],
+    "storedPerDevice": true
+  },
+  "desktop": {
+    "standard": {
+      "per": 80,
+      "scale": 0.91,
+      "band": [
+        64,
+        199
+      ],
+      "soldiers": {
+        "inf": 25,
+        "arc": 13,
+        "gun": 15,
+        "cav": 10
+      },
+      "fill": {
+        "inf": "88%",
+        "arc": "85%",
+        "gun": "88%",
+        "cav": "88%"
+      },
+      "spriteSets": 35,
+      "startMs": 2981,
+      "frameMs": 5.37
+    },
+    "dense": {
+      "per": 56,
+      "scale": 0.91,
+      "band": [
+        64,
+        199
+      ],
+      "soldiers": {
+        "inf": 36,
+        "arc": 18,
+        "gun": 22,
+        "cav": 15
+      },
+      "fill": {
+        "inf": "88%",
+        "arc": "88%",
+        "gun": "88%",
+        "cav": "88%"
+      },
+      "spriteSets": 37,
+      "startMs": 3766,
+      "frameMs": 4.6
+    },
+    "epic": {
+      "per": 42,
+      "scale": 0.91,
+      "band": [
+        64,
+        199
+      ],
+      "soldiers": {
+        "inf": 48,
+        "arc": 24,
+        "gun": 29,
+        "cav": 20
+      },
+      "fill": {
+        "inf": "88%",
+        "arc": "88%",
+        "gun": "88%",
+        "cav": "88%"
+      },
+      "spriteSets": 35,
+      "startMs": 2588,
+      "frameMs": 4.65
+    }
+  },
+  "deterministic": true,
+  "casualties": {
+    "troops": [
+      2000,
+      1000
+    ],
+    "soldiers": [
+      48,
+      24,
+      24
+    ],
+    "rowsKept": true
+  },
+  "combat": {
+    "result": "win",
+    "rounds": 1,
+    "hits": 4,
+    "killsTotal": "36.8367",
+    "soldiersDrawn": {
+      "standard": 62,
+      "dense": 87,
+      "epic": 116
+    },
+    "identical": true
+  },
+  "mixes": {
+    "infantry only": {
+      "soldiers": {
+        "inf": 48
+      },
+      "biggestFill": "88%",
+      "armyWidth": 58,
+      "fit": {
+        "tight": 1,
+        "sq": 1
+      }
+    },
+    "gun line": {
+      "soldiers": {
+        "inf": 10,
+        "gun": 48
+      },
+      "biggestFill": "88%",
+      "armyWidth": 127,
+      "fit": {
+        "tight": 1,
+        "sq": 1
+      }
+    },
+    "horse army": {
+      "soldiers": {
+        "inf": 12,
+        "cav": 48
+      },
+      "biggestFill": "88%",
+      "armyWidth": 240,
+      "fit": {
+        "tight": 1,
+        "sq": 1
+      }
+    },
+    "balanced": {
+      "soldiers": {
+        "inf": 47,
+        "arc": 47,
+        "gun": 47,
+        "cav": 47
+      },
+      "biggestFill": "88%",
+      "armyWidth": 322,
+      "fit": {
+        "tight": 0.8,
+        "sq": 0.8281623404797487
+      }
+    },
+    "siege": {
+      "attackers": {
+        "inf": 48,
+        "arc": 24,
+        "gun": 29,
+        "cav": 20
+      },
+      "defenders": {
+        "inf": 16,
+        "arc": 16,
+        "gun": 3,
+        "cav": 16
+      },
+      "wallGunners": 3,
+      "result": "lose"
+    }
+  },
+  "devices": {
+    "390x844": {
+      "scale": 1.25,
+      "band": [
+        130,
+        412
+      ],
+      "infFill": "88%",
+      "frameMs": 4.08
+    },
+    "844x390": {
+      "scale": 0.85,
+      "band": [
+        68,
+        184
+      ],
+      "infFill": "88%",
+      "frameMs": 10.24
+    },
+    "768x1024": {
+      "scale": 1.04,
+      "band": [
+        94,
+        248
+      ],
+      "infFill": "88%",
+      "frameMs": 2.85
+    },
+    "1024x768": {
+      "scale": 1.13,
+      "band": [
+        75,
+        242
+      ],
+      "infFill": "88%",
+      "frameMs": 7.15
+    }
+  },
+  "resize": {
+    "toPortrait": {
+      "band": [
+        130,
+        412
+      ],
+      "infFill": "88%",
+      "infRows": 13
+    },
+    "toLandscapePhone": {
+      "band": [
+        68,
+        184
+      ],
+      "infFill": "88%",
+      "infRows": 13
+    },
+    "backToDesktop": {
+      "band": [
+        64,
+        199
+      ],
+      "infFill": "88%",
+      "infRows": 13
+    },
+    "midBattle": "win"
+  },
+  "errors": []
+}
