@@ -624,7 +624,8 @@ function sell(a,b){
 function economyFull(b){const B=BUILDINGS[b.id];return B.makes?((b.pile||0)>=PILE_CAP||(b.buffer||0)>0):B.craft?outTotal(b)>=OUT_CAP:false;}
 function assignJobs(){
  const inds=G.buildings.filter(b=>(BUILDINGS[b.id].cat==='ind'||BUILDINGS[b.id].craft)&&BUILDINGS[b.id].slots),load={};
- for(const v of G.villagers){if(v.role!=='work'){v.job=-1;continue;}if(v.job>=0&&inds.find(b=>b.uid===v.job&&entranceOf(b)))load[v.job]=(load[v.job]||0)+1;else v.job=-1;}
+ for(const v of G.villagers){if(v.role!=='work'){v.job=-1;continue;}const job=v.job>=0&&inds.find(b=>b.uid===v.job);
+  if(job&&(job.moveJobHold||entranceOf(job))){load[v.job]=(load[v.job]||0)+1;if(job.moveJobHold&&entranceOf(job))delete job.moveJobHold;}else v.job=-1;}
  for(const v of G.villagers)if(v.role==='work'&&v.job<0){
   const free=inds.filter(b=>b.id!=='porter'&&(load[b.uid]||0)<BUILDINGS[b.id].slots&&entranceOf(b));
   if(!free.length)continue;free.sort((a,b)=>(load[a.uid]||0)-(load[b.uid]||0)||a.uid-b.uid);v.job=free[0].uid;load[v.job]=(load[v.job]||0)+1;}

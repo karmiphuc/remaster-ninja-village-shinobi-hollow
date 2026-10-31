@@ -6377,7 +6377,7 @@ const WEEK_SEC = 9; // a week of village life, in seconds (was 6: the game runs 
 const SEASONS = ['Spring', 'Spring', 'Spring', 'Summer', 'Summer', 'Summer', 'Autumn', 'Autumn', 'Autumn', 'Winter', 'Winter', 'Winter'];
 const SAVE_KEY = 'shinobi-hollow-v1';
 let G = null;           // saved game state
-const RT = { agents: [], floaters: [], particles: [], groundDirty: true, ground: null, t: 0, sel: null, mode: 'normal', ghost: null, buildId: null, waterTiles: [], spawnAcc: 0, lastWeekSpawns: 0, monthSales: 0, monthTrav: 0, uidAgent: 1 };
+const RT = { agents: [], floaters: [], particles: [], groundDirty: true, ground: null, t: 0, sel: null, mode: 'normal', ghost: null, buildId: null, moveUid: null, waterTiles: [], spawnAcc: 0, lastWeekSpawns: 0, monthSales: 0, monthTrav: 0, uidAgent: 1 };
 
 function vById(id) { return G.villagers.find(v => v.id === id); }
 function vBase(id){return VILLAGER_POOL.find(v=>v.id===id)||RECRUITS.find(v=>v.id===id)||G?.rebelWorkers?.[id];}
@@ -6497,7 +6497,7 @@ function migrateMap() {
   setTimeout(() => announce('里 · The valley widens', `Surveyors have mapped far more of the valley. Every plot is larger now, and three new tracts — <b>Bamboo Hills</b>, <b>Lakeside</b> and the <b>Plum Orchard</b> — can be bought outright: tap the sealed land.`, 'deed'), 600);
 }
 function nearLake(b, r) { const B = BUILDINGS[b.id], [lx, ly, lw, lh] = LAND.lake; for (let y = b.y - r; y < b.y + B.h + r; y++) for (let x = b.x - r; x < b.x + B.w + r; x++) { if (x < lx || y < ly || x >= lx + lw || y >= ly + lh || !inMap(x, y)) continue; if (G.tiles[idx(x, y)] === 'water') return true; } return false; }
-function resetRT() { invalidateRoadTraffic(); RT.eco=null; RT.agents = []; RT.groundDirty = true; RT.sel = null; RT.selVillager = null; RT.monthSales = 0; RT.monthTrav = 0; RT.spawnAcc = 0; RT.ghost = null; RT.mode = 'normal'; RT.buildId = null; RT.floaters = []; RT.particles = []; if (typeof setMode === 'function' && document.getElementById('placebar')) setMode('normal'); }
+function resetRT() { invalidateRoadTraffic(); RT.eco=null; RT.agents = []; RT.groundDirty = true; RT.sel = null; RT.selVillager = null; RT.monthSales = 0; RT.monthTrav = 0; RT.spawnAcc = 0; RT.ghost = null; RT.mode = 'normal'; RT.buildId = null; RT.moveUid = null; RT.floaters = []; RT.particles = []; if (typeof setMode === 'function' && document.getElementById('placebar')) setMode('normal'); }
 const EQ_SLOTS = ['weapon', 'armor', 'head', 'special', 'special2', 'mount'];
 function slotAccepts(slot, k) { const s = ITEMS[k] && ITEMS[k].slot; return slot === 'special2' ? s === 'special' : s === slot; }
 // older saves: add the new slots, move animals out of Special into Mount, drop unknown items
@@ -6652,14 +6652,14 @@ function wideStreetFrontage(b) {
 }
 
 /* ---------- Buildings ---------- */
-function canPlace(id, x, y) {
-  const B = BUILDINGS[id]; if(B.cat==='road')return roadBrushPlan(x,y,id).why; if (B.one && G.buildings.some(b => b.id === id)) return 'Only one allowed';
+function canPlace(id, x, y, moving = null) {
+  const B = BUILDINGS[id]; if(B.cat==='road')return roadBrushPlan(x,y,id).why; if (B.one && G.buildings.some(b => b.id === id && b !== moving)) return 'Only one allowed';
   for (let j = 0; j < B.h; j++) for (let i = 0; i < B.w; i++) {
     const tx = x + i, ty = y + j; if (!inMap(tx, ty) || !tileOpen(tx, ty)) return 'Locked land';
     const t = G.tiles[idx(tx, ty)];
     if (B.needOre ? t !== 'ore' : (t !== 'grass' && !(t === 'ore' && B.cat !== 'ind'))) return B.needOre ? 'Needs ore ground (Iron Ridge)' : 'Blocked';
     if (G.roads[idx(tx, ty)] && B.cat !== 'road') return 'Road in the way';
-    if (G.bmap[idx(tx, ty)] >= 0) { const o = bByUid(G.bmap[idx(tx, ty)]); if (!(o && BUILDINGS[o.id].tree && !B.tree && B.cat !== 'env')) return 'Occupied'; }
+    if (G.bmap[idx(tx, ty)] >= 0 && G.bmap[idx(tx, ty)] !== moving?.uid) { const o = bByUid(G.bmap[idx(tx, ty)]); if (!(o && BUILDINGS[o.id].tree && !B.tree && B.cat !== 'env')) return 'Occupied'; }
   }
   return null;
 }
@@ -6678,6 +6678,40 @@ function place(id, x, y, free) {
   return b;
 }
 function bByUid(uid) { return G.buildings.find(b => b.uid === uid); }
+
+function buildingMoveBlock(b) {
+  if(!b||bByUid(b.uid)!==b)return 'Building no longer exists.';
+  const B=BUILDINGS[b.id];if(B.cat==='road'||b.id==='stall')return 'The travelling merchant and roads cannot be moved.';
+  for(let j=0;j<B.h;j++)for(let i=0;i<B.w;i++)if(!tileOpen(b.x+i,b.y+j))return 'Unlock this land first.';
+  return null;
+}
+function moveBuilding(b,x,y) {
+  G.speed=0;
+  if(buildingMoveBlock(b)||!Number.isInteger(x)||!Number.isInteger(y)||canPlace(b.id,x,y,b))return false;
+  if(b.x===x&&b.y===y)return true;
+  const B=BUILDINGS[b.id],oldX=b.x,oldY=b.y,dx=(x-oldX)*16,dy=(y-oldY)*16;
+  // Commit only after validation. Keep the same object/UID and all its contents.
+  for(let j=0;j<B.h;j++)for(let i=0;i<B.w;i++)if(G.bmap[idx(oldX+i,oldY+j)]===b.uid)G.bmap[idx(oldX+i,oldY+j)]=-1;
+  clearTrees(b.id,x,y);b.x=x;b.y=y;
+  for(let j=0;j<B.h;j++)for(let i=0;i<B.w;i++)G.bmap[idx(x+i,y+j)]=b.uid;
+  invalidateRoadTraffic();const edge=entranceOf(b);
+  if(B.slots&&!edge)b.moveJobHold=1;else delete b.moveJobHold;
+  for(const a of RT.agents){
+    const inside=a.x>=oldX*16&&a.x<(oldX+B.w)*16&&a.y>=oldY*16&&a.y<(oldY+B.h)*16;
+    // Occupants move with their building; road users keep their real position.
+    if(a.target!==b.uid||a.state==='walk')continue;
+    if(!(a.state==='work'||a.state==='inside'&&a.hidden||inside)){a.target=-1;a.entryTile=null;continue;}
+    a.x+=dx;a.y+=dy;if(a.px!=null){a.px+=dx;a.py+=dy;}
+    a.entryTile=edge||null;a.path.length=0;a.moving=false;a.pathRevision=ROAD_TRAFFIC.revision;
+    if(a.state==='inside'&&edge)agentAtTile(a,edge[0],edge[1]);
+  }
+  // Walking claims reroute on the existing revision check. Do not reassign jobs/homes.
+  RT.groundDirty=true;RT._aw=null;refreshBoosts();updateHUD();return true;
+}
+function movingBuildingSprite(b) {
+  const B=BUILDINGS[b.id],v=b.id==='dojo'?dojoTrainingVariant(b):B.forgeType?(forgeFocus(b)==='armor'?4:0):b.id==='paddy'||b.id==='veggie'||b.id==='teafield'?b.var:B.tree?(hash2(b.x,b.y)*3)|0:0;
+  return b.id==='workshop'?workshopProductSprite(workshopBannerRecipe(b)):buildingSprite(b.id,v,bLv(b));
+}
 
 function roadEntranceTiles(b) { // cached road edges, retaining the original below-first order
   const C=roadTrafficTopology(),cached=C.entrances.get(b);
@@ -7194,7 +7228,7 @@ function dateStr() { return `Y${G.year} ${SEASONS[G.month - 1]} M${G.month}·W${
 function updateVillage(rdt) {
   const dt = rdt * G.speed;
   RT.t += rdt;
-  if (G.speed > 0 && !RT.paused && !sheetPauses()) {
+  if (G.speed > 0 && RT.mode !== 'move' && !RT.paused && !sheetPauses()) {
     G.wt += dt / WEEK_SEC; if (G.march && G.march.left > 0) G.march.left -= dt / WEEK_SEC; // the army marches by the hour, not by the week
     const rate = visitorRate(); // travellers per week by appeal, until the month's cap is spent
     RT.spawnAcc += rate * dt / WEEK_SEC * rnd(.4, 1.6); // arrivals come in bunches, not on a metronome
@@ -7300,8 +7334,8 @@ function drawVillage() {
     }
   }
   // ghost
-  if (RT.ghost && RT.buildId) { const B = BUILDINGS[RT.buildId], g = RT.ghost; const ok = !canPlace(RT.buildId, g.x, g.y) && G.gold >= B.cost;
-    if (B.cat !== 'road') { const sp = buildingSprite(RT.buildId, 0); ctx.globalAlpha = 0.75; artDraw(ctx, sp.cv, g.x * 16 + sp.ox, g.y * 16 + sp.oy); ctx.globalAlpha = 1; }
+  if (RT.ghost && RT.buildId) { const B = BUILDINGS[RT.buildId], g = RT.ghost, moving=RT.mode==='move'?bByUid(RT.moveUid):null; const ok = !canPlace(RT.buildId, g.x, g.y, moving) && (moving||G.gold >= B.cost);
+    if (B.cat !== 'road') { const sp = moving?movingBuildingSprite(moving):buildingSprite(RT.buildId, 0); ctx.globalAlpha = 0.75; artDraw(ctx, sp.cv, g.x * 16 + sp.ox, g.y * 16 + sp.oy); ctx.globalAlpha = 1; }
     ctx.fillStyle = ok ? 'rgba(120,220,120,0.35)' : 'rgba(230,70,60,0.4)'; ctx.fillRect(g.x * 16, g.y * 16, B.w * 16, B.h * 16);
     ctx.strokeStyle = ok ? '#9fe09f' : '#ff7a6a'; ctx.strokeRect(g.x * 16 + .5, g.y * 16 + .5, B.w * 16 - 1, B.h * 16 - 1); }
   if(RT.mode==='road'||RT.mode==='demolish'){const t=RT.hoverTile;if(t){const plan=RT.mode==='road'?roadBrushPlan(t[0],t[1]):null,b=plan?plan.box:roadEraseBox(t[0],t[1])||{x:t[0],y:t[1],w:1,h:1};if(b){ctx.strokeStyle=RT.mode==='road'&&!plan.why?'#f2d27a':'#ff7a6a';ctx.strokeRect(b.x*16+.5,b.y*16+.5,b.w*16-1,b.h*16-1);}}}
@@ -7360,6 +7394,13 @@ function bindVillageInput() {
 
 function villageTap(sx, sy) {
   const [wx, wy] = screenToWorld(sx, sy); const tx = Math.floor(wx / 16), ty = Math.floor(wy / 16);
+  if(RT.mode==='move'){
+    const b=bByUid(RT.moveUid);
+    if(!b){const uid=inMap(tx,ty)?G.bmap[idx(tx,ty)]:-1,selected=bByUid(uid);if(selected)startMove(selected);else toast('Tap a building to move.');return;}
+    const B=BUILDINGS[b.id],gx=clamp(tx-Math.floor((B.w-1)/2),0,MAP_W-B.w),gy=clamp(ty-Math.floor((B.h-1)/2),0,MAP_H-B.h);
+    if(RT.ghost&&RT.ghost.x===gx&&RT.ghost.y===gy){confirmMove();return;}
+    RT.ghost={x:gx,y:gy};Sound.play('tap');updatePlaceBar();return;
+  }
   if (RT.mode === 'place') { const B = BUILDINGS[RT.buildId]; const gx = clamp(tx - Math.floor((B.w - 1) / 2), 0, MAP_W - B.w), gy = clamp(ty - Math.floor((B.h - 1) / 2), 0, MAP_H - B.h);
     if (RT.ghost && RT.ghost.x === gx && RT.ghost.y === gy) { confirmPlace(); return; } RT.ghost = { x: gx, y: gy }; Sound.play('tap'); updatePlaceBar(); return; }
   if (RT.mode === 'demolish') { const uid = inMap(tx, ty) ? G.bmap[idx(tx, ty)] : -1;
@@ -7480,7 +7521,7 @@ function initUI() {
   $('#hud-snd').onclick = () => { Sound.init(); const on = !(Sound.musicOn || Sound.sfxOn) || Sound.state !== 'running'; Sound.setMusic(on); Sound.setSfx(on); try { localStorage.setItem('sh-mus', on ? '1' : '0'); localStorage.setItem('sh-sfx', on ? '1' : '0'); } catch (e) { } if (on) setTimeout(() => Sound.play('coin'), 60); updateHUD(); };
   $('#sh-x').onclick = () => { Sound.play('tap'); closeSheet(); };
   $('#pb-no').onclick = () => { Sound.play('tap'); exitMode(); };
-  $('#pb-ok').onclick = () => { if (RT.mode === 'place') confirmPlace(); else if (RT.mode === 'demolish' && RT.sel) doDemolish(RT.sel); else exitMode(); };
+  $('#pb-ok').onclick = () => { if (RT.mode === 'place') confirmPlace(); else if(RT.mode==='move')confirmMove(); else if (RT.mode === 'demolish' && RT.sel) doDemolish(RT.sel); else exitMode(); };
 }
 function updateHUD() {
   if (!G) return;
@@ -7490,7 +7531,7 @@ function updateHUD() {
   const r = rankOf(G.popularity || 0);
   $('#hud-pop').innerHTML = `Appeal ${G.popularity || 0}`; $('#hud-rank').textContent = '★'.repeat(r + 1) + '☆'.repeat(5 - r);
   $('#hud-folk').textContent = `${G.villagers.length}/${housingCap()} folk`;
-  $$('.hud-speed button[data-sp]').forEach(b => b.classList.toggle('on', +b.dataset.sp === G.speed));
+  $$('.hud-speed button[data-sp]').forEach(b => {b.classList.toggle('on', +b.dataset.sp === G.speed);b.disabled=RT.mode==='move'&&+b.dataset.sp>0;});
   const snd = $('#hud-snd'), live = Sound.state === 'running' && (Sound.musicOn || Sound.sfxOn); snd.textContent = live ? '♪' : '✕♪'; snd.classList.toggle('mute', !live); snd.title = live ? 'Sound on' : 'Sound off — tap to turn on';
   const res = Object.keys(GOODS).filter(g => G.stock[g] > 0 || anyMakes(g)).map(g => `<span class="chip${G.stock[g] < 3 ? ' low' : ''}">${icon('g_' + g)}${fmt(Math.floor(G.stock[g] || 0))}</span>`).join('') + Object.keys(WARES).filter(w => (G.wares || {})[w] > 0).map(w => `<span class="chip ware" title="${WARES[w].name}">${icon('w_' + w)}${fmt(G.wares[w])}</span>`).join('');
   const troops = Object.values(G.troops).reduce((a, b) => a + b, 0);
@@ -7936,7 +7977,8 @@ function renderBuild(body, tab) {
   });
   body.appendChild(grid);
   body.appendChild(h(`<p class="note tl">${ib(tab === 'road' ? 'Choose single tiles for precise paths or a discounted 2×2 section for wider streets. Tap to place or drag to extend; overlaps charge only changed tiles. Every shop, field and home must touch a road.' : tab === 'env' ? 'Scenery raises nearby shop sales and field output, and draws more travellers.' : tab === 'shop' ? 'Shops turn goods into gold when travellers visit. Keep the matching fields stocked.' : tab === 'train' ? 'Commanders train at Dojos. Formation workshops forge better troop gear: choose Weapons or Armor & helmets in each building. Connect them to a road; duplicates add +100% quantity and quality. Extra output and quality use more gold and recipe materials.' : tab === 'ind' ? 'Each field needs a worker. Assign villagers as Workers in the Villagers panel.' : 'Homes raise how many villagers can live here. New allies only move in if a bed is free.', { road: 'Roads', env: 'Scenery', shop: 'Shops', ind: 'Fields', home: 'Homes', train: 'Training' }[tab] || '')}</p>`));
-  const demo = h(`<div class="row" style="margin-top:6px"><button class="btn">${icon('demolish')} Demolish tool</button></div>`); demo.firstElementChild.onclick = () => { closeSheet(); setMode('demolish'); }; body.appendChild(demo);
+  const demo = h(`<div class="row wrap" style="margin-top:6px"><button class="btn" data-move-tool>↔ Move</button><button class="btn" data-demolish-tool>${icon('demolish')} Demolish tool</button></div>`);
+  demo.querySelector('[data-move-tool]').onclick=()=>startMove();demo.querySelector('[data-demolish-tool]').onclick=()=>{closeSheet();setMode('demolish');};body.appendChild(demo);
 }
 function startBuild(id) {
   closeSheet(); RT.buildId = id;
@@ -7946,11 +7988,26 @@ function startBuild(id) {
   const B = BUILDINGS[id]; const [wx, wy] = screenToWorld(VIEW.w / 2, VIEW.h / 2); RT.ghost = { x: clamp(Math.floor(wx / 16) - (B.w >> 1), 0, MAP_W - B.w), y: clamp(Math.floor(wy / 16) - (B.h >> 1), 0, MAP_H - B.h) };
   updatePlaceBar();
 }
-function setMode(m) { RT.mode = m; $('#placebar').hidden = m === 'normal'; $('#dock').style.visibility = m === 'normal' ? '' : 'hidden'; updatePlaceBar(); }
-function exitMode() { RT.mode = 'normal'; RT.ghost = null; RT.buildId = null; RT.sel = null; setMode('normal'); }
+function startMove(b=null) {
+  G.speed=0;updateHUD();
+  if(b){const why=buildingMoveBlock(b);if(why){toast(why);return false;}}
+  closeSheet();RT.moveUid=b?b.uid:null;RT.sel=b;RT.ghost=null;RT.buildId=b?b.id:null;setMode('move');Sound.play('tap');return true;
+}
+function confirmMove() {
+  G.speed=0;const b=bByUid(RT.moveUid),g=RT.ghost;if(!b||!g)return false;
+  const why=buildingMoveBlock(b)||canPlace(b.id,g.x,g.y,b);if(why){toast(why);Sound.play('alert');updatePlaceBar();return false;}
+  if(!moveBuilding(b,g.x,g.y))return false;
+  exitMode();RT.sel=b;Sound.play('tap');
+  toast(BUILDINGS[b.id].cat!=='env'&&!entranceOf(b)?'Moved · connect it to a road.':'Moved · press Play when ready.');return true;
+}
+function setMode(m) { RT.mode = m; $('#placebar').hidden = m === 'normal'; $('#dock').style.visibility = m === 'normal' ? '' : 'hidden'; updatePlaceBar();if(G)updateHUD(); }
+function exitMode() { if(RT.mode==='move')G.speed=0;RT.mode = 'normal'; RT.ghost = null; RT.buildId = null; RT.moveUid = null; RT.sel = null; setMode('normal'); }
 function updatePlaceBar() {
   const t = $('#pb-t'), ok = $('#pb-ok');
-  if (RT.mode === 'place') { const B = BUILDINGS[RT.buildId]; const why = RT.ghost ? canPlace(RT.buildId, RT.ghost.x, RT.ghost.y) : 'Tap a spot'; const poor = G.gold < B.cost;
+  if(RT.mode==='move'){const b=bByUid(RT.moveUid),g=RT.ghost,why=b&&g?canPlace(b.id,g.x,g.y,b):null;
+    t.innerHTML=`<b>Paused · ${b?'Move '+esc(bName(b)):'Move buildings'}</b><br>${!b?'Tap a building.':!g?'Tap a new spot · no cost.':why?esc(why):'Tap Move, or tap the spot again.'}`;
+    ok.textContent='Move';ok.hidden=!b;ok.disabled=!b||!g||!!why;$('#pb-no').textContent='Cancel';
+  }else if (RT.mode === 'place') { const B = BUILDINGS[RT.buildId]; const why = RT.ghost ? canPlace(RT.buildId, RT.ghost.x, RT.ghost.y) : 'Tap a spot'; const poor = G.gold < B.cost;
     t.innerHTML = `<b>${esc(B.name)}</b> · ${fmt(B.cost)}G<br>${why ? esc(why) : poor ? 'Not enough gold' : 'Tap Build, or tap the spot again.'}`; ok.textContent = 'Build'; ok.disabled = !!why || poor; ok.hidden = false; $('#pb-no').textContent = 'Done'; }
   else if (RT.mode === 'road') { const B = BUILDINGS[RT.buildId]; t.innerHTML = `<b>${esc(B.name)}</b> · ${B.w}×${B.h} · ${B.cost}G per ${B.w===1?'tile':'full section'}<br>${B.w===1?'Tap one tile or drag to extend.':'Tap a section or drag to extend · overlaps charge only changed tiles.'}`; ok.hidden = true; $('#pb-no').textContent = 'Done'; }
   else if (RT.mode === 'demolish') { const b = RT.sel; t.innerHTML = b ? `Remove <b>${esc(BUILDINGS[b.id].name)}</b>? Refund ${fmt(BUILDINGS[b.id].cost / 2)}G` : 'Tap a building or road to remove it.'; ok.textContent = 'Remove'; ok.hidden = !b; ok.disabled = false; ok.className = 'btn red'; $('#pb-no').textContent = 'Done'; return; }
@@ -8002,8 +8059,11 @@ function openBuildingInfo(b) {
     if (HOME_LV[b.id] || B.cat === 'shop') body.appendChild(renoPanel(b));
     if (B.cap) { const rs = G.villagers.filter(v => v.home === b.uid); body.appendChild(h(`<div class="sec">Residents ${rs.length}/${B.cap}</div>`)); const l = h('<div class="vlist"></div>'); rs.forEach(v => l.appendChild(vCard(v))); body.appendChild(l); }
     if (B.cat === 'env') body.appendChild(h(`<p class="note">+${Math.round(B.boost * 100)}% within ${B.radius} tiles · appeal +${B.appeal} ${ib('Boosts nearby shops, fields and workshops, and helps neighbours rest faster.')}</p>`));
-    if (b.id !== 'hall' && tileOpen(b.x, b.y)) { const r = h(`<div class="row" style="margin-top:10px"><span class="sp"></span><button class="btn red">${icon('demolish')} Remove (+${fmt(B.cost / 2)}G)</button></div>`); r.lastElementChild.onclick = () => { doDemolish(b); closeSheet(); }; body.appendChild(r); }
-    else { body.appendChild(h(`<p class="note">Treasury: <b>${fmt(G.gold)}G</b>. Monthly troop upkeep: ${fmt(Math.ceil(Object.values(G.troops).reduce((a, c) => a + c, 0) * 0.35 * upkeepMul()))}G.</p>`)); }
+    const movable=!buildingMoveBlock(b),removable=b.id!=='hall'&&tileOpen(b.x,b.y);
+    if(movable||removable){const r=h(`<div class="row wrap" style="margin-top:10px"><span class="sp"></span>${movable?'<button class="btn" data-building-move>↔ Move</button>':''}${removable?`<button class="btn red" data-building-remove>${icon('demolish')} Remove (+${fmt(B.cost/2)}G)</button>`:''}</div>`);
+      if(movable)r.querySelector('[data-building-move]').onclick=()=>startMove(b);
+      if(removable)r.querySelector('[data-building-remove]').onclick=()=>{doDemolish(b);closeSheet();};body.appendChild(r);}
+    if(!removable)body.appendChild(h(`<p class="note">Treasury: <b>${fmt(G.gold)}G</b>. Monthly troop upkeep: ${fmt(Math.ceil(Object.values(G.troops).reduce((a, c) => a + c, 0) * 0.35 * upkeepMul()))}G.</p>`));
   });
 }
 
@@ -12768,7 +12828,7 @@ function startMarch(p) {
   Sound.play('horn'); toast(`⚔ The army marches on <b>${esc(p.name)}</b> · ${daysStr(w)}`); updateHUD(); return true;
 }
 function marchCheck() { // called from the village loop: on arrival, the battle begins (once nothing else is on screen)
-  const M = G.march; if (!M || M.left > 0 || BT || MQ.length || MAPV.open || $('#sheet').classList.contains('open')) return;
+  const M = G.march; if (!M || M.left > 0 || G.speed<=0 || RT.mode==='move' || BT || MQ.length || MAPV.open || $('#sheet').classList.contains('open')) return;
   G.march = null; const P = siteById(M.id);
   if (!P || (G.prov[P.id] && G.prov[P.id].owner === 'kage')) { toast('The enemy has gone — the army returns.'); return; }
   startBattle(P.id);
@@ -13717,7 +13777,8 @@ function sell(a,b){
 function economyFull(b){const B=BUILDINGS[b.id];return B.makes?((b.pile||0)>=PILE_CAP||(b.buffer||0)>0):B.craft?outTotal(b)>=OUT_CAP:false;}
 function assignJobs(){
  const inds=G.buildings.filter(b=>(BUILDINGS[b.id].cat==='ind'||BUILDINGS[b.id].craft)&&BUILDINGS[b.id].slots),load={};
- for(const v of G.villagers){if(v.role!=='work'){v.job=-1;continue;}if(v.job>=0&&inds.find(b=>b.uid===v.job&&entranceOf(b)))load[v.job]=(load[v.job]||0)+1;else v.job=-1;}
+ for(const v of G.villagers){if(v.role!=='work'){v.job=-1;continue;}const job=v.job>=0&&inds.find(b=>b.uid===v.job);
+  if(job&&(job.moveJobHold||entranceOf(job))){load[v.job]=(load[v.job]||0)+1;if(job.moveJobHold&&entranceOf(job))delete job.moveJobHold;}else v.job=-1;}
  for(const v of G.villagers)if(v.role==='work'&&v.job<0){
   const free=inds.filter(b=>b.id!=='porter'&&(load[b.uid]||0)<BUILDINGS[b.id].slots&&entranceOf(b));
   if(!free.length)continue;free.sort((a,b)=>(load[a.uid]||0)-(load[b.uid]||0)||a.uid-b.uid);v.job=free[0].uid;load[v.job]=(load[v.job]||0)+1;}
