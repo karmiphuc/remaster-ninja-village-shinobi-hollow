@@ -1,0 +1,66 @@
+SHINOBI HOLLOW — LOGISTICS / SAFARI P0 DESIGN
+Scope: diagnostics, bounded sprite memory, Porter House, physical shelves,
+conserved goods, pickup/delivery claims and visible shortages. Stop after P0.
+
+Evidence and disagreements
+The imported v19.1 already sells delivered shopGoods/shopWares, with 10 raw
+and 10 crafted items per shop, plus partial incoming-haul reservations.
+The brief's pooled-shop baseline describes the older repository import.
+Baseline the current v19.1 economy before any behavior changes. Its partial
+256-entry rig eviction misses the left-facing insertion branch; use one
+1000-entry global LRU on every insertion. Do not change demand, prices,
+building production rates, service limits or contracts before P1 approval.
+
+Goods and claims
+Keep G.stock/G.wares as central storage and migrate local stock into b.shelf
+with at least the existing 10 raw + 10 ware capacities. All movements use
+moveGoods(from,to,key,n,reason); named createGoods/destroyGoods cover recipes,
+harvest, sales, forge materials, item purchases, renovation and contracts.
+Preserve exact goods on demolition and save/load, including fractional stock.
+Keep G.v===1. Claims, dispatcher jobs and the <=200-event optional ring live
+in RT, not in saves. Claim source quantities and destination space before
+walking and release/expire on arrival, cancellation or removal of a carrier.
+
+Porters and production
+Porter House / 荷運び小屋: 2x2 and two manually selected v.job slots.
+assignJobs preserves assignments but never auto-fills them; chooseSite does
+not send porters into production. A bounded dispatcher runs every 0.75 game
+seconds. Prioritize low shelves, workshop inputs, output piles and useful
+return loads. Score cheap distances and cached connectivity; roadPath only
+for the selected trip, never pathLen inside jobs x sites loops.
+Existing producer/artisan hauling remains sufficient with zero porters.
+Porter carts carry up to 24 real goods, bundling up to four kinds on the same
+pickup/drop route. Every kind reserves quantity and shelf room separately;
+render the dominant parcel with the existing cached cart. No rate nerfs.
+Full sites give porters a six-second chance before self-hauling. While
+output or a confirmed incoming trip blocks work, workers take breaks at the
+site (4 energy/second, no wound healing). Homes retain 16+/second recovery.
+This uses waiting time without changing output rates or production costs.
+Pause an unfinished batch visibly when its pile/output buffer is full rather
+than silently losing output. Draw small crate/shortage/stockout overlays in
+the existing building pass; reuse existing tooltip/long-press detail.
+
+Migration and early income
+Merge old shop maps without loss. For old pooled saves, seed only a small
+one-time shelf lot withdrawn from unreserved central goods; it represents
+stock already on the counter and does not create inventory. Preserve
+existing local stock, prices, bonuses and capacity. Workers can top up low
+shelves so porters stay optional.
+
+Diagnostics and validation
+Before behavior changes: ship ?perf=1 / date 2-second long-press HUD and an
+isolated ?simtest=1 runner. Use the game's own weak canvas registry; report
+120-frame fps/p95, canvas MB, redraws, cache/collection sizes and save size.
+Bound sprite caches; release portrait/doll frames and battle frames on exit.
+Trim transparent rig margins with unchanged pixel origins (validated against
+the original renderer). Free evicted canvas backing stores and use
+pre-rendered cargo/carts. Trial mobile DPR 2 only if default-zoom art matches.
+Run 52 weeks x5 seeded paired scenarios for starter, small, mature +/- two
+porters (same and +2 headcount), early duplicate stalls, late, expanded late,
+late duplicate shops, demolition and in-memory save/load mid-transit.
+Chunk through setTimeout; restore G, RT, VIEW, UI, RNG, dialogs, sound and save
+behavior on success, cancellation or error. Record the untouched economy's
+baseline before P0 and compare against it. Report conservation, negatives,
+reserves, worker/porter time, income, stockouts, cache memory and sim timing.
+Native iPhone app-switch survival and Low Power Mode still require on-device
+validation; ship the same diagnostics for that purpose. Stop after P0.

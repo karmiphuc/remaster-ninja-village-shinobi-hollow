@@ -46,9 +46,15 @@ The game is served by GitHub Pages straight from the `main` branch root (`/`), w
 | `tests/` | Browser checks for equipment effects, research, saves, portraits and mobile layout |
 | `reports/` | Recorded validation results |
 
-## Current version: v19.1
+## Current version: v19.1 + Logistics P0
 
 Includes the compact battle HUD, independent hero formations, physically delivered shop stock, guaranteed worker-calling rebellion captives, and the specialist arsenal. The three-shot rifle uses a one-over-two triangular barrel cluster. See [equipment notes](docs/equipment-v19.1.txt) and the [procedural preview](docs/arsenal-v19.1.png).
+
+Logistics P0 adds the **Porter House** (荷運び小屋) under Industry. Assign up to two workers manually; vacancies never auto-fill. Porters collect harvests, supply artisans, and bundle goods on shared trips to local shop shelves. Ordinary workers can still haul without porters. Full piles pause further work and retain completed output in a counted buffer.
+
+Saved games keep version 1. Existing local shop stock migrates without losing goods. Procedural artwork is preserved; bounded sprite caches, trimmed transparent margins, and releasing previews reduce canvas memory. See the [design note](docs/logistics-p0-design.txt) and [recorded validation](docs/logistics-p0-validation.md).
+
+Optional diagnostics are off by default: use `?perf=1` or hold the date for two seconds. The seeded economy test is available manually in that panel or through `?simtest=1`. Regular CI runs functional checks; the full economy suite is manual. Long stress sessions and physical iPhone app-switch/Low Power Mode checks are deferred. P1 demand and service-capacity changes are outside this update.
 
 Run the browser checks with `npm install`, `npx playwright install chromium`, then `npm test`. Set `CHROMIUM_PATH` to use an existing Chromium executable. The game itself has no installation or build requirement.
 
