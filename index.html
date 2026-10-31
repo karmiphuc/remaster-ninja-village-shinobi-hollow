@@ -12922,6 +12922,10 @@ function freeRecruitsNow() {
 }
 function latestGear(test) { const l = Object.keys(ITEMS).filter(k => G.researched[k] && !ITEMS[k].rare && ITEMS[k].cost > 0 && test(ITEMS[k], k)); l.sort((a, b) => (ITEMS[b].tier || 0) - (ITEMS[a].tier || 0) || ITEMS[b].cost - ITEMS[a].cost); return l[0] || null; }
 const DOJO_PRIZE = { troops: { w: 40, mul: .75 }, armor: { w: 20, mul: .9 }, horse: { w: 15, mul: .9 }, person: { w: 25, mul: 1.05 } };
+const DOJO_RECRUIT_CAP = { inf: 100, arc: 50, gun: 30, cav: 20 };
+function dojoRecruitReward(t, total = Object.values(G.troops).reduce((a, b) => a + b, 0)) {
+  return Math.min(DOJO_RECRUIT_CAP[t], Math.max(10, Math.round(total * .08)));
+}
 function dojoPrizeValid(P) {
   if (!P || !DOJO_PRIZE[P.kind]) return false;
   if (P.kind === 'troops') return troopsOpen(P.t);
@@ -12938,7 +12942,7 @@ function dojoPrize() {
   return G.dojoPrize = Object.assign({ kind, mul: DOJO_PRIZE[kind].mul }, o);
 }
 function dojoPrizeChip(P) {
-  if (P.kind === 'troops') return `${icon('u_' + P.t)} ${UNITS[P.t].name} recruits`;
+  if (P.kind === 'troops') return `${icon('u_' + P.t)} ${UNITS[P.t].name} recruits ×${dojoRecruitReward(P.t)}`;
   if (P.kind === 'person') { const d = vData(P.id); return `${icon('folk')} ${esc(d.name)} (${ROLE_NAME[d.role] || d.role}) joins`; }
   return `${icon('it_' + P.k)} ${esc(ITEMS[P.k].name)}`;
 }
@@ -12946,10 +12950,12 @@ function dojoPayout(res, rewards) {
   const P = dojoPrize(), tot = Object.values(G.troops).reduce((a, b) => a + b, 0); G.dojoPrize = null;
   if (res !== 'win') { // consolation: a few recruits, spread over the arms you field
     const gain = Math.max(5, Math.round(tot * .025)), types = ['inf', 'arc', 'gun', 'cav'].filter(t => unitOpen(t) && G.troops[t] > 0);
-    if (!types.length) G.troops.inf = (G.troops.inf || 0) + gain; else types.forEach(t => { G.troops[t] += Math.max(1, Math.round(gain * G.troops[t] / Math.max(1, tot))); });
-    rewards.push(`${icon('u_inf')} +${gain} recruits`); return; }
+    let received = 0;
+    if (!types.length) { received = Math.min(DOJO_RECRUIT_CAP.inf, gain); G.troops.inf = (G.troops.inf || 0) + received; }
+    else types.forEach(t => { const n = Math.min(DOJO_RECRUIT_CAP[t], Math.max(1, Math.round(gain * G.troops[t] / Math.max(1, tot)))); G.troops[t] += n; received += n; });
+    rewards.push(`${icon('u_inf')} +${received} recruits`); return; }
   G.gold += 120; rewards.push(`${icon('gold')} +120`);
-  if (P.kind === 'troops') { const n = Math.max(10, Math.round(tot * .08)); G.troops[P.t] = (G.troops[P.t] || 0) + n; rewards.push(`${icon('u_' + P.t)} +${n} ${UNITS[P.t].name}`); }
+  if (P.kind === 'troops') { const n = dojoRecruitReward(P.t, tot); G.troops[P.t] = (G.troops[P.t] || 0) + n; rewards.push(`${icon('u_' + P.t)} +${n} ${UNITS[P.t].name}`); }
   else if (P.kind === 'person') { rewards.push(`${icon('folk')} ${esc(vData(P.id).name)} joins`); releaseRecruit(P.id); setTimeout(() => offerHire(P.id, 'rebel', 'A sparring partner asks to stay'), 60); }
   else { G.items[P.k] = (G.items[P.k] || 0) + 1; rewards.push(`${icon('it_' + P.k)} ${esc(ITEMS[P.k].name)}`); }
 }

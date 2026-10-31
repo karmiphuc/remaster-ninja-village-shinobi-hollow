@@ -4,18 +4,18 @@
     "dojoExcluded": "Training Ground",
     "completes": "49/49"
   },
-  "dojoCard": "Archers recruits",
+  "dojoCard": "Ginryū Gusoku",
   "dojo": {
     "rolls": {
-      "horse": 75,
-      "person": 101,
-      "troops": 149,
-      "armor": 75
+      "armor": 72,
+      "troops": 174,
+      "horse": 61,
+      "person": 93
     },
     "partnerPower": {
-      "troops": 772,
-      "armor": 872,
-      "person": 1044
+      "troops": 778,
+      "armor": 859,
+      "person": 1058
     }
   },
   "dojoPayouts": {
@@ -25,25 +25,37 @@
     "personOffered": "Hikaru",
     "lossConsolation": 5
   },
+  "dojoRecruitCaps": {
+    "winAndConsolation": {
+      "inf": 100,
+      "arc": 50,
+      "gun": 30,
+      "cav": 20
+    },
+    "belowCapPreserved": true,
+    "earlyMinimum": 10,
+    "mixedConsolationTotal": 200,
+    "previewMatchesPayout": true,
+    "alreadyRolledPrizeCapped": true
+  },
   "rebels": {
     "lair": {
       "name": "Yamato",
-      "before": 63,
-      "after": 470,
-      "uprising": 392,
+      "before": 64,
+      "after": 494,
+      "uprising": 412,
       "spoils": {
         "items": [
-          "Hachigane",
-          "Leather Dō"
+          "Horned Kabuto"
         ],
         "recruits": []
       }
     },
     "castle": {
       "name": "Ise",
-      "strengthKept": 144,
+      "strengthKept": 178,
       "spoilsGranted": [
-        "Quilted Haraate"
+        "Uchigatana"
       ],
       "recruitOffered": "Shinpei"
     }

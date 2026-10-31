@@ -62,6 +62,32 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
       check(troops1 > troops0 && G.gold === gold0 && (G.items[ak] || 0) === ak0, 'Loss should give only a few recruits');
       out.dojoPayouts = { troopsOnWin: Math.max(10, Math.round(200 * .08)), armor: ITEMS[ak].name, horse: ITEMS[hk].name, personOffered: vData(pid).name, lossConsolation: troops1 - troops0 };
 
+      // Late-game armies cannot turn one spar into hundreds of specialist troops.
+      fresh(); ['arc', 'gun', 'cav'].forEach(t => { G.researched['corps_' + t] = 1; G.units[t] = true; });
+      const caps = { inf: 100, arc: 50, gun: 30, cav: 20 }, capped = {};
+      for (const [t, cap] of Object.entries(caps)) {
+        G.troops = { inf: 0, arc: 0, gun: 0, cav: 0 }; G.troops[t] = 100000;
+        G.dojoPrize = { kind: 'troops', t, mul: .75, n: 8000 }; // already-rolled saves also use the cap
+        check(dojoPrizeChip(dojoPrize()).includes('×' + cap), 'Preview exceeds ' + t + ' cap');
+        const messages = [], before = G.troops[t]; dojoPayout('win', messages);
+        check(G.troops[t] - before === cap && messages.some(s => s.includes('+' + cap + ' ')), 'Uncapped victory payout for ' + t);
+        const below = Math.floor((cap - 1) / .08); G.troops[t] = below; G.dojoPrize = { kind: 'troops', t, mul: .75 };
+        dojoPayout('win', []); check(G.troops[t] - below === cap - 1, 'Below-cap reward changed for ' + t);
+        G.troops[t] = 100000; G.dojoPrize = { kind: 'troops', t, mul: .75 }; const lossMessages = [];
+        dojoPayout('lose', lossMessages);
+        check(G.troops[t] - 100000 === cap && lossMessages.some(s => s.includes('+' + cap + ' recruits')), 'Consolation bypasses cap or displays wrong count for ' + t);
+        capped[t] = cap;
+      }
+      G.troops = { inf: 100000, arc: 100000, gun: 100000, cav: 100000 };
+      const mixBefore = { ...G.troops }, mixMessages = []; G.dojoPrize = { kind: 'troops', t: 'cav', mul: .75 }; dojoPayout('lose', mixMessages);
+      for (const t in caps) check(G.troops[t] - mixBefore[t] === caps[t], 'Mixed consolation exceeds ' + t + ' cap');
+      check(mixMessages.some(s => s.includes('+200 recruits')), 'Mixed consolation reports uncapped total');
+      G.troops = { inf: 10000, arc: 0, gun: 0, cav: 0 }; G.dojoPrize = { kind: 'troops', t: 'cav', mul: .75 };
+      openMap(); showProvCard(dojo); check($('#prov-card').textContent.includes('Cavalry recruits ×20'), 'Training Ground card lacks capped quantity'); $('#prov-card').hidden = true; closeMap();
+      G.troops = { inf: 0, arc: 0, gun: 0, cav: 0 }; G.dojoPrize = { kind: 'troops', t: 'inf', mul: .75 }; dojoPayout('win', []);
+      check(G.troops.inf === 10, 'Early minimum changed');
+      out.dojoRecruitCaps = { winAndConsolation: capped, belowCapPreserved: true, earlyMinimum: 10, mixedConsolationTotal: 200, previewMatchesPayout: true, alreadyRolledPrizeCapped: true };
+
       // ---------- 3. a province lost to rebels ----------
       fresh(); for (const k in ITEMS) if (!ITEMS[k].rare && k.indexOf('rcp_') !== 0) G.researched[k] = 1; G.troops = { inf: 400, arc: 0, gun: 0, cav: 0 };
       const lair = PROVINCES.find(q => q.type === 'bandit'), castle = PROVINCES.find(q => q.type === 'clan' && !q.capital && !q.boss && q.reward && (q.reward.item || q.reward.recruit));
