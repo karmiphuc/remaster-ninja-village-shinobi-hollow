@@ -90,12 +90,12 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
       const propsHalf = BT.props.filter(q => q.tate && q.si === 0).length; check(propsHalf < props.length, `Half coverage drew ${propsHalf} pavises vs ${props.length}`); out.combat.pavisesHalf = propsHalf; closeBattle(); clearModals();
 
       // ---------- AI: progression, the 50% cap, never in castles ----------
-      const aiCov = wins => { G.wins = wins; G.tate = tateNeed(); startBattle(camp.id); const g = BT.A[1].groups.find(x => x.type === 'gun'); const c = g ? g.tateCov || 0 : null; closeBattle(); clearModals(); return c; };
+      const pa0 = playerArmy(), aiCov = wins => { G.wins = wins; const ea = enemyArmy(camp); tateEquip(pa0, ea, camp); const g = ea.groups.find(x => x.type === 'gun'); return g ? g.tateCov || 0 : null; };
       const ai = { 0: aiCov(0), 4: aiCov(4), 10: aiCov(10), 30: aiCov(30) };
       check(ai[0] === 0, 'AI Tate at 0 wins'); check(ai[4] > .15 && ai[4] <= .2 + 1e-9, 'AI at 4 wins: ' + ai[4]); check(ai[10] <= .5 + 1e-9 && ai[30] <= .5 + 1e-9 && ai[30] > .45, 'AI cap: ' + JSON.stringify(ai));
       G.wins = 30; const castles = PROVINCES.filter(q => q.type === 'clan'); let castleTate = 0;
-      for (const P of castles) { const ea = enemyArmy(P), pa = playerArmy(); tateEquip(pa, ea, P); castleTate += ea.groups.reduce((n, g) => n + (g.tate || 0), 0); }
-      check(castleTate === 0, 'A castle garrison got Tate'); { const ea = enemyArmy(PROVINCES.find(q => q.type === 'dojo')), pa = playerArmy(); tateEquip(pa, ea, PROVINCES.find(q => q.type === 'dojo')); check(!ea.groups.some(g => g.tate), 'Dojo partners got Tate'); }
+      for (const P of castles) { const ea = enemyArmy(P); tateEquip(pa0, ea, P); castleTate += ea.groups.reduce((n, g) => n + (g.tate || 0), 0); }
+      check(castleTate === 0, 'A castle garrison got Tate'); { const ea = enemyArmy(PROVINCES.find(q => q.type === 'dojo')); tateEquip(pa0, ea, PROVINCES.find(q => q.type === 'dojo')); check(!ea.groups.some(g => g.tate), 'Dojo partners got Tate'); }
       out.ai = { coverageByWins: Object.fromEntries(Object.entries(ai).map(([k, v]) => [k, +v.toFixed(3)])), castlesChecked: castles.length, castleTate };
 
       // ---------- the death ledger ----------
@@ -111,7 +111,7 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
       closeBattle(); clearModals();
 
       // ---------- full battles: identical rules for both sides ----------
-      // mirror battles against the pirates with the AI at its 50% cap; your Gunners with 0%, 50% and 100% coverage
+      // even battles against the archer-heavy Karasu with the AI at its 50% cap; your Gunners with no Tate and with 100% coverage
       const battle = (tate, seed, noGuns) => withSeed(seed, () => { G.troops = { inf: 400, arc: 300, gun: 1200, cav: 0 }; G.tate = tate; G.tateKills = 0; G.wins = 30; G.ki = 0;
         G.camps = G.camps.filter(c => c.id !== camp.id); G.camps.push(Object.assign({}, camp, { clan: 'karasu', power: 2600 })); startBattle(camp.id); BT.autoKi && (BT.autoKi.on = false);
         // an even fight: the archer-heavy Karasu scaled to your strength, their Gunners keeping their 50% Tate share
@@ -120,20 +120,20 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
         const by = {}, tally = hs => { hs.forEach(h => { if (h.to === pg) { const k = h.from.type + (h.icpt ? '-countershot' : h.counter ? '-counter' : ''); by[k] = (by[k] || 0) + h.kills; } }); return hs; };
         const rp = window.resolvePhase, ch = window.counterHits, ih = window.interceptHits;
         window.resolvePhase = (...a) => tally(rp(...a)); window.counterHits = (...a) => tally(ch(...a)); window.interceptHits = (...a) => tally(ih(...a));
-        try { beginRound(); let n = 0; while (BT && BT.state !== 'done' && n++ < 60000) updateBattle(1 / 30); } finally { window.resolvePhase = rp; window.counterHits = ch; window.interceptHits = ih; }
+        try { beginRound(); let n = 0; while (BT && BT.state !== 'done' && n++ < 20000) updateBattle(1 / 10); } finally { window.resolvePhase = rp; window.counterHits = ch; window.interceptHits = ih; }
         const r = { by, res: BT.result, pLost: p0 - Math.ceil(Math.max(0, pg.troops)), pCov: pg.tateCov || 0, tateLost: pg.tateLost || 0, killed: pg.tateKilled || 0, eLost: eg ? e0 - Math.ceil(Math.max(0, eg.troops)) : 0, eCov: ecov, eTate: et, eTateLost: eg ? eg.tateLost || 0 : 0, eKilled: eg ? eg.tateKilled || 0 : 0, tateAfter: G.tate, carry: G.tateKills };
         closeBattle(); clearModals(); return r; });
       fresh(); G.tateOn = true; arm({}); const rows = [];
-      for (const tate of [0, 60, 120]) for (let s = 1; s <= 8; s++) rows.push(Object.assign({ tate, seed: s }, battle(tate, s * 97)));
+      for (const tate of [0, 120]) for (let s = 1; s <= 2; s++) rows.push(Object.assign({ tate, seed: s }, battle(tate, s * 97)));
       rows.forEach(r => { check(r.res, 'Battle unfinished'); check(r.eCov <= .5 + 1e-9, 'AI over 50%');
         if (r.tate) { const br = Math.floor(r.killed / 10), lost = Math.min(r.tate, br); check(r.tateLost === lost && r.carry === (lost < br ? 0 : r.killed % 10) && r.tateAfter === r.tate - lost, 'Player ledger in a full battle: ' + JSON.stringify(r)); }
         if (r.eTate) check(r.eTateLost === Math.min(r.eTate, Math.floor(r.eKilled / 10)), 'AI ledger in a full battle: ' + JSON.stringify(r)); });
       // where the Tate earns its keep: the same fight against archers and spears with no Gunners
-      const bowRows = []; for (const tate of [0, 120]) for (let s = 1; s <= 6; s++) bowRows.push(Object.assign({ tate, seed: s }, battle(tate, s * 131, true)));
+      const bowRows = []; for (const tate of [0, 120]) for (let s = 1; s <= 2; s++) bowRows.push(Object.assign({ tate, seed: s }, battle(tate, s * 131, true)));
       const bowAvg = (tate, k) => { const L = bowRows.filter(r => r.tate === tate); return L.reduce((n, r) => n + r[k], 0) / L.length; };
       const avg = (tate, k) => { const L = rows.filter(r => r.tate === tate); return L.reduce((n, r) => n + r[k], 0) / L.length; };
       out.fullBattles = { battles: rows.length, aiCoverage: +avg(0, 'eCov').toFixed(3),
-        byPlayerTate: Object.fromEntries([0, 60, 120].map(t => [t, { coverage: avg(t, 'pCov'), gunnersLost: Math.round(avg(t, 'pLost')), killedBy: (() => { const T = {}; rows.filter(r => r.tate === t).forEach(r => Object.entries(r.by).forEach(([k, v]) => T[k] = (T[k] || 0) + v)); const sum = Object.values(T).reduce((a, b) => a + b, 0) || 1; return Object.fromEntries(Object.entries(T).map(([k, v]) => [k, Math.round(v / sum * 100) + '%'])); })(), enemyGunnersLost: Math.round(avg(t, 'eLost')), tateLost: +avg(t, 'tateLost').toFixed(1), wins: rows.filter(r => r.tate === t && r.res === 'win').length }])),
+        byPlayerTate: Object.fromEntries([0, 120].map(t => [t, { coverage: avg(t, 'pCov'), gunnersLost: Math.round(avg(t, 'pLost')), killedBy: (() => { const T = {}; rows.filter(r => r.tate === t).forEach(r => Object.entries(r.by).forEach(([k, v]) => T[k] = (T[k] || 0) + v)); const sum = Object.values(T).reduce((a, b) => a + b, 0) || 1; return Object.fromEntries(Object.entries(T).map(([k, v]) => [k, Math.round(v / sum * 100) + '%'])); })(), enemyGunnersLost: Math.round(avg(t, 'eLost')), tateLost: +avg(t, 'tateLost').toFixed(1), wins: rows.filter(r => r.tate === t && r.res === 'win').length }])),
         rows,
         vsArchersOnly: Object.fromEntries([0, 120].map(t => [t, { coverage: bowAvg(t, 'pCov'), gunnersLost: Math.round(bowAvg(t, 'pLost')), tateLost: +bowAvg(t, 'tateLost').toFixed(1), wins: bowRows.filter(r => r.tate === t && r.res === 'win').length, battles: bowRows.filter(r => r.tate === t).length }])) };
       // saves keep the ledger

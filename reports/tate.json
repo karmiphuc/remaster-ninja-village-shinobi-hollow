@@ -1,0 +1,176 @@
+{
+  "unlock": {
+    "reward": "Yamashiro",
+    "oldSaveHolding": true,
+    "oldSaveNot": false,
+    "minus10Buttons": 0
+  },
+  "buying": {
+    "gunners": 1234,
+    "need": 124,
+    "costEach": "40G + 4 timber",
+    "replenish27": "1,080G + 108 timber",
+    "partialWith41Timber": 10
+  },
+  "combat": {
+    "gunners": 1500,
+    "tate": 150,
+    "ratios": {
+      "arrow1": 0.8,
+      "arrow0.5": 0.9,
+      "attack1": 0.92,
+      "attack0.5": 0.96,
+      "gunTaken": 1,
+      "infTaken": 1,
+      "cavTaken": 1,
+      "arrowWithWard": 0.8
+    },
+    "pavisesFull": 8,
+    "pavisesHalf": 4
+  },
+  "ai": {
+    "coverageByWins": {
+      "0": 0,
+      "4": 0.2,
+      "10": 0.5,
+      "30": 0.5
+    },
+    "castlesChecked": 41,
+    "castleTate": 0
+  },
+  "ledger": {
+    "lost": 40,
+    "fell": 30,
+    "fled": 10,
+    "wounded": 12,
+    "killed": 18,
+    "carriedIn": 7,
+    "tateLost": 2,
+    "carriedOut": 5
+  },
+  "fullBattles": {
+    "battles": 4,
+    "aiCoverage": 0.5,
+    "byPlayerTate": {
+      "0": {
+        "coverage": 0,
+        "gunnersLost": 625,
+        "killedBy": {
+          "arc": "100%"
+        },
+        "enemyGunnersLost": 37,
+        "tateLost": 0,
+        "wins": 2
+      },
+      "120": {
+        "coverage": 1,
+        "gunnersLost": 573,
+        "killedBy": {
+          "arc": "100%"
+        },
+        "enemyGunnersLost": 37,
+        "tateLost": 39.5,
+        "wins": 2
+      }
+    },
+    "rows": [
+      {
+        "tate": 0,
+        "seed": 1,
+        "by": {
+          "arc": 298.08863713580524
+        },
+        "res": "win",
+        "pLost": 617,
+        "pCov": 0,
+        "tateLost": 0,
+        "killed": 0,
+        "eLost": 36.19047619047619,
+        "eCov": 0.5,
+        "eTate": 1.8095238095238095,
+        "eTateLost": 1,
+        "eKilled": 12,
+        "tateAfter": 0,
+        "carry": 0
+      },
+      {
+        "tate": 0,
+        "seed": 2,
+        "by": {
+          "arc": 381.49262575747156
+        },
+        "res": "win",
+        "pLost": 633,
+        "pCov": 0,
+        "tateLost": 0,
+        "killed": 0,
+        "eLost": 37.073170731707314,
+        "eCov": 0.5,
+        "eTate": 1.8536585365853657,
+        "eTateLost": 1,
+        "eKilled": 12,
+        "tateAfter": 0,
+        "carry": 0
+      },
+      {
+        "tate": 120,
+        "seed": 1,
+        "by": {
+          "arc": 311.9263174720272
+        },
+        "res": "win",
+        "pLost": 625,
+        "pCov": 1,
+        "tateLost": 43,
+        "killed": 437,
+        "eLost": 36.19047619047619,
+        "eCov": 0.5,
+        "eTate": 1.8095238095238095,
+        "eTateLost": 1,
+        "eKilled": 12,
+        "tateAfter": 77,
+        "carry": 7
+      },
+      {
+        "tate": 120,
+        "seed": 2,
+        "by": {
+          "arc": 305.920701254327
+        },
+        "res": "win",
+        "pLost": 520,
+        "pCov": 1,
+        "tateLost": 36,
+        "killed": 364,
+        "eLost": 37.073170731707314,
+        "eCov": 0.5,
+        "eTate": 1.8536585365853657,
+        "eTateLost": 1,
+        "eKilled": 12,
+        "tateAfter": 84,
+        "carry": 4
+      }
+    ],
+    "vsArchersOnly": {
+      "0": {
+        "coverage": 0,
+        "gunnersLost": 576,
+        "tateLost": 0,
+        "wins": 2,
+        "battles": 2
+      },
+      "120": {
+        "coverage": 1,
+        "gunnersLost": 528,
+        "tateLost": 36.5,
+        "wins": 2,
+        "battles": 2
+      }
+    }
+  },
+  "save": {
+    "tate": 33,
+    "carry": 4
+  },
+  "errors": []
+}
