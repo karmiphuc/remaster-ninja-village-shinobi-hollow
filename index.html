@@ -8195,7 +8195,7 @@ function renderArmory(body, tab) {
 /* ---------- Village menu ---------- */
 function renderMenu(body, tab) {
   if (tab === 'stats') {
-    const owned = PROVINCES.filter(p => G.prov[p.id].owner === 'kage').length;
+    const { owned, total } = provinceTally();
     body.appendChild(h(`<div class="power"><span>Treasury</span><b>${fmt(G.gold)}G</b><span class="sp"></span><span style="font-size:12px">${dateStr()}</span></div>`));
     { const bh = boonsHTML(); if (bh) body.appendChild(h(`<div>${bh}</div>`)); }
     body.appendChild(h(`<div class="stats" style="font-size:13px;grid-template-columns:auto 1fr">
@@ -8203,7 +8203,7 @@ function renderMenu(body, tab) {
       <span>Visitors</span><span>${(() => { const V = visitorCap(); return `${G.travM || 0}/${V.cap} this month · ${visitorRate().toFixed(1)}/wk pace ${ib(`Pace = appeal. Monthly cap = ${TRAV_MONTH_K} × (2 + realm ${V.x} + 2×${V.e} extra gates) × ${(1 + .15 * V.e).toFixed(2)}. Realm: army 1 · castle 3 · small bands 0. On screen max ${onScreenCap()} (30 + 5 × clan tier).`)} ${ib(VISITORS.map(P => `${P.name} ♥ ${P.likes.map(s => BUILDINGS[s].name).join(', ')}`).join(' · '), '♥')}`; })()}</span>
       <span>Last month sales</span><span>${fmt(G.stats.lastSales)}G from ${G.stats.lastTrav} travellers</span>
       <span>All-time sales</span><span>${fmt(G.stats.sales)}G</span>
-      <span>Provinces held</span><span>${owned} / ${PROVINCES.length}</span>
+      <span>Provinces held</span><span>${owned} / ${total}</span>
       <span>Clan victories</span><span>${G.wins}</span>
       <span>Deadline</span><span>Unify the islands by the end of Year ${G.endYear || 25}</span>
       ${G.vseed ? `<span>Valley</span><span>Seed ${G.vseed} · river ${{ north: 'along the north', west: 'down the west', east: 'down the east' }[G.river] || '—'}</span>` : ''}</div>`));
@@ -8257,10 +8257,10 @@ function toast(html, look) {
   setTimeout(() => { t.style.transition = 'opacity .4s'; t.style.opacity = '0'; setTimeout(() => t.remove(), 400); }, 2600);
 }
 function showEnding(win) {
-  const owned = PROVINCES.filter(p => G.prov[p.id].owner === 'kage').length;
+  const { owned, total } = provinceTally();
   const score = Math.round(G.stats.sales / 10 + owned * 500 + G.wins * 300 + (win ? Math.max(0, (G.endYear || 16) + 1 - G.year) * 1500 : 0));
   modal(win ? '天下統一 · The islands are one' : `${G.endYear || 16} years have passed`,
-    `${win ? 'The Iron Keep has fallen and the Kage clan stands beside the Shogun. Peace returns to Akitsu.' : 'The Shogun takes stock of your clan\'s deeds.'}<br><br>Provinces: <b>${owned}/${PROVINCES.length}</b><br>Sales: <b>${fmt(G.stats.sales)}G</b><br>Final score: <b>${fmt(score)}</b><br><br>You can keep playing.`, [['Continue', null]], { icon: 'star' });
+    `${win ? 'The Iron Keep has fallen and the Kage clan stands beside the Shogun. Peace returns to Akitsu.' : 'The Shogun takes stock of your clan\'s deeds.'}<br><br>Provinces: <b>${owned}/${total}</b><br>Sales: <b>${fmt(G.stats.sales)}G</b><br>Final score: <b>${fmt(score)}</b><br><br>You can keep playing.`, [['Continue', null]], { icon: 'star' });
 }
 
 document.addEventListener('keydown', e => { if ((e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') || UI.panel !== 'folk' || !RT.selVillager || !$('#sheet').classList.contains('open')) return;
@@ -9674,7 +9674,7 @@ function siteMode(P) { return P.type === 'land' || P.type === 'hunt' ? 'skirmish
 function enemyArmy(site) {
   const P0 = typeof site === 'string' ? siteById(site) : site, st = siteState(P0);
   const clan = P0.clan, skirm = siteMode(P0) === 'skirmish';
-  let P = P0.type === 'dojo' ? Math.max(60, armyPower(playerArmy()) * 0.72) : (st.power || 60) * (P0.type === 'clan' ? diffScale() * siteBoost(P0) * (P0.capital && !P0.boss ? SIEGE_MUL : 1) : 1);
+  let P = P0.type === 'dojo' ? Math.max(60, armyPower(playerArmy()) * dojoPrize().mul) : (st.power || 60) * (P0.type === 'clan' ? diffScale() * siteBoost(P0) * (P0.capital && !P0.boss ? SIEGE_MUL : 1) : 1);
   const A = { side: 1, clan, name: P0.type === 'dojo' ? 'Sparring Partners' : CLANS[clan].name, groups: [], ki: P0.boss ? 2 : 0, strat: 0, mode: skirm ? 'skirmish' : 'army', boss: P0.boss };
   const tier = Math.log2(1 + P / 100);
   const names = ENEMY_NAMES[P0.type === 'dojo' ? 'dojo' : clan] || ENEMY_NAMES.bandit;
@@ -10141,12 +10141,7 @@ function finishBattle(res, note) {
     xp = Math.round(xp * .8);
   } else if (drill) {
     G.trainCD = 2;
-    const tot = Object.values(G.troops).reduce((a, b) => a + b, 0), gain = Math.max(5, Math.round(tot * (res === 'win' ? .06 : .025)));
-    const types = ['inf', 'arc', 'gun', 'cav'].filter(t => unitOpen(t) && G.troops[t] > 0);
-    if(!types.length)G.troops.inf=(G.troops.inf||0)+gain;
-    else types.forEach(t=>{const n=Math.max(1,Math.round(gain*G.troops[t]/Math.max(1,tot)));G.troops[t]+=n;});
-    rewards.push(`${icon('u_inf')} +${gain} recruits`);
-    if (res === 'win') { G.gold += 120; rewards.push(`${icon('gold')} +120`); }
+    dojoPayout(res, rewards);
     unlockMsgs.length = 0;
   } else if (res === 'win') {
     const R = P.reward || {};
@@ -10163,17 +10158,18 @@ function finishBattle(res, note) {
     } else {
       const first = st.owner !== 'kage';
       if (first) {
+        const retake = st.retake; if (retake) { delete st.retake; grantRetake(retake, rewards); }
         st.owner = 'kage'; if (P.type === 'clan') { G.dGrowth = conquestGrowth() + (2 + G.year) / 100; G.wins++; }
         { const pn = campaignWin(P); if (pn) rewards.push(`${icon('folk')} ${esc(pn)} keeps the pledge`); }
         if (R.gold) { G.gold += R.gold; rewards.push(`${icon('gold')} +${fmt(R.gold)}`); }
-        if (R.deed) { G.land[R.deed] = true; RT.groundDirty = true; rewards.push(`${icon('deed')} Land deed: ${LAND_NAME[R.deed] || R.deed}`); unlockMsgs.push(`The <b>${LAND_NAME[R.deed] || R.deed}</b> plot is now open for building.`); }
-        if (R.unlock) { const t = R.unlock, gk = { arc: 'yumi', gun: 'sakaizutsu', cav: 'jiba' }[t]; const had = troopsOpen(t); unlockCorps(t, true); G.troops[t] = (G.troops[t] || 0) + 20; if (gk) G.items[gk] = (G.items[gk] || 0) + 2;
+        if (!retake && R.deed) { G.land[R.deed] = true; RT.groundDirty = true; rewards.push(`${icon('deed')} Land deed: ${LAND_NAME[R.deed] || R.deed}`); unlockMsgs.push(`The <b>${LAND_NAME[R.deed] || R.deed}</b> plot is now open for building.`); }
+        if (!retake && R.unlock) { const t = R.unlock, gk = { arc: 'yumi', gun: 'sakaizutsu', cav: 'jiba' }[t]; const had = troopsOpen(t); unlockCorps(t, true); G.troops[t] = (G.troops[t] || 0) + 20; if (gk) G.items[gk] = (G.items[gk] || 0) + 2;
           rewards.push(`${icon('u_' + t)} ${had ? '' : ITEMS['corps_' + t].name + ' · '}+20 veterans${gk ? ` · ${icon('it_' + gk)}×2` : ''}`);
           if (!had) unlockMsgs.push(`Their ${UNITS[t].name.toLowerCase()} drill is yours: <b>20 veterans</b> join and the unit can now be raised.${gk ? ` You took <b>2 ${ITEMS[gk].name}</b> — give them to villagers to lead the ${UNITS[t].name}.` : ''}`);
           G.villagers.forEach(v => { const d = vData(v.id); if (d.role === t && v.role === 'work' && G.villagers.filter(x => x.role === t).length < MAX_CMD) takeRole(v, t); }); assignJobs(); }
-        if (R.build) { R.build.forEach(k => { G.unlocked[k] = true; }); const names = BUILD_ORDER.filter(id => R.build.includes(BUILDINGS[id].lock)).map(id => BUILDINGS[id].name); rewards.push(`${icon('build')} ${names.length} blueprints`); unlockMsgs.push(`New blueprints: <b>${names.join(', ')}</b>.`); }
-        if (R.item) { G.items[R.item] = (G.items[R.item] || 0) + 1; rewards.push(`${icon('it_' + R.item)} ${ITEMS[R.item].name}`); }
-        if (R.recruit && !vById(R.recruit)) { const fee = hireFee(R.recruit, 'lord'); rewards.push(`${icon('folk')} ${vData(R.recruit).name} ${fee ? `offers service · ${fmt(fee)}G` : 'joins'}`); setTimeout(() => offerHire(R.recruit, 'lord', 'A defeated lord offers service'), 50); }
+        if (!retake && R.build) { R.build.forEach(k => { G.unlocked[k] = true; }); const names = BUILD_ORDER.filter(id => R.build.includes(BUILDINGS[id].lock)).map(id => BUILDINGS[id].name); rewards.push(`${icon('build')} ${names.length} blueprints`); unlockMsgs.push(`New blueprints: <b>${names.join(', ')}</b>.`); }
+        if (!retake && R.item) { G.items[R.item] = (G.items[R.item] || 0) + 1; rewards.push(`${icon('it_' + R.item)} ${ITEMS[R.item].name}`); }
+        if (!retake && R.recruit && !vById(R.recruit)) { const fee = hireFee(R.recruit, 'lord'); rewards.push(`${icon('folk')} ${vData(R.recruit).name} ${fee ? `offers service · ${fmt(fee)}G` : 'joins'}`); setTimeout(() => offerHire(R.recruit, 'lord', 'A defeated lord offers service'), 50); }
         if (P.boss) { G.ended = true; setTimeout(() => showEnding(true), 400); }
       } else { const g = Math.round((st.power || 100) * .6); G.gold += g; rewards.push(`${icon('gold')} +${fmt(g)}`); }
     }
@@ -12323,8 +12319,8 @@ function openMap() {
   if (MAPV.rot && !MAPV.artR) buildMapArt(true);
   MAPV.fit = MAPV.rot ? Math.max(r.width / 700, (r.height - 40) / 1000) * 1.08 : Math.max(r.width / 1000, (r.height - 40) / 700) * 1.02; MAPV.zmin = Math.min(r.width / mapW(), (r.height - 40) / mapH()) * .96;
   MAPV.cam.z = MAPV.fit; mapCenterOn(PROVINCES[0]); clampMap();
-  const owned = PROVINCES.filter(p => G.prov[p.id].owner === 'kage').length;
-  const nc = (G.camps || []).length; $('#map-info').innerHTML = `${icon('mon_kage')} ${owned}/${PROVINCES.length} provinces${nc ? ` · ${nc} camp${nc > 1 ? 's' : ''} sighted` : ''} · ${dateStr()}`;
+  const { owned, total } = provinceTally();
+  const nc = (G.camps || []).length; $('#map-info').innerHTML = `${icon('mon_kage')} ${owned}/${total} provinces${nc ? ` · ${nc} camp${nc > 1 ? 's' : ''} sighted` : ''} · ${dateStr()}`;
   Sound.music('map');
 }
 function closeMap() { MAPV.open = false; $('#map-layer').hidden = true; Sound.music('village'); updateHUD(); }
@@ -12504,6 +12500,7 @@ function rewardChips(R) {
   if (R.item) c.push(`${icon('it_' + R.item)} ${ITEMS[R.item].name}`);
   if (R.xp) c.push(`${icon('xp')} XP for everyone`);
   if (R.troops) c.push(`${icon('u_inf')} +${R.troops} infantry`);
+  (R.items || []).forEach(k => ITEMS[k] && c.push(`${icon('it_' + k)} ${esc(ITEMS[k].name)}`));
   (R.recruits || []).forEach(id => c.push(`${icon('folk')} Free ${esc(vData(id).name)}`));
   if (R.drill) c.push(`${icon('u_inf')} Recruits join`, `${icon('xp')} Big XP for all who march`, `No troop losses`);
   return c.map(x => `<span class="chip">${x}</span>`).join('');
@@ -12522,7 +12519,7 @@ function showProvCard(p) {
       <div class="odds"><i style="width:${odds * 100}%;background:#3b4a7a"></i><i style="flex:1;background:#8a2b2b"></i></div>
       <div class="muted">Enemy: ${ea.groups.map(g => UNITS[g.type].short + ' ' + fmt(g.troops)).join(' · ')}${(() => { const cd = p.type === 'clan' && clanDoc(p.clan); return cd ? ` <span class="chip"${tipAttr('This campaign the ' + esc(C.name) + ' favour ' + UNITS[cd.fav].name.toLowerCase() + (cd.kit ? (cd.kit > 0 ? ', with better gear than most' : ', poorly equipped') : ''))}><img class="px" src="${ICONS['u_' + cd.fav]}" alt="">${FAV_LABEL[cd.fav]}${cd.kit ? (cd.kit > 0 ? ' ⚙↑' : ' ⚙↓') : ''}</span>` : ''; })()}</div>
       <div class="muted">Marching: ${pa.groups.reduce((n, g) => n + g.cmds.filter(c => c.vref).length, 0)} villagers${skirm ? '' : ` leading ${fmt(totalOf(pa))} troops`}</div>
-      <div class="rewards">${rewardChips(p.type === 'dojo' ? { drill: 1 } : p.reward || {})}</div>`;
+      <div class="rewards">${(p.type === 'dojo' ? `<span class="chip">${dojoPrizeChip(dojoPrize())}</span><span class="chip">No troop losses</span><span class="chip">${icon('xp')} XP for all who march</span>` : G.prov[p.id] && G.prov[p.id].retake ? rewardChips({ items: G.prov[p.id].retake.items, recruits: G.prov[p.id].retake.recruits }) : rewardChips(p.reward || {}))}</div>`;
     if (p.type === 'clan' && (p.capital || p.boss)) body += `<p class="note">🏯 Siege · 4 rounds ${ib('Walls and a gate: your troops fight at a heavy disadvantage until the gate falls.' + (G.researched.siegegun ? ' Your siege battery can be hired before the attack.' : ' A Siege Battery (Armory) helps.'))}</p>`;
     if (!skirm && !pa.groups.length) body += `<p class="note" style="color:#a02a1a">⚠ No troops · Army panel</p>`;
     if (p.type === 'dojo' && G.trainCD > 0) body += `<p class="note">⏳ ${G.trainCD} mo</p>`;
@@ -12549,10 +12546,70 @@ monthTick = function () { tributeTick(); _monthTick(); rebelTick(); campTick(); 
 
 /* ---------- rebellion: a held province sometimes rises; crush it in time or lose it ---------- */
 const REBEL_MONTHS = 2;
+// provinces that can be held: everything but the training grounds (the dojo is sparred at, never taken)
+function conquerable(p) { return p.type !== 'dojo'; }
+function provinceTally() { const all = PROVINCES.filter(conquerable); return { owned: all.filter(p => G.prov[p.id] && G.prov[p.id].owner === 'kage').length, total: all.length }; }
+/* The dojo offers one prize per spar, shown before you fight; the bigger the prize, the stronger the sparring
+ partners. A win takes it: recruits of a random unlocked arm, your latest armor or horse, or a free commander or
+ worker. A loss still sends a few recruits home with you, and nobody is ever lost. */
+function freeRecruitsNow() {
+  const reserved = new Set(PROVINCES.filter(p => G.prov[p.id] && G.prov[p.id].owner !== 'kage' && p.reward && p.reward.recruit).map(p => p.reward.recruit));
+  return RECRUITS.filter(v => !vById(v.id) && !G.recruitQueue.includes(v.id) && !onHire(v.id) && !reserved.has(v.id) && !(G.boons && G.boons.pledge === v.id)
+    && !(G.camps || []).some(c => c.reward && (c.reward.recruit === v.id || (c.reward.recruits || []).includes(v.id)))
+    && !Object.values(G.prov || {}).some(st => st && st.retake && (st.retake.recruits || []).includes(v.id)) && !(G.dojoPrize && G.dojoPrize.id === v.id));
+}
+function latestGear(test) { const l = Object.keys(ITEMS).filter(k => G.researched[k] && !ITEMS[k].rare && ITEMS[k].cost > 0 && test(ITEMS[k], k)); l.sort((a, b) => (ITEMS[b].tier || 0) - (ITEMS[a].tier || 0) || ITEMS[b].cost - ITEMS[a].cost); return l[0] || null; }
+const DOJO_PRIZE = { troops: { w: 40, mul: .75 }, armor: { w: 20, mul: .9 }, horse: { w: 15, mul: .9 }, person: { w: 25, mul: 1.05 } };
+function dojoPrizeValid(P) {
+  if (!P || !DOJO_PRIZE[P.kind]) return false;
+  if (P.kind === 'troops') return troopsOpen(P.t);
+  if (P.kind === 'person') return !vById(P.id) && !G.recruitQueue.includes(P.id) && !onHire(P.id);
+  return !!ITEMS[P.k] && !!G.researched[P.k];
+}
+function dojoPrize() {
+  if (dojoPrizeValid(G.dojoPrize)) return G.dojoPrize;
+  const types = ['inf', 'arc', 'gun', 'cav'].filter(troopsOpen), armor = latestGear(I => I.slot === 'armor'), horse = latestGear((I, k) => I.slot === 'mount' && isHorse(k));
+  const free = (() => { const f = freeRecruitsNow(); return f.length ? pick(f).id : null; })();
+  const opts = [['troops', { t: pick(types.length ? types : ['inf']) }]];
+  if (armor) opts.push(['armor', { k: armor }]); if (horse) opts.push(['horse', { k: horse }]); if (free) opts.push(['person', { id: free }]);
+  const [kind, o] = wpick(Math.random, opts, opts.map(([k]) => DOJO_PRIZE[k].w));
+  return G.dojoPrize = Object.assign({ kind, mul: DOJO_PRIZE[kind].mul }, o);
+}
+function dojoPrizeChip(P) {
+  if (P.kind === 'troops') return `${icon('u_' + P.t)} ${UNITS[P.t].name} recruits`;
+  if (P.kind === 'person') { const d = vData(P.id); return `${icon('folk')} ${esc(d.name)} (${ROLE_NAME[d.role] || d.role}) joins`; }
+  return `${icon('it_' + P.k)} ${esc(ITEMS[P.k].name)}`;
+}
+function dojoPayout(res, rewards) {
+  const P = dojoPrize(), tot = Object.values(G.troops).reduce((a, b) => a + b, 0); G.dojoPrize = null;
+  if (res !== 'win') { // consolation: a few recruits, spread over the arms you field
+    const gain = Math.max(5, Math.round(tot * .025)), types = ['inf', 'arc', 'gun', 'cav'].filter(t => unitOpen(t) && G.troops[t] > 0);
+    if (!types.length) G.troops.inf = (G.troops.inf || 0) + gain; else types.forEach(t => { G.troops[t] += Math.max(1, Math.round(gain * G.troops[t] / Math.max(1, tot))); });
+    rewards.push(`${icon('u_inf')} +${gain} recruits`); return; }
+  G.gold += 120; rewards.push(`${icon('gold')} +120`);
+  if (P.kind === 'troops') { const n = Math.max(10, Math.round(tot * .08)); G.troops[P.t] = (G.troops[P.t] || 0) + n; rewards.push(`${icon('u_' + P.t)} +${n} ${UNITS[P.t].name}`); }
+  else if (P.kind === 'person') { rewards.push(`${icon('folk')} ${esc(vData(P.id).name)} joins`); releaseRecruit(P.id); setTimeout(() => offerHire(P.id, 'rebel', 'A sparring partner asks to stay'), 60); }
+  else { G.items[P.k] = (G.items[P.k] || 0) + 1; rewards.push(`${icon('it_' + P.k)} ${esc(ITEMS[P.k].name)}`); }
+}
+
+/* Retaking a province the rebels took back: non-castle sites come back as strong as the uprising that took them,
+ and the spoils are rolled afresh (gear, and often a commander or worker) instead of the one-time rewards. */
+function rollRetake(P, pw, camp) {
+  const table = enemyLootTable({ type: 'camp', clan: P.clan, power: pw }, Math.max(1, maxTier())).filter(o => ['weapon', 'armor', 'head'].includes(ITEMS[o.k].slot));
+  const items = []; for (let i = rint(1, 2); i > 0 && table.length; i--) items.push(enemyWeightedPick(table));
+  // the uprising's own captives are held in the province it took; with none, someone else is found there
+  const held = camp && camp.reward ? [camp.reward.recruit, ...(camp.reward.recruits || [])].filter(id => id && !vById(id) && !G.recruitQueue.includes(id) && !onHire(id)) : [];
+  const pool = held.length ? held : freeRecruitsNow().map(v => v.id), recruits = pool.length && (Math.random() < .65 || !items.length) ? [pick(pool)] : [];
+  return { items, recruits };
+}
+function grantRetake(X, rewards) {
+  (X.items || []).forEach(k => { if (!ITEMS[k]) return; G.items[k] = (G.items[k] || 0) + 1; rewards.push(`${icon('it_' + k)} ${ITEMS[k].name}`); });
+  (X.recruits || []).forEach((id, i) => { if (vById(id)) return; releaseRecruit(id); rewards.push(`${icon('folk')} ${vData(id).name} joins`); setTimeout(() => offerHire(id, 'rebel', 'A captive joins you'), 60 + i * 30); });
+}
 function rebelTick() {
   if (!G.camps) G.camps = []; const m = monthIdx();
   G.camps.filter(c => c.rebel && c.expires <= m).forEach(c => { const P = PROVINCES.find(p => p.id === c.rebel);
-    if (P && G.prov[P.id].owner === 'kage') { G.prov[P.id].owner = P.clan; Sound.play('alert'); announce('Province lost', `The rebels of <b>${esc(P.name)}</b> threw out your governor. It falls back to the ${esc(CLANS[P.clan].name)} — retake it.`, 'scroll'); } });
+    if (P && G.prov[P.id].owner === 'kage') { const st = G.prov[P.id]; st.owner = P.clan; if (P.type !== 'clan') st.power = Math.max(st.power || 0, Math.round(c.power * 1.2)); st.retake = rollRetake(P, Math.max(st.power || 0, c.power), c); Sound.play('alert'); announce('Province lost', `The rebels of <b>${esc(P.name)}</b> threw out your governor. It falls back to the ${esc(CLANS[P.clan].name)} — retake it.`, 'scroll'); } });
   G.camps = G.camps.filter(c => !(c.rebel && c.expires <= m));
   if (G.camps.some(c => c.rebel)) return;
   const owned = PROVINCES.filter(p => p.type !== 'home' && p.type !== 'dojo' && !p.boss && G.prov[p.id].owner === 'kage');
@@ -12567,7 +12624,7 @@ function spawnRebellion(P) {
   // a fighter and/or a worker who join you for free
   const R={gold:Math.round(pw*rnd(.3,.5)/10)*10,items,troops:rint(10,50),recruits:[]};ensureRebelWorker(R);
   { const reserved = new Set(PROVINCES.filter(p => G.prov[p.id].owner !== 'kage' && p.reward && p.reward.recruit).map(p => p.reward.recruit));
-    const free = RECRUITS.filter(v => !vById(v.id) && !G.recruitQueue.includes(v.id) && !onHire(v.id) && !reserved.has(v.id) && !(G.boons && G.boons.pledge === v.id) && !G.camps.some(c => c.reward && (c.reward.recruit === v.id || (c.reward.recruits || []).includes(v.id))));
+    const free = freeRecruitsNow().filter(v => !reserved.has(v.id));
     const fighters=free.filter(v=>!R.recruits.includes(v.id)&&vData(v.id).role!=='work'),workers=free.filter(v=>!R.recruits.includes(v.id)&&vData(v.id).role==='work');
     if (fighters.length && Math.random() < .7) R.recruits.push(pick(fighters).id);
     if (workers.length && Math.random() < .7) R.recruits.push(pick(workers).id);
@@ -12603,7 +12660,7 @@ function spawnCamp(quiet) {
   if(Math.random()<.45)R.item=rollEnemyLoot({type:'camp',clan:K.clan,power});
   if (army && Math.random() < .5) R.troops = Math.max(5, Math.round(power * .07));
   const reserved = new Set(PROVINCES.filter(p => G.prov[p.id].owner !== 'kage' && p.reward && p.reward.recruit).map(p => p.reward.recruit));
-  const free = RECRUITS.filter(v => !vById(v.id) && !G.recruitQueue.includes(v.id) && !onHire(v.id) && !reserved.has(v.id) && !(G.boons && G.boons.pledge === v.id) && !G.camps.some(c => c.reward.recruit === v.id));
+  const free = freeRecruitsNow().filter(v => !reserved.has(v.id));
   if (free.length && Math.random() < .3) R.recruit = pick(free).id;
   const c = { id: 'camp' + (G.campUid = (G.campUid || 1) + 1), type: 'camp', clan: K.clan, mode: K.mode, name: pick(K.names), x: pos.x, y: pos.y, power, owner: K.clan, reward: R, expires: m + rint(3, 5), near: base.name, links: [] };
   G.camps.push(c);

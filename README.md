@@ -13,6 +13,19 @@ The whole game is one self-contained HTML file. It has no build step, no server 
 - **Top bar:** date (year, season, month, week), village appeal and star rating, population, coin, and time controls (pause, play, fast-forward, music).
 - **Input:** mouse, touch and scroll wheel. It works on desktop and phone-sized screens. In the Warrior Atelier, `Esc` closes the panel and `Tab` cycles focus.
 
+## The map: provinces, the dojo and uprisings
+
+- **Winning the map:** 49 provinces can be held (41 clan castles, 7 bandit lairs and your home village). The **Training Ground** dojo is sparred at, never taken, so it does not count; the map and the Ledger show *held / 49*. The war ends when you take the Shogun's keep.
+- **Dojo prizes:** each spar puts up one prize, shown on the dojo's map card before you fight. A win takes it, plus 120G:
+  - recruits of a random arm you have unlocked (8% of your troops, at least 10);
+  - your latest researched armor or horse;
+  - a free commander or worker.
+  Bigger prizes bring stronger sparring partners. A recruits prize matches the old dojo's difficulty; armor or a horse brings partners 20% stronger, and a person 40% stronger. A loss still sends a few recruits home with you, and nobody is ever lost. A new prize is rolled after every spar.
+- **Uprisings:** when rebels throw out your governor, the province falls back to its clan.
+  - Lairs and other non-castle sites come back as strong as the uprising that took them, plus 20%. Castles keep their own strength.
+  - Its spoils are rolled afresh: 1–2 pieces of gear, and often a commander or worker (one of the uprising's captives when it held any). The map card shows them.
+  - The province's one-time rewards (deeds, unlocks, buildings, its named item and recruit) are not granted again.
+
 ## Battles: formation tactics and ninjutsu
 
 Battles are prepared, not micromanaged. Everything is set in the **Army** screen, and once you press *Attack!* the rounds play out without pausing. *Retreat* and speed stay on the battle bar, and a retreat takes effect at the end of the current round.
@@ -118,7 +131,7 @@ The game is served by GitHub Pages straight from the `main` branch root (`/`), w
 | `index.html` | The complete game: markup, styles, script, sprites and audio (audio is embedded as data URIs) |
 | `README.md` | This file |
 | `docs/` | Equipment notes, [village art direction](docs/ART_DIRECTION.md), and previews rendered from the procedural game assets |
-| `tests/` | Browser checks for equipment effects, research, saves, portraits, formation tactics, Ki, army forging, the campaign hand, logistics and mobile layout |
+| `tests/` | Browser checks for equipment effects, research, saves, portraits, formation tactics, Ki, army forging, the campaign hand, logistics, the province count, dojo prizes, uprisings and mobile layout |
 | `reports/` | Recorded validation results |
 
 ## Current version: v19.1 + Logistics P0
