@@ -43,6 +43,19 @@
     "shortOf": "Silk",
     "madeWithShortage": 25
   },
+  "scarceShare": {
+    "capacity": {
+      "gun": 200,
+      "inf": 40,
+      "cav": 40
+    },
+    "silk": 60,
+    "sets": {
+      "inf": 11,
+      "gun": 52,
+      "cav": 11
+    }
+  },
   "limits": {
     "researchRespected": true,
     "goldFloor": true,

@@ -110,7 +110,7 @@ Each formation forge (Training) makes its own sets of your **best researched gea
 - **Output adds up.** Five Level 1 Gunner forges on armor make 200 sets a month and fully equip 1,000 Gunners with top armor and helmets in 10 months. At Level 3 it takes 5.
 - **A forge keeps working while carpenters upgrade it.**
 - **Focus is a priority, not a limit.** A forge whose focus is already covered (say, every Gunner carries your best gun) makes the other job instead of resting. The forge panel says so, and the Army screen's rates and time to full coverage count it.
-- **Materials set the pace.** Each set uses the gear's usual gold and an eighth of its materials. Top armor and helmets need Silk: Ginryū Gusoku 1.75 a set, Eboshi-nari Kabuto 1. When a material runs out mid-month, the forging message says *stopped short of …*.
+- **Materials set the pace.** Each set uses the gear's usual gold and an eighth of its materials. Top armor and helmets need Silk: Ginryū Gusoku 1.75 a set, Eboshi-nari Kabuto 1. A short material is shared between formations in proportion to their forges' monthly output (260 sets of Gunner forges get 6.5× the Silk of a 40-set forge). When a material runs out mid-month, the forging message says *stopped short of …*.
 - **Visible upgrades:** Level 1 has an open furnace; Levels 2 and 3 add one and two roof chimneys. Formation displays and the red weapon / green armor banners remain visible. See the [procedural level preview](docs/forge-upgrades-preview.png).
 - **Forges add quantity, never quality.** Every set costs its usual gold and materials, and stops before the treasury drops below 150G.
 - **The village smiths add a small shared trickle on top**, split between formations: 20 a month, +30 per Smithy, +12 per Iron Mine.
