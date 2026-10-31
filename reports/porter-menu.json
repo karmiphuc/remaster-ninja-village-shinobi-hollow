@@ -1,0 +1,20 @@
+[
+  {
+    "route": "/",
+    "oldSave": true,
+    "visible": true,
+    "placed": true,
+    "cost": 240,
+    "assigned": 2,
+    "reload": true
+  },
+  {
+    "route": "/download",
+    "oldSave": true,
+    "visible": true,
+    "placed": true,
+    "cost": 240,
+    "assigned": 2,
+    "reload": true
+  }
+]

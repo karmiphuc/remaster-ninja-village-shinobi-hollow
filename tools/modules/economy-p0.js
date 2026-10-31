@@ -4,6 +4,7 @@
 const ECONOMY_P0=1;
 BUILDINGS.porter={name:'Porter House',jp:'荷運び小屋',cat:'ind',tab:'ind',w:2,h:2,cost:240,slots:2,appeal:1,
  desc:'Assign up to two porters by hand. They collect harvests and wares, supply artisans and restock shop shelves with handcarts. Ordinary workers still haul without them.'};
+if(!BUILD_ORDER.includes('porter'))BUILD_ORDER.splice(BUILD_ORDER.indexOf('kura')+1,0,'porter');
 SH_PERF.ledgerHooked=true;
 function economyState(){
  let E=RT.eco;if(E&&E.owner===G)return E;
@@ -355,26 +356,27 @@ function assignJobs(){
  economyState().dirty=true;
 }
 function porterHouseSprite(){
- const p=new ArtPB(32,44),C=EDO_WORK_PALETTE;
- p.rect(2,22,28,18,'#d4c1a0');p.rect(4,24,24,14,'#493928');
- for(let x=4;x<29;x+=4){p.rect(x,23,.65,16,'#94734e');p.rect(x+.65,23,.33,16,'#ba9665');}
- p.rect(2,39,28,3,'#9e825d');p.rect(3,39,26,.65,'#ddc294');p.rect(3,41,26,.65,'#705439');
- p.poly([[0,23],[4,12],[27,12],[32,23]],'#34383c');
- p.poly([[1,22],[5,13],[27,13],[31,22]],'#59616a');
- for(let y=15;y<23;y+=2){p.rect(3-(y-15)/4,y,25+(y-15)/2,.55,'#30383d');}
- for(let x=5;x<29;x+=3.7){p.line(x,13,x-2.2,22,'#7d8383');p.line(x+.7,13,x-1.5,22,'#424a51');}
- p.rect(1,22,30,1.6,'#262e32');p.hline(1,22,30,'#9a9e96');
- p.rect(6,24,10,1,'#c1a16b');p.rect(7,25,3,9,'#314d59');p.rect(11,25,3,9,'#314d59');
- p.hline(8,27,1,'#e5debb');p.rect(10,35,4,.7,'#755438');
- // Rope rack, shoulder poles, wrapped consignments and a parked wooden cart.
- artStroke(p,[[24,25],[22,37]],.65,'#bc9661');artStroke(p,[[26,25],[25,36]],.55,'#78583b');
- p.ellipse(21,28,2,3.1,'#c5aa74');p.ellipse(21,28,1.2,2.2,'#68583d');p.line(20.7,30.5,19.2,33.5,'#d5bb85');
- p.rect(3,32,5,5,'#b4915b');p.hline(3,33,5,'#ddbc80');p.vline(5,32,5,'#665037');
- p.rect(14,34,13,4,'#987548');p.hline(14,34,13,'#d2ad6d');p.rect(15,36,12,.5,'#5f482f');
- p.circle(17,39,2.5,'#3e3530');p.circle(17,39,1.7,'#bb945f');p.circle(17,39,.6,'#4e3c2e');
- p.circle(25,39,2.5,'#3e3530');p.circle(25,39,1.7,'#bb945f');p.circle(25,39,.6,'#4e3c2e');
- p.line(26,35,30,31,'#c4a071');p.rect(17,29,7,5,'#b6a078');p.vline(20,29,5,'#596d6c');p.hline(17,31,7,'#596d6c');
- p.shadeEdges(.92,1.045);const o=p.outlined(OUTLINE);return {cv:o.canvas(),ox:-1,oy:-13};
+  // Village art: native PB pixels, shared shading, and a permanent foreground barrow.
+  const p=new PB(32,46),wood='#6b4a2e';
+  wallFront(p,2,26,28,15,{plaster:'#efe6d0',wood,door:true,noren:'#3b4a7a'});
+  p.rect(24,30,5,8,'#8a5a32');p.hline(24,30,5,'#a87a48');
+  p.hline(24,34,5,'#5a3a20');p.vline(26,30,8,'#5a3a20');
+  roofTiles(p,0,5,32,24,'#3a3442');
+  p.rect(12,21,9,7,wood);p.rect(13,22,7,5,'#e8d8b0');
+  p.rect(14,23,5,3,'#a8743f');p.vline(16,23,3,'#f2efe2');
+  // Empty wooden wheelbarrow parked in front, separate from the house's sill.
+  // Keep its sloped tray, two shafts, support leg and large spoked wheel readable.
+  p.line(19,38,29,34,'#4a321e');p.line(19,39,29,35,'#c8945f');
+  p.line(18,41,28,38,'#4a321e');p.set(28,38,'#c8945f');
+  p.line(18,40,21,44,'#4a321e');p.hline(20,44,3,'#4a321e');
+  p.poly([[3,35],[22,35],[20,41],[7,41]],'#4a321e');
+  p.poly([[5,36],[20,36],[18,39],[8,39]],'#a8743f');
+  p.hline(3,35,19,'#c8945f');p.hline(8,39,11,'#8a5a32');
+  p.hline(7,40,13,'#6b4a2e');p.vline(8,36,4,'#8a5a32');p.vline(18,36,4,'#8a5a32');
+  // The wheel is painted last so it cannot disappear behind the cart or foundation.
+  p.circle(8,42,3,'#3a2a22');p.circle(8,42,2,'#c8945f');
+  p.vline(8,40,5,'#4a321e');p.hline(6,42,5,'#4a321e');p.set(8,42,'#e0b884');
+  p.shadeEdges(.88,1.06);const o=p.outlined(OUTLINE);return {cv:o.canvas(),ox:-1,oy:-11};
 }
 function economyBadge(ctx,b,B,px,py){
  let kind=0;
