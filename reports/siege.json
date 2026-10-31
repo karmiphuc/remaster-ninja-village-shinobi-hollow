@@ -1,0 +1,56 @@
+{
+  "gateHolds": {
+    "rounds": 2,
+    "blowsWhileHeld": 10,
+    "rangedOurs": 3,
+    "rangedTheirs": 7,
+    "meleeIntoTheGate": 0,
+    "defendingMeleeAttacks": 0,
+    "gateDamage": 121
+  },
+  "duelBeforeBreach": true,
+  "breach": {
+    "brokeInRound": 2,
+    "round2Phases": [
+      "gun",
+      "arc",
+      "inf"
+    ],
+    "nextRound": 1,
+    "ki": 2,
+    "commanderKoKept": "Sora",
+    "meleeAfterBreach": 5,
+    "result": "lose"
+  },
+  "buying": {
+    "bombard": "4,000 / 5,000 (max 2)",
+    "hwacha": "2,000 / 2,500 / 3,000 / 3,500 (max 4)",
+    "refunds": "last bought, full price",
+    "withdraw": "all refunded"
+  },
+  "afterAttack": "locked",
+  "engines": {
+    "bombardsGate": "-40% of the gate from 2 shells (20% each)",
+    "hwachaPlanned": [
+      111.3,
+      66.8,
+      44.5,
+      27.8
+    ],
+    "hwachaActual": [
+      54,
+      66.8,
+      44.5,
+      27.8
+    ],
+    "hwachaTargets": [
+      "gun",
+      "arc"
+    ],
+    "meleeLosses": 0
+  },
+  "afterBreach": "silent",
+  "ai": "no engines for defenders or in field battles",
+  "save": true,
+  "errors": []
+}

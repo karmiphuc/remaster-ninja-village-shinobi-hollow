@@ -389,6 +389,7 @@ img.px, canvas.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 .kbar i.plain { background: repeating-linear-gradient(45deg, rgba(42,29,26,.07) 0 4px, transparent 4px 8px); color: var(--ink-2); }
 .kfoot { display: flex; gap: 8px; align-items: center; justify-content: space-between; font-size: 11px; }
 .tate { margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(90,60,30,.35); font-size: 11px; display: grid; gap: 4px; } .tate .kl { font-weight: bold; } .tate img { width: 16px; height: 16px; vertical-align: middle; } .tate-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; } .tate .cov { color: #a02a1a; } .tate .cov.full { color: var(--pine); } .tate.locked { display: flex; gap: 8px; align-items: center; }
+.engines { display: grid; gap: 6px; margin: 8px 10px 0; } .engine { display: flex; gap: 8px; align-items: center; font-size: 12px; } .engine img { width: 24px; height: 24px; } .engine .en-txt { flex: 1; min-width: 0; } .engine .paid { color: var(--pine); font-weight: bold; } .engine .btn { min-height: 30px; padding: 2px 9px; } .engine.on b { color: #a02a1a; }
 .kfoot .btn { min-height: 28px; padding: 2px 8px; font-size: 11px; flex: 0 0 auto; }
 .skl { display: grid; grid-template-columns: 40px 1fr; gap: 8px; align-items: start; }
 .skl img { width: 40px; height: 40px; image-rendering: pixelated; background: rgba(42, 29, 26, .1); border: 1px solid rgba(42, 29, 26, .35); margin-top: 8px; }
@@ -1232,7 +1233,7 @@ const ITEMS = {
   corps_gun: { name: 'Gun Corps',   jp: '鉄砲組', slot: 'perk', cost: 0, tier: 2, corps: 'gun', desc: 'Raise Gunner troops and name gunner commanders.' },
   corps_cav: { name: 'Horse Corps', jp: '騎馬組', slot: 'perk', cost: 0, tier: 2, corps: 'cav', desc: 'Raise Cavalry troops and name cavalry commanders.' },
   horo:     { name: 'Horo-shū Corps',  slot: 'perk', cost: 0, tier: 3, desc: 'Unlocks retainers — elite cloaked bodyguards for your commanders.' },
-  siegegun: { name: 'Siege Battery',   slot: 'perk', cost: 0, tier: 5, desc: 'A bronze ōzutsu mortar and a hwacha rocket cart, hired with their crews for one siege at a time (1,000–6,000G each). The mortar batters the gate; the hwacha sweeps the ramparts.' },
+  siegegun: { name: 'Siege Battery',   slot: 'perk', cost: 0, tier: 5, desc: 'Lets you buy siege engines with their crews for one siege at a time, before the attack: up to 2 Bombards (4,000G, then 5,000G) that batter the gate, and up to 4 Hwacha (2,000–3,500G) that sweep defenders on the ramparts.' },
   hawk:     { name: 'War Hawk',        slot: 'mount', atk: 1, def: 1, mrk: 2, wrk: 4, wild: 1, beast: 'arc', bonus: 0.12, cost: 800, tier: 2, desc: 'Beast: all Archers +12% damage. Found by hunting, loot or merchants; up to 3 stack (diminishing).' },
   hound:    { name: 'Akita Hound',     slot: 'mount', atk: 2, def: 1, wrk: 4, wild: 1, beast: 'inf', bonus: 0.12, cost: 800, tier: 2, desc: 'Beast: all Infantry +12% damage. Found by hunting, loot or merchants; up to 3 stack (diminishing).' },
   jiba:     { name: 'Hill Horse',      slot: 'mount', ride: 1, atk: 3, def: 3, wrk: 6, move: .05, cost: 360, tier: 1, res: { rice: 6 }, desc: 'Sturdy local horse. Lets a villager command Cavalry; anyone riding gains ATK/DEF and spirit (Work).' },
@@ -10083,6 +10084,9 @@ function drawCastle(x, cx, by, C) {
 const PHASES = ['gun', 'arc', 'inf', 'cav'];
 const PHASE_CALL = { gun: ['鉄砲', 'Gunners — fire!'], arc: ['弓矢', 'Archers — loose!'], inf: ['突撃', 'Infantry — clash!'], cav: ['騎馬', 'Cavalry — charge!'] };
 function beginRound() {
+  // the gate fell last round: open combat begins again at Round 1 with whoever is left (casualties, commanders and Ki carry over)
+  if (BT.breachReset) { BT.breachReset = false; BT.round = 0; BT.maxR = 3; BT.duelRound = null; BT.breachRestarted = (BT.breachRestarted || 0) + 1; }
+  BT.roundSeq = (BT.roundSeq || 0) + 1;
   BT.round++; BT.phase = -1; BT.state = 'run'; BT.camAnchor = null; clearCamKeys(); BT.phaseName = null; BT.pt = 0; BT.script = null; BT.A.forEach(A => A.groups.forEach(g => g.routed = g.troops <= 0)); renderRunStrip();
   BT.tac[1] = BT.plan && BT.plan.round === BT.round ? BT.plan.tac : aiTactic(BT.A[1], BT.A[0]);
   // formation orders follow the plan for Rounds 1-3 (Round 3 may adapt once); past Round 3 the last order holds
@@ -10139,12 +10143,33 @@ function castJutsu(side, j) {
 }
 function callout(big, small) { $('#bcall').innerHTML = `<div class="in">${big}<small>${small}</small></div>`; clearTimeout(BT._co); BT._co = setTimeout(() => { if ($('#bcall')) $('#bcall').innerHTML = ''; }, 1500 / battlePlaybackRate()); }
 
-/* ---------- Siege battery: hired for one siege ---------- */
-function batteryFee() { const ep = BT.A[1].power0 || armyPower(BT.A[1]); return clamp(Math.round(ep * 1.1 / 100) * 100, 1000, 6000); }
-function batteryRow() {
-  if (!G.researched.siegegun) return `<div class="note" style="margin:8px 10px 0">${icon('it_siegegun')} 🔒 Siege Battery ${ib('Research it in the Armory (10,000G) to hire a mortar and a hwacha for sieges.')}</div>`;
-  const fee = batteryFee(), on = !!BT.battery;
-  return `<div class="battery${on ? ' on' : ''}"><img class="px" src="${ICONS['it_siegegun']}" alt=""><div><b>${on ? 'Battery in place' : 'Siege battery'}</b> ${ib('Each round the mortar takes ~20% off the gate; the hwacha sweeps the ramparts. One siege only; refunded if you withdraw now.')}</div><button class="btn ${on ? 'ghost' : 'gold'}" id="bt-battery"${!on && G.gold < fee ? ' disabled' : ''}>${on ? 'Send away · refund' : `大筒 Hire · ${fmt(fee)}G`}</button></div>`;
+/* ---------- Siege engines: Bombards and Hwacha, bought separately for one siege ----------
+ Unlocked by researching the Siege Battery. Each purchase costs more than the last; any of them can be sent back
+ for a full refund until you give the order to attack. Bombards strike the gate only; Hwacha strike defenders exposed
+ on the ramparts only (their gunners and archers), each extra cart adding less. Both fall silent once the gate is down. */
+const ENGINES = {
+  bombard: { name: 'Bombard', jp: '大筒', prop: 'mortar', icon: 'it_siegegun', cost: [4000, 5000], gate: .2,
+    role: 'Batters the gate: each takes 20% of its strength off every round. Never hits troops.' },
+  hwacha: { name: 'Hwacha', jp: '火車', prop: 'hwacha', icon: 'it_siegegun', cost: [2000, 2500, 3000, 3500], dim: [1, .6, .4, .25],
+    role: 'Sweeps defenders exposed on the ramparts (gunners and archers). Each extra cart adds less: ×1, ×0.6, ×0.4, ×0.25. No gate damage.' },
+};
+function engN(k) { return (BT && BT.eng && BT.eng[k]) || 0; }
+function engCount() { return engN('bombard') + engN('hwacha'); }
+function engNext(k) { return ENGINES[k].cost[engN(k)]; } // undefined at the cap
+function engSpent() { return Object.keys(ENGINES).reduce((n, k) => n + ENGINES[k].cost.slice(0, engN(k)).reduce((a, b) => a + b, 0), 0); }
+function engCan() { return !!(BT && BT.siege && BT.A[0].side === 0 && BT.round === 0 && BT.state === 'prep' && G.researched.siegegun); }
+function engBuy(k) { const fee = engNext(k); if (!engCan() || fee == null || G.gold < fee) return false; G.gold -= fee; (BT.eng ||= { bombard: 0, hwacha: 0 })[k]++; placeEngines(); return true; }
+function engRefund(k) { if (!engCan() || !engN(k)) return false; BT.eng[k]--; G.gold += ENGINES[k].cost[BT.eng[k]]; placeEngines(); return true; }
+function engRefundAll() { const g = engSpent(); if (g && BT.round === 0) { G.gold += g; BT.eng = { bombard: 0, hwacha: 0 }; } return g; }
+// one Hwacha volley's kills: the first cart takes 5% of the garrison + 4, each extra cart a smaller share of that
+function hwachaKills(i) { return (totalOf(BT.A[1]) * .05 + 4) * ENGINES.hwacha.dim[i]; }
+function hwachaTarget() { const D = BT.A[1]; return alive(D, 'gun')[0] || alive(D, 'arc')[0] || null; }
+function engineRows() {
+  if (!G.researched.siegegun) return `<div class="note" style="margin:8px 10px 0">${icon('it_siegegun')} 🔒 Siege engines ${ib('Research the Siege Battery in the Armory (10,000G) to buy Bombards and Hwacha for sieges.')}</div>`;
+  return `<div class="engines">${Object.keys(ENGINES).map(k => { const E = ENGINES[k], n = engN(k), next = engNext(k);
+    return `<div class="engine${n ? ' on' : ''}"><img class="px" src="${ICONS[E.icon]}" alt=""><div class="en-txt"><b>${E.jp} ${E.name}</b> <span class="muted">${n}/${E.cost.length}</span> ${ib(E.role)}<br><small class="muted">${next != null ? `Next ${fmt(next)}G` : 'At the limit'} · ${E.cost.map((c, i) => `<span class="${i < n ? 'paid' : ''}">${fmt(c)}</span>`).join(' / ')}</small></div>
+      <button class="btn ghost" data-eng-less="${k}"${n ? '' : ' disabled'}${tipAttr('Send back · full refund (before the attack only)')}>−</button><button class="btn gold" data-eng-more="${k}"${next != null && G.gold >= next ? '' : ' disabled'}>+${next != null ? `<small>${fmt(next)}G</small>` : ''}</button></div>`; }).join('')}
+    <div class="note" style="margin:2px 0 0">${engCount() ? `${engN('bombard')} Bombard${engN('bombard') === 1 ? '' : 's'}: gate −${Math.round(engN('bombard') * ENGINES.bombard.gate * 100)}% a round · ${engN('hwacha')} Hwacha: about ${fmt(Math.round(Array.from({ length: engN('hwacha') }, (_, i) => hwachaKills(i)).reduce((a, b) => a + b, 0)))} rampart defenders a round · ${fmt(engSpent())}G, refundable until you attack` : 'One siege only. Refunded in full if you send them back or withdraw before attacking.'}</div></div>`;
 }
 /* ---------- Deployment panel ----------
  Shown once, before the first round. Formation orders and ninjutsu are set in the Army screen; the battle then plays
@@ -10160,14 +10185,14 @@ function showTacticPanel() {
   const K = BT.autoKi, J = K && JUTSU[K.pref];
   const kiLine = K ? `<div class="note" style="margin:6px 10px 0">${icon('ki')} Ki ${Math.max(0, BT.ki[0])}/${BT.kiCap} · ${!K.on ? 'Auto-cast off' : `Auto-cast ${J.name} (${J.ki} Ki): ${!K.eligible ? `holds — your strength share is ${Math.round(K.share * 100)}%, outside 33–67%` : BT.ki[0] < J.ki ? 'not enough Ki banked' : 'ready'}`}</div>` : '';
   $('#btac').innerHTML = `<div class="in lac"><div class="paper" style="border-top:0">${head}${orders}${kiLine}
-    ${BT.siege ? batteryRow() : ''}
+    ${BT.siege ? engineRows() : ''}
     <div class="row" style="padding:10px"><button class="btn ghost" id="bt-retreat">Withdraw</button><button class="btn ghost" id="bt-speed">Speed ×${BT.speed}</button><span class="sp"></span><button class="btn red" id="bt-go" style="min-width:120px">出陣 · Attack!</button></div></div></div>`;
-  const hb = $('#bt-battery'); if (hb) hb.onclick = () => { const fee = batteryFee(); if (BT.battery) { BT.battery = false; G.gold += BT.batteryPaid || 0; BT.batteryPaid = 0; Sound.play('tap'); }
-    else { if (G.gold < fee) { Sound.play('alert'); toast('Not enough gold to hire the battery.'); return; } G.gold -= fee; BT.battery = true; BT.batteryPaid = fee; Sound.play('coin'); Sound.play('taiko', { vol: .6 }); toast(`The siege battery rolls up behind your lines <span class="muted">(−${fmt(fee)}G)</span>.`); }
-    placeBattery(); updateHUD(); showTacticPanel(); };
+  $$('#btac [data-eng-more]').forEach(b => b.onclick = () => { const k = b.dataset.engMore, fee = engNext(k); if (!engBuy(k)) { Sound.play('alert'); toast(fee == null ? `No more ${ENGINES[k].name}s for this siege.` : 'Not enough gold.'); return; }
+    Sound.play('coin'); Sound.play('taiko', { vol: .6 }); toast(`A ${ENGINES[k].name} rolls up behind your lines <span class="muted">(−${fmt(fee)}G)</span>.`); updateHUD(); showTacticPanel(); });
+  $$('#btac [data-eng-less]').forEach(b => b.onclick = () => { const k = b.dataset.engLess; if (!engRefund(k)) return; Sound.play('tap'); updateHUD(); showTacticPanel(); });
   $('#bt-go').onclick = () => { Sound.play('horn'); beginRound(); };
   $('#bt-speed').onclick = () => { BT.speed = BT.speed >= 4 ? 1 : BT.speed + 1; Sound.play('tap'); showTacticPanel(); };
-  $('#bt-retreat').onclick = () => { if (BT.battery) G.gold += BT.batteryPaid || 0; closeBattle(); openMap(); };
+  $('#bt-retreat').onclick = () => { engRefundAll(); closeBattle(); openMap(); };
 }
 
 // one row per unit type in phase order: our count and strength on the left, theirs on the right, the acting type lit
@@ -10497,6 +10522,9 @@ function siegeScript(p) {
     const t1 = BT.ram.mv.t1; for (let k = 0; k < 3; k++) add(t1 + .2 + k * .6, 'ram', { dmg: dmg / 3 });
   } else if (p === 'gun') { const gun = alive(A, 'gun'); if (!gun.length) return;
     const dmg = gun.reduce((n, g) => n + fightingStrength(g) * battleAttack(g) * UNITS.gun.atk * g.atkMul * .26 * tateAtk(g), 0) * .14; add(T0 + RANGED_LEAD + .66, 'ram', { dmg, shot: 1 }); }
+  else if (p === 'cav') { const cav = alive(A, 'cav'); if (!cav.length) return; // riders hack at the doors: half an infantry ram's weight
+    const dmg = cav.reduce((n, g) => n + fightingStrength(g) * battleAttack(g) * UNITS.cav.atk * g.atkMul * TACTICS[tacFam(g)].mod.mel * .26, 0) * (1 + A.strat * .05) * .5 * rnd(.85, 1.15);
+    for (let k = 0; k < 2; k++) add(T0 + .8 + k * .5, 'ram', { dmg: dmg / 2, shot: 1 }); }
   else return;
   S.ev.sort((a, b) => a.t - b.t); const end = Math.max(...S.ev.map(e => e.t)) - BT.t + .7; S.dur = Math.max(S.dur, end); BT.next = Math.max(BT.next, end - .2);
 }
@@ -10512,7 +10540,7 @@ function gateHit(e) {
   if (G2.hp <= 0) breachGate();
 }
 function breachGate() {
-  const G2 = BT.siege; G2.breached = true; G2.brokeAt = BT.t;
+  const G2 = BT.siege; G2.breached = true; G2.brokeAt = BT.t; BT.breachReset = true;
   const gx = G2.x + 2, gy = (BT.midY || 0) + 10;
   BT.stop = Math.max(BT.stop, .4); BT.shake = 1; BT.punch = .14; BT.flash = .3; BT.flashCol = '255,236,170';
   Sound.play('hit', { pitch: .5 }); Sound.play('taiko'); Sound.play('shout', { vol: 1 }); setTimeout(() => BT && Sound.play('combo'), 400);
@@ -11030,52 +11058,55 @@ function runPhase(p) {
   BT.phaseName = p; BT.pt = 0; BT.pt0 = BT.t; BT.stopBudget = .32; BT.phaseId = (BT.phaseId || 0) + 1;
   BT.A.forEach(A => A.groups.forEach(g => (g.heroes || []).forEach(hr => { hr.px = hr.py = undefined; })));
   const has0 = alive(BT.A[0], p).length, has1 = alive(BT.A[1], p).length;
-  const bat = p === 'gun' && BT.battery && BT.batFired !== BT.round; if (bat) BT.batFired = BT.round;
-  if (!has0 && !has1) { if (bat) { BT.script = { dur: 2.2, ev: [], i: 0, wins: [] }; callout('大筒', ''); batteryScript(); BT.next = 2.1; return; } BT.next = 0.05; BT.script = null; return; }
+  const bat = p === 'gun' && siegeHold() && engCount() > 0 && BT.engFired !== BT.roundSeq; if (bat) BT.engFired = BT.roundSeq;
+  if (!has0 && !has1) { if (bat) { BT.script = { dur: 2.2, ev: [], i: 0, wins: [] }; callout('大筒', ''); engineScript(); BT.next = 2.1; return; } BT.next = 0.05; BT.script = null; return; }
   callout(PHASE_CALL[p][0], ''); renderRunStrip();
   const ctx = { tac: BT.tac, jutsu: BT.jutsu, siege: siegeHold() };
+  // behind a standing gate: attacking infantry and cavalry strike the gate only (siegeScript), and the defenders'
+  // infantry and cavalry hold the walls without attacking; archers and gunners still trade volleys
+  const walled = ctx.siege && (p === 'inf' || p === 'cav');
   // shooters loose one hurried volley at the foes charging them; those it drops never reach the clash
   const ih = p === 'inf' || p === 'cav' ? interceptHits(p) : [];
   ih.forEach(h => h.to.troops -= h.kills);updateArmyCohesion();
-  const hits = ih.concat(resolvePhase(p, BT.A[0], BT.A[1], ctx), resolvePhase(p, BT.A[1], BT.A[0], ctx)); hits.push(...counterHits(p, hits, ctx));
-  equipmentGrenades(p,hits,ctx);
+  const hits = walled ? ih : ih.concat(resolvePhase(p, BT.A[0], BT.A[1], ctx), resolvePhase(p, BT.A[1], BT.A[0], ctx)); if (!walled) hits.push(...counterHits(p, hits, ctx));
+  if (!walled) equipmentGrenades(p,hits,ctx);
   ih.forEach(h => h.to.troops += h.kills);updateArmyCohesion();
   BT.camAnchor = null; clearCamKeys();
   finishPhase(p, hits, null);
   if (siegeHold()) siegeScript(p);
-  if (bat) batteryScript();
+  if (bat) engineScript();
 }
-/* ----- the hired siege battery: an ōzutsu mortar lobs a ball at the gate, a hwacha looses a sheaf of fire-arrows onto the walls ----- */
-function placeBattery() {
+/* ----- the siege engines: Bombards lob balls at the gate, Hwacha loose sheaves of fire-arrows onto the ramparts ----- */
+function placeEngines() {
   BT.props = (BT.props || []).filter(p => p.k !== 'mortar' && p.k !== 'hwacha');
-  if (!BT.battery) return; const y = Math.round(BT.fy0 + 7); // dug in at the far edge of the field, clear of the ranks
-  BT.batPos = { mx: BT.cx - 40, hx: BT.cx - 12, y }; // pushed out in front of the ranks along the far edge
-  BT.props.push({ k: 'mortar', si: 0, x: BT.batPos.mx, y }, { k: 'hwacha', si: 0, x: BT.batPos.hx, y: y + 1 });
+  const y = Math.round(BT.fy0 + 7); // dug in at the far edge of the field, clear of the ranks
+  BT.engPos = { y, bombard: Array.from({ length: engN('bombard') }, (_, i) => BT.cx - 40 - i * 22), hwacha: Array.from({ length: engN('hwacha') }, (_, i) => BT.cx - 12 + (i % 2) * 14 - Math.floor(i / 2) * 5) };
+  BT.engPos.bombard.forEach(x => BT.props.push({ k: 'mortar', si: 0, x, y }));
+  BT.engPos.hwacha.forEach((x, i) => BT.props.push({ k: 'hwacha', si: 0, x, y: y + 1 + (i >> 1) * 9 }));
 }
-function batteryScript() {
-  const S = BT.script; if (!S || !BT.batPos) return; const B = BT.batPos, t0 = BT.t + (S.ev.length ? Math.max(.15, S.dur - .7) : .15);
-  camKey(t0 - .1, B.mx + BT.vw * .28, .5); if (BT.siege) camKey(t0 + 1.05, BT.siege.x - BT.vw * .12, .45);
-  S.ev.push({ t: t0 + .2, k: 'mortar' }, { t: t0 + 1.35, k: 'shell' }, { t: t0 + .5, k: 'hwacha' }, { t: t0 + 1.55, k: 'rockets' });
-  S.ev.sort((a, b) => a.t - b.t); const end = t0 + 1.9 - BT.t; S.dur = Math.max(S.dur, end); BT.next = Math.max(BT.next || 0, end - .1);
+function engineScript() {
+  const S = BT.script, B = BT.engPos; if (!S || !B || !siegeHold()) return; const t0 = BT.t + (S.ev.length ? Math.max(.15, S.dur - .7) : .15);
+  camKey(t0 - .1, (B.bombard[0] ?? B.hwacha[0]) + BT.vw * .28, .5); if (BT.siege) camKey(t0 + 1.05, BT.siege.x - BT.vw * .12, .45);
+  B.bombard.forEach((x, i) => S.ev.push({ t: t0 + .2 + i * .35, k: 'mortar', x, i }, { t: t0 + 1.35 + i * .35, k: 'shell', x, i }));
+  B.hwacha.forEach((x, i) => S.ev.push({ t: t0 + .5 + i * .18, k: 'hwacha', x, i, y: B.y + (i >> 1) * 9 }, { t: t0 + 1.55 + i * .18, k: 'rockets', x, i, kills: hwachaKills(i) }));
+  S.ev.sort((a, b) => a.t - b.t); const end = Math.max(...S.ev.map(e => e.t)) + .35 - BT.t; S.dur = Math.max(S.dur, end); BT.next = Math.max(BT.next || 0, end - .1);
 }
-function batteryTarget() { const D = BT.A[1]; return alive(D, 'gun')[0] || alive(D, 'arc')[0] || alive(D, 'inf')[0] || alive(D)[0]; }
 function batteryEvent(e) {
-  const B = BT.batPos, S2 = BT.siege; if (!B || !S2) return;
+  const B = BT.engPos, S2 = BT.siege; if (!B || !S2) return;
   const gx = S2.x + 8, gy = S2.gy - 8;
-  if (e.k === 'mortar') { const mx = B.mx + 7, my = B.y - 11; BT.fx.push({ k: 'flash', x: mx, y: my, t: .12, t0: .12, dir: 1 });
+  if (e.k === 'mortar') { const mx = e.x + 7, my = B.y - 11; BT.fx.push({ k: 'flash', x: mx, y: my, t: .12, t0: .12, dir: 1 });
     for (let i = 0; i < 7; i++) BT.fx.push({ k: 'bigsmoke', x: mx + rnd(-3, 5), y: my + rnd(-3, 2), vx: rnd(2, 10) + BT.wind, vy: rnd(-6, -2), t: rnd(1.6, 2.6), t0: 2.6, r: rnd(3, 6) });
     BT.proj.push({ k: 'shell', x0: mx, y0: my, x1: gx, y1: gy, t0: BT.t, dur: 1.12, h: 70 }); BT.shake = Math.max(BT.shake, .5); BT.punch = Math.max(BT.punch, .05); Sound.play('gun', { pitch: .45, vol: 1 }); Sound.play('taiko', { vol: .7 }); return; }
   if (e.k === 'shell') { BT.shake = Math.max(BT.shake, .8); BT.flash = .2; BT.flashCol = '255,200,140'; Sound.play('hit', { pitch: .45 }); Sound.play('fire', { vol: .6 });
     for (let i = 0; i < 18; i++) BT.fx.push({ k: 'spark', x: gx, y: gy, vx: rnd(-90, 60), vy: rnd(-110, -10), g: 180, t: .55, t0: .55 });
     for (let i = 0; i < 10; i++) BT.fx.push({ k: 'bigsmoke', x: gx + rnd(-6, 6), y: gy + rnd(-4, 6), vx: rnd(-6, 6), vy: rnd(-5, -1), t: rnd(1.5, 2.5), t0: 2.5, r: rnd(4, 8) });
-    if (siegeHold()) gateHit({ dmg: S2.max * .2, shot: 1, big: 1 });
-    else { const T = alive(BT.A[1], 'inf')[0] || alive(BT.A[1])[0]; if (T) { const k = Math.min(T.troops, totalOf(BT.A[1]) * .03 + 2); T.troops -= k; addNum(T, k); syncSprites(T, 'knock'); BT.hudDirty = true; } }
+    if (siegeHold()) { gateHit({ dmg: S2.max * ENGINES.bombard.gate, shot: 1, big: 1 }); BT.engLog && BT.engLog.push(['shell', e.i]); } // a ball landing after the breach strikes nothing
     return; }
-  if (e.k === 'hwacha') { const T = batteryTarget(); if (!T) return; const tg = T.spr.filter(q => q.alive); Sound.play('arrow', { pitch: .8, vol: 1 }); Sound.play('fire', { vol: .5 });
+  if (e.k === 'hwacha') { const T = hwachaTarget(); if (!T || !siegeHold()) return; const tg = T.spr.filter(q => q.alive), hy = e.y ?? B.y; Sound.play('arrow', { pitch: .8, vol: 1 }); Sound.play('fire', { vol: .5 });
     for (let i = 0; i < 20; i++) { const q = tg.length ? pick(tg) : null, tx = (q ? q.x : T.hx) + rnd(-6, 6), ty = (q ? q.y - 6 - (q.lift || 0) : T.hy) + rnd(-4, 4);
-      BT.proj.push({ k: 'rocket', x0: B.hx + 9 + rnd(-2, 2), y0: B.y - 15 + rnd(-3, 3), x1: tx, y1: ty, t0: BT.t + i * .025, dur: rnd(.85, 1.05), h: rnd(28, 46) }); }
-    for (let i = 0; i < 6; i++) BT.fx.push({ k: 'bigsmoke', x: B.hx + rnd(0, 12), y: B.y - 12 + rnd(-3, 3), vx: rnd(-8, -2), vy: rnd(-5, -1), t: rnd(1.4, 2.2), t0: 2.2, r: rnd(3, 5) }); return; }
-  if (e.k === 'rockets') { const T = batteryTarget(); if (!T) return; const k = Math.min(T.troops, totalOf(BT.A[1]) * .05 + 4);
+      BT.proj.push({ k: 'rocket', x0: e.x + 9 + rnd(-2, 2), y0: hy - 15 + rnd(-3, 3), x1: tx, y1: ty, t0: BT.t + i * .025, dur: rnd(.85, 1.05), h: rnd(28, 46) }); }
+    for (let i = 0; i < 6; i++) BT.fx.push({ k: 'bigsmoke', x: e.x + rnd(0, 12), y: hy - 12 + rnd(-3, 3), vx: rnd(-8, -2), vy: rnd(-5, -1), t: rnd(1.4, 2.2), t0: 2.2, r: rnd(3, 5) }); return; }
+  if (e.k === 'rockets') { const T = hwachaTarget(); if (!T || !siegeHold()) return; const k = Math.min(T.troops, e.kills ?? hwachaKills(0)); BT.engLog && BT.engLog.push(['rockets', e.i, k, T.type, e.kills]);
     T.troops -= k; addNum(T, k); syncSprites(T, 'burn'); BT.hudDirty = true; const c = gCenter(T);
     for (let i = 0; i < 16; i++) BT.fx.push({ k: 'spark', x: c.x + rnd(-10, 10), y: c.y - 8 + rnd(-10, 10), vx: rnd(-40, 40), vy: rnd(-70, -10), g: 150, t: .5, t0: .5 });
     BT.shake = Math.max(BT.shake, .4); Sound.play('volley', { pitch: .8 }); return; }
@@ -11084,7 +11115,7 @@ function batteryEvent(e) {
 // shots; with the spears gone they all fire. A charge through their ranks is shot at too.
 function interceptHits(p) {
   const out = [];
-  [0, 1].forEach(si => { const D = BT.A[si], A = BT.A[1 - si], tg = alive(A, p); if (!tg.length) return;
+  [0, 1].forEach(si => { const D = BT.A[si], A = BT.A[1 - si], tg = alive(A, p); if (!tg.length || (si === 0 && siegeHold())) return;
     const screen = alive(D, 'inf').reduce((n, g) => n + g.troops, 0) > tg.reduce((n, g) => n + g.troops, 0) * .3;
     alive(D).filter(g => g.type === 'gun' || g.type === 'arc').forEach(g => {
       const tac = TACTICS[tacFam(g)].mod; let dmg = fightingStrength(g) * battleAttack(g,true) * UNITS[g.type].atk * g.atkMul * tac.rng * .26 * .28 * (screen ? .35 : 1) * (1 + (g.mods.counter || 0) * .3) * rnd(.85, 1.15) * tateAtk(g);
@@ -11888,7 +11919,7 @@ function updateBattle(rdt) {
     if (BT.next <= 0) {
       if (BT.phaseName !== 'duel' && BT.script && BT.script.i < BT.script.ev.length && (BT.next < -1.5 || BT.pt > 11)) { while (BT.script.i < BT.script.ev.length) doEvent(BT.script.ev[BT.script.i++]); }
       if (!BT.script || BT.script.i >= BT.script.ev.length) {
-        BT.script = null; const done = PHASES[BT.phase]; BT.phase++;
+        BT.script = null; const done = PHASES[BT.phase]; BT.phase++; if (BT.breachReset) BT.phase = PHASES.length; // the gate fell: no more of this round
         if (done === 'inf' || done === 'cav') regroup([done]);
         clearCamKeys(); if (BT.phase >= PHASES.length || totalOf(BT.A[0]) <= 0 || totalOf(BT.A[1]) <= 0) { BT.state = 'between'; BT.betweenT = 0; BT.next = 1.6; BT.phaseName = null; regroup(); }
         else runPhase(PHASES[BT.phase]);
@@ -12592,7 +12623,7 @@ function showProvCard(p) {
       <div class="muted">Enemy: ${ea.groups.map(g => UNITS[g.type].short + ' ' + fmt(g.troops)).join(' · ')}${(() => { const cd = p.type === 'clan' && clanDoc(p.clan); return cd ? ` <span class="chip"${tipAttr('This campaign the ' + esc(C.name) + ' favour ' + UNITS[cd.fav].name.toLowerCase() + (cd.kit ? (cd.kit > 0 ? ', with better gear than most' : ', poorly equipped') : ''))}><img class="px" src="${ICONS['u_' + cd.fav]}" alt="">${FAV_LABEL[cd.fav]}${cd.kit ? (cd.kit > 0 ? ' ⚙↑' : ' ⚙↓') : ''}</span>` : ''; })()}</div>
       <div class="muted">Marching: ${pa.groups.reduce((n, g) => n + g.cmds.filter(c => c.vref).length, 0)} villagers${skirm ? '' : ` leading ${fmt(totalOf(pa))} troops`}</div>
       <div class="rewards">${(p.type === 'dojo' ? `<span class="chip">${dojoPrizeChip(dojoPrize())}</span><span class="chip">No troop losses</span><span class="chip">${icon('xp')} XP for all who march</span>` : G.prov[p.id] && G.prov[p.id].retake ? rewardChips({ items: G.prov[p.id].retake.items, recruits: G.prov[p.id].retake.recruits }) : rewardChips(p.reward || {}))}</div>`;
-    if (p.type === 'clan' && (p.capital || p.boss)) body += `<p class="note">🏯 Siege · 4 rounds ${ib('Walls and a gate: your troops fight at a heavy disadvantage until the gate falls.' + (G.researched.siegegun ? ' Your siege battery can be hired before the attack.' : ' A Siege Battery (Armory) helps.'))}</p>`;
+    if (p.type === 'clan' && (p.capital || p.boss)) body += `<p class="note">🏯 Siege · 4 rounds ${ib('Walls and a gate: your troops fight at a heavy disadvantage until the gate falls.' + (G.researched.siegegun ? ' Bombards and Hwacha can be bought before the attack.' : ' Siege engines (research the Siege Battery in the Armory) help.'))}</p>`;
     if (!skirm && !pa.groups.length) body += `<p class="note" style="color:#a02a1a">⚠ No troops · Army panel</p>`;
     if (p.type === 'dojo' && G.trainCD > 0) body += `<p class="note">⏳ ${G.trainCD} mo</p>`;
     else if (!att) body += `<p class="note">🔒 Take a neighbour first</p>`;

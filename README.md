@@ -13,6 +13,23 @@ The whole game is one self-contained HTML file. It has no build step, no server 
 - **Top bar:** date (year, season, month, week), village appeal and star rating, population, coin, and time controls (pause, play, fast-forward, music).
 - **Input:** mouse, touch and scroll wheel. It works on desktop and phone-sized screens. In the Warrior Atelier, `Esc` closes the panel and `Tab` cycles focus.
 
+## Castle sieges
+
+- **While the gate stands:**
+  - Your infantry ram it and your cavalry hack at it; they never strike the troops sheltered behind it.
+  - The defenders' infantry and cavalry hold the walls and don't attack.
+  - Archers and gunners on both sides keep trading volleys.
+  - Commanders can still be called out to duel.
+- **When the gate falls:** the breach plays out, the rest of that round is skipped, and open combat starts again at **Round 1** with the survivors. Casualties, commanders' wounds and KOs, and Ki carry over.
+- **Siege engines** (research the *Siege Battery* in the Armory) are bought one at a time in the pre-battle deployment panel, for that siege only:
+
+  | Engine | Max | Each purchase | Role |
+  |---|---|---|---|
+  | Bombard (大筒) | 2 | 4,000G, then 5,000G | Batters the gate only: each takes 20% of its strength off every round. |
+  | Hwacha (火車) | 4 | 2,000 / 2,500 / 3,000 / 3,500G | Sweeps defenders exposed on the ramparts (their gunners and archers) only, never the gate. Each extra cart adds less: ×1, ×0.6, ×0.4, ×0.25. |
+
+  Any engine can be sent back for a full refund until you order the attack (withdrawing refunds them all). Engines fire once a round while the gate stands and fall silent after the breach; a ball still in flight when the gate falls strikes nothing. Defenders never field engines.
+
 ## Wooden Tate (盾) for Gunners
 
 - **Unlock:** conquer **Yamashiro Castle**, next to your home valley. Saves that already hold Yamashiro get it automatically.
@@ -146,7 +163,7 @@ The game is served by GitHub Pages straight from the `main` branch root (`/`), w
 | `index.html` | The complete game: markup, styles, script, sprites and audio (audio is embedded as data URIs) |
 | `README.md` | This file |
 | `docs/` | Equipment notes, [village art direction](docs/ART_DIRECTION.md), and previews rendered from the procedural game assets |
-| `tests/` | Browser checks for equipment effects, research, saves, portraits, formation tactics, Ki, army forging, the campaign hand, logistics, the province count, dojo prizes, uprisings, Wooden Tate and mobile layout |
+| `tests/` | Browser checks for equipment effects, research, saves, portraits, formation tactics, Ki, army forging, the campaign hand, logistics, the province count, dojo prizes, uprisings, Wooden Tate, sieges and mobile layout |
 | `reports/` | Recorded validation results |
 
 ## Current version: v19.1 + Logistics P0
