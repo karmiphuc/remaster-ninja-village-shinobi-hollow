@@ -39,6 +39,37 @@ At the start of Round 3, each formation led by an active strategist rolls once, 
 
 **Ninjutsu and Ki.** Ki is banked between battles. It recovers 1 each game month, up to a capacity of 1 plus smoke pouches, the Shadow skill, monkeys and the Shadow School doctrine, with a hard maximum of 3. Pick a preferred ninjutsu and turn on *Auto-cast*, and it is cast once per battle at a useful moment, provided enough Ki is banked and your share of the two armies' combined strength is between 33% and 67%. That window means Ki is also spent when you are the stronger side, to save troops. With Auto-cast off, Ki only accumulates.
 
+## The campaign hand
+
+Every new game deals a forced hand of three cards: a **House Doctrine**, a **Hardship** (or a two-sided **Twist**), and one more **Omen**, which can be a hardship, a twist or a blessing. You can redraw the whole hand once, then it stands. A reload does not buy another redraw. The hand is listed under *Campaign* in the Village panel.
+
+**Doctrines (7):** Spear Lords, Gunpowder House, Horse Clans, Shrine Archers, Merchant House, Shadow School, Rice Barons.
+
+| Omen | Kind | Effect |
+|---|---|---|
+| 呪 Cursed Market | Hardship | One random shop sells at −50% |
+| 槍 Lost Spear Scrolls | Hardship | Spears cannot be researched |
+| 刀 Lost Sword Scrolls | Hardship | Swords cannot be researched |
+| 馬 Barren Pastures | Hardship | Horse gear cannot be researched (the Horse Corps stays open) |
+| 枯 Blight | Hardship | One random field, grove, lumber yard, mine or silk hut type yields −40% |
+| 期 Short Mandate | Hardship | Deadline 4 years sooner (never before Year 16) |
+| 鉄 Iron Famine | Hardship | Armour and helmets, and their research, +40% gold |
+| 税 Heavy Tithe | Hardship | Army upkeep +25% |
+| 覇 Shogunate Ascendant | Hardship | Rival castles +12% strength |
+| 匪 Lawless Coasts | Hardship | Roaming bandit, pirate and rōnin camps ×2–3 strength (same spoils) |
+| 泥 Washed-out Roads | Hardship | Marches take twice as long |
+| 道 Proud Masters | Hardship | Dojo lessons ×3–5 fee |
+| 狭 Cramped Homes | Hardship | Every home houses 1 fewer (never below 1) |
+| 褪 Faded Gardens | Hardship | Each decoration gives 1 point less boost |
+| 巻 Costly Scrolls | Hardship | Research ×1.5–2 gold (same time) |
+| 隊 Long Caravans | Twist | Contracts run 2× longer and pay 2× per week |
+| 師 Wandering Sensei | Blessing | Research −25% gold |
+| 絹 Silk Road | Blessing | One random shop sells +40% |
+| 乱 Divided Daimyō | Blessing | Rival castles −10% strength |
+| 豊 Bountiful Land | Blessing | Harvests +15% |
+
+Sealed gear can still be bought, won as a reward or looted. No hand seals two lines, pairs Horse Clans with Barren Pastures, puts Silk Road on the cursed shop, or deals Ascendant with Divided Daimyō, or Costly Scrolls with the Sensei. Saves from before this change keep their doctrine and get no omens.
+
 ## Saving
 
 Progress is saved to your browser's `localStorage` under the key `shinobi-hollow-v1`. It saves automatically:
@@ -69,7 +100,7 @@ The game is served by GitHub Pages straight from the `main` branch root (`/`), w
 | `index.html` | The complete game: markup, styles, script, sprites and audio (audio is embedded as data URIs) |
 | `README.md` | This file |
 | `docs/` | Equipment notes and previews rendered from the procedural game assets |
-| `tests/` | Browser checks for equipment effects, research, saves, portraits, formation tactics, Ki and mobile layout |
+| `tests/` | Browser checks for equipment effects, research, saves, portraits, formation tactics, Ki, the campaign hand, logistics and mobile layout |
 | `reports/` | Recorded validation results |
 
 ## Current version: v19.1 + Logistics P0

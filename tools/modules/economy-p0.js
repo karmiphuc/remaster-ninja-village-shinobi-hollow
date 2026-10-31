@@ -317,7 +317,7 @@ function produce(b,v){
  const B=BUILDINGS[b.id],s=vStats(v);let amt=B.rate*(.55+s.wrk/22)*(1+(b.boost||0))*(b.combo?b.combo.m:1);
  if(s.sk.strongback)amt*=1+.2*s.sk.strongback;if(s.sk.greenthumb)amt*=1+.15*s.sk.greenthumb;
  if(B.needTrees)amt*=clamp(treesNear(b,2)/4,.25,1.5);
- amt=Math.max(1,Math.round(amt*1.4*workMul(v)*boonFarm()));
+ amt=Math.max(1,Math.round(amt*1.4*workMul(v)*boonFarm()*blightOf(b.id)));
  createGoods(economyPoint(b,'buffer'),B.makes,amt,'harvest');economyFlush(b);
  b.prog=(b.prog+1)%4;b.var=b.prog>=2?1:0;
  floater(b.x*16+B.w*8,b.y*16+4,'+'+amt,'g_'+B.makes,'#f2efe2');if(Math.random()<.25)giveXP(v,1);
@@ -339,7 +339,7 @@ function sell(a,b){
   else if(!B.needWares&&B.sells.every(g=>(goods[g]||0)>=1)){for(const g of B.sells)destroyGoods(p,g,1,'retail');base+=B.price;n++;}
  }
  if(!n){a.bubble={t:1.8,icon:'…'};diagSale(a,b,0,before);return 0;}
- const price=(1+(b.boost||0))*(b.combo?b.combo.m:1)*(G.activeCombos?.lanterns?1.15:1)*(1+(L?.sale||0))*(1+(b.wideStreet?WIDE_STREET_BONUS.sale:0)),gold=Math.round(base*price*boonSales());
+ const price=(1+(b.boost||0))*(b.combo?b.combo.m:1)*(G.activeCombos?.lanterns?1.15:1)*(1+(L?.sale||0))*(1+(b.wideStreet?WIDE_STREET_BONUS.sale:0)),gold=Math.round(base*price*boonSales()*shopOmen(b.id));
  if(wn)a.bubble={t:1.6,icon:'★'};G.gold+=gold;G.stats.sales+=gold;RT.monthSales+=gold;
  floater(b.x*16+B.w*8,b.y*16-2,'+'+gold,'gold','#f2d27a');if(Math.random()<.35)a.bubble={t:1.6,icon:'♥'};if(Math.random()<.5)a.cheer=RT.t+1.1;
  Sound.play('coin',{vol:.5});diagSale(a,b,n,before);return n;

@@ -539,6 +539,8 @@ img.px, canvas.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 .choice { flex: 1 1 140px; max-width: 220px; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 8px; border: 2px solid var(--ink); background: rgba(255, 250, 235, .9); cursor: pointer; font: inherit; color: inherit; text-align: center; box-shadow: 0 3px 0 rgba(42, 29, 26, .35); }
 .choice:hover, .choice:focus { background: #fff3c8; transform: translateY(-1px); }
 .choice img.px { width: 40px; height: 40px; image-rendering: pixelated; }
+.hand .hcard { cursor: default; } .hand .hcard:hover { transform: none; background: rgba(255, 250, 235, .9); } .hcard small { font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: #7c6143; }
+.hcard .hk { font-family: var(--f-brush); font-size: 30px; line-height: 40px; height: 40px; } .hcard.bane { border-color: #8a2b2b; } .hcard.bane .hk { color: #8a2b2b; } .hcard.boon { border-color: #3f6b3a; } .hcard.boon .hk { color: #3f6b3a; } .hcard.twist { border-color: #b8862a; } .hcard.twist .hk { color: #8a6418; }
 .choice img.pt { width: 48px; height: 48px; image-rendering: pixelated; }
 .choice b { font-size: 14px; } .choice span { font-size: 11px; color: var(--ink-2); }
 .choices .or { align-self: center; font-style: normal; font-size: 12px; opacity: .6; }
@@ -6518,6 +6520,7 @@ function resState(r) { // → { ok, tier, why:[{t:'pts'|'prev'|'pre'|'unit', ...
   if (rankPts() < Gt.pts) why.push({ t: 'pts', n: Gt.pts });
   if (Gt.prev) { const have = RESEARCH.filter(q => G.researched[q.item] && (ITEMS[q.item].tier || 0) >= T - 1 && !q.item.startsWith('rcp_')).length + Object.keys(G.researched).filter(k => ITEMS[k] && (ITEMS[k].tier || 0) >= T - 1 && !RESEARCH.some(q => q.item === k)).length; if (have < Gt.prev) why.push({ t: 'prev', n: Gt.prev, have, tier: T - 1 }); }
   const pre = RES_PRE[r.item]; if (pre && !pre.some(k => G.researched[k])) why.push({ t: 'pre', any: pre });
+  if (sealedItem(r.item)) why.push({ t: 'seal' });
   return { ok: !why.length, tier: T, why };
 }
 // a unit type takes the field with a commander who carries its weapon; raising TROOPS of it needs its Corps research
@@ -6667,7 +6670,7 @@ function refreshBoosts() {
     const B = BUILDINGS[b.id]; b.boost = 0; b.combo = null; b.wideStreet=wideStreetFrontage(b);
     if (B.cat !== 'ind' && B.cat !== 'shop' && !B.craft && !capOf(b)) return;
     envs.forEach(e => { const E = BUILDINGS[e.id]; const cx = e.x + E.w / 2, cy = e.y + E.h / 2, bx = b.x + B.w / 2, by = b.y + B.h / 2;
-      if (Math.abs(cx - bx) <= E.radius + B.w / 2 && Math.abs(cy - by) <= E.radius + B.h / 2) b.boost += E.boost; });
+      if (Math.abs(cx - bx) <= E.radius + B.w / 2 && Math.abs(cy - by) <= E.radius + B.h / 2) b.boost += Math.max(0, E.boost - (G.boons && G.boons.decoCut || 0)); }); // Faded Gardens
     if (nearStone(b)) b.boost += .01; // a paved path at the door: a touch more custom
     b.boost = Math.min(b.boost, 1.2);
   });
@@ -6712,7 +6715,7 @@ function vStats(v) {
   return s;
 }
 // the dojo's masters charge by the session, and teaching a veteran costs far more than drilling a novice
-function dojoFee(v) { return Math.round(3 + .6 * Math.pow(v.lv || 1, 1.55)); }
+function dojoFee(v) { return Math.round((3 + .6 * Math.pow(v.lv || 1, 1.55)) * boonOf('dojo')); }
 function xpNeed(lv) { return Math.round(40 * Math.pow(lv, 1.35)); }
 function giveXP(v, n) {
   if (typeof yrPer === 'function' && G) yrPer('xp', v.id, n); v.xp += n; let up = false;
@@ -7067,7 +7070,7 @@ function weekTick() {
 }
 function monthTick() {
   const troops = Object.values(G.troops).reduce((a, b) => a + b, 0);
-  const qm = Math.max(0, ...G.villagers.map(v => vStats(v).sk.quartermaster || 0)), upkeep = Math.ceil(troops * 0.35 * (1 - .08 * qm)) + guardCount() * GUARD_UPKEEP;
+  const qm = Math.max(0, ...G.villagers.map(v => vStats(v).sk.quartermaster || 0)), upkeep = Math.ceil(troops * 0.35 * (1 - .08 * qm) * upkeepMul()) + guardCount() * GUARD_UPKEEP;
   G.gold -= upkeep; yrNote('upkeep', upkeep); bondsMonth();
   G.stats.lastSales = RT.monthSales; G.stats.lastTrav = RT.monthTrav; RT.monthSales = 0; RT.monthTrav = 0; G.travM = 0;
   const hall = G.buildings.find(b => b.id === 'hall'); if (upkeep > 0 && hall) floater(hall.x * 16 + 24, hall.y * 16, '-' + upkeep, 'gold', '#ff8a7a');
@@ -7917,7 +7920,7 @@ function openBuildingInfo(b) {
     if (B.cap) { const rs = G.villagers.filter(v => v.home === b.uid); body.appendChild(h(`<div class="sec">Residents ${rs.length}/${B.cap}</div>`)); const l = h('<div class="vlist"></div>'); rs.forEach(v => l.appendChild(vCard(v))); body.appendChild(l); }
     if (B.cat === 'env') body.appendChild(h(`<p class="note">+${Math.round(B.boost * 100)}% within ${B.radius} tiles · appeal +${B.appeal} ${ib('Boosts nearby shops, fields and workshops, and helps neighbours rest faster.')}</p>`));
     if (b.id !== 'hall' && tileOpen(b.x, b.y)) { const r = h(`<div class="row" style="margin-top:10px"><span class="sp"></span><button class="btn red">${icon('demolish')} Remove (+${fmt(B.cost / 2)}G)</button></div>`); r.lastElementChild.onclick = () => { doDemolish(b); closeSheet(); }; body.appendChild(r); }
-    else { body.appendChild(h(`<p class="note">Treasury: <b>${fmt(G.gold)}G</b>. Monthly troop upkeep: ${fmt(Math.ceil(Object.values(G.troops).reduce((a, c) => a + c, 0) * 0.35))}G.</p>`)); }
+    else { body.appendChild(h(`<p class="note">Treasury: <b>${fmt(G.gold)}G</b>. Monthly troop upkeep: ${fmt(Math.ceil(Object.values(G.troops).reduce((a, c) => a + c, 0) * 0.35 * upkeepMul()))}G.</p>`)); }
   });
 }
 
@@ -8069,7 +8072,7 @@ function ninjutsuRow(A) {
 }
 function renderArmy(body) {
   const A = playerArmy(); const P = armyPower(A);
-  body.appendChild(h(`<div class="power"><span>Army strength</span><b>${fmt(P)}</b><span class="sp"></span><span style="font-size:12px">Ki ${kiNow(A.kiCap)}/${A.kiCap} · Strategy ${A.strat} · upkeep ${fmt(Math.ceil(A.total * 0.35) + guardCount() * GUARD_UPKEEP)}G/mo</span></div>`));
+  body.appendChild(h(`<div class="power"><span>Army strength</span><b>${fmt(P)}</b><span class="sp"></span><span style="font-size:12px">Ki ${kiNow(A.kiCap)}/${A.kiCap} · Strategy ${A.strat} · upkeep ${fmt(Math.ceil(A.total * 0.35 * upkeepMul()) + guardCount() * GUARD_UPKEEP)}G/mo</span></div>`));
   body.appendChild(h(`<p class="note" style="margin-top:0">${icon('build')} ${forgeCapacity()} base forge batches/month ${ib('Smiths and Iron Mines add base batches. Formation workshops in Training add +100% batch output and +100% gear quality per connected workshop in its selected focus. Each set costs gold and recipe materials multiplied by quality. Retempering costs the same as a new set. Forging stops before the treasury drops below 150G.')}</p>`));
   const marching = A.groups.reduce((n, g) => n + g.cmds.length, 0), workers = G.villagers.filter(v => v.role === 'work').length;
   const tg = h(`<div class="troop" style="grid-template-columns:1fr auto"><div><div>Militia ${ib('Workers march too, at half weight, with whatever weapon they hold. Battles take no village time.')}</div><div class="muted">${G.allHands !== false ? `${G.villagers.length} march` : `${marching} march · ${workers} stay`}</div></div><button class="btn ${G.allHands !== false ? 'gold' : 'ghost'}" id="ar-all">${G.allHands !== false ? 'On' : 'Off'}</button></div>`);
@@ -8133,7 +8136,7 @@ function renderArmory(body, tab) {
       body.appendChild(h(`<div class="rtier${open ? '' : ' lock'}">${open ? '' : '🔒 '}Tier ${'Ⅰ Ⅱ Ⅲ Ⅳ Ⅴ'.split(' ')[T - 1]} ${req}</div>`));
       rs.forEach(r => { const I = ITEMS[r.item], st = stateOf(r), pre = st.why.find(w => w.t === 'pre'), qfull = !!G.research && Q.length >= 3;
         const preHtml = pre ? `<span class="rpre"${tipAttr('Needs one of: ' + pre.any.map(k => ITEMS[k].name).join(' / '))}>🔗${pre.any.map(k => `<img class="px" src="${ICONS['it_' + k]}" alt="">`).join('')}</span>` : '';
-        const row = h(`<div class="rs${st.ok ? '' : ' locked'}"><div class="row" style="align-items:center"${tipAttr(esc(I.desc))}><img class="px rsico" src="${ICONS['it_' + r.item]}" alt=""><div><div class="nm">${esc(I.name)} ${itemStat(r.item)}</div><div class="sub">⏳${r.weeks}w · ${icon('gold')}${resCost(r) < r.gold ? `<s>${fmt(r.gold)}</s> ` : ''}${fmt(resCost(r))} ${preHtml}</div></div></div><button class="btn${!st.ok || qfull ? '' : G.research ? ' ghost' : ' gold'}">${!st.ok ? '🔒' : G.research ? 'Queue' : 'Start'}</button></div>`);
+        const row = h(`<div class="rs${st.ok ? '' : ' locked'}"><div class="row" style="align-items:center"${tipAttr(esc(I.desc))}><img class="px rsico" src="${ICONS['it_' + r.item]}" alt=""><div><div class="nm">${esc(I.name)} ${itemStat(r.item)}</div><div class="sub">⏳${r.weeks}w · ${icon('gold')}${resCost(r) < r.gold ? `<s>${fmt(r.gold)}</s> ` : ''}${fmt(resCost(r))} ${preHtml}${st.why.some(w => w.t === 'seal') ? `<span class="rpre"${tipAttr(SEAL_TXT)}>封 Sealed by an omen</span>` : ''}</div></div></div><button class="btn${!st.ok || qfull ? '' : G.research ? ' ghost' : ' gold'}">${!st.ok ? '🔒' : G.research ? 'Queue' : 'Start'}</button></div>`);
         const b = row.querySelector('button'); b.disabled = !st.ok || qfull;
         b.onclick = () => { if (!stateOf(r).ok || (G.research && Q.length >= 3)) return; const rc = resCost(r); if (G.gold < rc) { Sound.play('alert'); toast('Not enough gold'); return; } G.gold -= rc; if (rc < r.gold) G.boons.resHalf--;
           if (G.research) { Q.push({ id: r.id, paid: rc }); toast(`Queued <b>${esc(I.name)}</b> · paid`); } else G.research = { id: r.id, left: r.weeks }; Sound.play('research'); refreshSheet(); updateHUD(); };
@@ -8719,7 +8722,7 @@ const HAUL_AT = 6, PILE_CAP = 30, INBOX_CAP = 12, OUT_CAP = 12, CART_AT = 9;
 /* ---------- levels ---------- */
 function bLv(b) { return b.lv || 1; }
 function lvInfo(b) { const L = HOME_LV[b.id]; if (L) return L[bLv(b) - 1]; if (BUILDINGS[b.id].cat === 'shop' && bLv(b) >= 2) return SHOP_LV2; return null; }
-function capOf(b) { const L = lvInfo(b); return (L ? L.cap : BUILDINGS[b.id].cap) || 0; }
+function capOf(b) { const L = lvInfo(b), c = (L ? L.cap : BUILDINGS[b.id].cap) || 0; return c > 0 && G.boons && G.boons.homeCap ? Math.max(1, c - G.boons.homeCap) : c; } // Cramped Homes
 function appealOf(b) { const L = lvInfo(b); return (BUILDINGS[b.id].appeal || 0) + (L && L.appeal || 0); }
 function bName(b) { const L = lvInfo(b); return L && bLv(b) > 1 ? (BUILDINGS[b.id].cat === 'shop' ? `${BUILDINGS[b.id].name} · ${L.name}` : L.name) : BUILDINGS[b.id].name; }
 function nextLv(b) {
@@ -9016,7 +9019,7 @@ function tPick(pool, wt) { const w = pool.map(wt); let r = Math.random() * w.red
 function wareQty(P) { return P >= 120 ? 1 : P >= 60 ? rint(1, 2) : rint(2, 3); }
 function goodQty(g, scale = 1) { const n = tMakes(g); return Math.max(FOOD[g] ? 5 : 2, Math.round(n * (FOOD[g] ? rnd(2.6, 4) : rnd(1.4, 2.4)) * scale)); }
 function tradeOffer(kind) {
-  const weeks = rint(4, 8), mk = (lv, items, mul) => ({ lv, kind, items, weeks, pay: Math.round(items.reduce((s, it) => s + it.qty * (tIsWare(it.k) ? WARES[it.k].price : GOOD_PRICE[it.k]), 0) * mul * boonSales() / 5) * 5 });
+  const weeks = rint(4, 8) * boonOf('contract'), mk = (lv, items, mul) => ({ lv, kind, items, weeks, pay: Math.round(items.reduce((s, it) => s + it.qty * (tIsWare(it.k) ? WARES[it.k].price : GOOD_PRICE[it.k]), 0) * mul * boonSales() * boonOf('contract') / 5) * 5 });
   if (kind === 1 || kind === 4) { // raw goods: food comes in big lots, sized to what the fields actually grow
     const pool = Object.keys(GOODS).filter(g => tMakes(g) > 0); if (!pool.length || (kind === 4 && pool.length < 2)) return null;
     const g = tPick(pool, g => FOOD[g] ? 2 : 1);
@@ -9292,10 +9295,17 @@ function applyBoons() {
   const B = G.boons || {};
   Object.keys(UNITS).forEach(t => { const U = UNITS[t]; if (U._c0 == null) U._c0 = U.cost; U.cost = Math.round(U._c0 * ((B.cost || {})[t] || 1) * 10) / 10; });
   Object.keys(ITEMS).forEach(k => { const I = ITEMS[k]; if (I._c0 == null) I._c0 = I.cost; if (I._c0 > 0) { const d = discOf(k); I.cost = d === 1 ? I._c0 : Math.max(10, Math.round(I._c0 * d / 10) * 10); } });
-  RESEARCH.forEach(r => { if (r._g0 == null) r._g0 = r.gold; const d = discOf(r.item); r.gold = d === 1 ? r._g0 : Math.max(10, Math.round(r._g0 * d / 10) * 10); });
+  RESEARCH.forEach(r => { if (r._g0 == null) r._g0 = r.gold; const d = discOf(r.item) * (B.resMul || 1); r.gold = d === 1 ? r._g0 : Math.max(10, Math.round(r._g0 * d / 10) * 10); });
 }
 function boonAtk(t) { return G && G.boons && G.boons.atk && G.boons.atk[t] || 0; }
 function boonSales() { return 1 + (G.boons && G.boons.sales || 0); }
+function shopOmen(id) { return G.boons && G.boons.shop && G.boons.shop[id] || 1; }
+function blightOf(id) { return G.boons && G.boons.blight && G.boons.blight[id] || 1; }
+function upkeepMul() { return G.boons && G.boons.upkeep || 1; }
+function foeMul() { return G.boons && G.boons.foe || 1; }
+function boonOf(k) { return G.boons && G.boons[k] || 1; }
+// a line sealed by an omen: its research is lost (the corps research never is)
+function sealedItem(k) { const S = G.boons && G.boons.seal; return !!(S && S.length && !k.startsWith('corps_') && S.some(ln => LINES[ln] && LINES[ln].items.includes(k))); }
 function boonFarm() { return 1 + (G.boons && G.boons.farm || 0); }
 function resCost(r) { return Math.round(r.gold * (G.boons && G.boons.resHalf > 0 ? .5 : 1)); }
 function addCost(t, f) { const B = G.boons; B.cost[t] = Math.round(((B.cost[t] || 1) * f) * 100) / 100; }
@@ -9311,12 +9321,74 @@ const DOCTRINES = [
   { id: 'shadow', jp: '忍', name: 'Shadow School', ic: 'ki', txt: '+2 Ki capacity · duels +3', tip: 'Ki capacity +2 (to the cap of 3) for banked ninjutsu; your commanders duel harder. All troops cost 10% more.', apply() { G.boons.ki += 2; G.boons.duel += 3; ['inf', 'arc', 'gun', 'cav'].forEach(t => addCost(t, 1.1)); } },
   { id: 'rice', jp: '農', name: 'Rice Barons', ic: 'g_rice', txt: 'Harvests +25%', tip: 'Fields, tea, lumber and mines yield 25% more. All troops cost 10% more.', apply() { G.boons.farm += .25; ['inf', 'arc', 'gun', 'cav'].forEach(t => addCost(t, 1.1)); } },
 ];
+/* ----- the campaign hand: dealt, not chosen ----------------------------------------------
+ Every new campaign is dealt three cards: a House Doctrine, a Hardship and a Wild omen (hardship or blessing).
+ The player may redraw the whole hand once, then must accept it. Omens live in G.boons and feed existing systems:
+ shop sales, harvests, research, item prices, upkeep, rival strength and the deadline. */
+const OMEN_SHOPS = ['onigiri', 'pickle', 'noodle', 'teahouse', 'crafts', 'smithy', 'kimono'];
+const OMEN_YIELDS = ['paddy', 'veggie', 'teafield', 'lumber', 'mine', 'silkhut'];
+const SEAL_TXT = 'Its research is lost for this campaign. The gear can still be bought from merchants, won as rewards or taken in battle.';
+const OMENS = [
+  { id: 'cursed', kind: 'bane', jp: '呪', name: 'Cursed Market', arg: (rng, h) => pick2(rng, OMEN_SHOPS.filter(k => !h.some(o => o.id === 'silk' && o.arg === k))), txt: a => `${BUILDINGS[a].name} sales −50%`, tip: 'A curse lies on one trade: that shop sells at half price for the whole campaign. Build your economy around it.', apply(a) { (G.boons.shop ||= {})[a] = (G.boons.shop[a] || 1) * .5; } },
+  { id: 'nospear', kind: 'bane', seal: 'spear', jp: '槍', name: 'Lost Spear Scrolls', txt: () => 'Spears cannot be researched', tip: SEAL_TXT, apply() { (G.boons.seal ||= []).push('spear'); } },
+  { id: 'nosword', kind: 'bane', seal: 'sword', jp: '刀', name: 'Lost Sword Scrolls', txt: () => 'Swords cannot be researched', tip: SEAL_TXT, apply() { (G.boons.seal ||= []).push('sword'); } },
+  { id: 'nohorse', kind: 'bane', seal: 'horse', jp: '馬', name: 'Barren Pastures', txt: () => 'Horse gear cannot be researched', tip: SEAL_TXT + ' The Horse Corps itself stays open.', apply() { (G.boons.seal ||= []).push('horse'); } },
+  { id: 'blight', kind: 'bane', jp: '枯', name: 'Blight', arg: rng => pick2(rng, OMEN_YIELDS), txt: a => `${BUILDINGS[a].name} yields −40%`, tip: 'A sickness in one kind of land: every building of that type produces 40% less for the whole campaign.', apply(a) { (G.boons.blight ||= {})[a] = .6; } },
+  { id: 'mandate', kind: 'bane', jp: '期', name: 'Short Mandate', txt: () => `Unify by the end of Year ${mandateYear()}`, tip: 'The court will not wait: the deadline comes 4 years sooner (never before Year 16).', apply() { G.endYear = mandateYear(); } },
+  { id: 'iron', kind: 'bane', jp: '鉄', name: 'Iron Famine', txt: () => 'Armour & helmets +40% cost', tip: 'Ore is scarce: armour and headgear, and their research, cost 40% more.', apply() { addDisc('armor', 1.4); } },
+  { id: 'tithe', kind: 'bane', jp: '税', name: 'Heavy Tithe', txt: () => 'Army upkeep +25%', tip: 'The monthly cost of your troops rises by a quarter.', apply() { G.boons.upkeep = (G.boons.upkeep || 1) * 1.25; } },
+  { id: 'ascend', kind: 'bane', jp: '覇', name: 'Shogunate Ascendant', txt: () => 'Rival castles +12% strength', tip: 'The great clans rally: every rival castle fields 12% more.', apply() { G.boons.foe = (G.boons.foe || 1) * 1.12; } },
+  { id: 'raiders', kind: 'bane', jp: '匪', name: 'Lawless Coasts', arg: rng => Math.round((2 + rng()) * 10) / 10, txt: a => `Roaming bandits & pirates ×${a} strength`, tip: 'Bandit, pirate and ronin camps roam far stronger this campaign. Their spoils stay the same.', apply(a) { G.boons.raid = (G.boons.raid || 1) * a; } },
+  { id: 'mud', kind: 'bane', jp: '泥', name: 'Washed-out Roads', txt: () => 'Marches take twice as long', tip: 'Every march on the campaign map takes 2× the days.', apply() { G.boons.march = (G.boons.march || 1) * 2; } },
+  { id: 'masters', kind: 'bane', jp: '道', name: 'Proud Masters', arg: rng => 3 + ((rng() * 3) | 0), txt: a => `Dojo lessons ×${a} fee`, tip: 'The dojo masters know their worth: every training session costs several times more.', apply(a) { G.boons.dojo = (G.boons.dojo || 1) * a; } },
+  { id: 'caravan', kind: 'twist', jp: '隊', name: 'Long Caravans', txt: () => 'Contracts run 2× longer, pay 2× per week', tip: 'Trading contracts last twice as many weeks and pay twice as much each week: four times the gold, if your workshops can keep the goods coming.', apply() { G.boons.contract = (G.boons.contract || 1) * 2; } },
+  { id: 'cramped', kind: 'bane', jp: '狭', name: 'Cramped Homes', txt: () => 'Every home houses 1 fewer', tip: 'Poor timber, thin walls: each home holds one villager less (never below one).', apply() { G.boons.homeCap = (G.boons.homeCap || 0) + 1; } },
+  { id: 'faded', kind: 'bane', jp: '褪', name: 'Faded Gardens', txt: () => 'Each decoration −1% boost', tip: 'Every garden, tree, lantern and shrine gives one percentage point less boost to the buildings around it.', apply() { G.boons.decoCut = (G.boons.decoCut || 0) + .01; } },
+  { id: 'scrolls', kind: 'bane', jp: '巻', name: 'Costly Scrolls', arg: rng => Math.round((1.5 + rng() * .5) * 10) / 10, txt: a => `Research ×${a} gold`, tip: 'Scholars are scarce: research costs much more gold. It takes no longer.', apply(a) { G.boons.resMul = (G.boons.resMul || 1) * a; } },
+  { id: 'sensei', kind: 'boon', jp: '師', name: 'Wandering Sensei', txt: () => 'Research −25% gold', tip: 'A master settles in the village: all research costs a quarter less.', apply() { G.boons.resMul = (G.boons.resMul || 1) * .75; } },
+  { id: 'silk', kind: 'boon', jp: '絹', name: 'Silk Road', arg: (rng, h) => pick2(rng, OMEN_SHOPS.filter(k => !h.some(o => o.id === 'cursed' && o.arg === k))), txt: a => `${BUILDINGS[a].name} sales +40%`, tip: 'A trade road brings eager buyers to one kind of shop for the whole campaign.', apply(a) { (G.boons.shop ||= {})[a] = (G.boons.shop[a] || 1) * 1.4; } },
+  { id: 'divided', kind: 'boon', jp: '乱', name: 'Divided Daimyō', txt: () => 'Rival castles −10% strength', tip: 'Feuds split the great clans: every rival castle fields 10% less.', apply() { G.boons.foe = (G.boons.foe || 1) * .9; } },
+  { id: 'bounty', kind: 'boon', jp: '豊', name: 'Bountiful Land', txt: () => 'Harvests +15%', tip: 'Fields, groves, lumber and mines yield 15% more.', apply() { G.boons.farm += .15; } },
+];
+function mandateYear() { return Math.max(16, (G.endYear || 25) - 4); }
+// hands that would contradict themselves are redealt: one sealed line at most, no discount on a sealed line,
+// never Ascendant with Divided; Silk Road and the curse never fall on the same shop (their args)
+function handOk(doc, a, b) {
+  if (a.seal && b.seal) return false;
+  if ([a.id, b.id].includes('ascend') && [a.id, b.id].includes('divided')) return false;
+  if ([a.id, b.id].includes('scrolls') && [a.id, b.id].includes('sensei')) return false;
+  const D = DOCTRINES.find(d => d.id === doc), discounts = { horse: 'horse', gun: 'gun', bow: 'bow' };
+  if ([a, b].some(o => o.seal && discounts[D.id] === o.seal)) return false;
+  return true;
+}
+function dealHand(rr) {
+  const rng = seeded((G.roll.seed ^ 0xd0c) + (rr || 0) * 0x9e3779), banes = OMENS.filter(o => o.kind !== 'boon');
+  for (let t = 0; t < 200; t++) {
+    const doc = pick2(rng, DOCTRINES).id, a = pick2(rng, banes), b = pick2(rng, OMENS.filter(o => o !== a));
+    if (!handOk(doc, a, b)) continue;
+    const omens = []; [a, b].forEach(o => omens.push({ id: o.id, arg: o.arg ? o.arg(rng, omens) : null }));
+    return { doc, omens };
+  }
+  return { doc: DOCTRINES[0].id, omens: [{ id: 'tithe', arg: null }, { id: 'bounty', arg: null }] };
+}
+function omenOf(o) { return OMENS.find(x => x.id === o.id); }
+function applyHand(H) {
+  const D = DOCTRINES.find(d => d.id === H.doc); D.apply(); G.boons.doc = D.id; boonLog(`${D.jp} ${D.name}`);
+  H.omens.forEach(o => { const O = omenOf(o); o.txt = O.txt(o.arg); O.apply(o.arg); boonLog(`${O.jp} ${O.name}: ${o.txt}`); }); // text fixed before applying (Short Mandate reads the deadline)
+  G.boons.omens = H.omens.map(o => Object.assign({}, o)); G.boons.pending = null;
+  applyBoons(); refreshBoosts(); updateHUD(); if (UI.panel) refreshSheet();
+}
 function offerDoctrine() {
-  const rng = seeded(G.roll.seed ^ 0xd0c), opts = rshuffle(rng, DOCTRINES.slice()).slice(0, 3);
+  const B = G.boons, rr = B.rr || 0, H = dealHand(rr), D = DOCTRINES.find(d => d.id === H.doc);
   const C = G.roll.clans, gone = C.gone.map(c => CLANS[c] && CLANS[c].name).filter(Boolean);
   const loud = Object.entries(C.doc).filter(([c, d]) => d.kit > 0).slice(0, 1).map(([c, d]) => `${CLANS[c].name}: ${FAV_LABEL[d.fav]}, elite gear`);
   const news = [gone.length ? `${gone.join(', ')} ${gone.length > 1 ? 'have' : 'has'} fallen` : '', ...loud].filter(Boolean).join(' · ');
-  choiceModal('家訓 House doctrine', news ? `<p class="note" style="margin:0 0 8px">📜 ${esc(news)}</p>` : '', opts.map(D => ({ ic: ICONS[D.ic], name: `${D.jp} ${D.name}`, txt: D.txt, tip: D.tip, apply() { D.apply(); G.boons.doc = D.id; boonLog(`${D.jp} ${D.name}`); } })));
+  const card = (cls, top, label, name, txt, tip) => `<div class="choice hcard ${cls}"${tipAttr(tip)}>${top}<small>${label}</small><b>${esc(name)}</b><span>${esc(txt)}</span></div>`;
+  const cards = [card('doc', `<img class="px" src="${ICONS[D.ic]}" alt="">`, 'House doctrine', `${D.jp} ${D.name}`, D.txt, D.tip)]
+    .concat(H.omens.map((o, i) => { const O = omenOf(o); return card(O.kind, `<span class="hk">${O.jp}</span>`, O.kind === 'boon' ? 'Blessing' : O.kind === 'twist' ? 'Twist' : 'Hardship', O.name, O.txt(o.arg), O.tip); }));
+  const btns = [['承 Accept the hand', () => applyHand(H)]];
+  if (!rr) btns.unshift(['Redraw once', () => { B.rr = 1; saveGame(); offerDoctrine(); }, 'ghost']);
+  modal('家訓 The campaign hand', `${news ? `<p class="note" style="margin:0 0 8px">📜 ${esc(news)}</p>` : ''}<p class="note" style="margin:0 0 8px">Fate deals every house its hand: a doctrine, a hardship and one more omen. ${rr ? 'This is your redrawn hand. It stands.' : 'You may redraw the whole hand once.'}</p><div class="choices hand">${cards.join('')}</div>`, btns, { icon: 'scroll', must: true });
 }
 
 /* ----- the occasional crossroads: two lasting effects, pick one ----- */
@@ -9393,7 +9465,8 @@ function choiceModal(title, lead, opts) {
 function boonsHTML() {
   const B = G.boons; if (!B || !B.log.length) return '';
   const D = DOCTRINES.find(d => d.id === B.doc);
-  return `<div class="sec">家訓 Campaign</div>${D ? `<p class="note"${tipAttr(D.tip)}><b>${D.jp} ${D.name}</b> · ${D.txt}</p>` : ''}<p class="note">${B.log.filter(s => !D || !s.endsWith(D.name)).map(esc).join(' · ')}</p>`;
+  const om = (B.omens || []).map(o => { const O = omenOf(o); return O ? `<p class="note"${tipAttr(O.tip)}><b>${O.jp} ${O.name}</b> · ${esc(o.txt || O.txt(o.arg))}</p>` : ''; }).join('');
+  return `<div class="sec">家訓 Campaign</div>${D ? `<p class="note"${tipAttr(D.tip)}><b>${D.jp} ${D.name}</b> · ${D.txt}</p>` : ''}${om}<p class="note">${B.log.filter(s => (!D || !s.endsWith(D.name)) && !(B.omens || []).some(o => { const O = omenOf(o); return O && s.includes(O.name + ':'); })).map(esc).join(' · ')}</p>`;
 }
 
 /* ================= BATTLE: armies, resolution, side-view scene ================= */
@@ -9414,7 +9487,7 @@ function timeCreep(y = G.year) { let t = 0; for (let k = 1; k < y; k++) t += k <
 // each conquest adds (2 + year)% to every clan's strength — 3% in year 1, 4% in year 2, 5% in year 3… — capped at 3×, plus the yearly creep
 const DIFF_CAP = 3;
 function conquestGrowth() { return G.dGrowth ?? .03 * (G.wins || 0); }
-function diffScale() { return Math.min(DIFF_CAP, 1 + conquestGrowth()) + timeCreep(); }
+function diffScale() { return (Math.min(DIFF_CAP, 1 + conquestGrowth()) + timeCreep()) * foeMul(); }
 // every province has its own garrison pride: a fixed +10–50% for this campaign (the Iron Keep excepted)
 function siteBoost(P0) { return P0.boss || P0.type !== 'clan' ? 1 : 1.1 + .4 * hash2(P0.x | 0, (P0.y | 0) + (G.vseed || 7)); }
 const SIEGE_FLOOR = 500; // a clan seat holds at least this many foot, bows and horse (before growth)
@@ -9596,6 +9669,13 @@ function enemyArmy(site) {
       A.groups.forEach(g => g.troops = Math.max(4, Math.round(g.troops * want / tot))); }
     A.strat = clan === 'kurogane' ? 3 : clan === 'tora' ? 2 : tier >= 2.2 ? 1 : 0;
   }
+  // Lawless Coasts: roaming camps field m times the strength (a field force: m times the men; a band: each fighter
+  // tougher and harder-hitting by the square root, as the skirmish scaling above does). Their spoils are unchanged.
+  const raid = P0.type === 'camp' ? boonOf('raid') : 1;
+  if (raid !== 1) { const p0 = armyPower(A), grow = m => A.groups.forEach(g => { if (skirm) { const k = Math.sqrt(m); g.troops *= k; g.atkMul *= k; } else g.troops *= m; });
+    // officers' own blows don't grow with their men, so correct toward the rolled multiple of the army's power
+    grow(raid); for (let i = 0; i < 4; i++) { const r = armyPower(A) / Math.max(1, p0); if (Math.abs(r / raid - 1) < .02) break; grow(raid / r); }
+    A.groups.forEach(g => g.troops = Math.max(1, Math.round(g.troops))); }
   return finishArmy(A);
 }
 
@@ -12307,7 +12387,7 @@ function drawMap() {
 }
 /* ----- marching: army battles happen where the army arrives, a week or three after it sets out ----- */
 function marchPlan(p) { const own = PROVINCES.filter(q => G.prov[q.id] && G.prov[q.id].owner === 'kage'); let best = Infinity, from = own[0] || PROVINCES[0];
-  own.forEach(q => { const d = Math.hypot(q.x - p.x, q.y - p.y); if (d < best) { best = d; from = q; } }); return { w: clamp(Math.round(best / 300 * 7) / 7, 2 / 7, 2.5), from }; }
+  own.forEach(q => { const d = Math.hypot(q.x - p.x, q.y - p.y); if (d < best) { best = d; from = q; } }); return { w: clamp(Math.round(best / 300 * 7) / 7, 2 / 7, 2.5) * boonOf('march'), from }; }
 function daysStr(w) { return Math.max(0, Math.ceil(w * 7)) + 'd'; }
 function startMarch(p) {
   if (G.march) { toast('The army is already on the march.'); return false; }
@@ -12948,7 +13028,7 @@ function produce(b,v){
  const B=BUILDINGS[b.id],s=vStats(v);let amt=B.rate*(.55+s.wrk/22)*(1+(b.boost||0))*(b.combo?b.combo.m:1);
  if(s.sk.strongback)amt*=1+.2*s.sk.strongback;if(s.sk.greenthumb)amt*=1+.15*s.sk.greenthumb;
  if(B.needTrees)amt*=clamp(treesNear(b,2)/4,.25,1.5);
- amt=Math.max(1,Math.round(amt*1.4*workMul(v)*boonFarm()));
+ amt=Math.max(1,Math.round(amt*1.4*workMul(v)*boonFarm()*blightOf(b.id)));
  createGoods(economyPoint(b,'buffer'),B.makes,amt,'harvest');economyFlush(b);
  b.prog=(b.prog+1)%4;b.var=b.prog>=2?1:0;
  floater(b.x*16+B.w*8,b.y*16+4,'+'+amt,'g_'+B.makes,'#f2efe2');if(Math.random()<.25)giveXP(v,1);
@@ -12970,7 +13050,7 @@ function sell(a,b){
   else if(!B.needWares&&B.sells.every(g=>(goods[g]||0)>=1)){for(const g of B.sells)destroyGoods(p,g,1,'retail');base+=B.price;n++;}
  }
  if(!n){a.bubble={t:1.8,icon:'…'};diagSale(a,b,0,before);return 0;}
- const price=(1+(b.boost||0))*(b.combo?b.combo.m:1)*(G.activeCombos?.lanterns?1.15:1)*(1+(L?.sale||0))*(1+(b.wideStreet?WIDE_STREET_BONUS.sale:0)),gold=Math.round(base*price*boonSales());
+ const price=(1+(b.boost||0))*(b.combo?b.combo.m:1)*(G.activeCombos?.lanterns?1.15:1)*(1+(L?.sale||0))*(1+(b.wideStreet?WIDE_STREET_BONUS.sale:0)),gold=Math.round(base*price*boonSales()*shopOmen(b.id));
  if(wn)a.bubble={t:1.6,icon:'★'};G.gold+=gold;G.stats.sales+=gold;RT.monthSales+=gold;
  floater(b.x*16+B.w*8,b.y*16-2,'+'+gold,'gold','#f2d27a');if(Math.random()<.35)a.bubble={t:1.6,icon:'♥'};if(Math.random()<.5)a.cheer=RT.t+1.1;
  Sound.play('coin',{vol:.5});diagSale(a,b,n,before);return n;

@@ -1,0 +1,129 @@
+{
+  "pool": {
+    "doctrines": 7,
+    "omens": 20,
+    "kinds": {
+      "bane": 15,
+      "twist": 1,
+      "boon": 4
+    },
+    "total": 27
+  },
+  "dealing": {
+    "seeds": 3000,
+    "everyDoctrineDealt": true,
+    "everyOmenDealt": true,
+    "redrawChangesHand": 1
+  },
+  "modal": {
+    "firstHand": [
+      "農 Rice Barons",
+      "Short Mandate",
+      "Shogunate Ascendant"
+    ],
+    "redrawnHand": [
+      "槍 Spear Lords",
+      "Cursed Market",
+      "Wandering Sensei"
+    ],
+    "accepted": {
+      "doc": "spear",
+      "omens": [
+        "Smithy sales −50%",
+        "Research −25% gold"
+      ]
+    }
+  },
+  "effects": {
+    "cursed": {
+      "before": 1,
+      "after": 0.5
+    },
+    "silk": {
+      "before": 1,
+      "after": 1.4
+    },
+    "nospear": {
+      "sealedResearch": 6,
+      "corpsOpen": []
+    },
+    "nosword": {
+      "sealedResearch": 9,
+      "corpsOpen": []
+    },
+    "nohorse": {
+      "sealedResearch": 4,
+      "corpsOpen": [
+        "corps_cav"
+      ]
+    },
+    "blight": {
+      "before": 4,
+      "after": 3
+    },
+    "mandate": "25→21, floor 16",
+    "iron": {
+      "before": 530,
+      "after": 740
+    },
+    "tithe": {
+      "upkeepBefore": 140,
+      "upkeepAfter": 175
+    },
+    "ascend": {
+      "before": 1,
+      "after": 1.12
+    },
+    "divided": {
+      "before": 1,
+      "after": 0.9
+    },
+    "sensei": {
+      "before": 900,
+      "after": 680
+    },
+    "bounty": {
+      "before": 1,
+      "after": 1.15
+    },
+    "raiders": {
+      "powerBefore": 173,
+      "powerAfter": 428,
+      "ratio": 2.47
+    },
+    "mud": {
+      "weeksBefore": 0.2857142857142857,
+      "weeksAfter": 0.5714285714285714
+    },
+    "masters": {
+      "feeBefore": 24,
+      "feeAfter": 97
+    },
+    "caravan": {
+      "before": {
+        "weeks": 6,
+        "payPerWeek": 70
+      },
+      "after": {
+        "weeks": 12,
+        "payPerWeek": 140
+      }
+    },
+    "cramped": {
+      "housingBefore": 6,
+      "housingAfter": 3,
+      "homes": 3
+    },
+    "faded": {
+      "boostBefore": 0.15,
+      "boostAfter": 0.12,
+      "decorationsInRange": 3
+    },
+    "scrolls": {
+      "before": 900,
+      "after": 1620
+    }
+  },
+  "oldSave": "loads with no omens and is not dealt a hand",
+  "errors": []
+}
