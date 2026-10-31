@@ -200,6 +200,17 @@ const root=path.resolve(__dirname,'..');
     ok(G.v===1&&!economyState().claims.size&&!RT.agents.some(a=>a.carry||economyFreightTotal(a)),'Transit state leaked through save');ledgerEnd();
     T=tripFixture();set(G,'wares','mochi',20);set(G,'wares','bento',20);ledgerStart();twoStop(T);arrive(T.a,T.v,T.store);T.a.dead=true;
     economyTick(1);ok(!T.a.carry&&!economyFreightTotal(T.a)&&!economyState().claims.size,'Gone porter left goods or claims behind');ledgerEnd();
+    // Nearer shop first: the claimed shop is the far one, the second shop sits on the way. The porter serves the near
+    // shop first and walks no further than straight to the far one (the old order doubled back and was charged 4 tiles).
+    T=tripFixture();set(G,'wares','mochi',20);set(G,'wares','bento',20);ledgerStart();jobsClear();
+    economyJob(economyCentral('bento'),economyPoint(T.A,'shelf'),'bento',5,13,T.store,T.A);
+    ok(economyStart(T.a,T.v,economyCentral('mochi'),economyPoint(T.B,'shelf'),'mochi',6,T.store,T.B),'Could not plan far stop');
+    economyBundle(T.a);claim=economyClaimOf(T.a);ok(claim.second===T.A&&claim.secondFirst,'On-the-way shop not taken first');
+    ok(claim.detour===0&&claim.walked===claim.directDistance,'On-the-way shop still costs a detour: '+claim.detour);
+    arrive(T.a,T.v,T.store);ok(T.a.target===T.A.uid,'Porter heads to the far shop first');finishLeg(T.a);
+    ok(shopStock(T.A,true).bento===5&&T.a.target===T.B.uid,'Near shop not served first');finishLeg(T.a);
+    ok(shopStock(T.B,true).mochi===6&&!T.a.carry&&!economyFreightTotal(T.a)&&!economyState().claims.size,'Far shop missed after the near one');ledgerEnd();
+    out.nearestFirst={walked:claim.walked,direct:claim.directDistance,claimedShopFirstWalk:claim.directDistance+(()=>{const be=entranceOf(T.B),ae=entranceOf(T.A);return roadDistances(idx(be[0],be[1]),true)[idx(ae[0],ae[1])];})()};
     out.porters={twoShops:true,mixedWares:true,sameGoodSplit:true,capacity:31,sharedPickupOnly:true,detourBounded:true,urgentSecondStop:true,concurrentClaims:true,singleStopFallback:true,demolition:true,fullShopRecovery:true,midTripSaveLoad:true};
 
     // Real 30-fps worker plans and deliveries through the exact crossing chain.
