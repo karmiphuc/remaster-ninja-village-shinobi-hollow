@@ -15,6 +15,7 @@ const result=await p.evaluate(()=>{
  porters[0].job=-1;assignJobs();ok(G.villagers.filter(isPorter).length===1,'porter vacancy never auto-filled');
  porters[0].job=depot.uid;assignJobs();out.manualAssignments=true;
  for(const v of porters){const a=RT.agents.find(q=>q.vid===v.id);ok(!chooseSite(a,v,false),'porters excluded from chooseSite');}
+ for(const q of G.buildings)if(shopIs(q))releaseShopStock(q);
  SH_PERF.diag=simStageStats();diagInventory(SH_PERF.diag.opening);
  const shop=G.buildings.find(b=>b.id==='onigiri'),field=G.buildings.find(b=>b.id==='paddy'),a=RT.agents.find(q=>q.vid===porters[0].id),b=RT.agents.find(q=>q.vid===porters[1].id);
  const central=economyCentral('rice'),shelf=economyPoint(shop,'shelf');
