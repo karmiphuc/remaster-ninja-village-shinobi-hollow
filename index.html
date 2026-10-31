@@ -401,6 +401,10 @@ img.px, canvas.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 .intel img { width: 28px; height: 28px; image-rendering: pixelated; }
 .intel .muted { display: block; font-size: 10px; }
 .tac.ctr { border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold), 0 0 12px rgba(224, 181, 74, .6); }
+.ftac { margin-top: 6px; border-top: 1px dashed var(--line); padding-top: 6px; font-size: 12px; } .ftac .ftl { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.fsel { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 6px; margin: 4px 0; } .fsel label { display: grid; gap: 2px; font-size: 10px; color: var(--pine); min-width: 0; }
+.ftac select, .ninj select { display: block; width: 100%; min-width: 0; margin-top: 4px; font-size: 12px; font-family: inherit; padding: 6px 4px; border: 1px solid var(--line); background: #f7ebd0; color: #2a2236; border-radius: 0; }
+.ftd { font-size: 11px; line-height: 1.45; margin-top: 3px; } #btac .plan { padding: 6px 10px 0; font-size: 12px; line-height: 1.5; }
 .tac.ctr::before { content: 'COUNTER'; font-size: 9px; letter-spacing: .1em; color: #fff4dc; background: var(--verm); padding: 0 4px; }
 /* champion picker */
 .duelpick .dp-hd { display: flex; gap: 10px; align-items: center; padding: 10px 10px 4px; font-size: 13px; }
@@ -1068,7 +1072,7 @@ const SKILLS = {
   horseres: { name: 'Horse Ward',    desc: 'Squad takes -10% cavalry damage per level.' },
   attackup: { name: 'Fury',          desc: 'Squad +10% attack per level.' },
   strongback:{ name: 'Strong Back',  desc: 'Worker: +20% output per level.' },
-  shadow:   { name: 'Shadow Step',   desc: 'Ninjutsu: +1 Ki in battle per 2 levels. Dodges 5%/lvl.' },
+  shadow:   { name: 'Shadow Step',   desc: 'Ninjutsu: +1 Ki capacity per 2 levels (Ki max 3). Dodges 5%/lvl.' },
   medic:    { name: 'Field Medic',   desc: 'After each round, recover 3% of squad per level from a finite wounded reserve (10% +2% per extra level, max 24% per battle). Cannot restore an eliminated formation.' },
   // second skills, learned later in life (Lv 7 / 14 / 22)
   vanguard: { name: 'Spearhead',     desc: 'Own blows +15% and duel +1 per level.' },
@@ -1175,7 +1179,7 @@ const ITEMS = {
   ebira:    { name: 'Ebira Quiver',    slot: 'special', for: ['arc'], mrk: 5, cost: 200, tier: 1, res: { wood: 2 }, desc: 'Open quiver: arrows to hand faster.' },
   hayago:   { name: 'Hayago Cartridges', slot: 'special', for: ['gun'], mrk: 6, def: 1, cost: 420, tier: 2, res: { silk: 2 }, desc: 'Pre-measured powder and ball. Faster reloads.' },
   abumi:    { name: 'Iron Abumi',      slot: 'special', for: ['cav'], atk: 4, def: 3, cost: 380, tier: 2, res: { ore: 3 }, desc: 'Deep iron stirrups: stand and strike from the saddle.' },
-  smoke:    { name: 'Smoke Pellets',   slot: 'special', ki: 1, cost: 300, tier: 1, res: { tea: 4 }, desc: '+1 Ki for ninjutsu in battle.' },
+  smoke:    { name: 'Smoke Pellets',   slot: 'special', ki: 1, cost: 300, tier: 1, res: { tea: 4 }, desc: '+1 Ki capacity for ninjutsu (max 3).' },
   omamori:  { name: 'Omamori Charm',   slot: 'special', def: 3, hp: 8, cost: 140, tier: 1, res: { silk: 2 }, desc: 'Shrine ward sewn into the collar.' },
   kunai:    { name: 'Kunai Set',       slot: 'special', for: ['inf', 'arc', 'gun', 'cav'], atk: 3, mrk: 3, cost: 260, tier: 1, res: { ore: 3 }, desc: 'Throwing knives for close work.' },
   yakuro:   { name: 'Medicine Case',   slot: 'special', hp: 14, duel: 3, cost: 420, tier: 2, res: { tea: 4 }, desc: 'Herbs and bandages. Outlasts rivals in duels.' },
@@ -1197,7 +1201,7 @@ const ITEMS = {
   akayoroi: { name: 'Red-Armored Charger', slot: 'mount', ride: 1, atk: 9, def: 12, hp: 12, wrk: 8, wild: 1, beast: 'cav', bonus: 0.16, beastDef: .2, duel: 6, cost: 4200, tier: 5, rare: 1, desc: 'A great charger in vermilion ō-yoroi barding. Cavalry +16% ATK, +20% DEF. Found by hunting, loot or merchants; up to 3 stack (diminishing).' },
   boar:     { name: 'Wild Boar',       slot: 'mount', atk: 4, def: 2, wrk: 5, wild: 1, beast: 'inf', bonus: 0.14, duel: 3, cost: 1300, tier: 3, desc: 'Tamed tusker that leads the charge. Infantry +14%. Found by hunting, loot or merchants; up to 3 stack (diminishing).' },
   bear:     { name: 'Moon Bear',       slot: 'mount', atk: 3, def: 5, wrk: 6, wild: 1, beastDef: .15, beastDefType: 'inf', duel: 7, hp: 10, cost: 2300, tier: 4, rare: 1, desc: 'Infantry hold the line behind it: +15% DEF. A terror in duels. Found by hunting, loot or merchants; up to 3 stack (diminishing).' },
-  monkey:   { name: 'Snow Monkey',     slot: 'mount', atk: 1, def: 1, wrk: 6, wild: 1, ki: 1, move: .1, cost: 900, tier: 2, desc: 'A clever mountain monkey. +1 Ki for ninjutsu, nimble feet.' },
+  monkey:   { name: 'Snow Monkey',     slot: 'mount', atk: 1, def: 1, wrk: 6, wild: 1, ki: 1, move: .1, cost: 900, tier: 2, desc: 'A clever mountain monkey. +1 Ki capacity for ninjutsu (max 3), nimble feet.' },
   fox:      { name: 'White Fox',       slot: 'mount', atk: 2, def: 2, wrk: 5, wild: 1, duel: 8, mrk: 3, cost: 1600, tier: 3, desc: 'A sly kitsune companion. Duel +8 — it distracts the foe.' },
   tanuki:   { name: 'Tanuki',          slot: 'mount', atk: 1, def: 1, wild: 1, wrk: 16, carry: .2, cost: 700, tier: 2, desc: 'A cheerful raccoon dog. Work +16, carries a little extra.' },
   // doctrine (research only)
@@ -1317,12 +1321,85 @@ const JUTSU = {
 };
 // each tactic beats one other: Shield Wall blunts a Charge, a Charge overruns a Volley Line, volleys pick apart a Shield Wall
 const COUNTER = { wall: 'charge', charge: 'volley', volley: 'wall' };
+// Tactic families. The enemy still forms one of these army-wide; each of the player's formations takes its own
+// order from FORM_TACTICS, which maps onto the same family numbers. Buffs are capped at +15%, penalties at 20%.
 const TACTICS = {
-  steady: { name: 'Steady Advance', jp: '構', desc: 'Balanced. No bonus or penalty.', mod: { rng: 1, mel: 1, take: 1 } },
-  volley: { name: 'Volley Line',    jp: '射', desc: 'Ranged +40%, melee -20%.', mod: { rng: 1.4, mel: 0.8, take: 1 } },
-  charge: { name: 'All-out Charge', jp: '突', desc: 'Melee & cavalry +40%, take +20% damage.', mod: { rng: 1, mel: 1.4, take: 1.2 } },
-  wall:   { name: 'Shield Wall',    jp: '守', desc: 'Take -35% damage, deal -25%.', mod: { rng: 0.75, mel: 0.75, take: 0.65 } },
+  steady: { name: 'Steady Advance', fam: 'Steady',     jp: '構', desc: 'Balanced. No bonus or penalty.', mod: { rng: 1, mel: 1, take: 1 } },
+  volley: { name: 'Volley Line',    fam: 'Precise',    jp: '射', desc: 'Deal +5%, take +5% damage.', mod: { rng: 1.05, mel: 1.05, take: 1.05 } },
+  charge: { name: 'All-out Charge', fam: 'Aggressive', jp: '突', desc: 'Deal +15%, take +20% damage.', mod: { rng: 1.15, mel: 1.15, take: 1.2 } },
+  wall:   { name: 'Shield Wall',    fam: 'Defensive',  jp: '守', desc: 'Deal -20%, take -15% damage.', mod: { rng: 0.8, mel: 0.8, take: 0.85 } },
 };
+/* ---------- Formation tactics ----------
+ Each formation follows its own orders for Rounds 1-3, unlocked by the highest Strategy among its own active commanders
+ (no sharing between formations): Lv0 none (Steady), Lv1 one order for Rounds 1-3, Lv2 Round 1 + Rounds 2-3, Lv3+ each round.
+ At the start of Round 3 a formation led by a strategist rolls once (20% x level) to switch to an order that beats the enemy's. */
+const FORM_TYPES = ['inf', 'arc', 'gun', 'cav'];
+const FORM_TACTICS = {
+  inf: { hold:     { name: 'Hold Line',          jp: '構', fam: 'steady', desc: 'Keep the ranks. No bonus or penalty; cannot be countered.' },
+         assault:  { name: 'Aggressive Assault', jp: '突', fam: 'charge', desc: 'Melee +15%, take +20%. Beats a Volley Line.' },
+         spear:    { name: 'Spear Wall',         jp: '槍', fam: 'wall',   desc: 'Melee -20%, take -15%. Blunts an All-out Charge.' } },
+  arc: { aimed:    { name: 'Aimed Volley',       jp: '狙', fam: 'volley', desc: 'Arrows +5%, take +5%. Picks apart a Shield Wall.' },
+         rapid:    { name: 'Rapid Fire',         jp: '連', fam: 'charge', desc: 'Arrows +15%, take +20%. Outpaces a Volley Line.' },
+         harass:   { name: 'Harassment',         jp: '擾', fam: 'wall',   desc: 'Arrows -20%, take -15%. Skirmishes clear of an All-out Charge.' } },
+  gun: { focused:  { name: 'Focused Fire',       jp: '集', fam: 'volley', desc: 'Shots +5%, take +5%. Picks apart a Shield Wall.' },
+         suppress: { name: 'Suppressive Volley', jp: '制', fam: 'wall',   desc: 'Shots -20%, take -15%. Pins down an All-out Charge.' },
+         controlled:{ name: 'Controlled Fire',   jp: '整', fam: 'steady', desc: 'Measured fire. No bonus or penalty; cannot be countered.' } },
+  cav: { charge:   { name: 'Full Charge',        jp: '騎', fam: 'charge', desc: 'Melee +15%, take +20%. Rides down a Volley Line.' },
+         flank:    { name: 'Flanking Attack',    jp: '翼', fam: 'volley', desc: 'Melee +5%, take +5%. Turns a Shield Wall.' },
+         reserve:  { name: 'Defensive Reserve',  jp: '控', fam: 'wall',   desc: 'Melee -20%, take -15%. Blunts an All-out Charge.' } },
+};
+const FORM_DEFAULT = { inf: 'hold', arc: 'aimed', gun: 'controlled', cav: 'flank' };
+// a formation whose order beats the enemy's deals +15%, plus 2% for each Strategy level above the first
+function counterBonus(lv) { return .15 + .02 * Math.max(0, (lv || 0) - 1); }
+function orderSlots(lv) { return lv >= 3 ? 3 : lv >= 2 ? 2 : lv >= 1 ? 1 : 0; }
+function orderPlan(t) { const p = G.ftac && G.ftac[t], d = FORM_DEFAULT[t]; return [0, 1, 2].map(i => p && FORM_TACTICS[t][p[i]] ? p[i] : d); }
+// the order a formation follows in Round r (1-3) at Strategy level lv; null = default behaviour (Steady)
+function formOrder(t, lv, r) { const s = orderSlots(lv); if (!s) return null; const p = orderPlan(t); return p[s === 1 ? 0 : s === 2 ? (r <= 1 ? 0 : 1) : Math.min(2, Math.max(0, r - 1))]; }
+// the highest Strategy among a formation's own active (not carried-off) commanders
+function formLevel(A, t, live) { return Math.max(0, ...A.groups.filter(g => g.type === t && (!live || g.troops > 0)).flatMap(g => (g.cmds || []).filter(c => !c.ko)).map(stratOf)); }
+// the tactic family a group fights under this round: the enemy side's army-wide tactic, or the player formation's own order
+function tacFam(g) { const si = sideOf(g); if (si === 1 || !BT.ftac) return BT.tac[si]; const k = BT.ftac[g.type]; return k ? FORM_TACTICS[g.type][k].fam : 'steady'; }
+function tacScore(f, e) { return (COUNTER[f] === e ? 1 : 0) - (COUNTER[e] === f ? 1 : 0); }
+// Round 3 only: one roll per formation led by an active strategist; a hit switches to the best answer to the enemy's order
+function adaptFormations() {
+  if (!BT.ftac || BT.adapt) return; BT.adapt = {}; const A = BT.A[0], e = BT.tac[1];
+  FORM_TYPES.forEach(t => {
+    if (!alive(A, t).length) return; const lv = formLevel(A, t, true); if (lv < 1) return;
+    const opts = FORM_TACTICS[t], cur = BT.ftac[t] || FORM_DEFAULT[t], chance = Math.min(1, .2 * lv), roll = Math.random(), hit = roll < chance;
+    const best = Object.keys(opts).reduce((b, k) => tacScore(opts[k].fam, e) > tacScore(opts[b].fam, e) ? k : b, cur);
+    const better = tacScore(opts[best].fam, e) > tacScore(BT.ftac[t] ? opts[cur].fam : 'steady', e);
+    BT.adapt[t] = { lv, chance, roll, hit, from: BT.ftac[t], to: hit && better ? best : BT.ftac[t] };
+    if (hit && better) { BT.ftac[t] = best; const g = alive(A, t)[0], c = g.spr && g.spr.length ? gCenter(g) : { x: BT.cx || 0 };
+      BT.labels.push({ x: c.x, y: (BT.fy0 || 0) + 24, text: `${UNITS[t].name} adapt: ${opts[best].name}`, t: -.9, side: 0 }); }
+  });
+}
+// the family most of our troops fight under (what an enemy strategist reads as our habit)
+function dominantFam() { const w = {}; alive(BT.A[0]).forEach(g => { const f = tacFam(g); w[f] = (w[f] || 0) + g.troops; }); return Object.keys(w).sort((a, b) => w[b] - w[a])[0] || 'steady'; }
+
+/* ---------- Persistent Ki ----------
+ Ki is banked between battles and recovers 1 each month up to capacity (1 + gear, skills and doctrine; hard cap 3).
+ Auto-cast spends it on the preferred ninjutsu at most once per battle, only when neither army holds more than 67%
+ of the combined pre-battle strength, and only when the jutsu has something to bite on. */
+const KI_CAP = 3, KI_SHARE = [.33, .67];
+function playerKiCap() { return playerArmy().kiCap ?? 1; }
+function kiNow(cap) { cap = cap ?? playerKiCap(); return Math.min(cap, G.ki ?? cap); }
+function kiMonth() { const cap = playerKiCap(); G.ki = Math.min(cap, (G.ki ?? cap) + 1); }
+function jutsuPref() { return JUTSU[G.jutsuPref] ? G.jutsuPref : 'smoke'; }
+function autoCastOn() { return G.autoCast !== false; }
+// symmetric: our share of the combined pre-battle power must sit in 33-67% inclusive, stronger or weaker
+function autoKiEligible(pp, ep) { const tot = pp + ep; if (!(tot > 0)) return false; const s = pp / tot; return s >= KI_SHARE[0] - 1e-9 && s <= KI_SHARE[1] + 1e-9; }
+function jutsuUseful(j) {
+  const P = BT.A[0], E = BT.A[1], tot = totalOf(E); if (!(tot > 0) || !(totalOf(P) > 0)) return false;
+  const sum = ts => ts.reduce((n, t) => n + alive(E, t).reduce((m, g) => m + g.troops, 0), 0);
+  if (j === 'smoke' || j === 'fire') return sum(['gun', 'arc']) >= tot * .15;
+  if (j === 'wind') return sum(['inf', 'cav']) >= tot * .15;
+  if (j === 'clone') return totalOf(P) >= (P.start || totalOf(P)) * .5;
+  return false;
+}
+function autoJutsu() {
+  if (!BT.autoKi || BT.kiCast || !BT.autoKi.on || !BT.autoKi.eligible) return null;
+  const j = BT.autoKi.pref; if (BT.ki[0] < JUTSU[j].ki || !jutsuUseful(j)) return null; return j;
+}
 
 /* ---------- Campaign: the islands of Akitsu ----------
  Province nodes in map coords (0..1000 x 0..700). type: clan | bandit | dojo
@@ -6996,7 +7073,7 @@ function monthTick() {
   const hall = G.buildings.find(b => b.id === 'hall'); if (upkeep > 0 && hall) floater(hall.x * 16 + 24, hall.y * 16, '-' + upkeep, 'gold', '#ff8a7a');
   if (G.gold < 0 && !G.bailout) { G.bailout = 1; G.gold += 500; announce('The Shogun sends aid', 'Your treasury ran dry. A gift of <b>500 G</b> arrives — spend wisely, it will not come again.', 'gold'); }
   if (G.trainCD > 0) G.trainCD--;
-  forgeTick(); logiMonth(); tradeMonth(); hireMonth();
+  forgeTick(); logiMonth(); tradeMonth(); hireMonth(); kiMonth();
   G.month++;
   if (G.month > 12) { G.month = 1; G.year++; yearTick(); campaignYear(); }
   campaignMonth();
@@ -7438,10 +7515,11 @@ function renderBHUD(){
   const live=['run','between','autowait','duelpick'].includes(BT.state),side=(A,r)=>
     `<div class="bside lac${r?' r':''}"><div class="nm">${icon('mon_'+A.clan)}<span>${esc(A.name)}</span></div><div class="bmetrics"><span${tipAttr('Total fighting strength')}>${icon('army')}<b>${fmt(armyPower(A))}</b></span><span${tipAttr('Active units: troops and independent heroes')}>${icon('people')}<b>${fmt(combatCount(A))}</b></span></div></div>`;
   const pressure=offensivePressure(),gate=BT.siege?`<div class="gaterow"${tipAttr(`Castle gate · ${Math.ceil(BT.siege.hp)}/${BT.siege.max}`)}>${icon('it_kabuto')}<div class="gatebar"><i style="width:${clamp(BT.siege.hp/BT.siege.max*100,0,100)}%"></i></div></div>`:'';
-  $('#bhud').innerHTML=side(BT.A[0],0)+`<div class="bround lac"><span>${BT.round?'Round '+BT.round:BT.siege?'Siege':'Deploy'}</span>${pressure>1?`<small>+${Math.round((pressure-1)*100)}% pressure</small>`:''}${gate}${live?`<div class="bcontrols"><button id="rs-speed" aria-label="Battle speed">×${BT.speed}</button><button id="rs-auto" aria-pressed="${BT.auto}">Auto ${BT.auto?'on':'off'}</button></div>`:''}</div>`+side(BT.A[1],1);
+  $('#bhud').innerHTML=side(BT.A[0],0)+`<div class="bround lac"><span>${BT.round?'Round '+BT.round:BT.siege?'Siege':'Deploy'}</span>${pressure>1?`<small>+${Math.round((pressure-1)*100)}% pressure</small>`:''}${gate}${live?`<div class="bcontrols"><button id="rs-speed" aria-label="Battle speed">×${BT.speed}</button><button id="rs-auto" aria-pressed="${BT.auto}"${tipAttr('On: your commanders take up duels on their own. Off: you choose who answers a challenge.')}>Duels ${BT.auto?'auto':'pick'}</button>${BT.round>0&&!BT.quick?`<button id="rs-retreat"${BT.retreatReq?' disabled':''}${tipAttr('Sound the retreat at the end of this round.')}>${BT.retreatReq?'Retreating…':'Retreat'}</button>`:''}</div>`:''}</div>`+side(BT.A[1],1);
   $('#bformations').innerHTML=typeRows();
   const speed=$('#rs-speed'),auto=$('#rs-auto');if(speed)speed.onclick=()=>{BT.speed=BT.speed===1?2:BT.speed===2?3:1;Sound.play('tap');renderBHUD();};
   if(auto)auto.onclick=()=>{BT.auto=!BT.auto;Sound.play('tap');renderBHUD();};
+  const rt=$('#rs-retreat');if(rt)rt.onclick=()=>{BT.retreatReq=true;Sound.play('tap');renderBHUD();};
 }
 
 /* Shops sell only delivered stock. The existing global ledgers are the
@@ -7640,7 +7718,7 @@ function equipmentGrenades(phase,hits,ctx){
    const room=t=>Math.max(0,t.troops-hits.filter(h=>h.to===t&&!h.icpt).reduce((n,h)=>n+h.kills,0));
    const target=PREF.inf.flatMap(type=>alive(D,type)).find(t=>room(t)>0);if(!target)continue;
    const scale=ctx.siege?(A.side===0?.3:.7):1,power=(c.s.str*.22+c.s.mrk*.25+3)*(c.aux?.5:1)*battleAttack(g)*scale,
-    kills=Math.min(room(target),battleDamage(power,battleResistance(target),TACTICS[ctx.tac[1-A.side]].mod.take,1));
+    kills=Math.min(room(target),battleDamage(power,battleResistance(target),TACTICS[tacFam(target)].mod.take,1));
    if(!(kills>0))continue;
    hits.push({from:g,to:target,kills,depth:0,grenade:true,owner:c,pk:'burn'});c.grenadeUsed=true;
   }
@@ -7969,20 +8047,42 @@ function kitRow(t) {
   el.querySelector('.kfoot button').onclick = () => { G.forge[t] = !on; Sound.play('tap'); refreshSheet(); };
   return el;
 }
+// a formation's orders: as many dropdowns as its best active commander's Strategy allows (Lv1: 1, Lv2: 2, Lv3+: 3)
+function formRow(A, t) {
+  const lv = formLevel(A, t), n = orderSlots(lv), plan = orderPlan(t), O = FORM_TACTICS[t];
+  const labels = n === 1 ? ['Rounds 1–3'] : n === 2 ? ['Round 1', 'Rounds 2–3'] : ['Round 1', 'Round 2', 'Round 3'], idx = labels.map((_, i) => i);
+  const shown = idx.map(i => plan[i]).filter((k, i, a) => a.indexOf(k) === i);
+  const el = h(`<div class="ftac"><div class="ftl">${icon('sk_strategy')} Tactics · Strategy ${lv} ${ib(n ? `Orders for each round, set before battle; rounds after the 3rd keep the last order. At the start of Round 3 this formation has a ${Math.min(100, lv * 20)}% chance to switch once to an order that beats the enemy's.` : 'No commander with Strategy leads this formation, so it fights in its default formation. Assign one with Strategy Lv1+ to give it orders.', 'Formation tactics')}</div>${n ? `<div class="fsel">${idx.map(i => `<label>${labels[i]}<select data-fslot="${i}" aria-label="${UNITS[t].name} · ${labels[i]}">${Object.entries(O).map(([k, T]) => `<option value="${k}"${plan[i] === k ? ' selected' : ''}>${T.jp} ${T.name}</option>`).join('')}</select></label>`).join('')}</div><div class="muted ftd">${shown.map(k => `<b>${O[k].name}</b>: ${esc(O[k].desc)}`).join('<br>')}</div>` : `<div class="muted ftd">Default formation · no orders</div>`}</div>`);
+  el.querySelectorAll('select').forEach(sel => sel.onchange = () => { const p = orderPlan(t), i = +sel.dataset.fslot, v = sel.value;
+    // a slot covers every round it governs at this level, so a later Strategy rise keeps the same plan
+    if (n === 1) p[0] = p[1] = p[2] = v; else if (n === 2 && i === 1) p[1] = p[2] = v; else p[i] = v;
+    (G.ftac ||= {})[t] = p; Sound.play('tap'); refreshSheet(); });
+  return el;
+}
+// banked Ki, the preferred ninjutsu and the Auto-cast switch
+function ninjutsuRow(A) {
+  const kc = A.kiCap ?? 1, kn = kiNow(kc), pj = jutsuPref(), on = autoCastOn();
+  const el = h(`<div class="troop ninj" style="grid-template-columns:1fr auto"><div style="min-width:0"><div>${icon('ki')} Ninjutsu ${ib('Ki is banked between battles and recovers 1 each month, up to capacity: 1, plus smoke pouches, the Shadow skill, monkeys and doctrine, to 3 at most. With Auto-cast on, your preferred ninjutsu is cast once per battle at a useful moment, when enough Ki is banked and neither army holds more than 67% of the combined strength.', 'Ninjutsu')}</div><div class="muted">Ki <b>${kn}</b>/${kc} · +1 each month</div><select id="ar-jutsu" aria-label="Preferred ninjutsu">${Object.entries(JUTSU).map(([k, J]) => `<option value="${k}"${k === pj ? ' selected' : ''}>${J.jp} ${J.name} · ${J.ki} Ki</option>`).join('')}</select><div class="muted ftd">${esc(JUTSU[pj].desc)}</div></div><button class="btn ${on ? 'gold' : 'ghost'}" id="ar-autocast" aria-pressed="${on}">Auto-cast ${on ? 'On' : 'Off'}</button></div>`);
+  el.querySelector('#ar-jutsu').onchange = e => { G.jutsuPref = e.target.value; Sound.play('tap'); refreshSheet(); };
+  el.querySelector('#ar-autocast').onclick = () => { G.autoCast = !autoCastOn(); Sound.play('tap'); refreshSheet(); };
+  return el;
+}
 function renderArmy(body) {
   const A = playerArmy(); const P = armyPower(A);
-  body.appendChild(h(`<div class="power"><span>Army strength</span><b>${fmt(P)}</b><span class="sp"></span><span style="font-size:12px">Ki ${A.ki} · Strategy ${A.strat} · upkeep ${fmt(Math.ceil(A.total * 0.35) + guardCount() * GUARD_UPKEEP)}G/mo</span></div>`));
+  body.appendChild(h(`<div class="power"><span>Army strength</span><b>${fmt(P)}</b><span class="sp"></span><span style="font-size:12px">Ki ${kiNow(A.kiCap)}/${A.kiCap} · Strategy ${A.strat} · upkeep ${fmt(Math.ceil(A.total * 0.35) + guardCount() * GUARD_UPKEEP)}G/mo</span></div>`));
   body.appendChild(h(`<p class="note" style="margin-top:0">${icon('build')} ${forgeCapacity()} base forge batches/month ${ib('Smiths and Iron Mines add base batches. Formation workshops in Training add +100% batch output and +100% gear quality per connected workshop in its selected focus. Each set costs gold and recipe materials multiplied by quality. Retempering costs the same as a new set. Forging stops before the treasury drops below 150G.')}</p>`));
   const marching = A.groups.reduce((n, g) => n + g.cmds.length, 0), workers = G.villagers.filter(v => v.role === 'work').length;
   const tg = h(`<div class="troop" style="grid-template-columns:1fr auto"><div><div>Militia ${ib('Workers march too, at half weight, with whatever weapon they hold. Battles take no village time.')}</div><div class="muted">${G.allHands !== false ? `${G.villagers.length} march` : `${marching} march · ${workers} stay`}</div></div><button class="btn ${G.allHands !== false ? 'gold' : 'ghost'}" id="ar-all">${G.allHands !== false ? 'On' : 'Off'}</button></div>`);
   tg.querySelector('#ar-all').onclick = () => { G.allHands = G.allHands === false; Sound.play('tap'); refreshSheet(); };
   body.appendChild(tg);
+  body.appendChild(ninjutsuRow(A));
   ['inf', 'arc', 'gun', 'cav'].forEach(t => {
     const U = UNITS[t], un = troopsOpen(t), grp = A.groups.find(g => g.type === t), cmds = grp ? grp.cmds : G.villagers.filter(v => v.role === t).map(cmdFrom), cost = troopCost(t);
     const row = h(`<div class="troop${un ? '' : ' locked'}"><img src="${ICONS['u_' + t]}" alt=""><div style="min-width:0"><div class="row"><span>${U.name}</span><span class="muted">${U.jp}</span></div><div class="n">${un ? fmt(G.troops[t]) : 'Sealed'}</div><div class="muted">${un ? '' : `🔒 <img class="px" style="width:14px;height:14px;vertical-align:-2px" src="${ICONS['it_corps_' + t]}" alt=""> ${ITEMS['corps_' + t].name}`} ${ib(un ? esc(U.desc) : `Research ${ITEMS['corps_' + t].name} in the Armory, or win it from a clan.`)}</div><div class="cmd"></div></div><div class="buy"></div></div>`);
     const cm = row.querySelector('.cmd');
     cmds.forEach(c => { const i = h(`<span class="cmdp ${c.post || 'line'}${c.aux ? ' aux' : ''}"><img src="${pURL(c.look)}" alt="${esc(c.name)}" title="${esc(c.name)}${c.aux ? ' (militia)' : ''} · ${POST_NAME[c.post || 'line']}">${c.guard ? `<i>${c.guard}</i>` : ''}</span>`); i.onclick = () => openVillager(c.id); cm.appendChild(i); });
     if (un) row.querySelector('div[style]').appendChild(kitRow(t));
+    if (A.groups.some(g => g.type === t)) row.querySelector('div[style]').appendChild(formRow(A, t));
     if (un && !cmds.length) cm.appendChild(h(`<span class="muted" style="color:#a02a1a"${tipAttr('No commander: half strength')}>⚠ ½</span>`));
 
     const by = row.querySelector('.buy');
@@ -8075,7 +8175,7 @@ function renderMenu(body, tab) {
       <p><b>1 · Earn.</b> Fields make goods; shops sell them to travellers who walk in from the south gate. Lay roads so everyone can reach everything.</p>
       <p><b>2 · Boost.</b> Scenery near shops and fields raises output. Some layouts trigger combos.</p>
       <p><b>3 · Muster.</b> Hire troops in the Army panel and put villagers in charge of each unit type. Equip them in the Armory.</p>
-      <p><b>4 · Conquer.</b> Open the Campaign map and attack neighbouring provinces. Battles last until an army has no combat-capable troops or you retreat. Casualties may fall or flee. Beyond the opening rounds, bounded offensive pressure increases; weakened formations fight desperate last stands. Pick a tactic each round and spend Ki on ninjutsu. Wins bring gold, land deeds, new buildings, unit types and allies.</p>
+      <p><b>4 · Conquer.</b> Open the Campaign map and attack neighbouring provinces. Battles last until an army has no combat-capable troops or you retreat. Casualties may fall or flee. Beyond the opening rounds, bounded offensive pressure increases; weakened formations fight desperate last stands. Set each formation's orders and your ninjutsu in the Army screen; the battle then plays out on its own. Wins bring gold, land deeds, new buildings, unit types and allies.</p>
       <p><b>5 · Unify.</b> Take the Iron Keep before the end of Year ${G.endYear || 25}. Every clan you beat makes the rest a little stronger, so do not dawdle.</p>
       <p>Tips: drag to pan, pinch or scroll to zoom. Tap villagers and buildings to inspect them.</p></div>`));
   } else {
@@ -9208,7 +9308,7 @@ const DOCTRINES = [
   { id: 'horse', jp: '騎馬', name: 'Horse Clans', ic: 'u_cav', txt: 'Cavalry −30% · horses −40%', tip: 'Horses and the Horse Corps research 40% cheaper. Archers and gunners cost 20% more.', apply() { addCost('cav', .7); addDisc('horse', .6); addCost('arc', 1.2); addCost('gun', 1.2); } },
   { id: 'bow', jp: '弓', name: 'Shrine Archers', ic: 'u_arc', txt: 'Archers −30% · ATK +8%', tip: 'Bows 25% cheaper. Gunners cost 25% more.', apply() { addCost('arc', .7); G.boons.atk.arc = (G.boons.atk.arc || 0) + .08; addDisc('bow', .75); addCost('gun', 1.25); } },
   { id: 'merchant', jp: '商', name: 'Merchant House', ic: 'gold', txt: 'Shop sales +20%', tip: 'All troops cost 15% more.', apply() { G.boons.sales += .2; ['inf', 'arc', 'gun', 'cav'].forEach(t => addCost(t, 1.15)); } },
-  { id: 'shadow', jp: '忍', name: 'Shadow School', ic: 'ki', txt: '+2 Ki · duels +3', tip: 'Every battle starts with 2 more Ki for ninjutsu; your commanders duel harder. All troops cost 10% more.', apply() { G.boons.ki += 2; G.boons.duel += 3; ['inf', 'arc', 'gun', 'cav'].forEach(t => addCost(t, 1.1)); } },
+  { id: 'shadow', jp: '忍', name: 'Shadow School', ic: 'ki', txt: '+2 Ki capacity · duels +3', tip: 'Ki capacity +2 (to the cap of 3) for banked ninjutsu; your commanders duel harder. All troops cost 10% more.', apply() { G.boons.ki += 2; G.boons.duel += 3; ['inf', 'arc', 'gun', 'cav'].forEach(t => addCost(t, 1.1)); } },
   { id: 'rice', jp: '農', name: 'Rice Barons', ic: 'g_rice', txt: 'Harvests +25%', tip: 'Fields, tea, lumber and mines yield 25% more. All troops cost 10% more.', apply() { G.boons.farm += .25; ['inf', 'arc', 'gun', 'cav'].forEach(t => addCost(t, 1.1)); } },
 ];
 function offerDoctrine() {
@@ -9406,7 +9506,10 @@ function applyArmyWide(A, allC) {
   const bl = {}, bd = {}; let monkeys = 0; allC.forEach(c => { const sp = c.vref && c.vref.eq.mount, I = sp && ITEMS[sp]; if (!I) return; if(I.unitBonus){const g=A.groups.find(g=>g.cmds.includes(c));if(g)(bl[g.type]||=[]).push(I.unitBonus);} if (I.beast && I.bonus) (bl[I.beast] ||= []).push(I.bonus); if (I.beastDef) (bd[I.beastDefType || I.beast] ||= []).push(I.beastDef); if (I.ki) monkeys++; });
   A.beast = {}; Object.keys(bl).forEach(t => A.beast[t] = stackBeasts(bl[t]));
   A.beastDef = {}; Object.keys(bd).forEach(t => A.beastDef[t] = stackBeasts(bd[t])); A.groups.forEach(g => { if (A.beastDef[g.type]) g.defMul *= 1 + A.beastDef[g.type]; });
-  A.ki = Math.min(5, A.ki + Math.min(2, monkeys)) + (A.side === 0 && G.boons ? G.boons.ki || 0 : 0); // a doctrine's Ki rides on top of the cap
+  A.ki = Math.min(5, A.ki + Math.min(2, monkeys)) + (A.side === 0 && G.boons ? G.boons.ki || 0 : 0);
+  // the player's Ki is a banked pool: these sources set its capacity (hard cap 3, a doctrine's Ki included) and a battle
+  // draws on what is in the bank rather than refilling. The enemy keeps its per-battle Ki.
+  if (A.side === 0) { A.kiCap = Math.min(KI_CAP, A.ki); A.ki = Math.min(A.kiCap, G.ki ?? A.kiCap); }
 }
 function playerSkirmish(pick) {
   const fit = G.villagers.filter(v => !cmdWorn(v)), fighters = pick || fit.filter(v => v.role !== 'work').concat(fit.filter(v => v.role === 'work').sort((a, b) => vStats(b).atk - vStats(a).atk)).slice(0, 12);
@@ -9575,8 +9678,9 @@ function endRound(){
     }));
   }
   BT.jutsu=[null,null];BT.clones=0;BT.hudDirty=true;
-  if(BT.auto){BT.state='autowait';BT.next=BT.round>=BT.maxR?.45:.7;renderRunStrip();return;}
-  BT.state='tactic';showTacticPanel();
+  // no pause between rounds: orders and ninjutsu were set before the battle. A retreat called mid-round lands here.
+  if(BT.retreatReq){BT.playerRetreat=true;return finishBattle('lose','You sounded the retreat.');}
+  BT.state='autowait';BT.next=BT.round>=BT.maxR?.45:.7;renderRunStrip();
 }
 function unitBreak(g){
   if(g.troops>0||g.cohEliminated)return;
@@ -9646,11 +9750,12 @@ function resolvePhase(phase, A, D, ctx) {
   const atk = alive(A, phase); if (!atk.length) return hits;
   const left = new Map(D.groups.map(g => [g, g.troops]));
   const ranged = phase === 'gun' || phase === 'arc', melee = !ranged;
-  const tacA = TACTICS[ctx.tac[A.side]].mod, tacD = TACTICS[ctx.tac[D.side]].mod;
   atk.forEach(g => {
     const rq = A.mode === 'army' ? retEq(g) : 0, retShare = rq / Math.max(1, g.troops + rq); // the unit's retainers fight in its ranks
+    // each formation fights under its own order; a counter is judged against the formation it strikes
+    const famA = tacFam(g), tacA = TACTICS[famA].mod, lvA = A.side === 0 && BT.flv ? BT.flv[g.type] || 0 : A.strat || 0;
+    const tacT = t => TACTICS[tacFam(t)].mod.take * (COUNTER[famA] === tacFam(t) ? 1 + counterBonus(lvA) : 1);
     let dmg = (fightingStrength(g) + rq) * UNITS[phase].atk * g.atkMul * (ranged ? tacA.rng : tacA.mel) * rnd(.88, 1.12) * 0.26;
-    if (COUNTER[ctx.tac[A.side]] === ctx.tac[D.side]) dmg *= 1.15 + A.strat * .04;
     dmg*=battleAttack(g);
     dmg *= 1 + (A.strat * .05) + g.mods.attackup * .1 + (phase === 'inf' ? g.mods.chain * .03 : 0) + (ranged ? g.mods.rapid * .03 : 0) + (A.beast && A.beast[phase] || 0);
     if (ctx.jutsu[A.side] === 'clone') dmg *= 1.4;
@@ -9668,7 +9773,7 @@ function resolvePhase(phase, A, D, ctx) {
     for (const t of order) {
       const res = battleResistance(t);
       const ward = phase === 'gun' ? t.mods.bulletres : phase === 'arc' ? t.mods.arrowres : phase === 'cav' ? t.mods.horseres : 0;
-      let mult = (1 - Math.min(.6, ward * .1)) * tacD.take * (1 - Math.min(.3, t.mods.shadow * .05));
+      let mult = (1 - Math.min(.6, ward * .1)) * tacT(t) * (1 - Math.min(.3, t.mods.shadow * .05));
       if (phase === 'cav' && (t.type === 'gun' || t.type === 'arc')) mult *= 1.6;
       if (phase === 'inf' && (t.type === 'gun' || t.type === 'arc')) mult *= 1.35;
       if (phase === 'gun' && t.type === 'inf') mult *= 1.2;
@@ -9683,7 +9788,7 @@ function resolvePhase(phase, A, D, ctx) {
       if (ranged && depth >= 2) break;
     }
     if (stray) { const t = stray.t, need = left.get(t); if (need > 0) {
-      const res = battleResistance(t), mult = (1 - Math.min(.6, (t.mods.arrowres || 0) * .1)) * tacD.take * (1 - Math.min(.3, t.mods.shadow * .05)) * (t.type === 'inf' ? 1 : 1);
+      const res = battleResistance(t), mult = (1 - Math.min(.6, (t.mods.arrowres || 0) * .1)) * tacT(t) * (1 - Math.min(.3, t.mods.shadow * .05)) * (t.type === 'inf' ? 1 : 1);
       const kills = Math.min(need, battleDamage(stray.dmg,res,mult,fightingStrength(g)*.15)); if (kills > 0) { hits.push({ from: g, to: t, kills, depth: 1, stray: true }); left.set(t, need - kills); } } }
   });
   return hits;
@@ -9696,8 +9801,8 @@ function counterHits(phase, hits, ctx) {
   hits.filter(h => h.depth === 0 && !h.icpt && !h.duelBonus && !h.grenade && h.from.type === phase && h.to.type !== phase && (h.to.type === 'inf' || h.to.type === 'cav')).sort((a, b) => b.kills - a.kills).forEach(h => {
     const T = h.to, G = h.from; if (seen.has(T)) return; seen.add(T);
     const si = sideOf(T), A = BT.A[si], left = Math.max(0, T.troops - h.kills * .5);
-    const dmg = Math.max(Math.min(1,T.troops),left) * battleAttack(T,true) * UNITS[T.type].atk * T.atkMul * TACTICS[ctx.tac[si]].mod.mel * rnd(.88, 1.12) * .26 * COUNTER_K * (1 + (A.strat || 0) * .05);
-    const kills = Math.min(G.troops * .5, battleDamage(dmg,battleResistance(G),TACTICS[ctx.tac[1-si]].mod.take*(T.solo?personalWeaponFactor(T.solo,G,T.type):1)*personalDamageGuard(G,T.type),fightingStrength(T)*COUNTER_K));
+    const dmg = Math.max(Math.min(1,T.troops),left) * battleAttack(T,true) * UNITS[T.type].atk * T.atkMul * TACTICS[tacFam(T)].mod.mel * rnd(.88, 1.12) * .26 * COUNTER_K * (1 + (A.strat || 0) * .05);
+    const kills = Math.min(G.troops * .5, battleDamage(dmg,battleResistance(G),TACTICS[tacFam(G)].mod.take*(T.solo?personalWeaponFactor(T.solo,G,T.type):1)*personalDamageGuard(G,T.type),fightingStrength(T)*COUNTER_K));
     if (kills > 0) out.push({ from: T, to: G, kills, depth: 0, counter: true });
   });
   return out;
@@ -9737,10 +9842,15 @@ function startBattle(provId, opt) {
   const pa = opt ? opt.pa : skirm ? playerSkirmish() : playerArmy(), ea = opt ? opt.ea : enemyArmy(P0);
   if (!pa.groups.length) { toast(skirm ? 'You need villagers to fight.' : 'You have no troops! Hire some in the Army panel.'); return false; }
   MAPV.open = false;
-  BT = { prov: P0, A: [pa, ea], round: 0, phase: -1, state: 'prep', t: 0, speed: 1, tac: ['steady', 'steady'], jutsu: [null, null], ki: [pa.ki, ea.ki], fx: [], proj: [], nums: [], pops: [], labels: [], shake: 0, log: [], auto: false, sky: pick(['day', 'day', 'dusk', 'dawn', 'storm']), seed: rint(1, 9999), clouds: [], wind: rnd(4, 9) * pick([-1, 1]), cam: null, stop: 0, punch: 0, bodies: 0 };
+  BT = { prov: P0, A: [pa, ea], round: 0, phase: -1, state: 'prep', t: 0, speed: 1, tac: ['steady', 'steady'], jutsu: [null, null], ki: [pa.ki, ea.ki], fx: [], proj: [], nums: [], pops: [], labels: [], shake: 0, log: [], auto: true, sky: pick(['day', 'day', 'dusk', 'dawn', 'storm']), seed: rint(1, 9999), clouds: [], wind: rnd(4, 9) * pick([-1, 1]), cam: null, stop: 0, punch: 0, bodies: 0 };
   // clan seats and the Shogun's keep are sieges: walls, a gate to ram, archers and gunners on the ramparts, a fourth round
   BT.maxR = 3;
   if (!skirm && P0.type === 'clan' && (P0.capital || P0.boss)) { const hp = Math.round(totalOf(ea) * (P0.boss ? 1.8 : SIEGE_GATE)); BT.siege = { hp, max: hp, breached: false }; BT.maxR = 4; }
+  if (pa.side === 0 && pa.mode === 'army') { // formation orders and the banked Ki, fixed before the first round
+    BT.flv = {}; BT.ftac = {}; FORM_TYPES.forEach(t => { BT.flv[t] = formLevel(pa, t); BT.ftac[t] = formOrder(t, BT.flv[t], 1); });
+    const pp = pa.power0 || armyPower(pa), ep = ea.power0 || armyPower(ea);
+    BT.kiCap = pa.kiCap ?? 1; BT.ki[0] = Math.min(BT.kiCap, G.ki ?? BT.kiCap);
+    BT.autoKi = { on: autoCastOn(), pref: jutsuPref(), share: pp / Math.max(1, pp + ep), eligible: autoKiEligible(pp, ep) }; }
   for (let i = 0; i < 6; i++) BT.clouds.push({ x: rnd(0, 1), y: rnd(.05, .3), s: rnd(.6, 1.4), v: rnd(.002, .006) });
   $('#battle-layer').hidden = false; $('#map-layer').hidden = true;
   resizeBattle(); buildBattleBG(); layoutSprites(); marchIn();
@@ -9781,19 +9891,25 @@ const PHASE_CALL = { gun: ['鉄砲', 'Gunners — fire!'], arc: ['弓矢', 'Arch
 function beginRound() {
   BT.round++; BT.phase = -1; BT.state = 'run'; BT.camAnchor = null; clearCamKeys(); BT.phaseName = null; BT.pt = 0; BT.script = null; BT.A.forEach(A => A.groups.forEach(g => g.routed = g.troops <= 0)); renderRunStrip();
   BT.tac[1] = BT.plan && BT.plan.round === BT.round ? BT.plan.tac : aiTactic(BT.A[1], BT.A[0]);
+  // formation orders follow the plan for Rounds 1-3 (Round 3 may adapt once); past Round 3 the last order holds
+  if (BT.ftac && BT.round <= 3) { FORM_TYPES.forEach(t => BT.ftac[t] = formOrder(t, BT.flv[t], BT.round)); if (BT.round === 3) adaptFormations(); }
+  if (BT.ftac) (BT.ftacLog ||= {})[BT.round] = Object.assign({}, BT.ftac);
   returnHeroes();
   // Bodies and discarded equipment remain for the entire battle.
   BT.jutsu[1] = null; if (BT.ki[1] > 1 && BT.A[1].boss && BT.round >= 2) { BT.jutsu[1] = 'fire'; BT.ki[1] -= 2; }
-  if (BT.jutsu[0]) { BT.ki[0] -= JUTSU[BT.jutsu[0]].ki; castJutsu(0, BT.jutsu[0]); }
+  BT.jutsu[0] = autoJutsu(); // once per battle, from the banked Ki, at the first useful moment
+  if (BT.jutsu[0]) { const cost = JUTSU[BT.jutsu[0]].ki; BT.ki[0] -= cost; G.ki = Math.max(0, kiNow(BT.kiCap) - cost); BT.kiCast = { round: BT.round, j: BT.jutsu[0], cost }; castJutsu(0, BT.jutsu[0]); }
   if (BT.jutsu[1]) castJutsu(1, BT.jutsu[1]);
-  callout(`第${combatRoundName(BT.round)}陣`, `Round ${BT.round} · ${TACTICS[BT.tac[0]].name} vs ${TACTICS[BT.tac[1]].name}`);
+  callout(`第${combatRoundName(BT.round)}陣`, BT.ftac ? `Round ${BT.round} · ${esc(BT.A[1].name)}: ${TACTICS[BT.tac[1]].name}` : `Round ${BT.round} · ${TACTICS[BT.tac[0]].name} vs ${TACTICS[BT.tac[1]].name}`);
   updateArmyCohesion(true);
-  // formations that beat each other
-  const ctr = COUNTER[BT.tac[0]] === BT.tac[1] ? 0 : COUNTER[BT.tac[1]] === BT.tac[0] ? 1 : -1;
-  if (ctr >= 0) { const A = BT.A[ctr], pct = Math.round((.15 + A.strat * .04) * 100), c = BT.cam.x;
-    BT.labels.push({ x: c, y: BT.fy0 + 12, text: ctr === 0 ? `Countered! ${TACTICS[BT.tac[0]].name} beats ${TACTICS[BT.tac[1]].name} · +${pct}%` : `The enemy read us — ${TACTICS[BT.tac[1]].name} beats ${TACTICS[BT.tac[0]].name}`, t: -.6, side: ctr, big: 1 });
+  // formations that beat each other: judged formation by formation against the enemy's army-wide order
+  const e = BT.tac[1], mine = alive(BT.A[0]), win = mine.filter(g => COUNTER[tacFam(g)] === e), lose = mine.filter(g => COUNTER[e] === tacFam(g));
+  const nm = g => BT.ftac && BT.ftac[g.type] ? FORM_TACTICS[g.type][BT.ftac[g.type]].name : TACTICS[tacFam(g)].name, uniq = a => [...new Set(a)];
+  const ctr = win.length ? 0 : lose.length ? 1 : -1;
+  if (ctr >= 0) { const c = BT.cam.x, lv = ctr === 0 ? Math.max(...win.map(g => BT.flv ? BT.flv[g.type] || 0 : BT.A[0].strat || 0)) : BT.A[1].strat || 0, pct = Math.round(counterBonus(lv) * 100);
+    BT.labels.push({ x: c, y: BT.fy0 + 12, text: ctr === 0 ? `Countered! ${uniq(win.map(nm)).join(', ')} beats ${TACTICS[e].name} · +${pct}%` : `The enemy read us — ${TACTICS[e].name} beats ${uniq(lose.map(nm)).join(', ')}`, t: -.6, side: ctr, big: 1 });
     if (ctr === 0) { Sound.drumRoll(); setTimeout(() => BT && Sound.play('combo'), 500); } }
-  BT.lastTac0 = BT.tac[0];
+  BT.lastTac0 = BT.ftac ? dominantFam() : BT.tac[0];
   Sound.play('taiko'); brandish(BT.A.flatMap(A => A.groups.filter(g => g.troops > 0)), 1.05); Sound.say(pick(['Charge!', 'Forward!', 'Attack!'])); BT.next = 1.4;
   preDuel();
   renderBHUD();
@@ -9836,35 +9952,29 @@ function batteryRow() {
   const fee = batteryFee(), on = !!BT.battery;
   return `<div class="battery${on ? ' on' : ''}"><img class="px" src="${ICONS['it_siegegun']}" alt=""><div><b>${on ? 'Battery in place' : 'Siege battery'}</b> ${ib('Each round the mortar takes ~20% off the gate; the hwacha sweeps the ramparts. One siege only; refunded if you withdraw now.')}</div><button class="btn ${on ? 'ghost' : 'gold'}" id="bt-battery"${!on && G.gold < fee ? ' disabled' : ''}>${on ? 'Send away · refund' : `大筒 Hire · ${fmt(fee)}G`}</button></div>`;
 }
-/* ---------- Tactic panel ---------- */
+/* ---------- Deployment panel ----------
+ Shown once, before the first round. Formation orders and ninjutsu are set in the Army screen; the battle then plays
+ through without stopping (Retreat and speed stay on the battle HUD). */
 function showTacticPanel() {
-  BT.state = BT.round === 0 ? 'prep' : 'tactic';
+  if (BT.round > 0) { renderRunStrip(); return; }
+  BT.state = 'prep';
   const P = BT.prov, pa = BT.A[0], ea = BT.A[1];
   const pp = armyPower(pa), ep = armyPower(ea);
-  let head = '';
-  if (BT.round === 0) head = (P.type === 'dojo' ? `<div class="note" style="margin:8px 10px 0">木刀 No losses · XP · recruits ${ib('Sparring with wooden weapons: nobody is lost, win or lose.')}</div>` : '') + `<div class="vs" style="padding:10px 10px 0"><div><div class="lbl">Kage Clan</div><div class="big">${fmt(totalOf(pa))}</div><div class="lbl">${pa.mode === 'skirmish' ? 'fighters HP' : 'troops'} · power ${fmt(pp)}</div></div><div style="font-family:var(--f-brush);font-size:24px">対</div><div><div class="lbl">${esc(ea.name)}</div><div class="big">${fmt(totalOf(ea))}</div><div class="lbl">power ${fmt(ep)}</div></div></div><div style="padding:6px 10px 0"><div class="odds"><i style="width:${pp / (pp + ep) * 100}%;background:#3b4a7a"></i><i style="flex:1;background:#8a2b2b"></i></div></div>`;
-  if (!BT.plan || BT.plan.round !== BT.round + 1) { const st = pa.strat, chance = pa.intel ? 1 : st > 0 ? Math.min(1, .3 + st * .2) : 0;
-    BT.plan = { round: BT.round + 1, tac: aiTactic(ea, pa), known: Math.random() < chance, chance }; }
-  const PL = BT.plan, beat = Object.keys(COUNTER).find(k => COUNTER[k] === PL.tac);
-  const intel = `<div class="intel">${icon('sk_strategy')}<div>${PL.known ? `<b>Scouts:</b> the ${esc(ea.name)} will form <b>${TACTICS[PL.tac].name}</b>.${beat ? ` <b>${TACTICS[beat].name}</b> beats it.` : ''}` : PL.chance ? `<b>Scouts</b> could not read the enemy formation.` : `<b>No strategist:</b> the enemy formation is unknown.`} <span class="muted">${pa.intel ? 'Spyglass: always revealed.' : `Strategy ${pa.strat} · ${Math.round(PL.chance * 100)}% to scout.`}${ea.strat ? ` Their strategists may counter your habits.` : ''}</span></div></div>`;
-  const kiDots = icon('ki').repeat(Math.max(0, BT.ki[0]));
-  $('#btac').innerHTML = `<div class="in lac"><div class="paper" style="border-top:0">${head}
-    ${intel}<div class="tacs">${Object.entries(TACTICS).map(([k, T]) => `<button class="tac${BT.tac[0] === k ? ' on' : ''}${PL.known && COUNTER[k] === PL.tac ? ' ctr' : ''}" data-t="${k}"><span class="k">${T.jp}</span><span>${T.name}</span><span class="d">${T.desc}${COUNTER[k] ? ` Beats ${TACTICS[COUNTER[k]].name}.` : ''}</span></button>`).join('')}</div>
-    ${BT.round === 0 && BT.siege ? batteryRow() : ''}
-    <div class="jutsu"><span class="lbl">Ki ${kiDots || '—'}</span>${Object.entries(JUTSU).map(([k, J]) => `<button class="jbtn${BT.jutsu[0] === k ? ' on' : ''}" data-j="${k}" ${BT.ki[0] < J.ki ? 'disabled' : ''} title="${esc(J.desc)}">${J.jp} ${J.name} ·${J.ki}</button>`).join('')}</div>
-    <div class="row" style="padding:0 10px 10px"><button class="btn ghost" id="bt-retreat">${BT.round === 0 ? 'Withdraw' : 'Retreat'}</button><button class="btn ghost" id="bt-speed">Speed ×${BT.speed}</button>${BT.round === 0 ? '' : `<button class="btn ghost" id="bt-auto">Auto ${BT.auto ? 'on' : 'off'}</button>`}<span class="sp"></span><button class="btn red" id="bt-go" style="min-width:120px">${BT.round === 0 ? '出陣 · Attack!' : 'Next round'}</button></div>
-    <div class="note" style="padding:0 10px 10px;margin:0" id="bt-desc">${BT.jutsu[0] ? esc(JUTSU[BT.jutsu[0]].desc) : ''}</div></div></div>`;
-  $$('#btac .tac').forEach(b => b.onclick = () => { Sound.play('tap'); BT.tac[0] = b.dataset.t; showTacticPanel(); });
+  const head = (P.type === 'dojo' ? `<div class="note" style="margin:8px 10px 0">木刀 No losses · XP · recruits ${ib('Sparring with wooden weapons: nobody is lost, win or lose.')}</div>` : '') + `<div class="vs" style="padding:10px 10px 0"><div><div class="lbl">Kage Clan</div><div class="big">${fmt(totalOf(pa))}</div><div class="lbl">${pa.mode === 'skirmish' ? 'fighters HP' : 'troops'} · power ${fmt(pp)}</div></div><div style="font-family:var(--f-brush);font-size:24px">対</div><div><div class="lbl">${esc(ea.name)}</div><div class="big">${fmt(totalOf(ea))}</div><div class="lbl">power ${fmt(ep)}</div></div></div><div style="padding:6px 10px 0"><div class="odds"><i style="width:${pp / (pp + ep) * 100}%;background:#3b4a7a"></i><i style="flex:1;background:#8a2b2b"></i></div></div>`;
+  const orders = BT.ftac ? `<div class="plan">${FORM_TYPES.filter(t => pa.groups.some(g => g.type === t)).map(t => { const lv = BT.flv[t], seq = orderSlots(lv) ? [1, 2, 3].map(r => FORM_TACTICS[t][formOrder(t, lv, r)].name) : null;
+      return `<div><b>${UNITS[t].name}</b> <span class="muted">Strategy ${lv}</span> · ${seq ? (new Set(seq).size === 1 ? esc(seq[0]) : seq.map(esc).join(' → ')) : 'Default formation'}</div>`; }).join('')}</div>` : '';
+  const K = BT.autoKi, J = K && JUTSU[K.pref];
+  const kiLine = K ? `<div class="note" style="margin:6px 10px 0">${icon('ki')} Ki ${Math.max(0, BT.ki[0])}/${BT.kiCap} · ${!K.on ? 'Auto-cast off' : `Auto-cast ${J.name} (${J.ki} Ki): ${!K.eligible ? `holds — your strength share is ${Math.round(K.share * 100)}%, outside 33–67%` : BT.ki[0] < J.ki ? 'not enough Ki banked' : 'ready'}`}</div>` : '';
+  $('#btac').innerHTML = `<div class="in lac"><div class="paper" style="border-top:0">${head}${orders}${kiLine}
+    ${BT.siege ? batteryRow() : ''}
+    <div class="row" style="padding:10px"><button class="btn ghost" id="bt-retreat">Withdraw</button><button class="btn ghost" id="bt-speed">Speed ×${BT.speed}</button><span class="sp"></span><button class="btn red" id="bt-go" style="min-width:120px">出陣 · Attack!</button></div></div></div>`;
   const hb = $('#bt-battery'); if (hb) hb.onclick = () => { const fee = batteryFee(); if (BT.battery) { BT.battery = false; G.gold += BT.batteryPaid || 0; BT.batteryPaid = 0; Sound.play('tap'); }
     else { if (G.gold < fee) { Sound.play('alert'); toast('Not enough gold to hire the battery.'); return; } G.gold -= fee; BT.battery = true; BT.batteryPaid = fee; Sound.play('coin'); Sound.play('taiko', { vol: .6 }); toast(`The siege battery rolls up behind your lines <span class="muted">(−${fmt(fee)}G)</span>.`); }
     placeBattery(); updateHUD(); showTacticPanel(); };
-  $$('#btac .jbtn').forEach(b => b.onclick = () => { Sound.play('tap'); BT.jutsu[0] = BT.jutsu[0] === b.dataset.j ? null : b.dataset.j; showTacticPanel(); });
   $('#bt-go').onclick = () => { Sound.play('horn'); beginRound(); };
   $('#bt-speed').onclick = () => { BT.speed = BT.speed === 1 ? 2 : BT.speed === 2 ? 3 : 1; Sound.play('tap'); showTacticPanel(); };
-  const au = $('#bt-auto'); if (au) au.onclick = () => { BT.auto = !BT.auto; Sound.play('tap'); showTacticPanel(); };
-  $('#bt-retreat').onclick = () => { if (BT.round === 0) { if (BT.battery) G.gold += BT.batteryPaid || 0; closeBattle(); openMap(); } else {BT.playerRetreat=true;finishBattle('lose','You sounded the retreat.');} };
+  $('#bt-retreat').onclick = () => { if (BT.battery) G.gold += BT.batteryPaid || 0; closeBattle(); openMap(); };
 }
-
 
 // one row per unit type in phase order: our count and strength on the left, theirs on the right, the acting type lit
 
@@ -10179,11 +10289,11 @@ function siegeWorks(mid, fh) {
 }
 // what the siege adds to a phase: the ram goes in with the infantry, gunners chip at the gate
 function siegeScript(p) {
-  const S = BT.script; if (!S) return; const A = BT.A[0], tac = TACTICS[BT.tac[0]].mod;
+  const S = BT.script; if (!S) return; const A = BT.A[0];
   const T0 = BT.t + (p === 'inf' || p === 'cav' ? BRANDISH : 0), mid = BT.midY || (BT.fy0 + BT.fy1) / 2;
   const add = (t, k, o) => S.ev.push(Object.assign({ t, k }, o));
   if (p === 'inf') { const inf = alive(A, 'inf'); if (!inf.length) return;
-    const dmg = inf.reduce((n, g) => n + fightingStrength(g) * battleAttack(g) * UNITS.inf.atk * g.atkMul * tac.mel * .26, 0) * (1 + A.strat * .05) * rnd(.85, 1.15);
+    const dmg = inf.reduce((n, g) => n + fightingStrength(g) * battleAttack(g) * UNITS.inf.atk * g.atkMul * TACTICS[tacFam(g)].mod.mel * .26, 0) * (1 + A.strat * .05) * rnd(.85, 1.15);
     const g0 = inf[0], x1 = BT.siege.x - 15;
     if (!BT.ram) BT.ram = { x: g0.front + 6, y: mid + 10 };
     BT.ram.mv = { from: BT.ram.x, to: x1, t0: T0, t1: T0 + Math.max(.5, Math.abs(x1 - BT.ram.x) / 70) };
@@ -10778,7 +10888,7 @@ function interceptHits(p) {
   [0, 1].forEach(si => { const D = BT.A[si], A = BT.A[1 - si], tg = alive(A, p); if (!tg.length) return;
     const screen = alive(D, 'inf').reduce((n, g) => n + g.troops, 0) > tg.reduce((n, g) => n + g.troops, 0) * .3;
     alive(D).filter(g => g.type === 'gun' || g.type === 'arc').forEach(g => {
-      const tac = TACTICS[BT.tac[si]].mod; let dmg = fightingStrength(g) * battleAttack(g,true) * UNITS[g.type].atk * g.atkMul * tac.rng * .26 * .28 * (screen ? .35 : 1) * (1 + (g.mods.counter || 0) * .3) * rnd(.85, 1.15);
+      const tac = TACTICS[tacFam(g)].mod; let dmg = fightingStrength(g) * battleAttack(g,true) * UNITS[g.type].atk * g.atkMul * tac.rng * .26 * .28 * (screen ? .35 : 1) * (1 + (g.mods.counter || 0) * .3) * rnd(.85, 1.15);
       if (BT.jutsu[1 - si] === 'smoke') dmg *= .4; if (BT.siege && si === 1 && siegeHold()) dmg *= 1.3;
       const T = tg.slice().sort((a, b) => b.troops - a.troops)[0], ward = g.type === 'gun' ? T.mods.bulletres : T.mods.arrowres;
       const kills = Math.min(T.troops * .22, battleDamage(dmg,battleResistance(T),(1-Math.min(.6,(ward||0)*.1))*(g.solo?personalWeaponFactor(g.solo,T,g.type):1),fightingStrength(g)*.28));
@@ -11587,7 +11697,7 @@ function updateBattle(rdt) {
     }
   } else if (BT.state === 'intro') introTick();
   else if (BT.state === 'between') { BT.betweenT = (BT.betweenT || 0) + dt; BT.next -= dt; if (BT.next <= 0) endRound(); }
-  else if (BT.state === 'autowait') { BT.next -= dt; if (BT.next <= 0) { if (BT.auto) beginRound(); else { BT.state = 'tactic'; showTacticPanel(); } } }
+  else if (BT.state === 'autowait') { BT.next -= dt; if (BT.next <= 0) beginRound(); }
   if (BT.hudDirty) { BT.hudDirty = false; renderBHUD(); }
   BT.labels.forEach(l => l.t += dt); BT.labels = BT.labels.filter(l => l.t < (l.big ? 1.9 : 1.3));
   for (const f of BT.fx) { f.t -= dt; f.x += (f.vx || 0) * dt; f.y += (f.vy || 0) * dt; if (f.g) f.vy += f.g * dt; }
