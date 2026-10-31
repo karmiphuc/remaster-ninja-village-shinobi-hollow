@@ -9,7 +9,7 @@ await p.addInitScript(()=>{window.__noIntro=true;window.__noQuick=true;});await 
 const before=await p.evaluate(()=>{newGame();G.tut=1;G.speed=0;G.boons.pending=null;afterLoad();return {json:JSON.stringify(G),save:localStorage.getItem(SAVE_KEY),data:JSON.stringify([PROVINCES,ITEMS,UNITS,RESEARCH])};});
 const report=await p.evaluate(async()=>{return await runEconomySim();});
 const after=await p.evaluate(()=>({json:JSON.stringify(G),save:localStorage.getItem(SAVE_KEY)}));
-if(before.json!==after.json||before.save!==after.save||before.data!==after.data)throw Error('Simulation changed real village/save');
+if(before.json!==after.json||before.save!==after.save||!require('util').isDeepStrictEqual(JSON.parse(before.data),JSON.parse(after.data))){console.log('ISOLATION_DIFF='+JSON.stringify({g:before.json===after.json,save:before.save===after.save,data:before.data===after.data,differences:(function(){const out=[];function walk(a,b,path){if(a===b)return;if(!a||!b||typeof a!=='object'||typeof b!=='object'){out.push({path,before:a,after:b});return;}for(const k of new Set([...Object.keys(a),...Object.keys(b)]))walk(a[k],b[k],path+'.'+k);}walk(JSON.parse(before.data),JSON.parse(after.data),'data');return out.slice(0,20);})()}));throw Error('Simulation changed real village/save');}
 if(report.rows.length!==50)throw Error('Missing seed/scenario results');
 if(report.rows.some(r=>!r.failureExercised))throw Error('Failure scenario did not execute');
 fs.mkdirSync(path.join(root,'reports'),{recursive:true});fs.writeFileSync(path.join(root,'reports','economy-'+report.version.toLowerCase()+'.json'),JSON.stringify({...report,engine:engine===webkit?'webkit':'chromium',isolation:true,errors},null,2));

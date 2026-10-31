@@ -765,7 +765,7 @@ function diagNegatives(){
 function diagProbe(dt){
  var d=SH_PERF.diag;if(!d)return;
  for(var a of RT.agents){if(a.kind!=='villager')continue;var v=vById(a.vid);if(!v||v.role!=='work')continue;
-  var porter=typeof isPorter==='function'&&isPorter(v),category=a.state==='work'?0:a.state==='walk'?(a.carry?1:2):a.resting?3:4;
+  var porter=typeof isPorter==='function'&&isPorter(v),category=a.state==='work'?0:a.state==='walk'?(a.carry?1:2):a.resting||a.state==='goodsRest'?3:4;
   (porter?d.porter:d.worker)[category]+=dt;if(!porter&&category===2){var k=a.mission||'other';d.emptyByMission[k]=(d.emptyByMission[k]||0)+dt;}var b=v.job>=0?bByUid(v.job):null;
   if(!porter&&b&&(BUILDINGS[b.id].makes||BUILDINGS[b.id].craft))d.producer[category]+=dt;
  }
@@ -5489,7 +5489,7 @@ function agentFrame(a){
  const dir=a.dir||'down',t=RT.t,ph=(a.id||0)*1.37,fr=(a.fr||0)%4,walking=a.state==='walk'&&a.moving;let mods=[],bob=0,tool=null;
  if(walking){mods=['walk'+fr];bob=fr%2?-1:0;}
  else if(a.state==='work'){mods=[fr%2?'strike':'raise'];bob=fr%2*.3;}
- else if(a.state==='inside'&&a.resting&&!a.hidden){mods=['sit','eyesShut'];bob=2;}
+ else if((a.state==='inside'&&a.resting&&!a.hidden)||a.state==='goodsRest'){mods=['sit','eyesShut'];bob=2;}
  else if(a.cheer&&a.cheer>t){mods=['armsUp'];bob=-Math.round(Math.abs(Math.sin(t*9+ph))*2);}
  else if(((t*.37+ph)%3.1)<.11)mods=['blink'];
  const carry=a.carry&&a.carry.kind,rig=artLiveVillager(a.look,dir,mods,carry);
@@ -6890,6 +6890,7 @@ function updateAgents(dt) {
 }
 function updateVillagerAgent(a, dt) {
   const v = vById(a.vid); if (!v) { dropLost(a);a.dead = true; return; }
+  if(a.state==='goodsRest'){v.en=Math.min(100,(v.en??100)+dt*4);a.timer-=dt;if(a.timer<=0){a.state='idle';a.timer=0;}return;}
   if (a.state === 'walk') { if (stepAgent(a, dt)) { const b = bByUid(a.target); if (!b) { dropLost(a); a.mission = null; a.state = 'idle'; return; } arrive(a, v, b); } return; }
   if (a.state === 'work') {
     a.timer -= dt; a.ft += dt; if (a.ft > 0.3) { a.ft = 0; a.fr = (a.fr + 1) % 4; }
@@ -12778,16 +12779,18 @@ function workerPlan(a,v,J){
   if(!waiting&&(J.pile||0)>=Math.round(HAUL_AT*(1+vStats(v).carry))&&(!E.porters||economyFull(J))){
    const to=dropFor(B.makes,J);if(to){const plan=economyStart(a,v,economyPoint(J,'pile'),economyDestination(to,B.makes),B.makes,E.porters?capacity:Math.max(capacity,J.pile||0),J,to);if(plan)return plan;}
   }
-  if(economyFull(J)){a.bubble={t:1.5,icon:'!'};return null;}
+  if(economyFull(J)){a.bubble={t:1.5,icon:'!'};return waiting?economyWait(a,J):null;}
   a.mission='work';return J;
  }
  if(B.craft){
   J.inbox=J.inbox||{};J.outs=J.outs||{};const c=chooseCraft(J);
   let ready=null,n=0;for(const g in J.outs)if(J.outs[g]>n&&shopsFor(g).length){ready=g;n=J.outs[g];}
+  if(ready&&outTotal(J)>=OUT_CAP&&E.porters&&economyReserved(economyPoint(J,'outs'),ready,false)>0)return economyWait(a,J);
   if(ready&&(n>=3||!c||c.mode!=='craft'||outTotal(J)>=OUT_CAP)&&(!E.porters||outTotal(J)>=OUT_CAP)){
    const to=dropFor(ready,J);if(to){const plan=economyStart(a,v,economyPoint(J,'outs'),economyDestination(to,ready),ready,capacity,J,to);if(plan)return plan;}}
   if(c&&c.mode==='craft'&&outTotal(J)<OUT_CAP){a.mission='craft';a.craftWare=c.w;return J;}
   if(c&&c.mode==='fetch'){
+   if(E.porters&&economyReserved(economyPoint(J,'inbox'),c.g,true)>0)return economyWait(a,J);
    const p=economyPoint(J,'inbox'),st=economyNearStore(J),want=Math.min(economyRoom(p,c.g),WARES[c.w].from[c.g]*Math.round(3*(1+vStats(v).carry)));
    if(st&&(!E.porters||economyReserved(p,c.g,true)<WARES[c.w].from[c.g]-(J.inbox[c.g]||0))){const plan=economyStart(a,v,economyCentral(c.g),p,c.g,Math.max(1,want),st,J);if(plan)return plan;}
   }
@@ -12879,6 +12882,11 @@ function outTotal(b){let n=0;const map=b.outs;if(map)for(const k in map)n+=map[k
 function economyCanSell(b){
  const B=BUILDINGS[b.id],wares=shopStock(b,true);for(const w in wares)if(wares[w]>=1&&WARES[w]&&WARES[w].shops.includes(b.id))return true;
  if(B.needWares)return false;const raw=shopStock(b,false);for(let i=0;i<B.sells.length;i++)if((raw[B.sells[i]]||0)<1)return false;return true;
+}
+
+function economyWait(a,b){
+ if(a.target!==b.uid){a.mission='goodsPause';return b;}
+ a.state='goodsRest';a.mission=null;a.moving=false;a.hidden=false;a.timer=2;return null;
 }
 
 if (window.claude && window.claude.hot && window.claude.hot.ready) window.claude.hot.ready(boot); else if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();

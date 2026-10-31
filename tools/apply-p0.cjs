@@ -13,6 +13,8 @@ edit('chooseSite',"  const sites =","  if(isPorter(v))return null;const E=econom
 edit('updateVillagerAgent',"    const supply=planShopSupply(a,v),J=supply?null:chooseSite(a,v,v.role!=='work');\n    target=supply||(J&&workerPlan(a,v,J));","    if(isPorter(v))target=porterPlan(a,v);else {const supply=planShopSupply(a,v),J=supply?null:chooseSite(a,v,v.role!=='work');target=supply||(J&&workerPlan(a,v,J));}");
 edit('updateVillagerAgent',"  if (target && a.mission === 'rest'","  if(target&&target.uid===a.target&&(a.mission==='work'||a.mission==='craft')){arrive(a,v,target);return;}\n  if (target && a.mission === 'rest'");
 edit('updateVillagerAgent',"if (!v) { a.dead = true; return; }","if (!v) { dropLost(a);a.dead = true; return; }");
+edit('updateVillagerAgent',"  if (a.state === 'walk')","  if(a.state==='goodsRest'){v.en=Math.min(100,(v.en??100)+dt*4);a.timer-=dt;if(a.timer<=0){a.state='idle';a.timer=0;}return;}\n  if (a.state === 'walk')");
+edit('agentFrame',"a.state==='inside'&&a.resting&&!a.hidden","(a.state==='inside'&&a.resting&&!a.hidden)||a.state==='goodsRest'");
 edit('updateVillage',"    updateAgents(dt);","    economyTick(dt);updateAgents(dt);");
 edit('buildingSprite',"    case 'hut':","    case 'porter': res=porterHouseSprite();break;\n    case 'hut':");
 edit('drawLogi',"  if(B.cat==='shop')","  economyBadge(ctx,b,B,px,py);\n  if(B.cat==='shop')");

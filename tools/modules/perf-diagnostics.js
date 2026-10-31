@@ -110,7 +110,7 @@ function diagNegatives(){
 function diagProbe(dt){
  var d=SH_PERF.diag;if(!d)return;
  for(var a of RT.agents){if(a.kind!=='villager')continue;var v=vById(a.vid);if(!v||v.role!=='work')continue;
-  var porter=typeof isPorter==='function'&&isPorter(v),category=a.state==='work'?0:a.state==='walk'?(a.carry?1:2):a.resting?3:4;
+  var porter=typeof isPorter==='function'&&isPorter(v),category=a.state==='work'?0:a.state==='walk'?(a.carry?1:2):a.resting||a.state==='goodsRest'?3:4;
   (porter?d.porter:d.worker)[category]+=dt;if(!porter&&category===2){var k=a.mission||'other';d.emptyByMission[k]=(d.emptyByMission[k]||0)+dt;}var b=v.job>=0?bByUid(v.job):null;
   if(!porter&&b&&(BUILDINGS[b.id].makes||BUILDINGS[b.id].craft))d.producer[category]+=dt;
  }
