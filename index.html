@@ -13642,24 +13642,27 @@ function economyBundle(a){
  for(let i=0;i<E.jobCount;i++){
   const j=E.jobs[i];if(j.source!==c.source||j.target===c.target||!shopIs(j.target))continue;
   const be=entranceOf(j.target);if(!be)continue;const at=idx(be[0],be[1]),between=da[at],from=ds[at];if(between<0||from<0)continue;
-  const direct=Math.max(first,from),extra=first+between-direct;
+  // one pickup, two shops: visit the nearer shop first (start → near → far); the detour is what that costs over going straight to the farther shop
+  const direct=Math.max(first,from),extra=Math.min(first,from)+between-direct;
   if(extra>Math.max(4,direct*.25))continue;
   const n=Math.min(room,j.n,economyAvailable(j.from,j.good),economyRoom(j.to,j.good));if(n<1)continue;
   const urgent=shopTotal(j.target,!!WARES[j.good])<3?1:0,value=urgent*1000+j.rank*20+n*3-extra*4-between*.25;
   if(value>score){score=value;best=j;}
  }
  if(!best)return;
- const be=entranceOf(best.target),firstPath=roadPath(se[0],se[1],ae[0],ae[1],true,true),secondPath=roadPath(ae[0],ae[1],be[0],be[1],true,true);
- const direct=Math.max(first,ds[idx(be[0],be[1])]);
- const walked=firstPath&&secondPath?(first===0?0:firstPath.length)+(da[idx(be[0],be[1])]===0?0:secondPath.length):Infinity,detour=walked-direct;
+ // the final check walks the real keep-left paths, in both orders, and keeps the shorter
+ const be=entranceOf(best.target),leg=(p,q)=>{if(p[0]===q[0]&&p[1]===q[1])return 0;const P=roadPath(p[0],p[1],q[0],q[1],true,true);return P?P.length:Infinity;};
+ const direct=Math.max(first,ds[idx(be[0],be[1])]),aFirst=leg(se,ae)+leg(ae,be),bFirst=leg(se,be)+leg(be,ae);
+ const walked=Math.min(aFirst,bFirst),detour=walked-direct;
  if(detour>Math.max(4,direct*.25))return;
  for(let i=0;i<E.jobCount&&room>0;i++){const j=E.jobs[i];if(j.source!==c.source||j.target!==best.target)continue;
   room-=economyAddLine(c,j.from,j.to,j.good,Math.min(room,j.n),j.target);}
- if(c.second){c.directDistance=direct;c.detour=detour;c.detourLimit=Math.max(4,direct*.25);}
+ if(c.second){c.directDistance=direct;c.detour=detour;c.detourLimit=Math.max(4,direct*.25);c.secondFirst=bFirst<aFirst;c.walked=walked;}
 }
 
 function economyLineTarget(c,line){return line===c?c.target:line.target||c.target;}
 function economyStop(c){
+ if(c.secondFirst&&c.second&&bByUid(c.second.uid)&&c.extra&&c.extra.some(l=>l.n>0&&economyLineTarget(c,l)===c.second))return c.second;
  if(c.n>0&&bByUid(c.target.uid))return c.target;
  if(c.extra)for(const l of c.extra){const b=economyLineTarget(c,l);if(l.n>0&&bByUid(b.uid))return b;}return null;
 }
