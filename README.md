@@ -99,7 +99,7 @@ The game is served by GitHub Pages straight from the `main` branch root (`/`), w
 |---|---|
 | `index.html` | The complete game: markup, styles, script, sprites and audio (audio is embedded as data URIs) |
 | `README.md` | This file |
-| `docs/` | Equipment notes and previews rendered from the procedural game assets |
+| `docs/` | Equipment notes, [village art direction](docs/ART_DIRECTION.md), and previews rendered from the procedural game assets |
 | `tests/` | Browser checks for equipment effects, research, saves, portraits, formation tactics, Ki, the campaign hand, logistics and mobile layout |
 | `reports/` | Recorded validation results |
 
@@ -107,7 +107,9 @@ The game is served by GitHub Pages straight from the `main` branch root (`/`), w
 
 Includes the compact battle HUD, independent hero formations, physically delivered shop stock, guaranteed worker-calling rebellion captives, and the specialist arsenal. The three-shot rifle uses a one-over-two triangular barrel cluster. See [equipment notes](docs/equipment-v19.1.txt) and the [procedural preview](docs/arsenal-v19.1.png).
 
-Logistics P0 adds the **Porter House** (荷運び小屋) under Industry. Assign up to two workers manually; vacancies never auto-fill. Porters collect harvests, supply artisans, and bundle goods on shared trips to local shop shelves. Ordinary workers can still haul without porters. Full piles pause further work and retain completed output in a counted buffer.
+Logistics P0 adds the **Porter House** (荷運び小屋) under **Build → Fields & Work**, beside the Storehouse. It costs 240G. Assign up to two workers manually; vacancies never auto-fill. Porters collect harvests, supply artisans, and bundle goods on shared trips to local shop shelves. Ordinary workers can still haul without porters. Full piles pause further work and retain completed output in a counted buffer.
+
+The Lumber Yard, Iron Mine and Porter House use the established village pixel scale, dark outlines, warm timber and shared shading. The Porter House has a permanent wheelbarrow in front. See the [art direction guide](docs/ART_DIRECTION.md) and [procedural comparison sheet](docs/porter-house-preview.png). Roofs are optional for future buildings; consistency comes from the rendering language and materials.
 
 Saved games keep version 1. Existing local shop stock migrates without losing goods. Procedural artwork is preserved; bounded sprite caches, trimmed transparent margins, and releasing previews reduce canvas memory. See the [design note](docs/logistics-p0-design.txt) and [recorded validation](docs/logistics-p0-validation.md).
 
