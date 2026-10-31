@@ -65,6 +65,16 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
       fresh({ gun: 30 }); slot = 0; const low = kitList('a', 'gun').filter(k => k !== cov('gun').a.k)[0]; kitAdd('gun', low, 30, 2);
       forge(); forgeTick(); check(G.kit.gun[low] === 30 && G.kitQuality.gun[low][2] === 30, 'Older gear was destroyed');
       check(kitSummary('gun').a.length >= 1, 'Kit summary broke with mixed gear'); out.preserved = { kept: ITEMS[low].name, quality: 2 };
+      // gear at least as strong as a fresh top set (strength × quality) counts as covered; weaker quality does not
+      fresh({ gun: 50 }); slot = 0; const topA = cov('gun').a.k, topS = artKitScore(topA, 'gun');
+      const alt = kitList('a', 'gun').filter(k => k !== topA && artKitScore(k, 'gun') > 0).sort((x, y) => artKitScore(y, 'gun') - artKitScore(x, 'gun'))[0], qq = Math.ceil(topS / artKitScore(alt, 'gun') - 1e-9);
+      kitAdd('gun', alt, 20, qq); check(cov('gun').a.have === 20 && cov('gun').a.need === 30, `Equal-or-better quality not counted (${ITEMS[alt].name} ×${qq})`);
+      if (qq > 1 && artKitScore(alt, 'gun') * (qq - 1) < topS) { kitAdd('gun', alt, 10, qq - 1); check(cov('gun').a.have === 20, 'Weaker quality counted as covered'); }
+      forge(); for (let i = 0; i < 6; i++) forgeTick();
+      check(Math.floor(G.kit.gun[topA] || 0) === 30 && cov('gun').a.need === 0, `Forged ${G.kit.gun[topA]} top sets, expected only the 30 missing`);
+      const worn = kitSummary('gun').a, wornAlt = worn.filter(([k, , q]) => k === alt && q === qq).reduce((n, [, c]) => n + c, 0), wornTop = worn.filter(([k]) => k === topA).reduce((n, [, c]) => n + c, 0);
+      check(wornAlt === 20 && wornTop === 30, `Soldiers do not wear what coverage counted: ${JSON.stringify(worn)}`);
+      out.qualityCounts = { item: ITEMS[alt].name, quality: qq, topItem: ITEMS[topA].name, countedAsCovered: 20, forgedOnly: 30 };
 
       // ---------- focus selection ----------
       fresh({ gun: 100 }); slot = 0; const wf = forge('teppo_kaji', 'weapon'); forgeTick();
