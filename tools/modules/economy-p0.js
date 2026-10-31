@@ -103,6 +103,32 @@ function craftCycleTime(site,v,n){
 /* Logistics P0: central storage, physical shelves and optional dedicated haulers.
    Runtime endpoints, jobs and claims never enter the save. */
 const ECONOMY_P0=1;
+// An absent policy preserves old saves. Only disabled raw materials enter G.
+function materialSalesAllowed(good){return !G.materialSales||G.materialSales[good]!==false;}
+function shopRawSalesAllowed(b){const B=BUILDINGS[b.id];return !B.needWares&&B.sells.length>0&&B.sells.every(materialSalesAllowed);}
+function setMaterialSales(good,enabled){
+ if(good&&!GOODS[good])return;
+ if(!G.materialSales)G.materialSales={};
+ for(const g in GOODS)if(!good||g===good){if(enabled)delete G.materialSales[g];else G.materialSales[g]=false;}
+ if(!Object.keys(G.materialSales).length)delete G.materialSales;
+ const E=economyState();if(E.dirty)economyTopology();
+ // Cancel only affected lines; mixed loads keep their wares and second stop.
+ for(const c of E.claims.values()){
+  if(c.to.kind==='shelf'&&!WARES[c.good]&&!shopRawSalesAllowed(c.target)||!c.picked&&c.from.kind==='shelf'&&!WARES[c.good]&&shopRawSalesAllowed(c.source))c.n=0;
+  if(c.extra)for(const l of c.extra)if(l.to.kind==='shelf'&&!WARES[l.good]&&!shopRawSalesAllowed(economyLineTarget(c,l))||!c.picked&&l.from.kind==='shelf'&&!WARES[l.good]&&shopRawSalesAllowed(c.source))l.n=0;
+  const a=c.agent,stop=economyStop(c);
+  if(!stop){economyRelease(a);a.mission=null;a.path.length=0;a.state='idle';a.timer=0;if(a.carry||economyFreightTotal(a))returnShopCarry(a);}
+  else if(c.picked&&a.target!==stop.uid&&!economyContinueTrip(a,c)){dropLost(a);a.mission=null;a.state='idle';a.path.length=0;}
+ }
+ E.goodsRevision++;economyJobs();Sound.play('tap');
+}
+function materialSalesPanel(){
+ let all=true;for(const g in GOODS)if(!materialSalesAllowed(g))all=false;
+ const box=h(`<div><div class="sec">Shop material sales ${ib('Control raw-material retail across the village. Disabled materials stop selling and restocking; workers or porters return existing raw shelf stock to storage. Shops that combine ingredients pause their whole raw recipe if one is disabled. Crafted wares, workshop inputs and Ton’ya contracts are unaffected.')}</div><div class="row wrap"><button class="btn ${all?'ghost':'gold'}" data-material-all>${all?'Pause all materials':'Allow all materials'}</button></div><div class="row wrap" style="margin-top:8px">${Object.keys(GOODS).map(g=>`<button class="btn ${materialSalesAllowed(g)?'gold':'ghost'}" data-material="${g}" aria-pressed="${materialSalesAllowed(g)}">${icon('g_'+g)} ${esc(GOODS[g].name)} · ${materialSalesAllowed(g)?'On':'Off'}</button>`).join('')}</div><p class="note">Wares stay on sale. Raw stock returns by carrier when a route is available.</p></div>`);
+ box.querySelector('[data-material-all]').onclick=()=>{setMaterialSales(null,!all);refreshSheet();};
+ for(const bt of box.querySelectorAll('[data-material]'))bt.onclick=()=>{const g=bt.dataset.material;setMaterialSales(g,!materialSalesAllowed(g));refreshSheet();};
+ return box;
+}
 BUILDINGS.porter={name:'Porter House',jp:'荷運び小屋',cat:'ind',tab:'ind',w:2,h:2,cost:240,slots:2,appeal:1,
  desc:'Assign up to two porters by hand. They collect harvests and wares, supply artisans and restock shop shelves with handcarts. Ordinary workers still haul without them.'};
 if(!BUILD_ORDER.includes('porter'))BUILD_ORDER.splice(BUILD_ORDER.indexOf('kura')+1,0,'porter');
@@ -110,7 +136,7 @@ SH_PERF.ledgerHooked=true;
 function economyState(){
  let E=RT.eco;if(E&&E.owner===G)return E;
  E={owner:G,t:0,next:0,dirty:true,points:new WeakMap(),entrances:new WeakMap(),access:new WeakMap(),crafting:new Map(),supplyCache:new Map(),marketKeys:Object.create(null),goodsRevision:0,components:new Int16Array(MAP_W*MAP_H),queue:new Int16Array(MAP_W*MAP_H),roadRevision:-1,nextPoint:1,claims:new Map(),nextClaim:1,
- jobs:[],jobCount:0,shops:[],producers:[],crafts:[],stores:[],porters:0,workers:0,
+ jobs:[],jobCount:0,shops:[],producers:[],crafts:[],stores:[],porters:0,workers:0,collectorAt:0,collectorHires:0,
  events:SH_PERF.on?Array.from({length:200},()=>({t:0,reason:'',good:'',n:0})):null,eventAt:0,eventN:0,moved:0,created:0,destroyed:0,overflows:0};
  for(const w in WARES)E.marketKeys[w]=WARES[w].shops.slice().sort().join('|');
  for(let i=0;i<128;i++)E.jobs.push({from:null,to:null,good:null,n:0,rank:0,source:null,target:null});
@@ -195,13 +221,14 @@ function economyRelease(a){
 function economyClaimOf(a){return a.goodsClaim?economyState().claims.get(a.goodsClaim):null;}
 function isPorter(v){const b=v&&v.role==='work'&&v.job>=0?bByUid(v.job):null;return !!b&&b.id==='porter';}
 function economyTopology(){
- const E=economyState();if(E.roadRevision!==ROAD_TRAFFIC.revision)economyComponents(E);E.shops.length=E.producers.length=E.crafts.length=E.stores.length=0;E.porters=E.workers=0;
- for(const b of G.buildings){const B=BUILDINGS[b.id],e=b.reno?null:entranceOf(b),access=[];E.entrances.set(b,e);E.access.set(b,access);if(!e)continue;
+ const E=economyState();if(E.roadRevision!==ROAD_TRAFFIC.revision)economyComponents(E);E.shops.length=E.producers.length=E.crafts.length=E.stores.length=0;E.porters=E.workers=E.collectorHires=0;
+ for(const b of G.buildings){if(b.collectorHire)E.collectorHires++;const B=BUILDINGS[b.id],e=b.reno?null:entranceOf(b),access=[];E.entrances.set(b,e);E.access.set(b,access);if(!e)continue;
   for(const t of roadEntranceTiles(b)){const n=E.components[idx(t[0],t[1])];if(n&&!access.includes(n))access.push(n);}
   if(shopIs(b))E.shops.push(b);if(B.makes)E.producers.push(b);if(B.craft)E.crafts.push(b);if(B.store||b.id==='hall')E.stores.push(b);}
+ E.producers.sort(collectorUidOrder); // UID cursors survive demolition and save/load.
  E.porterComps=new Set();
  for(const v of G.villagers)if(v.role==='work'){E.workers++;if(isPorter(v)){E.porters++;const h=bByUid(v.job),c=h&&economyBuildingComponent(h);if(c)E.porterComps.add(c);}}
- E.dirty=false;E.goodsRevision++;
+ E.dirty=false;E.goodsRevision++;collectorPruneVisits();
 }
 function economyNearStore(from,preferred=0){
  const E=economyState();let best=null,score=Infinity;
@@ -247,7 +274,8 @@ function economyJobs(){
  }
  for(let i=0;i<E.shops.length;i++){const b=E.shops[i],st=economyNearStore(b);if(!st)continue;const B=BUILDINGS[b.id],to=economyPoint(b,'shelf');
   for(const g in WARES)if(wareKnown(g)&&WARES[g].shops.includes(b.id))economyJob(economyCentral(g),to,g,10,shopTotal(b,true)<1?13:7,st,b);
-  if(!B.needWares)for(let k=0;k<B.sells.length;k++){const g=B.sells[k];economyJob(economyCentral(g),to,g,10,shopTotal(b,false)<1?10:5,st,b);}
+  if(shopRawSalesAllowed(b))for(let k=0;k<B.sells.length;k++){const g=B.sells[k];economyJob(economyCentral(g),to,g,10,shopTotal(b,false)<1?10:5,st,b);}
+  else for(const g in shopStock(b,false))economyJob(to,economyCentral(g),g,PORTER_LOAD,15,b,st);
  }
 }
 function economyTick(dt){
@@ -259,7 +287,7 @@ function economyTick(dt){
   if(a.state==='work'||Math.abs(a.x-c.lastX)+Math.abs(a.y-c.lastY)>.25){c.lastX=a.x;c.lastY=a.y;c.until=E.t+120;}
  }
  for(const c of E.claims.values()){
-  const a=c.agent,gone=a.dead||!RT.agents.includes(a)||!vById(a.vid);
+  const a=c.agent,gone=a.dead||!RT.agents.includes(a)||a.kind!=='collector'&&!vById(a.vid);
   if(gone){dropLost(a);continue;}
   if(Math.abs(a.x-c.lastX)+Math.abs(a.y-c.lastY)>.25){c.lastX=a.x;c.lastY=a.y;c.until=E.t+60;}
   if(c.n>0&&!bByUid(c.target.uid))c.n=0;
@@ -269,7 +297,7 @@ function economyTick(dt){
    if(a.carry||economyFreightTotal(a))returnShopCarry(a);
   }
  }
- economyJobs();
+ collectorDispatch();economyJobs();
 }
 
 function economyStart(a,v,from,to,good,n,source,target){
@@ -278,6 +306,115 @@ function economyStart(a,v,from,to,good,n,source,target){
 }
 // Porters only haul: a porter carries 30% more per trip (31 vs 24 goods) and walks 15% faster (before any cart load)
 const PORTER_LOAD=31,PORTER_SPEED=1.15;
+// Paid weekly visits store only bounded intentions, never cargo or reservations.
+const COLLECTOR_COST=500,COLLECTOR_ROUNDS=5,COLLECTOR_MAX=8;
+let _collectorLooks=null;
+function collectorLook(n){
+ if(!_collectorLooks)_collectorLooks=[Object.assign({skin:SKIN[1],mask:false},VISITORS[0].looks[0]),Object.assign({skin:SKIN[2],mask:false},VISITORS[3].looks[0])];
+ return _collectorLooks[n%2];
+}
+function collectorUidOrder(a,b){return a.uid-b.uid;}
+function hireCollectors(b){
+ if(!b||b.id!=='kura'||b.reno||b.collectorHire||G.gold<COLLECTOR_COST)return false;
+ const E=economyState();if(E.dirty)economyTopology();let reachable=false;
+ for(const f of E.producers)if(economyConnected(b,f)){reachable=true;break;}
+ if(!reachable)return false;
+ G.gold-=COLLECTOR_COST;b.collectorHire={left:COLLECTOR_ROUNDS,waves:[],cursor:0,scanned:false,visits:[]};E.collectorHires++;
+ Sound.play('coin');return true;
+}
+function collectorWeek(){
+ // Snapshot by UID, so newly built worksites join the next weekly round.
+ for(const b of G.buildings){const c=b.collectorHire;if(c&&c.left>0){c.left--;c.waves.push(G.uid-1);}}
+}
+function collectorActiveVisit(home,visit){
+ for(const a of RT.agents)if(a.kind==='collector'&&!a.dead&&a.collectorHome===home.uid&&a.collectorVisit===visit)return true;
+ return false;
+}
+function collectorPruneVisits(){
+ // Saved intentions on a now-unreachable route are skipped like any other visit.
+ for(const b of G.buildings){const c=b.collectorHire;if(!c||!c.visits.length)continue;
+  for(let i=c.visits.length-1;i>=0;i--){const visit=c.visits[i],f=bByUid(visit.field);
+   if(!collectorActiveVisit(b,visit)&&(!f||!economyConnected(b,f)))c.visits.splice(i,1);}
+  collectorComplete(b,c);
+ }
+}
+function collectorSpawn(home,visit){
+ const f=bByUid(visit.field),E=economyState();if(!f||f.reno||!BUILDINGS[f.id].makes||!economyConnected(home,f))return false;
+ const good=BUILDINGS[f.id].makes;economyFlush(f);const pile=economyPoint(f,'pile'),n=Math.min(PORTER_LOAD,Math.floor(economyAvailable(pile,good)));
+ if(n<1)return false;
+ let edge=null;for(const e of roadEntranceTiles(home))if(economyBuildingComponent(f,E.components[idx(e[0],e[1])])){edge=e;break;}
+ if(!edge)return false;
+ const a=spawnAgent({kind:'collector',look:collectorLook(f.uid),speed:22,en:100,collectorHome:home.uid,collectorVisit:visit});
+ agentAtTile(a,edge[0],edge[1]);
+ if(economyStart(a,a,pile,economyCentral(good),good,n,f,home)&&walkTo(a,f))return true;
+ economyRelease(a);a.dead=true;return false;
+}
+function collectorComplete(home,c){
+ if(!c.scanned||c.visits.length)return;
+ c.waves.shift();c.cursor=0;c.scanned=false;
+ if(!c.left&&!c.waves.length){delete home.collectorHire;economyState().collectorHires=Math.max(0,economyState().collectorHires-1);toast('Collector hire complete · five rounds');}
+}
+function collectorDispatch(){
+ const E=economyState();if(!E.collectorHires||!E.stores.length||E.claims.size>=128)return;
+ let live=0,pending=0;for(const a of RT.agents)if(a.kind==='collector'&&!a.dead)live++;
+ for(const b of E.stores)if(b.collectorHire)pending+=b.collectorHire.visits.length;
+ let budget=32,spawned=0,checked=0;
+ while(live<COLLECTOR_MAX&&spawned<4&&budget>0&&checked<Math.min(16,E.stores.length)){
+  const home=E.stores[E.collectorAt%E.stores.length],c=home.collectorHire;E.collectorAt=(E.collectorAt+1)%E.stores.length;checked++;if(!c||!c.waves.length)continue;
+  // At most eight pending visit records survive a save; resume those first.
+  for(let i=c.visits.length-1;i>=0&&live<COLLECTOR_MAX&&spawned<4&&budget>0&&E.claims.size<128;i--){
+   const visit=c.visits[i];if(collectorActiveVisit(home,visit))continue;budget--;
+   if(collectorSpawn(home,visit)){live++;spawned++;}else{c.visits.splice(i,1);pending--;}
+  }
+  if(c.scanned){collectorComplete(home,c);continue;}
+  if(pending>=COLLECTOR_MAX)continue;
+  // Find the first unexamined UID without rescanning earlier fields each tick.
+  let lo=0,hi=E.producers.length;while(lo<hi){const mid=(lo+hi)>>>1;if(E.producers[mid].uid<=c.cursor)lo=mid+1;else hi=mid;}
+  while(lo<E.producers.length&&E.producers[lo].uid<=c.waves[0]&&live<COLLECTOR_MAX&&pending<COLLECTOR_MAX&&spawned<4&&budget>0&&E.claims.size<128){
+   const f=E.producers[lo++];c.cursor=f.uid;budget--;
+   if(!economyConnected(home,f))continue;
+   economyFlush(f);if(economyAvailable(economyPoint(f,'pile'),BUILDINGS[f.id].makes)<1)continue;
+   const visit={field:f.uid};c.visits.push(visit);pending++;
+   if(collectorSpawn(home,visit)){live++;spawned++;}else{c.visits.pop();pending--;}
+   if(E.claims.size>=128)break;
+  }
+  if(lo>=E.producers.length||E.producers[lo].uid>c.waves[0])c.scanned=true;
+  collectorComplete(home,c);
+ }
+}
+function collectorFinish(a){
+ if(a.carry||economyFreightTotal(a))dropLost(a);else economyRelease(a);
+ const home=bByUid(a.collectorHome),c=home&&home.collectorHire;
+ if(c){const i=c.visits.indexOf(a.collectorVisit);if(i>=0)c.visits.splice(i,1);collectorComplete(home,c);}
+ a.dead=true;a.path.length=0;a.hidden=true;
+}
+function updateCollector(a,dt){
+ const home=bByUid(a.collectorHome);if(!home||home.reno||a.collectorRecovered){collectorFinish(a);return;}
+ if(a.state==='walk'){
+  const done=stepAgent(a,dt);if(a.state==='walk'&&!done)return;
+  if(done&&a.state==='walk'){
+   const b=bByUid(a.target),m=a.mission;
+   if(b&&(m==='goodsPick'||m==='goodsDrop'||m==='shopReturn')){if(missionArrive(a,a,b)==='walking')return;}
+   if(b&&(b.uid===home.uid||m==='shopReturn')&&!a.carry&&!economyFreightTotal(a)){collectorFinish(a);return;}
+  }
+ }
+ if(a.carry||economyFreightTotal(a)){if(returnShopCarry(a))return;collectorFinish(a);return;}
+ economyRelease(a);a.mission='collectorReturn';if(walkTo(a,home))return;collectorFinish(a);
+}
+function collectorBeforeSave(){
+ for(let i=RT.agents.length-1;i>=0;i--){const a=RT.agents[i];if(a.kind!=='collector')continue;
+  // Existing save recovery stores loaded cargo once. Uncollected paid visits resume.
+  if(a.carry||economyFreightTotal(a)||a.collectorRecovered)collectorFinish(a);else economyRelease(a);
+  RT.agents.splice(i,1);
+ }
+}
+function collectorHirePanel(b){
+ const c=b.collectorHire,E=economyState();if(E.dirty)economyTopology();let reachable=false,active=0;
+ for(const f of E.producers)if(economyConnected(b,f)){reachable=true;break;}
+ for(const a of RT.agents)if(a.kind==='collector'&&!a.dead&&a.collectorHome===b.uid)active++;
+ const box=h(`<div><div class="sec">Part-time collectors ${ib('500G total hires five weekly collection rounds, beginning next week. Each round visits every connected raw-material worksite: fields, tea, timber, ore and silk. Collectors reserve available goods, carry up to 31 units and return here. Empty, fully reserved or unreachable piles are skipped. Large rounds dispatch gradually, with eight carriers village-wide. Ordinary workers and porters continue normally. Demolishing this Storehouse ends its hire.')}</div><p class="note">${c?`<b>${c.left+c.waves.length}/5 rounds remaining</b> · ${active} collecting${c.waves.length?' · collection in progress':' · next round next week'}`:'Extra hands for harvests, timber, ore and silk. No housing or worker assignment needed.'}${!entranceOf(b)?'<br>Connect this Storehouse to a road to dispatch collectors.':!reachable?'<br>No raw-material worksites share this road network.':''}</p><button class="btn gold" data-hire-collectors${c||G.gold<COLLECTOR_COST||!reachable?' disabled':''}>${icon('gold')} Hire collectors · 500G / 5 weeks</button></div>`);
+ box.querySelector('button').onclick=()=>{if(hireCollectors(b))refreshSheet();};return box;
+}
 function porterPlan(a,v){
  const E=economyState();if(E.dirty)economyTopology();const component=economyAgentComponent(a);let best=null,score=-Infinity;
  for(let i=0;i<E.jobCount;i++){const j=E.jobs[i];if(economyBuildingComponent(j.source,component)!==component)continue;const n=Math.min(j.n,economyAvailable(j.from,j.good),economyRoom(j.to,j.good),PORTER_LOAD);if(n<1)continue;
@@ -302,7 +439,7 @@ function shopIncoming(b,good,exclude){
 }
 function shopRoom(b,good,exclude){
  if(!shopIs(b))return Infinity;const ware=!!WARES[good],B=BUILDINGS[b.id];
- if(ware?!WARES[good].shops.includes(b.id):B.needWares||!B.sells.includes(good))return 0;
+ if(ware?!WARES[good].shops.includes(b.id):!shopRawSalesAllowed(b)||!B.sells.includes(good))return 0;
  const stock=shopStock(b,ware);let incoming=0;const E=RT.eco;
  if(E){const p=economyPoint(b,'shelf');for(const c of E.claims.values())if(c.agent!==exclude){if(c.to===p&&!!WARES[c.good]===ware)incoming+=c.n;if(c.extra)for(const l of c.extra)if(l.to===p&&!!WARES[l.good]===ware)incoming+=l.n;}}
  const perKind=ware?SHOP_CAP:Math.max(1,Math.floor(SHOP_CAP/Math.max(1,B.sells.length)));
@@ -335,6 +472,7 @@ function migrateLogistics(){
  migrateEconomy();G.logi=1;
 }
 function economyBeforeSave(){
+ collectorBeforeSave();
  for(const c of economyState().crafting.values()){const a=c.agent;craftRelease(a);a.mission=null;a.state='idle';a.timer=.2;a.path.length=0;a.hidden=false;}
  for(const a of RT.agents){if(a.carry||economyFreightTotal(a))dropLost(a);else economyRelease(a);if(a.mission==='goodsPick'||a.mission==='goodsDrop')a.mission=null;}
 }
@@ -363,6 +501,7 @@ function removeBuilding(b){
  RT.groundDirty=true;refreshBoosts();assignHomes();assignJobs();
 }
 function dropLost(a){
+ if(a.kind==='collector'&&(a.carry||economyFreightTotal(a)))a.collectorRecovered=true;
  economyRelease(a);craftRelease(a);a.shopSupply=null;
  if(a.carry){const g=a.carry.good;moveGoods(economyPoint(a,'carry'),economyCentral(g),g,a.carry.n,'recover-carrier');}
  if(a.freight)for(const g in a.freight)moveGoods(economyPoint(a,'freight'),economyCentral(g),g,a.freight[g],'recover-cart');
@@ -384,13 +523,13 @@ function missionArrive(a,v,b){
  if(!c){economyPromoteCargo(a);if(a.carry&&returnShopCarry(a))return 'walking';return true;}
  if(m==='goodsPick'){
   if(c.source!==b||!economyStop(c)){economyRelease(a);return true;}
-  let room=isPorter(v)?PORTER_LOAD:Infinity;
+  let room=isPorter(v)||a.kind==='collector'?PORTER_LOAD:Infinity;
   const n=Math.min(c.n,room,economyAvailable(c.from,c.good,c),economyRoom(c.to,c.good,c));
   c.n=moveGoods(c.from,economyPoint(a,'carry'),c.good,n,'pickup');room-=c.n;c.picked=true;c.until=economyState().t+100;
   if(c.extra)for(const l of c.extra){const amount=Math.min(l.n,room,economyAvailable(l.from,l.good,c),economyRoom(l.to,l.good,c));
    l.n=moveGoods(l.from,economyPoint(a,'freight'),l.good,amount,'cart-pickup');room-=l.n;}
   economyPromoteCargo(a);if(!a.carry){economyRelease(a);return true;}
-  if(isPorter(v)&&a.carry.n+economyFreightTotal(a)>=CART_AT){a.carry.kind='cart';a.speedMul=1-(1-.78)*(1-Math.min(.9,carryOf(a)));}
+  if((isPorter(v)||a.kind==='collector')&&a.carry.n+economyFreightTotal(a)>=CART_AT){a.carry.kind='cart';a.speedMul=1-(1-.78)*(1-Math.min(.9,carryOf(a)));}
   if(economyContinueTrip(a,c))return 'walking';
  }else{
   economyDeliverStop(a,b,c);v.en=Math.max(0,(v.en??100)-4);
@@ -403,12 +542,12 @@ function missionArrive(a,v,b){
 function shopMissionArrive(a,v,b){return missionArrive(a,v,b);}
 function planShopSupply(a,v){
  if(a.carry||isPorter(v))return null;const E=economyState();if(E.dirty)economyTopology();
- let hauling=0;for(const c of E.claims.values())if(!isPorter(vById(c.agent.vid))&&c.to.kind==='shelf')hauling++;
+ let hauling=0;for(const c of E.claims.values())if(!isPorter(vById(c.agent.vid))&&(c.to.kind==='shelf'||c.from.kind==='shelf'))hauling++;
  if(hauling>=Math.max(1,Math.ceil(E.workers*.35)))return null;
  const component=economyAgentComponent(a);let best=null,score=-Infinity;
- for(let i=0;i<E.jobCount;i++){const j=E.jobs[i];if(economyBuildingComponent(j.source,component)!==component||j.from.owner!==G||j.to.kind!=='shelf')continue;
+ for(let i=0;i<E.jobCount;i++){const j=E.jobs[i];if(economyBuildingComponent(j.source,component)!==component||!(j.from.owner===G&&j.to.kind==='shelf'||j.from.kind==='shelf'&&j.to.owner===G))continue;
   const n=Math.min(j.n,economyAvailable(j.from,j.good),economyRoom(j.to,j.good));if(n<1)continue;
-  if(porterReach(j.target)&&shopTotal(j.target,!!WARES[j.good])>0)continue;
+  if(j.to.kind==='shelf'&&porterReach(j.target)&&shopTotal(j.target,!!WARES[j.good])>0)continue;
   const d=Math.abs(a.x/16-j.source.x)+Math.abs(a.y/16-j.source.y)+Math.abs(j.source.x-j.target.x)+Math.abs(j.source.y-j.target.y),s=(j.rank+Math.min(8,n))/(10+d);
   if(s>score){score=s;best=j;}}
  if(!best)return null;return economyStart(a,v,best.from,best.to,best.good,Math.round(6*(1+vStats(v).carry)),best.source,best.target);
@@ -473,7 +612,7 @@ function sell(a,b){
  for(let i=0;i<qty;i++){
   let w=null;for(let j=0;j<ws.length;j++){const k=ws[j];if((wares[k]||0)>=1&&(!w||WARES[k].price>WARES[w].price))w=k;}
   if(w){destroyGoods(p,w,1,'retail');base+=WARES[w].price;n++;wn++;}
-  else if(!B.needWares&&B.sells.every(g=>(goods[g]||0)>=1)){for(const g of B.sells)destroyGoods(p,g,1,'retail');base+=B.price;n++;}
+  else if(shopRawSalesAllowed(b)&&B.sells.every(g=>(goods[g]||0)>=1)){for(const g of B.sells)destroyGoods(p,g,1,'retail');base+=B.price;n++;}
  }
  if(!n){a.bubble={t:1.8,icon:'…'};diagSale(a,b,0,before);return 0;}
  const price=(1+(b.boost||0))*(b.combo?b.combo.m:1)*(G.activeCombos?.lanterns?1.15:1)*(1+(L?.sale||0))*(1+(b.wideStreet?WIDE_STREET_BONUS.sale:0)),gold=Math.round(base*price*boonSales()*shopOmen(b.id));
@@ -534,7 +673,7 @@ function porterPanel(b){
 function outTotal(b){let n=0;const map=b.outs;if(map)for(const k in map)n+=map[k];return n;}
 function economyCanSell(b){
  const B=BUILDINGS[b.id],wares=shopStock(b,true);for(const w in wares)if(wares[w]>=1&&WARES[w]&&WARES[w].shops.includes(b.id))return true;
- if(B.needWares)return false;const raw=shopStock(b,false);for(let i=0;i<B.sells.length;i++)if((raw[B.sells[i]]||0)<1)return false;return true;
+ if(!shopRawSalesAllowed(b))return false;const raw=shopStock(b,false);for(let i=0;i<B.sells.length;i++)if((raw[B.sells[i]]||0)<1)return false;return true;
 }
 
 function economyWait(a,b){
@@ -545,7 +684,7 @@ function economyWait(a,b){
 function economyFreightTotal(a){let n=0;if(a.freight)for(const g in a.freight)n+=a.freight[g];return n;}
 function economyPromoteCargo(a){
  if(!a.carry&&a.freight)for(const g in a.freight)if(a.freight[g]>0){moveGoods(economyPoint(a,'freight'),economyPoint(a,'carry'),g,a.freight[g],'cart-front');break;}
- if(a.carry&&isPorter(vById(a.vid))&&a.carry.n+economyFreightTotal(a)>=CART_AT){
+ if(a.carry&&(isPorter(vById(a.vid))||a.kind==='collector')&&a.carry.n+economyFreightTotal(a)>=CART_AT){
   a.carry.kind='cart';a.speedMul=1-(1-.78)*(1-Math.min(.9,carryOf(a)));}
 }
 function economyAddLine(c,from,to,good,n,target=c&&c.target){
@@ -568,24 +707,27 @@ function economyBundle(a){
  for(let i=0;i<E.jobCount;i++){
   const j=E.jobs[i];if(j.source!==c.source||j.target===c.target||!shopIs(j.target))continue;
   const be=entranceOf(j.target);if(!be)continue;const at=idx(be[0],be[1]),between=da[at],from=ds[at];if(between<0||from<0)continue;
-  const direct=Math.max(first,from),extra=first+between-direct;
+  // one pickup, two shops: visit the nearer shop first (start → near → far); the detour is what that costs over going straight to the farther shop
+  const direct=Math.max(first,from),extra=Math.min(first,from)+between-direct;
   if(extra>Math.max(4,direct*.25))continue;
   const n=Math.min(room,j.n,economyAvailable(j.from,j.good),economyRoom(j.to,j.good));if(n<1)continue;
   const urgent=shopTotal(j.target,!!WARES[j.good])<3?1:0,value=urgent*1000+j.rank*20+n*3-extra*4-between*.25;
   if(value>score){score=value;best=j;}
  }
  if(!best)return;
- const be=entranceOf(best.target),firstPath=roadPath(se[0],se[1],ae[0],ae[1],true,true),secondPath=roadPath(ae[0],ae[1],be[0],be[1],true,true);
- const direct=Math.max(first,ds[idx(be[0],be[1])]);
- const walked=firstPath&&secondPath?(first===0?0:firstPath.length)+(da[idx(be[0],be[1])]===0?0:secondPath.length):Infinity,detour=walked-direct;
+ // the final check walks the real keep-left paths, in both orders, and keeps the shorter
+ const be=entranceOf(best.target),leg=(p,q)=>{if(p[0]===q[0]&&p[1]===q[1])return 0;const P=roadPath(p[0],p[1],q[0],q[1],true,true);return P?P.length:Infinity;};
+ const direct=Math.max(first,ds[idx(be[0],be[1])]),aFirst=leg(se,ae)+leg(ae,be),bFirst=leg(se,be)+leg(be,ae);
+ const walked=Math.min(aFirst,bFirst),detour=walked-direct;
  if(detour>Math.max(4,direct*.25))return;
  for(let i=0;i<E.jobCount&&room>0;i++){const j=E.jobs[i];if(j.source!==c.source||j.target!==best.target)continue;
   room-=economyAddLine(c,j.from,j.to,j.good,Math.min(room,j.n),j.target);}
- if(c.second){c.directDistance=direct;c.detour=detour;c.detourLimit=Math.max(4,direct*.25);}
+ if(c.second){c.directDistance=direct;c.detour=detour;c.detourLimit=Math.max(4,direct*.25);c.secondFirst=bFirst<aFirst;c.walked=walked;}
 }
 
 function economyLineTarget(c,line){return line===c?c.target:line.target||c.target;}
 function economyStop(c){
+ if(c.secondFirst&&c.second&&bByUid(c.second.uid)&&c.extra&&c.extra.some(l=>l.n>0&&economyLineTarget(c,l)===c.second))return c.second;
  if(c.n>0&&bByUid(c.target.uid))return c.target;
  if(c.extra)for(const l of c.extra){const b=economyLineTarget(c,l);if(l.n>0&&bByUid(b.uid))return b;}return null;
 }
