@@ -13,6 +13,20 @@ The whole game is one self-contained HTML file. It has no build step, no server 
 - **Top bar:** date (year, season, month, week), village appeal and star rating, population, coin, and time controls (pause, play, fast-forward, music).
 - **Input:** mouse, touch and scroll wheel. It works on desktop and phone-sized screens. In the Warrior Atelier, `Esc` closes the panel and `Tab` cycles focus.
 
+## Battlefield density and formations
+
+- **Battle density** (Village → Options, saved per device): **Standard** 25, **Dense** 36 (default) or **Epic** 48 soldiers at most per formation.
+  - At the start of each battle one soldier stands for a fixed number of men, so the largest formation fills the cap and smaller ones look smaller.
+  - Troop numbers, casualties and combat results are the same at every setting. The tests run the same seeded battle at all three and compare every blow.
+- **Formations** stand in even, deterministic ranks spread over about 88% of the room between the HUD and the bottom of the screen, safe area included. Ranks keep their shape at rest and re-form after each clash. Charges, duels, casualties and routs still break them up for a moment.
+  - Infantry: tight ranks.
+  - Gunners: straight firing lines.
+  - Archers: staggered ranks.
+  - Cavalry: wider ranks.
+- **Sizing:** rows, files, spacing and sprite size (0.85–1.25×) adapt to the screen. A big army closes its ranks, then its files, to stay inside its half of the field. On resize, the ranks refit to the new room.
+- **Commanders and banners:** commanders take places in the front file, and their guards stand just ahead of it rather than on the ranks. Back-flags are carried by whole ranks, so they line up.
+- **Drawing:** each formation's rank and file share a few looks (3–5), so sprite art stays bounded at Epic: about 35–40 sprite sets per battle at any density.
+
 ## Castle sieges
 
 - **While the gate stands:**
@@ -163,7 +177,7 @@ The game is served by GitHub Pages straight from the `main` branch root (`/`), w
 | `index.html` | The complete game: markup, styles, script, sprites and audio (audio is embedded as data URIs) |
 | `README.md` | This file |
 | `docs/` | Equipment notes, [village art direction](docs/ART_DIRECTION.md), and previews rendered from the procedural game assets |
-| `tests/` | Browser checks for equipment effects, research, saves, portraits, formation tactics, Ki, army forging, the campaign hand, logistics, the province count, dojo prizes, uprisings, Wooden Tate, sieges and mobile layout |
+| `tests/` | Browser checks for equipment effects, research, saves, portraits, formation tactics, Ki, army forging, the campaign hand, logistics, the province count, dojo prizes, uprisings, Wooden Tate, sieges, battle density and mobile layout |
 | `reports/` | Recorded validation results |
 
 ## Current version: v19.1 + Logistics P0

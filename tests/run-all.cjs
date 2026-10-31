@@ -5,7 +5,7 @@
 // Each suite still runs in its own Node process and browser, so suites stay isolated; only the waiting is shared.
 // A failing suite's own output is printed in full after the summary. The exit code is non-zero if any suite fails.
 const { spawn } = require('child_process'), os = require('os'), path = require('path');
-const ALL = ['siege', 'tate', 'tactics', 'campaign', 'equipment', 'integration', 'porter-menu', 'omens', 'logistics', 'forge']; // slowest first, so it starts first
+const ALL = ['density', 'siege', 'tate', 'tactics', 'campaign', 'equipment', 'integration', 'porter-menu', 'omens', 'logistics', 'forge']; // slowest first, so it starts first
 const pick = process.argv.slice(2), suites = pick.length ? ALL.filter(s => pick.includes(s)) : ALL;
 const unknown = pick.filter(s => !ALL.includes(s));
 if (unknown.length) { console.error('Unknown suite(s): ' + unknown.join(', ') + '. Known: ' + ALL.join(', ')); process.exit(2); }
