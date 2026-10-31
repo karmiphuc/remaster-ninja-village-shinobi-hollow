@@ -388,6 +388,7 @@ img.px, canvas.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 .kbar i img { width: 14px; height: 14px; image-rendering: pixelated; flex: 0 0 auto; }
 .kbar i.plain { background: repeating-linear-gradient(45deg, rgba(42,29,26,.07) 0 4px, transparent 4px 8px); color: var(--ink-2); }
 .kfoot { display: flex; gap: 8px; align-items: center; justify-content: space-between; font-size: 11px; }
+.tate { margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(90,60,30,.35); font-size: 11px; display: grid; gap: 4px; } .tate .kl { font-weight: bold; } .tate img { width: 16px; height: 16px; vertical-align: middle; } .tate-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; } .tate .cov { color: #a02a1a; } .tate .cov.full { color: var(--pine); } .tate.locked { display: flex; gap: 8px; align-items: center; }
 .kfoot .btn { min-height: 28px; padding: 2px 8px; font-size: 11px; flex: 0 0 auto; }
 .skl { display: grid; grid-template-columns: 40px 1fr; gap: 8px; align-items: start; }
 .skl img { width: 40px; height: 40px; image-rendering: pixelated; background: rgba(42, 29, 26, .1); border: 1px solid rgba(42, 29, 26, .35); margin-top: 8px; }
@@ -1461,7 +1462,7 @@ const PROVINCES = [
   { id: 'shiranui', name: 'Shima', x: 832, y: 860, clan: 'ronin', type: 'bandit', links: ['tsuru', 'hoshi', 'kitsuneport'], power: 300, reward: { gold: 900, deed: 'east', recruit: 'komachi', item: 'hawk' } },
   { id: 'kuromori', name: 'Ōmi', x: 742, y: 738, clan: 'kuma', type: 'clan', links: ['mistwood', 'yukino', 'echizen', 'yamashiro', 'akagane', 'hoshi'], power: 380, reward: { gold: 1200, deed: 'north', build: ['longhouse', 'sakura'], recruit: 'oboro' } },
   { id: 'settsu', name: 'Settsu', x: 628, y: 812, clan: 'ikki', type: 'clan', links: ['mistwood', 'yamashiro', 'harima'], power: 280, reward: { gold: 800, item: 'sugegasa', troops: 30 } },
-  { id: 'yamashiro', name: 'Yamashiro', x: 688, y: 772, clan: 'kurogane', type: 'clan', links: ['home', 'mistwood', 'kuromori', 'settsu'], power: 1500, reward: { gold: 5000, item: 'jinbaori' }, capital: 1 },
+  { id: 'yamashiro', name: 'Yamashiro', x: 688, y: 772, clan: 'kurogane', type: 'clan', links: ['home', 'mistwood', 'kuromori', 'settsu'], power: 1500, reward: { gold: 5000, item: 'jinbaori', tate: 1 }, capital: 1 },
   // --- Tōkai & Hokuriku ---
   { id: 'akagane', name: 'Mino', x: 800, y: 725, clan: 'taka', type: 'clan', links: ['hoshi', 'kuromori', 'fujinami', 'yukino', 'shinano'], power: 520, reward: { gold: 1600, deed: 'ridge', build: ['mine', 'stone'], unlock: 'cav', recruit: 'daigo' } },
   { id: 'fujinami', name: 'Owari', x: 836, y: 778, clan: 'kitsune', type: 'clan', links: ['hoshi', 'kitsuneport', 'akagane'], power: 640, reward: { gold: 1900, unlock: 'gun', build: ['rockgdn'], recruit: 'suzu' } },
@@ -8083,6 +8084,19 @@ function kitRow(t) {
   el.innerHTML = `<p class="forge-summary">${forgeSummary(t)}</p>` + seg('w', 'Arms') + seg('a', 'Armor') + (K.h.length ? seg('h', 'Helm') : '') +
     `<div class="kfoot"><span class="muted">ATK +${Math.round((K.mul.atk - 1) * 100)}% · DEF +${Math.round((K.mul.def - 1) * 100)}% from gear. ${plan.length ? (on ? 'Still missing: ' : 'Paused, still missing: ') + plan.map(x => `${fmt(x.need)} ${esc(ITEMS[x.k].name)} (${forgeCostText(x)} each)`).join(', ') + '.' : 'Everyone carries your best researched gear.'}</span><button class="btn ${on ? 'gold' : 'ghost'}">Forge ${on ? 'on' : 'off'}</button></div>`;
   el.querySelector('.kfoot button').onclick = () => { G.forge[t] = !on; Sound.play('tap'); refreshSheet(); };
+  if (t === 'gun') el.appendChild(tatePanel());
+  return el;
+}
+function tatePanel() {
+  if (!tateOn()) return h(`<div class="tate locked"><span class="kl">Defensive Support</span><span class="muted">${tateIcon()} Wooden Tate · 🔒 conquer Yamashiro Castle</span></div>`);
+  const own = tateOwned(), need = tateNeed(), cov = tateCoverOf(own, G.troops.gun || 0), miss = tateMissing(), C = tateCost(miss), can = tateAffordable(miss);
+  const el = h(`<div class="tate"><span class="kl">Defensive Support</span>
+    <div class="tate-row">${tateIcon()}<b>Wooden Tate</b><span>${fmt(own)} / ${fmt(need)}</span><span class="cov${cov >= 1 ? ' full' : ''}">${Math.floor(cov * 100)}%</span></div>
+    <div class="tate-row muted"><span${tipAttr('Fewer Gunners lost to arrows. No help against bullets, melee, cavalry or ninjutsu.')}>Arrow casualties −${Math.round(TATE.arrow * cov * 100)}%</span><span${tipAttr('Gunners fire past the shields.')}>Gunner attack −${Math.round(TATE.atk * cov * 100)}%</span></div>
+    <div class="kfoot"><span class="muted">${miss ? `Missing ${fmt(miss)} · ${fmt(C.gold)}G + ${fmt(C.wood)} ${GOODS.wood.name}` : 'Every Gunner is covered.'} · 1 Tate covers ${TATE.men} Gunners; every ${TATE.men} killed breaks one${G.tateKills ? ` (${G.tateKills} counted)` : ''}.</span>
+    <button class="btn gold" id="tate-buy"${miss ? '' : ' disabled'}>${own ? 'Replenish' : 'Buy'}${miss ? ` ${fmt(can < miss ? can : miss)}` : ''}</button></div></div>`);
+  const b = el.querySelector('#tate-buy'); b.classList.toggle('dim', miss > 0 && can < miss);
+  b.onclick = () => { const k = tateBuy(miss); if (!k) { Sound.play('alert'); toast(`Not enough gold or ${GOODS.wood.name.toLowerCase()}`); return; } Sound.play('build'); toast(`${k} Wooden Tate ${k < miss ? `bought (${miss - k} still missing)` : 'bought'}`); refreshSheet(); updateHUD(); };
   return el;
 }
 /* ---------- Army screen ----------
@@ -8122,7 +8136,7 @@ function armyTroops(body, A) {
     if (!un) { body.appendChild(h(`<div class="trow locked"${tipAttr(`Research ${ITEMS['corps_' + t].name} in the Armory, or win it from a clan.`)}><img class="px" src="${ICONS['u_' + t]}" alt=""><div class="tmain"><span class="tname">${U.name}</span><span class="muted">🔒 ${esc(ITEMS['corps_' + t].name)}</span></div></div>`)); return; }
     const K = kitSummary(t), open = !!(UI.armyOpen && UI.armyOpen[t]);
     const row = h(`<div class="trow"><img class="px"${tipAttr(esc(U.desc))} src="${ICONS['u_' + t]}" alt="${U.name}"><div class="tmain"><div class="tline"><b class="tn">${fmt(G.troops[t])}</b><span class="tname">${U.name}</span><span class="cmd"></span></div>
-      <button class="tkit" aria-expanded="${open}"${tipAttr(armyGearTip(t, K))}>${armyCoverage(t)}<span class="frate">${icon('build')}${forgeRate(t, 'weapon') + forgeRate(t, 'armor')}/mo</span><span class="kx">${open ? '▴' : '▾'}</span></button></div>
+      <button class="tkit" aria-expanded="${open}"${tipAttr(armyGearTip(t, K))}>${armyCoverage(t)}${t === 'gun' && tateOn() ? (() => { const p = Math.floor(tateCoverOf(tateOwned(), G.troops.gun) * 100); return `<span class="cov${p >= 100 ? ' full' : ''}">${tateIcon()}${p}%</span>`; })() : ''}<span class="frate">${icon('build')}${forgeRate(t, 'weapon') + forgeRate(t, 'armor')}/mo</span><span class="kx">${open ? '▴' : '▾'}</span></button></div>
       <div class="tbuy"></div></div>`);
     const cm = row.querySelector('.cmd');
     cmds.forEach(c => { const i = h(`<span class="cmdp ${c.post || 'line'}${c.aux ? ' aux' : ''}"${tipAttr(`${esc(c.name)}${c.aux ? ' (militia)' : ''} · ${POST_NAME[c.post || 'line']} · Strategy ${stratOf(c)}`)}><img src="${pURL(c.look)}" alt="${esc(c.name)}">${c.guard ? `<i>${c.guard}</i>` : ''}</span>`); i.onclick = () => openVillager(c.id); cm.appendChild(i); });
@@ -8131,7 +8145,6 @@ function armyTroops(body, A) {
     const by = row.querySelector('.tbuy');
     [[10, '+10'], [50, '+50']].forEach(([n, l]) => { const b = h(`<button class="btn gold"${tipAttr(`${l} ${U.name} for ${fmt(cost * n)}G`)}>${l}<small>${fmt(cost * n)}G</small></button>`); b.classList.toggle('dim', G.gold < cost * n);
       b.onclick = () => { const c2 = troopCost(t); if (G.gold < c2 * n) { Sound.play('alert'); toast('Not enough gold'); return; } G.gold -= c2 * n; G.troops[t] += n; Sound.play('taiko', { vol: .6 }); refreshSheet(); updateHUD(); }; by.appendChild(b); });
-    const d = h(`<button class="btn ghost"${tipAttr('Dismiss 10 troops')}>−10</button>`); d.disabled = G.troops[t] < 10; d.onclick = () => { G.troops[t] = Math.max(0, G.troops[t] - 10); Sound.play('tap'); refreshSheet(); updateHUD(); }; by.appendChild(d);
     body.appendChild(row);
     if (open) { const k = kitRow(t); k.classList.add('tdetail'); body.appendChild(k); }
   });
@@ -9940,6 +9953,7 @@ function resolvePhase(phase, A, D, ctx) {
     if (ctx.jutsu[A.side] === 'clone') dmg *= 1.4;
     if (ctx.jutsu[D.side] === 'smoke' && ranged) dmg *= 0.4;
     if (ranged) dmg *= 1 + (g.mods.marksman || 0) * .08; // Last Stand is bounded by cohesionState
+    dmg *= tateAtk(g); // Wooden Tate: firing past the shields
     if (phase === 'cav') { dmg *= 1 + (g.mods.cavmaster || 0) * .1; const infD = alive(D, 'inf').reduce((n, x) => n + left.get(x), 0); if (g.troops > infD * (1.5 - (g.mods.cavmaster || 0) * .12)) dmg *= 1.35; }
     if (ctx.siege) { // behind walls: attackers strike at stone and timber, defenders shoot down from the ramparts
       if (A.side === 0) dmg *= (phase === 'gun' ? .72 : phase === 'arc' ? .45 : phase === 'inf' ? .3 : .15) * (1 + (A.siegecraft || 0) * .1);
@@ -9956,7 +9970,7 @@ function resolvePhase(phase, A, D, ctx) {
       if (phase === 'cav' && (t.type === 'gun' || t.type === 'arc')) mult *= 1.6;
       if (phase === 'inf' && (t.type === 'gun' || t.type === 'arc')) mult *= 1.35;
       if (phase === 'gun' && t.type === 'inf') mult *= 1.2;
-      mult*=personalDamageGuard(t,phase)*(g.solo?personalWeaponFactor(g.solo,t,phase):1);
+      mult*=personalDamageGuard(t,phase)*(g.solo?personalWeaponFactor(g.solo,t,phase):1)*tateTake(t,phase);
       const need = left.get(t), kills = Math.min(need, battleDamage(dmg,res,mult,fightingStrength(g)));
       if (!(kills > 0)) break;
       hits.push({ from: g, to: t, kills, depth, retShare });
@@ -9967,7 +9981,7 @@ function resolvePhase(phase, A, D, ctx) {
       if (ranged && depth >= 2) break;
     }
     if (stray) { const t = stray.t, need = left.get(t); if (need > 0) {
-      const res = battleResistance(t), mult = (1 - Math.min(.6, (t.mods.arrowres || 0) * .1)) * tacT(t) * (1 - Math.min(.3, t.mods.shadow * .05)) * (t.type === 'inf' ? 1 : 1);
+      const res = battleResistance(t), mult = (1 - Math.min(.6, (t.mods.arrowres || 0) * .1)) * tacT(t) * (1 - Math.min(.3, t.mods.shadow * .05)) * (t.type === 'inf' ? 1 : 1) * tateTake(t, 'arc');
       const kills = Math.min(need, battleDamage(stray.dmg,res,mult,fightingStrength(g)*.15)); if (kills > 0) { hits.push({ from: g, to: t, kills, depth: 1, stray: true }); left.set(t, need - kills); } } }
   });
   return hits;
@@ -10019,6 +10033,7 @@ function startBattle(provId, opt) {
   const P0 = opt ? opt.site : siteById(provId); if (!P0) return false;
   const skirm = opt || siteMode(P0) === 'skirmish';
   const pa = opt ? opt.pa : skirm ? playerSkirmish() : playerArmy(), ea = opt ? opt.ea : enemyArmy(P0);
+  if (!opt) tateEquip(pa, ea, P0);
   if (!pa.groups.length) { toast(skirm ? 'You need villagers to fight.' : 'You have no troops! Hire some in the Army panel.'); return false; }
   MAPV.open = false;
   BT = { prov: P0, A: [pa, ea], round: 0, phase: -1, state: 'prep', t: 0, speed: 1, tac: ['steady', 'steady'], jutsu: [null, null], ki: [pa.ki, ea.ki], fx: [], proj: [], nums: [], pops: [], labels: [], shake: 0, log: [], auto: true, sky: pick(['day', 'day', 'dusk', 'dawn', 'storm']), seed: rint(1, 9999), clouds: [], wind: rnd(4, 9) * pick([-1, 1]), cam: null, stop: 0, punch: 0, bodies: 0 };
@@ -10172,7 +10187,11 @@ function finishBattle(res, note) {
   // the wounded: part of the fallen limp home and rejoin (more when you hold the field)
   let wounded = 0; const wf = (res === 'win' ? .3 : res === 'draw' ? .2 : .1) + (pa.qm || 0) * .05;
   if (pa.mode === 'army' && !drill) pa.groups.forEach(g => g.cmds.forEach(c => { if (!c.vref || c.hp == null) return; if (c.hp >= c.hpMax - .5) delete c.vref.hp; else c.vref.hp = Math.max(0, Math.round(c.hp)); }));
-  if (pa.mode === 'army' && !drill) pa.groups.filter(g=>!g.heroOnly).forEach(g => { const back = Math.round(Math.max(0,g.start-Math.ceil(g.troops))*wf); wounded += back; G.troops[g.type] = Math.max(0, Math.ceil(g.troops) + back); });
+  if (pa.mode === 'army' && !drill) pa.groups.filter(g=>!g.heroOnly).forEach(g => { const back = Math.round(Math.max(0,g.start-Math.ceil(g.troops))*wf); wounded += back;
+    if (g.tate > 0 && !BT.tateDone) { const W = tateWear(g, tateKilled(g, back), G.tateKills || 0); g.tateKilled = tateKilled(g, back); g.tateLost = W.lost; G.tate = Math.max(0, tateOwned() - W.lost); G.tateKills = W.carry; }
+    G.troops[g.type] = Math.max(0, Math.ceil(g.troops) + back); });
+  if (!BT.tateDone) BT.A[1].groups.filter(g => g.tate > 0).forEach(g => { g.tateKilled = tateKilled(g, 0); const W = tateWear(g, g.tateKilled, 0); g.tateLost = W.lost; });
+  BT.tateDone = true;
   const tier = Math.log2(1 + (drill ? (BT.A[1].power0 || armyPower(BT.A[1])) : (st.power || 60)) / 50);
   let xp = Math.round((res === 'win' ? 26 : res === 'draw' ? 14 : 8) * tier * (drill ? 1.4 : 1));
   const cmds = new Set(); pa.groups.forEach(g => g.cmds.forEach(c => c.vref && cmds.add(c.vref)));
@@ -10209,6 +10228,7 @@ function finishBattle(res, note) {
         st.owner = 'kage'; if (P.type === 'clan') { G.dGrowth = conquestGrowth() + (2 + G.year) / 100; G.wins++; }
         { const pn = campaignWin(P); if (pn) rewards.push(`${icon('folk')} ${esc(pn)} keeps the pledge`); }
         if (R.gold) { G.gold += R.gold; rewards.push(`${icon('gold')} +${fmt(R.gold)}`); }
+        if (R.tate && !G.tateOn) { G.tateOn = true; rewards.push(`${tateIcon()} Wooden Tate`); unlockMsgs.push(`Their carpenters' pattern is yours: <b>Wooden Tate</b> can now be bought for your Gunners (Army → Gunners → Defensive Support).`); }
         if (!retake && R.deed) { G.land[R.deed] = true; RT.groundDirty = true; rewards.push(`${icon('deed')} Land deed: ${LAND_NAME[R.deed] || R.deed}`); unlockMsgs.push(`The <b>${LAND_NAME[R.deed] || R.deed}</b> plot is now open for building.`); }
         if (!retake && R.unlock) { const t = R.unlock, gk = { arc: 'yumi', gun: 'sakaizutsu', cav: 'jiba' }[t]; const had = troopsOpen(t); unlockCorps(t, true); G.troops[t] = (G.troops[t] || 0) + 20; if (gk) G.items[gk] = (G.items[gk] || 0) + 2;
           rewards.push(`${icon('u_' + t)} ${had ? '' : ITEMS['corps_' + t].name + ' · '}+20 veterans${gk ? ` · ${icon('it_' + gk)}×2` : ''}`);
@@ -10431,6 +10451,8 @@ function layoutSprites() {
       const FP = formPlan(g, n, nH, front, face, mid); g._hp = FP.H;
       g.spr = FP.T.map(p => mkSprite(g, si, p.x, p.y, null, g.kitDist ? rollKit(g.kitDist) : null));
       if (onWall) { g.onWall = true; g.spr.forEach(q => q.lift = WALL_LIFT); }
+      if (A.mode === 'army' && g.type === 'gun' && g.tateCov > 0 && !onWall && g.spr.length) { const ys = g.spr.map(q => q.y), lo = Math.min(...ys), hi = Math.max(...ys), k = Math.max(1, Math.round(g.tateCov * rows)), xs = g.spr.map(q => q.x), fx = face > 0 ? Math.max(...xs) : Math.min(...xs);
+        for (let i = 0; i < k; i++) BT.props.push({ k: 'pavise', si, g, tate: 1, x: fx + face * 6, y: (k === 1 ? (lo + hi) / 2 : lo + i * (hi - lo) / (k - 1)) + 2 }); }
       g.heroes = heroSlots(g, face, mid, fh); fieldWorks(g, si, front, face, mid); if (onWall) g.heroes.forEach(q => { q.lift = WALL_LIFT; q.hdx = Math.min(q.hdx, 4); q.x = q.sx = front + face * q.hdx; });
       g.heroes.forEach(hr => mkGuards(g, si, hr));
       front -= face * ((cols - 1) * colStep + (onWall ? 24 : (g.type === 'cav' ? 46 : 38) + cols * 3)); // bigger blocks, wider lanes between them
@@ -10474,7 +10496,7 @@ function siegeScript(p) {
     BT.ram.mv = { from: BT.ram.x, to: x1, t0: T0, t1: T0 + Math.max(.5, Math.abs(x1 - BT.ram.x) / 70) };
     const t1 = BT.ram.mv.t1; for (let k = 0; k < 3; k++) add(t1 + .2 + k * .6, 'ram', { dmg: dmg / 3 });
   } else if (p === 'gun') { const gun = alive(A, 'gun'); if (!gun.length) return;
-    const dmg = gun.reduce((n, g) => n + fightingStrength(g) * battleAttack(g) * UNITS.gun.atk * g.atkMul * .26, 0) * .14; add(T0 + RANGED_LEAD + .66, 'ram', { dmg, shot: 1 }); }
+    const dmg = gun.reduce((n, g) => n + fightingStrength(g) * battleAttack(g) * UNITS.gun.atk * g.atkMul * .26 * tateAtk(g), 0) * .14; add(T0 + RANGED_LEAD + .66, 'ram', { dmg, shot: 1 }); }
   else return;
   S.ev.sort((a, b) => a.t - b.t); const end = Math.max(...S.ev.map(e => e.t)) - BT.t + .7; S.dur = Math.max(S.dur, end); BT.next = Math.max(BT.next, end - .2);
 }
@@ -10900,6 +10922,7 @@ function initLifeState(s,g,kind,away){
 }
 function killSprite(g,s,kind,awayDir){
   if(!s.alive||s.fate?.kind==='death')return;
+  if(!s.hero&&!s.guardOf&&!s.petOf)g.fellN=(g.fellN||0)+1;
   const f=initLifeState(s,g,'death',awayDir),R=f.random,base=FALL_BEATS[kind]||FALL_BEATS.knock,variation=.87+R()*.26;
   f.beats={...base,flinch:base.flinch*variation,stagger:base.stagger*variation,kneel:base.kneel*variation,fall:base.fall*variation};
   f.impact=kind;f.travel=base.travel*(.8+R()*.4)*f.scale;f.fallDir=kind==='gun'||kind==='cav'?f.away:kind==='arc'?s.face:R()<.65?s.face:f.away;
@@ -10912,6 +10935,7 @@ function killSprite(g,s,kind,awayDir){
 }
 function routSprite(g,s,awayDir,survivor=false,delay=0){
   if(s.fate||s.die<0||!s.alive)return;
+  if(!survivor&&!s.hero&&!s.guardOf&&!s.petOf)g.fledN=(g.fledN||0)+1;
   const f=initLifeState(s,g,'rout',awayDir),R=f.random;f.wait=delay+.08+R()*.30;f.recoil=.18+R()*.20;f.escapeAt=f.wait+f.recoil+.45+R()*.30;
   f.speed=(g.type==='cav'?55:42)+R()*12;f.end=f.escapeAt+(BT.WW+100)/f.speed+.5;f.mounted=g.type==='cav'&&!!f.recipe;
   f.hatAt=reactionHat(f.recipe)&&R()<.23?f.wait+f.recoil+.13:Infinity;
@@ -11063,7 +11087,7 @@ function interceptHits(p) {
   [0, 1].forEach(si => { const D = BT.A[si], A = BT.A[1 - si], tg = alive(A, p); if (!tg.length) return;
     const screen = alive(D, 'inf').reduce((n, g) => n + g.troops, 0) > tg.reduce((n, g) => n + g.troops, 0) * .3;
     alive(D).filter(g => g.type === 'gun' || g.type === 'arc').forEach(g => {
-      const tac = TACTICS[tacFam(g)].mod; let dmg = fightingStrength(g) * battleAttack(g,true) * UNITS[g.type].atk * g.atkMul * tac.rng * .26 * .28 * (screen ? .35 : 1) * (1 + (g.mods.counter || 0) * .3) * rnd(.85, 1.15);
+      const tac = TACTICS[tacFam(g)].mod; let dmg = fightingStrength(g) * battleAttack(g,true) * UNITS[g.type].atk * g.atkMul * tac.rng * .26 * .28 * (screen ? .35 : 1) * (1 + (g.mods.counter || 0) * .3) * rnd(.85, 1.15) * tateAtk(g);
       if (BT.jutsu[1 - si] === 'smoke') dmg *= .4; if (BT.siege && si === 1 && siegeHold()) dmg *= 1.3;
       const T = tg.slice().sort((a, b) => b.troops - a.troops)[0], ward = g.type === 'gun' ? T.mods.bulletres : T.mods.arrowres;
       const kills = Math.min(T.troops * .22, battleDamage(dmg,battleResistance(T),(1-Math.min(.6,(ward||0)*.1))*(g.solo?personalWeaponFactor(g.solo,T,g.type):1),fightingStrength(g)*.28));
@@ -12545,6 +12569,7 @@ function rewardChips(R) {
   if (R.build) c.push(`${icon('build')} Blueprints: ${BUILD_ORDER.filter(id => R.build.includes(BUILDINGS[id].lock)).map(id => BUILDINGS[id].name).join(', ')}`);
   if (R.recruit) c.push(`${icon('folk')} ${vData(R.recruit).name} may join`);
   if (R.item) c.push(`${icon('it_' + R.item)} ${ITEMS[R.item].name}`);
+  if (R.tate) c.push(`${tateIcon()} Wooden Tate`);
   if (R.xp) c.push(`${icon('xp')} XP for everyone`);
   if (R.troops) c.push(`${icon('u_inf')} +${R.troops} infantry`);
   (R.items || []).forEach(k => ITEMS[k] && c.push(`${icon('it_' + k)} ${esc(ITEMS[k].name)}`));
@@ -12593,6 +12618,47 @@ monthTick = function () { tributeTick(); _monthTick(); rebelTick(); campTick(); 
 
 /* ---------- rebellion: a held province sometimes rises; crush it in time or lose it ---------- */
 const REBEL_MONTHS = 2;
+/* Wooden Tate (盾): standing wooden shields for the Gunner firing line, bought with gold and timber (no forging).
+ Each Tate covers 10 Gunners. Coverage = Tate × 10 / Gunners, at most 100% for you and 50% for the AI. At full
+ coverage Gunners take 20% fewer arrow casualties and deal 8% less damage, both scaled by coverage and applied
+ on top of every other defence. Bullets, melee, cavalry and ninjutsu ignore it. Every 10 Gunners actually killed
+ (not wounded who return, not men who fled) destroys one Tate; the remainder carries over to the next battle.
+ Won from Yamashiro Castle. AI armies get Tate as the war goes on, but castle garrisons never do. */
+const TATE = { men: 10, gold: 40, wood: 4, arrow: .2, atk: .08, aiCap: .5, aiPerWin: .05 };
+function tateOn() { return !!G.tateOn; }
+function tateOwned() { return Math.max(0, Math.floor(G.tate || 0)); }
+function tateNeed(n = G.troops.gun || 0) { return Math.ceil(Math.max(0, n) / TATE.men); }
+function tateMissing() { return Math.max(0, tateNeed() - tateOwned()); }
+function tateCoverOf(tate, men) { return men > 0 ? Math.min(1, tate * TATE.men / men) : 0; }
+function tateCost(n) { return { gold: n * TATE.gold, wood: n * TATE.wood }; }
+function tateAffordable(n) { return Math.max(0, Math.min(n, Math.floor(G.gold / TATE.gold), Math.floor((G.stock.wood || 0) / TATE.wood))); }
+function tateBuy(n) { // buys up to n Tate, never past what the Gunners need; returns how many were bought
+  const k = tateAffordable(Math.min(n, tateMissing())); if (k <= 0) return 0;
+  G.gold -= k * TATE.gold; G.stock.wood -= k * TATE.wood; G.tate = tateOwned() + k; return k; }
+function tateAiCover(P) { // castles have their walls; the dojo mirrors your own army
+  if (!P || P.type === 'clan' || P.type === 'dojo') return 0;
+  return Math.min(TATE.aiCap, (G.wins || 0) * TATE.aiPerWin);
+}
+function tateIcon() { return `<img class="px" src="${ICONS.tate || (ICONS.tate = dataURL(propImg('pavise', 0), 2))}" alt="">`; }
+// fixed at the start of the battle, for both sides
+function tateEquip(pa, ea, P) {
+  if (pa && pa.mode === 'army' && tateOn()) pa.groups.filter(g => g.type === 'gun' && !g.heroOnly).forEach(g => { g.tate = Math.min(tateOwned(), tateNeed(g.troops)); g.tateCov = tateCoverOf(g.tate, g.troops); });
+  const c = ea && ea.mode === 'army' ? tateAiCover(P) : 0;
+  // AI formations are few but strong men, so their Tate is counted as a share (19 Gunners at 50% carry 0.95 Tate)
+  if (c > 0) ea.groups.filter(g => g.type === 'gun' && !g.heroOnly && g.troops > 0).forEach(g => { g.tate = g.troops * c / TATE.men; g.tateCov = tateCoverOf(g.tate, g.troops); });
+}
+function tateTake(t, phase) { return phase === 'arc' && t.type === 'gun' && t.tateCov ? 1 - TATE.arrow * t.tateCov : 1; }
+function tateAtk(g) { return g.type === 'gun' && g.tateCov ? 1 - TATE.atk * g.tateCov : 1; }
+// killed = the fallen among the losses, less the wounded who limp home; men who fled are not counted
+function tateKilled(g, back) {
+  const lost = Math.max(0, (g.start || 0) - Math.ceil(Math.max(0, g.troops))), fell = g.fellN || 0, fled = g.fledN || 0;
+  const share = fell + fled > 0 ? fell / (fell + fled) : 1;
+  return Math.max(0, Math.round(lost * share - (back || 0)));
+}
+function tateWear(g, killed, carry) { // returns { lost, carry }
+  const tot = (carry || 0) + killed, lost = Math.min(g.tate || 0, Math.floor(tot / TATE.men));
+  return { lost, carry: lost < Math.floor(tot / TATE.men) ? 0 : tot % TATE.men };
+}
 // provinces that can be held: everything but the training grounds (the dojo is sparred at, never taken)
 function conquerable(p) { return p.type !== 'dojo'; }
 function provinceTally() { const all = PROVINCES.filter(conquerable); return { owned: all.filter(p => G.prov[p.id] && G.prov[p.id].owner === 'kage').length, total: all.length }; }
@@ -12727,6 +12793,7 @@ function afterLoad() {
   if (!G.endYear) G.endYear = rint(20, 30);
   if (G.speed === 3) G.speed = 4; // fast-forward is now 4x
   applyCampaign(); // per-campaign clans, recruits and doctrine prices (old saves: the classic map)
+  if (!G.tateOn && G.prov && G.prov.yamashiro && G.prov.yamashiro.owner === 'kage') G.tateOn = true; // saves from before Wooden Tate
   if (G.boons && G.boons.pending && !window.__noIntro) setTimeout(() => G && G.boons.pending && !MQ.some(m => m.opts.must) && reofferDilemma(), 600);
   if (G.roll && G.roll.v && !G.boons.doc && !window.__noIntro) setTimeout(() => G && G.roll && G.roll.v && !G.boons.doc && !MQ.some(m => m.opts.must) && offerDoctrine(), 400);
   applyPlots(G.plots); migrateMap(); migrateGear(); migrateCorps(); migrateRoles(); migrateArsenal(); migrateLogistics();
