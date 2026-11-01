@@ -29,6 +29,14 @@
         "Refuse",
         "Fight!"
       ]
+    },
+    "touch": {
+      "steps": [
+        "隠れ里へようこそ: 1 tap",
+        "First steps: 1 tap",
+        "家訓 The campaign hand: 1 tap (top row, finger drifted 6px)"
+      ],
+      "handSwipe": "48px"
     }
   },
   "390x844": {
@@ -61,6 +69,14 @@
         "Refuse",
         "Fight!"
       ]
+    },
+    "touch": {
+      "steps": [
+        "隠れ里へようこそ: 1 tap",
+        "First steps: 1 tap",
+        "家訓 The campaign hand: 1 tap (top row, finger drifted 6px)"
+      ],
+      "handSwipe": "fits without scrolling"
     }
   },
   "844x390": {
@@ -93,6 +109,14 @@
         "Refuse",
         "Fight!"
       ]
+    },
+    "touch": {
+      "steps": [
+        "隠れ里へようこそ: 1 tap",
+        "First steps: 1 tap",
+        "家訓 The campaign hand: 1 tap (top row, finger drifted 6px)"
+      ],
+      "handSwipe": "105px"
     }
   },
   "1280x800": {
