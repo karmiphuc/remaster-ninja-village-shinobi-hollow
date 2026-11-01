@@ -50,7 +50,7 @@ const root=path.resolve(__dirname,'..');
    }
    try{
     let M=market();set(G,'stock','rice',30);set(G,'stock','veg',30);set(M.A,'shelf','rice',6);set(M.B,'shelf','rice',3);set(M.B,'shelf','veg',3);set(M.A,'shelf','mochi',3);set(M.craft,'inbox','rice',10);
-    ok(materialSalesAllowed('rice')&&shopRawSalesAllowed(M.A)&&shopRoom(M.A,'rice')===4,'Old-save default changed');
+    ok(materialSalesAllowed('rice')&&shopRawSalesAllowed(M.A)&&shopRoom(M.A,'rice')===SHOP_CAP-6,'Old-save default changed');
     startLedger();setMaterialSales('rice',false);
     ok(!shopRoom(M.A,'rice')&&!shopRoom(M.B,'rice')&&!shopRoom(M.B,'veg'),'Disabled mixed raw recipe still restocks');
     ok(shopStock(M.A).rice===6&&!shopRawSalesAllowed(M.A),'Shelf stock teleported or policy ignored');

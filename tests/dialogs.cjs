@@ -55,7 +55,7 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
         check(!/auto|scroll/.test(getComputedStyle(M()).overflowY) && getComputedStyle(M()).touchAction === 'auto', 'Backdrop became a scroll area again');
         // ---- hunt ----
         const H = HUNTS[HUNTS.length - 1];
-        openHunt(H); await wait(60); const ht = $('#sh-body [data-top-of="hunt"]'); check(ht && vis(ht.querySelector('.btn.red')), 'Hunt top buttons missing');
+        openHunt(H); for (let t = 0; t < 1500 && !vis($('#sh-body [data-top-of="hunt"] .btn.red')); t += 30) await wait(30); const ht = $('#sh-body [data-top-of="hunt"]'); check(ht && vis(ht.querySelector('.btn.red')), 'Hunt top buttons missing');
         let started = 0; const sb = window.startBattle; window.startBattle = () => { started++; return true; }; ht.querySelector('.btn.red').click(); window.startBattle = sb; check(started === 1, 'Top Begin the hunt did nothing');
         openHunt(H); await wait(30); $('#sh-body [data-top-of="hunt"] .btn.ghost').click(); check(!$('#sheet').classList.contains('open') || UI.panel !== 'hunt', 'Top Let it go did nothing');
         out.hunt = { topButtons: ['Let it go', 'Begin the hunt'] };

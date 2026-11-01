@@ -71,15 +71,15 @@ const root=path.resolve(__dirname,'..');
     ok(!C.site.inbox.rice&&C.site.outs.mochi===5,'Recipe ratio was not 10 -> 5');
     ok(craftDone(C.site,G.villagers[0],'mochi',C.a)===0&&C.site.outs.mochi===5,'Duplicate completion produced goods');ledgerEnd();
 
-    C=craftFixture();set(C.site,'inbox','rice',24);set(C.site,'outs','mochi',10);ledgerStart();
+    C=craftFixture();set(C.site,'inbox','rice',24);set(C.site,'outs','mochi',OUT_CAP-2);ledgerStart();
     // Contract demand allows filling the last two output slots, even with stock waiting.
-    G.trade.cs=[{items:[{k:'mochi',qty:10}]}];
+    G.trade.cs=[{items:[{k:'mochi',qty:OUT_CAP}]}];
     ok(craftReserve(C.a,G.villagers[0],C.site,'mochi',5)?.n===2,'Output space not reserved');
     ok(!craftReserve(C.b,G.villagers[1],C.site,'mochi',5),'Concurrent output overbooking');
-    ok(craftDone(C.site,G.villagers[0],'mochi',C.a)===2&&outTotal(C.site)===12&&C.site.inbox.rice===20,'Full-output accounting wrong');ledgerEnd();
+    ok(craftDone(C.site,G.villagers[0],'mochi',C.a)===2&&outTotal(C.site)===OUT_CAP&&C.site.inbox.rice===20,'Full-output accounting wrong');ledgerEnd();
 
     C=craftFixture();set(C.site,'inbox','rice',10);ledgerStart();craftReserve(C.a,G.villagers[0],C.site,'mochi',5);
-    set(C.shop,'shelf','mochi',10);ok(craftDone(C.site,G.villagers[0],'mochi',C.a)===0&&C.site.inbox.rice===10,'Demand vanished but ingredients consumed');
+    set(C.shop,'shelf','mochi',SHOP_CAP);ok(craftDone(C.site,G.villagers[0],'mochi',C.a)===0&&C.site.inbox.rice===10,'Demand vanished but ingredients consumed');
     ok(!chooseCraft(C.site)&&!wantsGood(C.site,'rice'),'Full market caused overproduction or pointless restocking');ledgerEnd();
 
     C=craftFixture();set(C.site,'inbox','rice',10);ledgerStart();craftReserve(C.a,G.villagers[0],C.site,'mochi',5);
@@ -93,8 +93,8 @@ const root=path.resolve(__dirname,'..');
     set(pickle,'shelf','pickles',5);ok(chooseCraft(C.site)?.w==='mochi','Preferred useful recipe not favoured');
     C.site.recipe='matcha';ok(chooseCraft(C.site)?.w!=='matcha'&&chooseCraft(C.site),'Preference became a strict lock');
     C=craftFixture();set(G,'wares','mochi',8);G.trade.cs=[{items:[{k:'mochi',qty:4}]}];
-    ok(craftShopNeed(C.site,'mochi')===10,'Contract reserve included in retail supply');
-    G.trade.cs=[];ok(craftShopNeed(C.site,'mochi')===2,'Contract cancellation left stale cached demand');
+    ok(craftShopNeed(C.site,'mochi')===SHOP_CAP,'Contract reserve included in retail supply');
+    G.trade.cs=[];ok(craftShopNeed(C.site,'mochi')===SHOP_CAP-8,'Contract cancellation left stale cached demand');
     const one=craftCycleTime(C.site,G.villagers[0],1),five=craftCycleTime(C.site,G.villagers[0],5);
     ok(five>one&&five<one*5,'Batch time is not moderately longer and more efficient');
     const craftItem=Object.keys(ITEMS).find(k=>(ITEMS[k].craft||0)>0),v=G.villagers[0];v.eq[ITEMS[craftItem].slot]=craftItem;
@@ -139,9 +139,10 @@ const root=path.resolve(__dirname,'..');
      for(let n=0;a.path.length&&n<3000;n++)stepAgent(a,1/30);
      ok(!a.path.length,'Delivery walk never finished');arrive(a,vById(a.vid),target);
     }
-    let T=tripFixture();set(G,'wares','mochi',20);set(G,'wares','bento',20);ledgerStart();
+    let T=tripFixture();set(G,'wares','mochi',60);set(G,'wares','bento',20);ledgerStart();
     let claim=twoStop(T);ok(claim.detour<=claim.detourLimit,'Accepted detour outside budget');
-    ok(!economyClaim(T.b,economyCentral('mochi'),economyPoint(T.B,'shelf'),'mochi',1,T.store,T.B),'Second worker stole reserved shelf space');
+    // the trip reserves 10 of the second shop's ware shelf (4 mochi + 6 bento): another worker may claim only the rest
+    {const c2=economyClaim(T.b,economyCentral('mochi'),economyPoint(T.B,'shelf'),'mochi',SHOP_CAP,T.store,T.B);ok(c2&&c2.n===SHOP_CAP-10,'Second worker stole reserved shelf space');economyRelease(T.b);}
     arrive(T.a,T.v,T.store);ok(T.a.carry.n+economyFreightTotal(T.a)===20,'Mixed pickup count wrong');
     finishLeg(T.a);ok(shopStock(T.A,true).mochi===6&&shopStock(T.A,true).bento===4,'First shop got wrong goods');
     ok(T.a.carry.n+economyFreightTotal(T.a)===10&&T.a.carry.kind==='cart'&&T.a.target===T.B.uid&&economyClaimOf(T.a),'Second-stop goods discarded or cart lost at first stop');
@@ -190,7 +191,7 @@ const root=path.resolve(__dirname,'..');
     removeBuilding(T.B);ok(!T.a.carry&&!economyFreightTotal(T.a)&&!T.a.goodsClaim,'Second-shop demolition lost cargo recovery');ledgerEnd();
 
     T=tripFixture();set(G,'wares','mochi',20);set(G,'wares','bento',20);ledgerStart();twoStop(T);arrive(T.a,T.v,T.store);
-    set(T.A,'shelf','mochi',10);finishLeg(T.a);ok(shopTotal(T.A,true)===10,'Full shop overflowed');finishLeg(T.a);
+    set(T.A,'shelf','mochi',SHOP_CAP);finishLeg(T.a);ok(shopTotal(T.A,true)===SHOP_CAP,'Full shop overflowed');finishLeg(T.a);
     ok(shopStock(T.B,true).mochi===4&&shopStock(T.B,true).bento===6,'Full first shop stole second-shop cargo');
     if(T.a.mission==='shopReturn')finishLeg(T.a);ok(!T.a.carry&&!economyFreightTotal(T.a),'Full-shop remainder not returned');ledgerEnd();
 

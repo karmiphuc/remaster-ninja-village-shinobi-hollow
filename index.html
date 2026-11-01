@@ -3021,6 +3021,44 @@ function x2Stack(rows, w, h, gap, ov, fn) {
   return pb;
 }
 const _pile = perfObjectLRU(160);
+// ---- stock piles: one icon per PILE_UNIT (6) of a good, rounded up, stacked bottom-up 4-3-2-1 like the original game ----
+function pileItem(good) { // one icon's art: [w, h, draw(p, x, y, k)]
+  const ware = good.startsWith('w_'), wk = ware && good.slice(2), L = WARE_LOOK[wk], silks = [X2.silk1, X2.silk2, X2.silk3];
+  if (good === 'rice') return [6, 4, (p, x, y) => x2Tawara(p, x, y, 6, 4)];
+  if (good === 'tea') return [6, 6, (p, x, y) => { x2TeaHeap(p, x, y, 6); x2Basket(p, x, y + 2, 6, 4); }];
+  if (good === 'wood') return [5, 5, (p, x, y) => x2LogEnd(p, x + 2.5, y + 2.5, 2.5)];
+  if (good === 'silk') return [6, 3, (p, x, y, k) => x2Bolt(p, x, y, 6, silks[k % 3])];
+  if (good === 'veg') return [6, 4, (p, x, y) => { p.ellipse(x + 3, y + 2.5, 3, 1.6, X2.daikon); p.hline(x + 1, y + 3, 4, X2.daikonS); p.set(x + 1, y, X2.leaf); p.set(x + 2, y, X2.leafL); p.set(x + 1, y + 1, X2.leafD); }];
+  if (good === 'ore') return [6, 4, (p, x, y, k) => x2Rocks(p, x, y, 6, 4, 11 + k)];
+  if (wk === 'pickles') return [5, 6, (p, x, y) => x2Jar(p, x, y, 5, 6)];
+  const col = L ? L.cloth : X2.gold;
+  return [6, 5, (p, x, y) => { x2Crate(p, x, y, 6, 5); p.hline(x + 1, y + 2, 4, col); p.set(x + 2, y + 2, L ? L.acc : X2.goldL); }];
+}
+// a field's pile of up to 10 stacks 4-3-2-1; a shelf's pile of up to 5 stacks 2-2-1, so a shop or workshop fits two side by side
+function pileRows(n, maxW = 4) { const rows = []; let left = n;
+  if (maxW < 4) { while (left > 0) { const c = Math.min(2, left); rows.push(c); left -= c; } return rows; } // shelf: pairs, the odd one on top
+  let w = n <= 1 ? 1 : n <= 3 ? 2 : n <= 6 ? 3 : 4; while (left > 0) { const c = Math.min(w, left); rows.push(c); left -= c; w = Math.max(1, w - 1); } return rows; }
+// how many icons of each kind a stock shows: ceil(total / 6) icons, at most cap / 6, shared by count (largest remainder),
+// the most plentiful kind first so it forms the base of the pile
+function pileIcons(stock, cap) {
+  const c = {}; for (const k in stock) { const n = Math.floor((stock[k] || 0) + 1e-9); if (n > 0) c[k] = n; } // whole units, as the panels count them
+  const ks = Object.keys(c).sort((a, b) => c[b] - c[a] || (a < b ? -1 : 1)), tot = ks.reduce((n, k) => n + c[k], 0);
+  if (!(tot > 0)) return []; const N = Math.min(Math.round(cap / PILE_UNIT), Math.ceil(tot / PILE_UNIT));
+  const raw = ks.map(k => c[k] / tot * N), n = raw.map(Math.floor); let left = N - n.reduce((a, b) => a + b, 0);
+  ks.map((k, i) => i).sort((a, b) => (raw[b] - n[b]) - (raw[a] - n[a]) || a - b).forEach(i => { if (left > 0) { n[i]++; left--; } });
+  for (let i = 0; i < ks.length; i++) if (!n[i]) { const j = n.indexOf(Math.max(...n)); if (n[j] > 1) { n[j]--; n[i]++; } } // every kind present shows
+  return ks.flatMap((k, i) => Array(n[i]).fill(k));
+}
+function pileStackSprite(goods, maxW = 4) { // goods: one entry per icon, base first; each icon outlined on its own so all can be counted
+  const key = 'stk' + maxW + ':' + goods.join(','); if (_pile[key]) return _pile[key];
+  const icons = goods.map((g, k) => { const [w, hh, fn] = pileItem(g), pb = new PB(w, hh); fn(pb, 0, 0, k); pb.shadeEdges(.84, 1.1); return pb.outlined(); });
+  const cw = Math.max(...icons.map(i => i.w)), ch = Math.max(...icons.map(i => i.h)), sx = cw - 1, sy = ch - 2, rows = pileRows(goods.length, maxW);
+  const W = rows[0] * sx + 1, H = (rows.length - 1) * sy + ch, out = new PB(W, H); let k = 0;
+  rows.forEach((c, r) => { const x0 = Math.round((W - (c * sx + 1)) / 2), y = H - ch - r * sy;
+    for (let i = 0; i < c; i++, k++) { const ic = icons[k]; out.draw(ic, x0 + i * sx + Math.floor((cw - ic.w) / 2), y + ch - ic.h); } });
+  return (_pile[key] = out.canvas());
+}
+function drawPile(ctx, stock, cap, px, py, right) { const g = pileIcons(stock, cap); if (!g.length) return null; const im = pileStackSprite(g, cap >= 60 ? 4 : 2); artDraw(ctx, im, right ? px - im.width : px, py - im.height); return im; }
 function pileSprite(good, n) {
   const key = good + n; if (_pile[key]) return _pile[key];
   n = clamp(n | 0, 1, 4); let pb;
@@ -7674,7 +7712,7 @@ function renderBHUD(){
 
 /* Shops sell only delivered stock. The existing global ledgers are the
    warehouse; local material/ware capacities are totals, not per item type. */
-const SHOP_CAP=10;
+const SHOP_CAP=30; // per shelf: 30 materials and 30 wares
 function shopIs(b){return !!b&&BUILDINGS[b.id]?.cat==='shop';}
 
 
@@ -7701,11 +7739,11 @@ function returnShopCarry(a){
 
 function shopStockPanel(b){
   const list=ware=>Object.entries(shopStock(b,ware)).filter(([,n])=>n>0).map(([k,n])=>`${icon((ware?'w_':'g_')+k)} ${esc(ware?WARES[k].name:GOODS[k].name)} <b>${n}</b>`).join(' · ')||'Empty';
-  return h(`<div class="shop-stock-info"><div class="sec">Delivered stock</div><p class="note">Materials <b>${shopTotal(b)}/10</b> · ${list(false)}<br>Wares <b>${shopTotal(b,true)}/10</b> · ${list(true)}<br>${!BUILDINGS[b.id].needWares&&!shopRawSalesAllowed(b)?'Raw sales paused at the Clan Hall · shelf materials await return.<br>':''}Workers carry stock here from fields, workshops and storehouses. Each limit is shared across all item types.</p></div>`);
+  return h(`<div class="shop-stock-info"><div class="sec">Delivered stock</div><p class="note">Materials <b>${shopTotal(b)}/${SHOP_CAP}</b> · ${list(false)}<br>Wares <b>${shopTotal(b,true)}/${SHOP_CAP}</b> · ${list(true)}<br>${!BUILDINGS[b.id].needWares&&!shopRawSalesAllowed(b)?'Raw sales paused at the Clan Hall · shelf materials await return.<br>':''}Workers carry stock here from fields, workshops and storehouses. Each limit is shared across all item types.</p></div>`);
 }
 function drawShopStock(ctx,b,B,px,py){
-  for(const ware of [false,true]){const total=shopTotal(b,ware);if(total<1)continue;const stock=shopStock(b,ware),k=Object.keys(stock).sort((a,c)=>stock[c]-stock[a])[0],im=pileSprite(ware?'w_'+visWare(k):k,Math.min(3,Math.ceil(total/4)));
-    artDraw(ctx,im,ware?px+B.w*16-im.width+2:px-2,py+B.h*16-im.height+2);
+  for(const ware of [false,true]){if(shopTotal(b,ware)<1)continue;const stock=shopStock(b,ware),m={};for(const k in stock)if(stock[k]>0){const key=ware?'w_'+visWare(k):k;m[key]=(m[key]||0)+stock[k];}
+    drawPile(ctx,m,SHOP_CAP,ware?px+B.w*16+2:px-2,py+B.h*16+2,ware);
   }
 }
 
@@ -8490,7 +8528,7 @@ function workshopPanel(b) {
   const el = h('<div class="wsp"></div>'), act = activeWares();
   const inb = Object.entries(b.inbox).filter(([, n]) => n >= 1).map(([g, n]) => `<span class="chip">${icon('g_' + g)} ${Math.floor(n)}</span>`).join('') || '<span class="muted">no materials</span>';
   const out = Object.entries(b.outs).filter(([, n]) => n >= 1).map(([k, n]) => `<span class="chip">${icon('w_' + k)} ${n}</span>`).join('') || '<span class="muted">nothing waiting</span>';
-  el.innerHTML = `<div class="sec">Workshop ${ib('A small wooden sign-in tag marks assigned artisans. One or two carved tally strokes show the assigned worker count. The tag disappears when no workers are assigned.','Duty tag')}</div><div class="wst">${inb}<span class="arrow">→</span>${out}</div>
+  el.innerHTML = `<div class="sec">Workshop ${ib('A small wooden sign-in tag marks assigned artisans. One or two carved tally strokes show the assigned worker count. The tag disappears when no workers are assigned.','Duty tag')}</div><div class="wst">${inb}<span class="arrow">→</span>${out}</div><p class="note" style="margin:2px 0 0">Materials <b>${Math.floor(inboxTotal(b))}/${WS_IN_CAP}</b> → Wares <b>${outTotal(b)}/${OUT_CAP}</b></p>
     <p class="note" style="margin-top:4px">${act.length ? act.map(k => icon('w_' + k)).join('') : '<span style="color:#a02a1a">No shop sells wares yet</span>'} ${ib('Artisans automatically batch useful wares. Batches make 1–5 wares. Contracts first, then shop shortages, your preferred recipe and other useful wares. Ingredients are charged per product; Work and Fine Craft shorten the cycle.')}</p>
     <div class="recipes">${Object.entries(WARES).map(([k, W]) => { const known = wareKnown(k), ok = act.includes(k); return `<button class="rcp${k === b.recipe ? ' on' : ''}${ok ? '' : ' dim'}" data-k="${k}"${known ? '' : ' disabled'}><img class="px" src="${ICONS['w_' + k]}" alt=""><span><b>${esc(W.name)}</b>${W.lv === 2 ? ' <span class="tagx rare">Lv 2</span>' : ''}<span class="muted">${known ? `${Object.entries(W.from).map(([g, n]) => `${n} ${GOODS[g].name}`).join(' + ')} → ~${W.price}G · ${W.shops.map(x => BUILDINGS[x].name).join('/')}` : 'Research the recipe in the Armory'}</span></span></button>`; }).join('')}</div>`;
   el.querySelectorAll('.rcp').forEach(x => x.onclick = () => { if (b.recipe === x.dataset.k || !wareKnown(x.dataset.k)) return; b.recipe = x.dataset.k; Sound.play('tap'); refreshSheet(); });
@@ -8982,7 +9020,10 @@ function kitStatText(k, t) { if(t==='gun'&&ITEMS[k].slot==='head'&&ITEMS[k].mrk)
    Artisans fetch what they lack from the storehouse, craft wares, and carry them to the shops.
    Workers tire; better homes rest them faster and send them out keener. */
 
-const HAUL_AT = 6, PILE_CAP = 30, INBOX_CAP = 12, OUT_CAP = 12, CART_AT = 9;
+// stock limits. A field holds 60; a shop or workshop holds 30 materials + 30 wares (60 in all). One pile icon stands
+// for up to 6 of a good (PILE_UNIT), so a full field shows 10 icons and each full shelf 5.
+// Pickup triggers keep their old sizes, so goods move as often as before: fields call a hauler at 18, workshops at 6.
+const HAUL_AT = 6, PILE_CAP = 60, WS_IN_CAP = 30, OUT_CAP = 30, CART_AT = 9, PILE_UNIT = 6, FIELD_HAUL = 18, WS_HAUL = 6;
 
 /* ---------- levels ---------- */
 function bLv(b) { return b.lv || 1; }
@@ -9026,8 +9067,20 @@ function workMul(v) { const en = v.en ?? 100; return (1 + homePerk(v).work) * (e
 function pathLen(fromB, toB) { const a = entranceOf(fromB), e = entranceOf(toB); if (!a || !e) return Infinity; const p = roadPath(a[0],a[1],e[0],e[1],false,true); return p ? p.length : Infinity; }
 function nearest(fromB, list) { let best = null, bd = Infinity; for (const o of list) { const d = pathLen(fromB, o) - (o._bias || 0); if (d < bd) { bd = d; best = o; } } return isFinite(bd) ? best : null; }
 function stores() { return G.buildings.filter(b => (b.id === 'kura' && !b.reno) || b.id === 'hall'); }
+function inboxTotal(w){let n=0;const m=w.inbox;if(m)for(const g in m)n+=Math.max(0,m[g]||0);return n;}
+// the materials a workshop is working with: those its wanted wares call for, and those already in its inbox
+function inboxKinds(w){
+ const memo=w._inK;if(memo&&memo.t===RT.t)return memo.k;const k=new Set();
+ for(const g in w.inbox||{})if((w.inbox[g]||0)>=1)k.add(g);
+ for(const x in WARES)if(wareKnown(x)&&craftNeed(w,x)>0)for(const g in WARES[x].from)k.add(g);
+ w._inK={t:RT.t,k};return k;
+}
+function inboxShare(w,g){const k=inboxKinds(w);return Math.max(1,Math.floor(WS_IN_CAP/Math.max(1,k.size+(k.has(g)?0:1))));}
+function inboxRoom(w,g,incomingAll=0,incomingG=0){
+ return Math.max(0,Math.floor(Math.min(WS_IN_CAP-inboxTotal(w)-incomingAll,inboxShare(w,g)-(w.inbox&&w.inbox[g]||0)-incomingG)));
+}
 function wantsGood(w,g) {
- if((w.inbox&&w.inbox[g]||0)>=INBOX_CAP)return false;
+ if(inboxRoom(w,g)<=0)return false;
  for(const k in WARES)if(wareKnown(k)&&WARES[k].from[g]&&craftNeed(w,k)>0)return true;
  return false;
 }
@@ -9251,10 +9304,10 @@ function workshopInfoSprite(b) { return worksiteInfoSprite(b); }
 function drawLogi(ctx,b,B,px,py){
   economyBadge(ctx,b,B,px,py);
   if(B.cat==='shop')drawShopStock(ctx,b,B,px,py);
-  if (B.makes && b.pile >= 1) { const im = pileSprite(B.makes, Math.min(4, Math.ceil(b.pile / 6))); artDraw(ctx, im, px + B.w * 16 - im.width - 1, py + B.h * 16 - im.height + 2); }
+  if (B.makes && b.pile >= 1) drawPile(ctx, { [B.makes]: b.pile }, PILE_CAP, px + B.w * 16 - 1, py + B.h * 16 + 2, true);
   if (B.craft) { const inN = Object.values(b.inbox || {}).reduce((n, x) => n + x, 0);
-    if (inN >= 1) { const g = Object.keys(b.inbox).find(k => b.inbox[k] >= 1); if (g) { const im = pileSprite(g, Math.min(3, Math.ceil(inN / 4))); artDraw(ctx, im, px - 2, py + B.h * 16 - im.height + 2); } }
-    const ot = outTotal(b); if (ot >= 1) { const k = Object.keys(b.outs).sort((p, q) => b.outs[q] - b.outs[p])[0]; const im = pileSprite('w_' + visWare(k), Math.min(3, Math.ceil(ot / 4))); artDraw(ctx, im, px + B.w * 16 - im.width + 2, py + B.h * 16 - im.height + 2); }
+    if (inN >= 1) drawPile(ctx, b.inbox, WS_IN_CAP, px - 2, py + B.h * 16 + 2, false);
+    if (outTotal(b) >= 1) { const w = {}; for (const k in b.outs) if (b.outs[k] > 0) w['w_' + visWare(k)] = (w['w_' + visWare(k)] || 0) + b.outs[k]; drawPile(ctx, w, OUT_CAP, px + B.w * 16 + 2, py + B.h * 16 + 2, true); }
     if (RT.agents.some(a => a.state === 'work' && a.target === b.uid) && Math.random() < .05) RT.particles.push({ x: px + rnd(8, 24), y: py + 6, vx: rnd(-3, 3), vy: -9, t: 1.6, kind: 'smoke' }); }
   if (b.reno) { const im = scaffoldSprite(B.w, B.h, ((RT.t * 3) | 0) % 2); artDraw(ctx, im, px - 2, py + B.h * 16 - im.height + 1);
     if (Math.random() < .08) { RT.particles.push({ x: px + rnd(4, B.w * 16 - 4), y: py - rnd(0, 14), vx: rnd(-6, 6), vy: -10, t: .5, kind: 'dust' }); if (Math.random() < .2 && RT.ready) Sound.play('tap', { vol: .15, pitch: rnd(1.4, 1.8) }); } }
@@ -13408,7 +13461,7 @@ function economyAvailable(p,good,except){
 function spendableGood(good){return economyAvailable(economyCentral(good),good);}
 function economyRoom(p,good,except){
  if(p.kind==='shelf')return shopRoom(p.owner,good,except&&except.agent);
- if(p.kind==='inbox')return Math.max(0,INBOX_CAP+4-economyCount(p,good)-economyReserved(p,good,true,except));
+ if(p.kind==='inbox'){let all=0;for(const g in GOODS)all+=economyReserved(p,g,true,except);return inboxRoom(p.owner,good,all,economyReserved(p,good,true,except));}
  return Infinity;
 }
 function economyClaim(a,from,to,good,n,source,target){
@@ -13467,7 +13520,7 @@ function economyFlush(b){
 function economyJobs(){
  const E=economyState();E.jobCount=0;
  for(let i=0;i<E.producers.length;i++){const b=E.producers[i],g=BUILDINGS[b.id].makes,p=economyPoint(b,'pile');economyFlush(b);
-  if(economyAvailable(p,g)<2)continue;const target=economyOutputTarget(g,b);if(target)economyJob(p,economyDestination(target,g),g,PORTER_LOAD,economyFull(b)?18:(b.pile||0)>=PILE_CAP*.6?12:5,b,target);}
+  if(economyAvailable(p,g)<2)continue;const target=economyOutputTarget(g,b);if(target)economyJob(p,economyDestination(target,g),g,PORTER_LOAD,economyFull(b)?18:(b.pile||0)>=FIELD_HAUL?12:5,b,target);}
  for(let i=0;i<E.crafts.length;i++){const b=E.crafts[i];economyFlush(b);
   for(const g in b.outs||{}){const p=economyPoint(b,'outs');if(economyAvailable(p,g)<1)continue;const target=economyOutputTarget(g,b);
    if(target)economyJob(p,economyDestination(target,g),g,20,economyFull(b)?13:9,b,target);}
@@ -13766,7 +13819,7 @@ function workerPlan(a,v,J){
  if(B.makes){
   economyFlush(J);
   const pile=economyPoint(J,'pile'),avail=economyAvailable(pile,B.makes),reach=porterReach(J),full=economyFull(J);
-  const haulAt=reach?Math.round(PILE_CAP*.6):Math.round(HAUL_AT*(1+vStats(v).carry));
+  const haulAt=reach?FIELD_HAUL:Math.round(HAUL_AT*(1+vStats(v).carry));
   if(avail>=1&&(avail>=haulAt||full)){
    const to=dropFor(B.makes,J,a);if(to){const plan=economyStart(a,v,pile,economyDestination(to,B.makes),B.makes,Math.max(capacity,avail),J,to);if(plan)return plan;}
   }
@@ -13777,7 +13830,7 @@ function workerPlan(a,v,J){
   J.inbox=J.inbox||{};J.outs=J.outs||{};
   const c=chooseCraft(J),outs=economyPoint(J,'outs'),reach=porterReach(J),full=outTotal(J)>=OUT_CAP;
   let ready=null,readyTo=null,n=0;for(const g in J.outs){const k=economyAvailable(outs,g);if(k>n){const to=dropFor(g,J,a);if(to&&to!==J){ready=g;readyTo=to;n=k;}}}
-  if(ready&&(full||(reach?n>=Math.ceil(OUT_CAP*.5):n>=3||!c||c.mode!=='craft'))){
+  if(ready&&(full||(reach?n>=WS_HAUL:n>=3||!c||c.mode!=='craft'))){
    const plan=economyStart(a,v,outs,economyDestination(readyTo,ready),ready,capacity,J,readyTo);if(plan)return plan;}
   if(full&&Object.keys(J.outs).some(g=>economyReserved(outs,g,false)>0))return economyWait(a,J);
   if(c&&c.mode==='craft'&&!full&&craftReserve(a,v,J,c.w,c.n)){a.mission='craft';return J;}
