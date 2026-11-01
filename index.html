@@ -233,10 +233,10 @@ img.px, canvas.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 #placebar .t b { color: var(--gold-l); font-weight: 400; }
 
 /* announce modal */
-#modal { position: absolute; inset: 0; z-index: 20; display: flex; background: rgba(10, 6, 10, .55); padding: calc(env(safe-area-inset-top, 0px) + 16px) max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 16px) max(16px, env(safe-area-inset-left, 0px)); overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch; }
+#modal { position: absolute; inset: 0; z-index: 20; display: flex; background: rgba(10, 6, 10, .55); padding: calc(env(safe-area-inset-top, 0px) + 16px) max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 16px) max(16px, env(safe-area-inset-left, 0px)); overflow: hidden; }
 /* margin:auto centres it, and when it is taller than the screen it starts at the top instead of being cut off above it;
    the max-height is a definite viewport size because a percentage inside the backdrop is not resolved by every browser */
-.modal-in { width: 100%; max-width: 420px; margin: auto; max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; animation: pop .25s cubic-bezier(.2, 1.4, .4, 1); }
+.modal-in { width: 100%; max-width: 420px; margin: auto; max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); max-height: min(100%, calc(100dvh - 32px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px))); display: flex; flex-direction: column; animation: pop .25s cubic-bezier(.2, 1.4, .4, 1); }
 .modal-ft-top { display: flex; justify-content: flex-end; gap: 8px; padding: 10px 14px 4px; flex: 0 0 auto; border-top: 2px solid var(--line); }
 .modal-ft-top[hidden], .dlg-top[hidden] { display: none !important; }
 .dlg-top { display: flex; gap: 6px; align-items: center; padding: 8px 10px; border-bottom: 1px dashed rgba(90, 60, 30, .35); }
@@ -319,6 +319,9 @@ img.px, canvas.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 #btac { position: absolute; z-index: 4; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; padding: 0 max(8px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 10px) max(8px, env(safe-area-inset-left, 0px)); }
 #btac .in { width: 100%; max-width: 620px; }
 #btac .in > .paper { max-height: calc(100vh - 96px); max-height: calc(100dvh - 96px - env(safe-area-inset-top, 0px)); overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch; }
+/* Buttons are tap targets, never the start of a swipe: inside the scrolling dialog body and battle panel they keep
+   the page's touch-action none, so a tap registers at once instead of waiting to see if it becomes a scroll. */
+#modal button, #btac button, #btac select { touch-action: none; }
 .tacs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 10px; }
 .tac { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 4px; border: 2px solid var(--ink); background: rgba(255, 255, 255, .5); color: var(--ink); font-size: 11px; line-height: 1.25; text-align: center; min-width: 0; }
 .tac .k { font-family: var(--f-brush); font-size: 26px; line-height: 1; color: var(--verm-d); }
