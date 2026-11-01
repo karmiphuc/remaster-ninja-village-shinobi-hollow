@@ -76,6 +76,8 @@ The whole game is one self-contained HTML file. It has no build step, no server 
 
 Battles are prepared, not micromanaged. Everything is set in the **Army** screen, and once you press *Attack!* the rounds play out without pausing. *Retreat* and speed stay on the battle bar, and a retreat takes effect at the end of the current round.
 
+**Auto Duel** is a separate saved choice under **Village → Options**, off by default. With it off, a challenge pauses Auto Battle so you can choose champions and Fight or Refuse. Turn it on to let Auto Battle accept and assign champions. Manual battles always show the picker; refusing retains its existing cohesion penalty.
+
 **Formation tactics.** Each formation (Infantry, Archers, Gunners, Cavalry) takes its own orders. How many orders it can take depends on the highest Strategy among its own active commanders. Formations never share Strategy.
 
 | Strategy | Orders |
@@ -188,6 +190,8 @@ The game is served by GitHub Pages straight from the `main` branch root (`/`), w
 Includes the compact battle HUD, independent hero formations, physically delivered shop stock, guaranteed worker-calling rebellion captives, and the specialist arsenal. The three-shot rifle uses a one-over-two triangular barrel cluster. See [equipment notes](docs/equipment-v19.1.txt) and the [procedural preview](docs/arsenal-v19.1.png).
 
 Logistics P0 adds the **Porter House** (荷運び小屋) under **Build → Fields & Work**, beside the Storehouse. It costs 240G. Assign up to two workers manually; vacancies never auto-fill. Porters collect harvests, supply artisans, and bundle goods on shared trips to local shop shelves. Ordinary workers can still haul without porters. Full piles pause further work and retain completed output in a counted buffer.
+
+Ground mounts and companions now add **+10–100% carry**, with **Pack Pony best at +100%**. Birds and White Fox receive no carry bonus. **Shoulder Pole** gives +80% carry, **Artisan’s Kit** +70% craft, and **Merchant Abacus** +30% carry / +30% craft. These bonuses stack through the existing hauling and crafting formulas. See [carry, craft and Auto Duel notes](docs/carry-craft-duels.md).
 
 Village economy flow lets workers and porters cross fields, Storehouses and Workshops **between road sections**. Other buildings remain obstacles, and visitors keep using roads. Workshops automatically craft useful batches of **1–5**, prioritising Ton'ya orders, shop shortages, the preferred recipe and other useful wares. Every product uses its full recipe: **10 Rice → 5 Mochi Boxes**. Work and Fine Craft improve cycle efficiency.
 

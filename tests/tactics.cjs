@@ -1,3 +1,4 @@
+// Unattended battle simulations explicitly opt in to automatic duel acceptance.
 // Formation tactics (Strategy Lv0-5, all formations, Round 3 adaptation) and persistent Ki (cap, monthly recharge,
 // no battle refill, symmetric Auto-cast window, one cast per battle). Writes reports/tactics.json.
 const fs = require('fs'), http = require('http'), assert = require('assert'), path = require('path'), { chromium } = require('playwright');
@@ -16,7 +17,7 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
     const report = await p.evaluate(() => {
       const check = (x, m) => { if (!x) throw Error(m); };
       const near = (a, b, tol, m) => check(Math.abs(a - b) <= tol, `${m}: ${a} vs ${b}±${tol}`);
-      newGame(); G.tut = 1; G.speed = 0; G.boons.pending = null; G.roll.v = false; $('#title').hidden = true; resizeView(); afterLoad(); MQ.length = 0; $('#modal').hidden = true;
+      newGame(); G.autoDuel = true; G.tut = 1; G.speed = 0; G.boons.pending = null; G.roll.v = false; $('#title').hidden = true; resizeView(); afterLoad(); MQ.length = 0; $('#modal').hidden = true;
       G.troops = { inf: 60, arc: 40, gun: 30, cav: 20 }; ['arc', 'gun', 'cav'].forEach(t => { G.units[t] = true; G.researched['corps_' + t] = true; });
       G.villagers.forEach((v, i) => { v.role = FORM_TYPES[i % 4]; delete v.hp; });
       // Strategy per formation, set through the game's own stratOf so every caller sees it

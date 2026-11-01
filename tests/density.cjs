@@ -1,3 +1,4 @@
+// Unattended battle simulations explicitly opt in to automatic duel acceptance.
 // Battle density and formation layout: the Standard 25 / Dense 36 / Epic 48 setting (default Dense, per device), the
 // representative troops per soldier, ranks spread over ~88% of the room between the HUD and the bottom safe area,
 // deterministic even ranks with per-arm identities, captains and guards clear of the rank and file, casualties
@@ -20,7 +21,7 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
         window.check = (x, m) => { if (!x) throw Error(m); };
         window.clearModals = () => { MQ.length = 0; $('#modal').hidden = true; };
         window.seeded = s => () => (s = (s * 16807) % 2147483647) / 2147483647;
-        window.fresh = (troops) => { newGame(); G.tut = 1; G.speed = 0; G.boons.pending = null; G.roll.v = false; $('#title').hidden = true; resizeView(); afterLoad(); clearModals();
+        window.fresh = (troops) => { newGame(); G.autoDuel = true; G.tut = 1; G.speed = 0; G.boons.pending = null; G.roll.v = false; $('#title').hidden = true; resizeView(); afterLoad(); clearModals();
           ['arc', 'gun', 'cav'].forEach(t => { G.researched['corps_' + t] = 1; G.units[t] = true; });
           G.villagers.forEach((v, i) => { v.role = ['inf', 'inf', 'cav', 'gun', 'arc', 'inf'][i] || 'work'; delete v.hp; }); G.allHands = false;
           G.troops = Object.assign({ inf: 0, arc: 0, gun: 0, cav: 0 }, troops || { inf: 2000, arc: 1000, gun: 1200, cav: 800 }); G.ki = 0; };

@@ -1,0 +1,55 @@
+{
+  "carry": {
+    "mountPercent": {
+      "kiso": 75,
+      "tosa": 20,
+      "ashige": 50,
+      "yoroiuma": 50,
+      "akayoroi": 60,
+      "boar": 30,
+      "bear": 50,
+      "monkey": 10,
+      "tanuki": 40,
+      "hound": 15,
+      "jiba": 40,
+      "nanbu": 60,
+      "pony": 100,
+      "stallion": 60,
+      "wolf": 25
+    },
+    "excluded": [
+      "hawk",
+      "gyrfalcon",
+      "fox"
+    ],
+    "stacked": 210,
+    "physicalWorkerDelivery": 19,
+    "conservationResidual": 0
+  },
+  "craft": {
+    "kitPercent": 70,
+    "abacusPercent": 30,
+    "stackedPercent": 100,
+    "oldBatchSeconds": 3.391312992858835,
+    "newBatchSeconds": 2.5434847446441258,
+    "fullRecipeCost": true,
+    "noDoubleCompletion": true
+  },
+  "duel": {
+    "newAndLegacyDefaultOff": true,
+    "autoBattleOffAsks": true,
+    "onAccepts": true,
+    "manualBattleAlwaysAsks": true,
+    "oncePerRound": true,
+    "skirmishUnchanged": true
+  },
+  "checks": 91,
+  "ui": {
+    "menuToggle": true,
+    "onAndOffPersist": true,
+    "oldSaveDefaultOff": true,
+    "noCompoundingOnReload": true,
+    "realRefuseButton": true,
+    "realFightButton": true
+  }
+}
