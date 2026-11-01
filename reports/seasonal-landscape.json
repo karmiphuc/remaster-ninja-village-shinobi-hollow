@@ -1,0 +1,38 @@
+{
+  "art": {
+    "seasons": 4,
+    "terrainHashes": [
+      513859531,
+      513859531,
+      1729529711,
+      3710604931
+    ],
+    "bareTrees": true,
+    "distinctSakura": true,
+    "summerGreenSakura": true,
+    "frozenPond": true,
+    "iceStillBlocked": true,
+    "canvasAssets": 508,
+    "drawCanvasAllocations": 0,
+    "canvasMBStart": 11.67599868774414,
+    "canvasMBAfterCycles": 11.67599868774414
+  },
+  "weather": {
+    "seconds": 240,
+    "showers": 5,
+    "dryBreaks": 5,
+    "wetFraction": 0.2978472222222222,
+    "privateRNG": true,
+    "dtDriven": true,
+    "particlePool": 140,
+    "cloudPool": 3
+  },
+  "thumbCount": 32,
+  "save": {
+    "version": 1,
+    "winterReload": true,
+    "weatherTransient": true,
+    "bytes": 34466
+  },
+  "checks": 23
+}

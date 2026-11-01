@@ -152,6 +152,10 @@ Every new game deals a forced hand of three cards: a **House Doctrine**, a **Har
 
 Sealed gear can still be bought, won as a reward or looted. No hand seals two lines, pairs Horse Clans with Barren Pastures, puts Silk Road on the cursed shop, or deals Ascendant with Divided Daimyō, or Costly Scrolls with the Sensei. Saves from before this change keep their doctrine and get no omens.
 
+## Village seasons
+
+The village follows the seasons: summer brings passing showers and translucent clouds, autumn turns foliage and grass golden, and winter brings bare trees, snowy ground, pale paths and frozen ponds. Sakura keeps a distinct winter silhouette. These are procedural visual changes; production and movement continue normally. See the [four-season preview](docs/seasonal-village-preview.png) and [implementation notes](docs/seasonal-landscape.md).
+
 ## Saving
 
 Progress is saved to your browser's `localStorage` under the key `shinobi-hollow-v1`. It saves automatically:
