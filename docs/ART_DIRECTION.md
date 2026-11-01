@@ -94,6 +94,14 @@ See the [forge level comparison sheet](forge-upgrades-preview.png), generated fr
 - An art-only edit must preserve building definitions, gold costs, worker slots, production, hauling, saves and combat. The menu correction accompanying this revision only makes the already-defined Porter House available to build.
 - The Porter House definition, menu insertion and sprite are also mirrored in `tools/modules/economy-p0.js`. Keep that module synchronized with `index.html`. Do not regenerate the game using a historical tool that would replace newer game features. Leave `baseline/v19.1.html` unchanged.
 
+## Seasonal landscapes
+
+Seasonal changes use the same native pixels, one-pixel ink outlines and material contrast as the existing village. Autumn foliage and grass use gold/ochre/copper; winter ground uses warm snow whites with cool shadows and pale worn roads. Preserve road masks, building anchors and footprints. A seasonal palette must not recolour unrelated timber, roofs, equipment or characters.
+
+The winter `pine` and sakura deliberately become bare, as requested by the player. Keep the former tall and narrow and the sakura broad/forked with rose-brown bark and restrained dormant tips; they must remain distinguishable without leaves. Bamboo retains sparse muted canes. Frozen ponds contain opaque ice and simple stepped veins, with no fish or lily pads visible on top. Ice is artwork only and does not create traversable/buildable land.
+
+Summer clouds are pale, translucent pixel masses with no heavy outline. Rain comes in brief showers with dry intervals; neither effect should hide villagers or the established building silhouettes. Pre-render finite variants once, reuse bounded particle/cloud pools, and keep weather randomness separate from gameplay randomness. Seasonal thumbnails and move previews should agree with the map. See [seasonal implementation notes and previews](seasonal-landscape.md).
+
 ## Review before handing off
 
 1. Compare the new asset with the reference family at the same zoom, checking pixel density, outline weight, warmth, contrast and light direction.

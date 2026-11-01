@@ -1,0 +1,41 @@
+{
+  "housing": {
+    "shopTypes": 7,
+    "allShopLevelsZero": true,
+    "homeCapacitiesPreserved": true,
+    "tradeBonusesPreserved": true
+  },
+  "migration": {
+    "version": 1,
+    "freeBedsReassigned": true,
+    "overCapacityRetained": true,
+    "newBedsFill": true,
+    "jobsAndEquipmentPreserved": true
+  },
+  "rest": {
+    "immediateTeleport": true,
+    "noInstantHeal": true,
+    "normalRecovery": true,
+    "resumesWork": true
+  },
+  "logistics": {
+    "unpickedClaims": true,
+    "mixedLoadedTwoStopCargo": true,
+    "repeatedRecallSafe": true,
+    "cancelledCraftSafe": true
+  },
+  "edgeCases": {
+    "disconnectedHome": true,
+    "missingAgent": true,
+    "invalidRequestsAtomic": true,
+    "demolishedHome": true
+  },
+  "checks": 73,
+  "conservationResidual": 0,
+  "ui": {
+    "mobileButtonsBelowResidents": true,
+    "upgradedBedCount": true,
+    "shopHasNoResidentsOrHousingPerks": true,
+    "browserSaveReload": true
+  }
+}
