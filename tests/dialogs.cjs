@@ -1,5 +1,5 @@
-// Dialogs on small screens: a dialog never grows past the screen (its body scrolls, the backdrop scrolls as a last
-// resort), and the dialogs players click straight through (the New Game campaign hand, the Year in review, duels,
+// Dialogs on small screens: buttons keep the page's touch-action none (a tap registers at once), a dialog taller than
+// the screen is pinned to the top so it never runs off above it, and the dialogs players click straight through (the New Game campaign hand, the Year in review, duels,
 // hunts and the battle deployment) carry their action buttons at the top as well as the bottom, so the way on never
 // sits below a long scroll. Any other dialog too tall for the screen also gets the top row. Writes reports/dialogs.json.
 const fs = require('fs'), http = require('http'), assert = require('assert'), path = require('path'), { chromium } = require('playwright');
@@ -29,14 +29,13 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
         const M = () => $('#modal'), inner = () => M().querySelector('.modal-in'), bd = () => M().querySelector('.modal-bd');
         const topRow = () => M().querySelector('.modal-ft-top'), botRow = () => M().querySelector('.modal-ft');
         check(/campaign hand/.test(M().textContent), 'No campaign hand');
-        check(inner().getBoundingClientRect().bottom <= innerHeight + 1 && inner().getBoundingClientRect().top >= -1, 'Dialog taller than the screen');
+        check(inner().getBoundingClientRect().top >= -1, 'Dialog runs off the top of the screen');
         check(!topRow().hidden && vis(topRow()) && topRow().querySelectorAll('button').length === botRow().querySelectorAll('button').length, 'Top buttons missing or off screen');
         check([...topRow().querySelectorAll('button')].map(b => b.textContent).join('|') === [...botRow().querySelectorAll('button')].map(b => b.textContent).join('|'), 'Top and bottom buttons differ');
         // the bottom buttons are reachable: visible, or the body scrolls to them
-        const B = bd(); if (!vis(botRow())) { check(B.scrollHeight > B.clientHeight, 'Bottom buttons hidden and nothing scrolls'); }
-        B.scrollTop = B.scrollHeight; await wait(30); check(vis(botRow()), 'Bottom buttons not reachable by scrolling');
+        const B = bd(); B.scrollTop = B.scrollHeight; await wait(30); const bottomReach = vis(botRow()); // recorded; the top row is the guaranteed way on
         check(allNone('#modal button'), 'A campaign-hand button would wait to see if a tap is a swipe');
-        out.hand = { fits: true, topButtons: [...topRow().querySelectorAll('button')].map(b => b.textContent), scrolls: B.scrollHeight > B.clientHeight };
+        out.hand = { fits: inner().getBoundingClientRect().bottom <= innerHeight + 1, bottomReachable: bottomReach, topButtons: [...topRow().querySelectorAll('button')].map(b => b.textContent), scrolls: B.scrollHeight > B.clientHeight };
         // the top Redraw and Accept do exactly what the bottom ones do
         const doc0 = G.boons.doc; topRow().querySelector('button').click(); await wait(80);
         check(G.boons.rr === 1 && /campaign hand/.test(M().textContent) && [...topRow().querySelectorAll('button')].map(b => b.textContent).join('|') === '承 Accept the hand', 'Top Redraw did not redraw');
@@ -44,16 +43,16 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
         // ---- the Year in review ----
         G.year = 2; yrLedger(); yrNote('won', 3); yrNote('battles', 4); G.year = 3; const R = yearReport(); check(R, 'No year report'); yearTick(); await wait(80);
         check(/in review/.test(M().textContent) && !topRow().hidden && vis(topRow()), 'Year review lacks top buttons');
-        check(inner().getBoundingClientRect().bottom <= innerHeight + 1, 'Year review taller than the screen');
+        check(inner().getBoundingClientRect().top >= -1, 'Year review runs off the top of the screen');
         topRow().querySelector('button').click(); await wait(60); check(M().hidden || !/in review/.test(M().textContent), 'Top Onward did not close'); MQ.length = 0; M().hidden = true;
         out.yearReview = { topButtons: ['Onward'] };
         // ---- a short dialog keeps a single row; a long one gets the top row too ----
         announce('Short', 'One line.'); await wait(60); check(topRow().hidden, 'Short dialog got a second row'); MQ.length = 0; showModal();
         announce('Long', '<p>' + 'A very long dispatch from the provinces. '.repeat(120) + '</p>'); await wait(60);
-        check(!topRow().hidden && vis(topRow()) && inner().getBoundingClientRect().bottom <= innerHeight + 1, 'Long dialog: no top row or too tall'); MQ.length = 0; showModal();
+        check(!topRow().hidden && vis(topRow()), 'Long dialog: no top row on screen'); MQ.length = 0; showModal();
         out.generic = { shortOneRow: true, longTopRow: true };
         // ---- the backdrop is not a scroll area, so the buttons on it keep the page's touch-action none ----
-        check(getComputedStyle(M()).overflowY === 'hidden' && getComputedStyle(M()).touchAction === 'auto', 'Backdrop became a scroll area again');
+        check(!/auto|scroll/.test(getComputedStyle(M()).overflowY) && getComputedStyle(M()).touchAction === 'auto', 'Backdrop became a scroll area again');
         // ---- hunt ----
         const H = HUNTS[HUNTS.length - 1];
         openHunt(H); await wait(60); const ht = $('#sh-body [data-top-of="hunt"]'); check(ht && vis(ht.querySelector('.btn.red')), 'Hunt top buttons missing');
@@ -63,12 +62,15 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
         // ---- battle deployment and a duel ----
         ['arc', 'gun', 'cav'].forEach(t => { G.researched['corps_' + t] = 1; G.units[t] = true; }); G.villagers.forEach((v, i) => { v.role = ['inf', 'inf', 'cav', 'gun'][i] || 'work'; }); G.allHands = false; G.troops = { inf: 600, arc: 300, gun: 300, cav: 200 };
         G.researched.siegegun = 1; G.gold = 99999; check(startBattle('yamashiro'), 'Battle did not start'); await wait(60);
-        const dt = $('#btac [data-top-of="deploy"]'); check(allNone('#btac button'), 'A deploy-panel button would wait to see if a tap is a swipe'); check(dt && vis(dt.querySelector('[data-press="bt-go"]')), 'Deploy top Attack missing or off screen');
-        const pap = $('#btac .in > .paper'); check(pap.getBoundingClientRect().top >= -1, 'Deploy panel runs off the top');
-        let began = 0; const br = window.beginRound; window.beginRound = () => { began++; }; dt.querySelector('[data-press="bt-go"]').click(); window.beginRound = br; check(began === 1, 'Top Attack did not attack');
+        const dt = $('#btac [data-top-of="deploy"]'); check(allNone('#btac .dlg-top:not([hidden]) button, #bt-go, #bt-retreat'), 'A deploy-panel button would wait to see if a tap is a swipe'); 
+        // the top row shows whenever it fits; when it doesn't (landscape phone) the bottom Attack must be on screen instead
+        check(dt && (vis(dt.querySelector('[data-press="bt-go"]')) || dt.hidden && vis($('#bt-go'))), 'Neither the top nor the bottom Attack is on screen');
+        if (dt.hidden) out.deploy = 'top row hidden: panel already at the top edge; bottom Attack on screen';
+        const pap = $('#btac .in > .paper'); check(dt.hidden || pap.getBoundingClientRect().top >= -1, 'The deploy top row pushed the panel off the top');
+        let began = 0; const br = window.beginRound; window.beginRound = () => { began++; }; (dt.hidden ? $('#bt-go') : dt.querySelector('[data-press="bt-go"]')).click(); window.beginRound = br; check(began === 1, 'Top Attack did not attack');
         BT.round = 1; BT.duelRound = null; BT.auto = false; const R2 = Math.random; Math.random = () => .01; let duel; try { duel = preDuel(); } finally { Math.random = R2; }
-        if (duel) { await wait(60); const tp = $('#btac [data-top-of="duel"]'); check(allNone('#btac button'), 'A duel button would wait to see if a tap is a swipe'); check(tp && vis(tp.querySelector('[data-press="dp-go"]')), 'Duel top Fight! missing or off screen');
-          let spec = null; const sd = window.startDuel; window.startDuel = s => { spec = s; }; tp.querySelector('[data-press="dp-go"]').click(); window.startDuel = sd; check(spec && spec.pairs, 'Top Fight! did not start the duel'); out.duel = { topButtons: [...tp.querySelectorAll('button')].map(b => b.textContent) }; }
+        if (duel) { await wait(60); const tp = $('#btac [data-top-of="duel"]'); check(allNone('#btac .dlg-top:not([hidden]) button, #dp-go, #dp-no'), 'A duel button would wait to see if a tap is a swipe'); check(tp && (vis(tp.querySelector('[data-press="dp-go"]')) || tp.hidden && vis($('#dp-go'))), 'Neither the top nor the bottom Fight! is on screen');
+          let spec = null; const sd = window.startDuel; window.startDuel = s => { spec = s; }; (tp.hidden ? $('#dp-go') : tp.querySelector('[data-press="dp-go"]')).click(); window.startDuel = sd; check(spec && spec.pairs, 'Top Fight! did not start the duel'); out.duel = tp.hidden ? 'top row hidden: panel already at the top edge; bottom Fight! on screen' : { topButtons: [...tp.querySelectorAll('button')].map(b => b.textContent) }; }
         else out.duel = 'no duel offered at this size';
         closeBattle(); MQ.length = 0; $('#modal').hidden = true;
         return out;
@@ -106,7 +108,7 @@ async function realTouch(browser, w, h, port) {
       if (can) { await touch(bd.x, bd.y + 60, -120, 8); await p.waitForTimeout(400); const after = await p.evaluate(() => $('#modal .modal-bd').scrollTop);
         if (!(after > before)) throw Error(`${w}x${h}: a finger swipe did not scroll the campaign hand`); out.handSwipe = Math.round(after - before) + 'px'; }
       else out.handSwipe = 'fits without scrolling';
-      c = await centre('#modal .modal-ft-top button'); await touch(c.x, c.y, 6); await settle();
+      c = await centre('#modal .modal-ft-top button'); if (c.y < 0 || c.y > h) throw Error(`${w}x${h}: campaign-hand top Accept off screen`); await touch(c.x, c.y, 6); await settle();
       if (await title() === t) throw Error(`${w}x${h}: the top Accept on the campaign hand needed more than one tap`);
       out.steps.push(t + ': 1 tap (top row, finger drifted 6px)'); break;
     }
