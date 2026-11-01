@@ -1,0 +1,44 @@
+{
+  "example": [
+    {
+      "target": "inf",
+      "kills": 400,
+      "contact": 0,
+      "end": 0.6923076923076924
+    },
+    {
+      "target": "gun",
+      "kills": 100,
+      "contact": 1.9423076923076925,
+      "end": 2.1923076923076925
+    }
+  ],
+  "clock": {
+    "seconds": 2.7,
+    "advance": 1.25,
+    "sharedAcrossGroups": true,
+    "defendersScreen": true,
+    "exposedRangedVulnerable": true,
+    "deadCannotAdvance": true,
+    "bonusBounded": true
+  },
+  "playback": {
+    "frontEnd": 2.553418591974513,
+    "rearContact": 3.803418591974513,
+    "firstRearDamage": 3.8605000000000125,
+    "gapAtDamage": 5.939722437203557,
+    "archersLeft": 300
+  },
+  "rebellion": {
+    "earlyPower": 292,
+    "latePower": 3141,
+    "earlyTroops": 71,
+    "playerGearAndCountIndependent": true,
+    "lawlessOnlyRoamers": true,
+    "legacyCapped": true,
+    "rewardsAndCaptivePreserved": true,
+    "expiryAndRetakeConsistent": true,
+    "saveVersion": 1
+  },
+  "checks": 31
+}

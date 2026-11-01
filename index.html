@@ -10227,12 +10227,13 @@ const OFFICERS = ['Ōba', 'Shimada', 'Kiba', 'Gonta', 'Rokurō', 'Hanzō', 'Tōt
 function officerName(clan, i) { const off = [...clan].reduce((n, ch) => n + ch.charCodeAt(0), 0); return OFFICERS[(off + i * 7) % OFFICERS.length]; }
 function siteById(id) { return PROVINCES.find(p => p.id === id) || (G.camps || []).find(c => c.id === id); }
 function siteState(P) { return G.prov[P.id] || P; }
+function sitePowerScale(P){return P.type==='clan'?diffScale()*siteBoost(P)*(P.capital&&!P.boss?SIEGE_MUL:1):1;}
 // every site on the map is fought with the army; only hunts and outlaw-held village plots are villager skirmishes
 function siteMode(P) { return P.type === 'land' || P.type === 'hunt' ? 'skirmish' : 'army'; }
 function enemyArmy(site) {
   const P0 = typeof site === 'string' ? siteById(site) : site, st = siteState(P0);
   const clan = P0.clan, skirm = siteMode(P0) === 'skirmish';
-  let P = P0.type === 'dojo' ? Math.max(60, armyPower(playerArmy()) * dojoPrize().mul) : (st.power || 60) * (P0.type === 'clan' ? diffScale() * siteBoost(P0) * (P0.capital && !P0.boss ? SIEGE_MUL : 1) : 1);
+  let P = P0.type === 'dojo' ? Math.max(60, armyPower(playerArmy()) * dojoPrize().mul) : (st.power || 60) * sitePowerScale(P0);
   const A = { side: 1, clan, name: P0.type === 'dojo' ? 'Sparring Partners' : CLANS[clan].name, groups: [], ki: P0.boss ? 2 : 0, strat: 0, mode: skirm ? 'skirmish' : 'army', boss: P0.boss };
   const tier = Math.log2(1 + P / 100);
   const names = ENEMY_NAMES[P0.type === 'dojo' ? 'dojo' : clan] || ENEMY_NAMES.bandit;
@@ -10281,7 +10282,7 @@ function enemyArmy(site) {
   }
   // Lawless Coasts: roaming camps field m times the strength (a field force: m times the men; a band: each fighter
   // tougher and harder-hitting by the square root, as the skirmish scaling above does). Their spoils are unchanged.
-  const raid = P0.type === 'camp' ? boonOf('raid') : 1;
+  const raid = P0.type === 'camp' && !P0.rebel ? boonOf('raid') : 1;
   if (raid !== 1) { const p0 = armyPower(A), grow = m => A.groups.forEach(g => { if (skirm) { const k = Math.sqrt(m); g.troops *= k; g.atkMul *= k; } else g.troops *= m; });
     // officers' own blows don't grow with their men, so correct toward the rolled multiple of the army's power
     grow(raid); for (let i = 0; i < 4; i++) { const r = armyPower(A) / Math.max(1, p0); if (Math.abs(r / raid - 1) < .02) break; grow(raid / r); }
@@ -10436,10 +10437,41 @@ function cohesionOffsets(s,t){
 function totalOf(A) { return A.groups.reduce((n, g) => n + Math.max(0, g.troops), 0); }
 function alive(A, type) { return A.groups.filter(g => g.troops > 0 && (!type || g.type === type)); }
 const PREF = { gun: ['inf', 'cav', 'arc', 'gun'], arc: ['gun', 'arc', 'inf', 'cav'], inf: ['inf', 'gun', 'arc', 'cav'], cav: ['cav', 'inf', 'gun', 'arc'] };
-// Damage cascades: a strike that wipes one formation carries its leftover force into the next one.
+// Infantry shares one post-contact clock. Clearing a line spends fighting time; moving to a new line spends time
+// with no attacks. Logical timings never depend on screen width, sprite density or playback speed.
+const INF_CLOCK={fight:2.7,advance:1.25,retarget:.14,swing:.25,approach:1.15};
+function resolveInfantry(strikes,D,left){
+  const hits=[],order=PREF.inf.flatMap(type=>D.groups.filter(g=>g.type===type&&left.get(g)>0));
+  let at=0,depth=0,prior=null;
+  for(const t of order){
+    if(prior)at+=prior.type===t.type?INF_CLOCK.retarget:INF_CLOCK.advance;
+    const remaining=INF_CLOCK.fight-at;if(remaining<INF_CLOCK.swing)break;
+    let rate=0;const res=battleResistance(t);
+    for(const s of strikes){const g=s.g;
+      let mult=s.tacT(t)*(1-Math.min(.3,t.mods.shadow*.05))*personalDamageGuard(t,'inf')*(g.solo?personalWeaponFactor(g.solo,t,'inf'):1);
+      if(t.type==='gun'||t.type==='arc')mult*=1.35;
+      s.rate=battleDamage(s.dmg,res,mult,fightingStrength(g))/INF_CLOCK.fight;rate+=s.rate;
+    }
+    if(!(rate>0))break;
+    const need=left.get(t),duration=Math.min(remaining,Math.max(INF_CLOCK.swing,need/rate)),kills=Math.min(need,rate*duration);
+    for(const s of strikes)if(s.rate>0)hits.push({from:s.g,to:t,kills:kills*s.rate/rate,depth,retShare:s.retShare,infAt:at,infEnd:at+duration});
+    left.set(t,Math.max(0,need-kills));at+=duration;prior=t;depth++;
+    if(kills<need-1e-8)break; // surviving defenders continue to screen every line behind them
+  }
+  return hits;
+}
+function guardInfantryBreakthrough(hits){
+  const timed=hits.filter(h=>h.infAt!=null),fallen=new Map();
+  for(const g of new Set(timed.map(h=>h.from))){const incoming=hits.filter(h=>h.to===g).sort((a,b)=>(a.infEnd??INF_CLOCK.fight)-(b.infEnd??INF_CLOCK.fight));let loss=0;
+    for(const h of incoming){loss+=h.kills;if(loss>=g.troops-1e-8){fallen.set(g,h.infEnd??INF_CLOCK.fight);break;}}}
+  // The original simultaneous front-line exchange remains; a formation eliminated there cannot march on and
+  // make posthumous attacks against the rear. Independent surviving infantry can still press their own attack.
+  for(let i=hits.length-1;i>=0;i--){const h=hits[i];if(h.infAt!=null&&h.depth>0&&fallen.has(h.from)&&h.infAt>=fallen.get(h.from)-1e-8)hits.splice(i,1);}
+}
+// Ranged/cavalry retain their existing cascade rules. Infantry converts the same stats into timed engagements.
 // Returns hits: {from, to, kills, depth}
 function resolvePhase(phase, A, D, ctx) {
-  const hits = [];
+  const hits = [],strikes=[],timedInf=phase==='inf'&&A.mode==='army'&&D.mode==='army'&&!ctx.siege;
   const atk = alive(A, phase); if (!atk.length) return hits;
   const left = new Map(D.groups.map(g => [g, g.troops]));
   const ranged = phase === 'gun' || phase === 'arc', melee = !ranged;
@@ -10459,6 +10491,7 @@ function resolvePhase(phase, A, D, ctx) {
     if (ctx.siege) { // behind walls: attackers strike at stone and timber, defenders shoot down from the ramparts
       if (A.side === 0) dmg *= (phase === 'gun' ? .72 : phase === 'arc' ? .45 : phase === 'inf' ? .3 : .15) * (1 + (A.siegecraft || 0) * .1);
       else dmg *= phase === 'gun' || phase === 'arc' ? 1.35 : phase === 'inf' ? .7 : .25; }
+    if(timedInf){strikes.push({g,dmg,retShare,tacT,rate:0});return;}
     const order = PREF[phase].flatMap(t => D.groups.filter(x => x.type === t && left.get(x) > 0));
     // stray arrows: the volley is aimed at the back ranks, but some of it always comes down on another formation
     let stray = null;
@@ -10485,6 +10518,7 @@ function resolvePhase(phase, A, D, ctx) {
       const res = battleResistance(t), mult = (1 - Math.min(.6, (t.mods.arrowres || 0) * .1)) * tacT(t) * (1 - Math.min(.3, t.mods.shadow * .05)) * (t.type === 'inf' ? 1 : 1) * tateTake(t, 'arc');
       const kills = Math.min(need, battleDamage(stray.dmg,res,mult,fightingStrength(g)*.15)); if (kills > 0) { hits.push({ from: g, to: t, kills, depth: 1, stray: true }); left.set(t, need - kills); } } }
   });
+  if(timedInf)hits.push(...resolveInfantry(strikes,D,left));
   return hits;
 }
 // a body of men caught by a charge it didn't make still fights back where it stands — at a fraction of its weight
@@ -11712,6 +11746,7 @@ function boutOdds(a, b) { const pa = Math.pow(duelPow(a), 1.8), pb = Math.pow(du
 function duelOdds(a, b) { const p = boutOdds(a, b), q = 1 - p; return p * p * p * (1 + 3 * q + 6 * q * q); } // win 3 exchanges before losing 3
 function finishPhase(p, hits, spec) {
   const has0 = alive(BT.A[0], p).length, has1 = alive(BT.A[1], p).length;
+  if(p==='inf'){normalizeBattleHits(hits);guardInfantryBreakthrough(hits);}
   const ex = heroPhase(p, hits, spec);
   normalizeBattleHits(hits);
   BT.script = buildScript(p, hits, ex);
@@ -12058,7 +12093,11 @@ function heroPhase(p, hits, spec) {
   const ex = { procs: [], bonus: new Map(), duel: null };
   if (BT.A[0].mode === 'skirmish') return ex;
   const room = T => T.troops - hits.reduce((n, h) => n + (h.to === T ? h.kills : 0), 0);
-  const add = (hs, k) => { let left = k, got = 0; for (const h of hs) { if (left <= .05) break; const a = Math.min(Math.max(0, room(h.to)), left); if (a > 0) { h.kills += a; left -= a; got += a; } } return got; };
+  const add = (hs, k) => { let left = k, got = 0;const timed=hs.some(h=>h.infAt!=null),base=timed?hs.reduce((n,h)=>n+h.kills,0):0;
+    for (const h of hs) { if (left <= .05) break;
+      // A finished front line cannot donate unused commander/Chain damage to a rear line's brief contact window.
+      const a = Math.min(Math.max(0, room(h.to)),timed?k*h.kills/Math.max(.000001,base):left);
+      if (a > 0) { h.kills += a; left -= a; got += a; } } return got; };
   if (spec && spec.refused) {
     hits.forEach(h => { if (h.from === spec.ga) h.kills *= .85; });
     const c = gCenter(spec.ga); 
@@ -12123,7 +12162,7 @@ function buildScript(p, hits, ex = { procs: [], bonus: new Map() }) {
         let st = free.get(g); if (!st) { st = { at: T0 + rnd(.05, .2) }; free.set(g, st); }
         const atk = g.spr.filter(s => s.alive && (!planned.has(s) || planned.get(s) > st.at + .5));
         const def = T.spr.filter(s => s.alive && !planned.has(s));
-        h.t0 = st.at + .3; h.t1 = st.at + .6;
+        h.t0=h.infAt!=null?T0+INF_CLOCK.approach+h.infAt:st.at+.3;h.t1=h.infEnd!=null?T0+INF_CLOCK.approach+h.infEnd:st.at+.6;
         if (!atk.length || !def.length) return;
         const mutual = dep === 0 && T.type === p && !siegeHold() && hits.some(o => o.from === T && o.to === g && o.depth === 0);
         const prior = mutual && S.wins.find(w => w.g === T && w.T === g);
@@ -12135,13 +12174,14 @@ function buildScript(p, hits, ex = { procs: [], bonus: new Map() }) {
             queueMove(a, ta, mx - 6, my, 100, arr + 1.25); queueMove(b, ta, mx + 6, my, 100, arr + 1.25);
             a.busyUntil = b.busyUntil = arr + 1.3; a.px = mx - 6; b.px = mx + 6; a.py = b.py = my; S.duel = { a, b, end: arr + 1.25, x: mx, y: my };
             ev(arr, 'duel', { a, b, x: mx, y: my, D: DP }); ev(arr + .42, 'duelhit', { a, b, x: mx, y: my }); ev(arr + .86, 'duelhit', { a, b, x: mx, y: my, big: 1 }); ev(arr + 1.25, 'duelEnd', { D: DP, x: mx, y: my }); } }
-        if (plan && plan.has(g)) { // infantry: the line strikes from where it stands
-          const r = lineClash(h, plan.get(g), S, planned, ev, p); if (!r) return;
+        const engagement=plan&&(plan.get(h)||plan.get(g));
+        if (engagement) { // timed infantry advances to each line only after the previous engagement ends
+          const r = lineClash(h, engagement, S, planned, ev, p); if (!r) return;
           h.t0 = r.t0; h.t1 = r.t1; firstContact = Math.min(firstContact, r.t0);
           if (!mutual) T.spr.forEach(q => { if (q.alive) { q.braceFrom = st.at + .15; q.braceUntil = Math.max(q.braceUntil || 0, r.t0 + .2); } });
           S.wins.push({ g, T, t0: r.t0, t1: r.t1, pairs: r.pairs, mutual, h });
-          if (!dep) { heroLineStrikes(g, plan.get(g), r.vEvs, ev); retStrikes(g, r.vEvs, h.retShare); }
-          ev(r.t0 + .12, 'hit', { h }); return; }
+          if (!dep) { heroLineStrikes(g, engagement, r.vEvs, ev); retStrikes(g, r.vEvs, h.retShare); }
+          ev(r.t0 + Math.min(.12,(r.t1-r.t0)*.2), 'hit', { h }); return; }
         if (prior) pairs = prior.pairs.map(pr => ({ a: pr.d, d: pr.a, tm: pr.tm, ax: pr.ax }));
         else {
           atk.sort((a, b) => a.y - b.y); def.sort((a, b) => a.y - b.y);
@@ -12273,7 +12313,8 @@ function buildScript(p, hits, ex = { procs: [], bonus: new Map() }) {
   // and melee could never reach again, and the battle would not end.
   { const landed = new Set(S.ev.filter(e => e.k === 'hit').map(e => e.h));
     hits.forEach(h => { if (landed.has(h) || !(h.kills > 0)) return; const dies = S.ev.filter(o => o.k === 'die' && o.h && o.h.to === h.to).map(o => o.t);
-      ev(dies.length ? Math.min(...dies) - .01 : T0 + .5, 'hit', { h }); }); }
+      const at=h.infAt!=null?(h.t0??T0+INF_CLOCK.approach+h.infAt)+Math.min(.12,((h.infEnd-h.infAt)||INF_CLOCK.swing)*.2):dies.length?Math.min(...dies)-.01:T0+.5;
+      ev(at, 'hit', { h }); }); }
   S.ev.forEach(e => { if (e.k !== 'hit') return; const first = Math.min(...S.ev.filter(o => o.k === 'die' && o.h === e.h).map(o => o.t)); if (isFinite(first) && first < e.t) e.t = first - .01; });
   tacticalShotScript(S,p);S.dur=Math.max(S.dur,...S.ev.map(e=>e.t-BT.t+.5));
   S.ev.sort((a, b) => a.t - b.t);
@@ -12304,11 +12345,12 @@ function heroStrikes(g, face, vEvs, at, p, ev, lim = at + 2.4) {
 /* ----- infantry fight as lines: each formation advances as one block to striking distance of the enemy line, the
    front ranks trade blows across that gap (pikes keep it long, swords close in), and when a man falls the one behind
    him steps into his place. Nobody breaks ranks to chase. */
-const CLASH = 2.7; // the two lines grind against each other: long enough to watch
+const CLASH = INF_CLOCK.fight; // the two lines grind against each other: long enough to watch
 function reachOf(g) { const ws = g.spr.filter(s => s.alive).map(s => s.wk || (g.kitDist && g.kitDist.w && g.kitDist.w[0] && g.kitDist.w[0][0]) || (KIT.w[g.type] || [])[0]);
   const pole = ws.filter(w => WEAPON_KIND[w] === 'spear' || WEAPON_KIND[w] === 'glaive').length; return pole * 2 >= ws.length ? 24 : 14; }
 function lineEdge(gs, si) { const xs = gs.flatMap(g => g.spr.filter(s => s.alive).map(s => s.x)); return xs.length ? (si === 0 ? Math.max(...xs) : Math.min(...xs)) : null; }
 function infAdvance(hits, T0, duel) {
+  if(hits.some(h=>h.infAt!=null))return timedInfAdvance(hits,T0,duel);
   const plan = new Map(), live = h => !h.icpt && !h.duelBonus && !h.counter && !h.grenade && h.from.type === 'inf';
   const infs = si => alive(BT.A[si], 'inf'), mv = [0, 1].map(si => hits.some(h => live(h) && sideOf(h.from) === si));
   const F = [lineEdge(infs(0), 0), lineEdge(infs(1), 1)], gap = Math.max(22, ...[0, 1].flatMap(si => infs(si).map(reachOf).map(r => r + 6))), tf = [null, null];
@@ -12327,21 +12369,47 @@ function infAdvance(hits, T0, duel) {
       plan.set(g, { arrive, until, front, dx }); }); });
   return plan;
 }
+function timedInfAdvance(hits,T0,duel){
+  const plan=new Map(),timed=hits.filter(h=>h.infAt!=null),infs=[0,1].map(si=>alive(BT.A[si],'inf').filter(g=>timed.some(h=>h.from===g))),
+    F=infs.map((gs,si)=>lineEdge(gs,si)),gap=Math.max(22,...infs.flatMap(gs=>gs.map(g=>reachOf(g)+6))),dx=[0,0],contact=T0+INF_CLOCK.approach;
+  for(let si=0;si<2;si++){
+    if(F[si]==null)continue;const face=sideDir(si),first=timed.find(h=>sideOf(h.from)===si);if(!first)continue;
+    const target=F[1-si]!=null?(F[0]+F[1])/2-face*gap/2:lineEdge([first.to],1-si)-face*reachOf(first.from);
+    dx[si]=face*(target-F[si])>0?target-F[si]:0;
+  }
+  for(let si=0;si<2;si++){const face=sideDir(si);
+    for(const g of infs[si]){const ownFront=lineEdge([g],si)??F[si],band=(g.colStep||BT.colStep)*(reachOf(g)>15?1.5:.8),front=g.spr.filter(q=>q.alive&&face*(q.x-ownFront)>-band);
+      let prior=null,shift=dx[si]+F[si]-ownFront;
+      for(const h of timed.filter(h=>h.from===g).sort((a,b)=>a.infAt-b.infAt)){
+        const at=contact+h.infAt,until=contact+h.infEnd,defShift=h.to.type==='inf'?dx[1-si]+(F[1-si]??0)-(lineEdge([h.to],1-si)??0):0;
+        if(prior){const target=lineEdge([h.to],1-si)+defShift-face*reachOf(g);shift=face*(target-ownFront)>0?target-ownFront:shift;}
+        const depart=prior?contact+prior.h.infEnd:T0+.04,moveTime=Math.max(.05,at-depart-.03),oldShift=prior?prior.shift:0;
+        for(const q of g.spr)if(q.alive){const x=q.x+shift;
+          queueMove(q,depart,x,q.y,Math.max(1,Math.abs(shift-oldShift)/moveTime),front.includes(q)?until:0);}
+        for(const hr of g.heroes||[])if(!hr.out&&!hr.hero.ko&&!(duel&&(hr===duel.a||hr===duel.b))){
+          queueMove(hr,depart,hr.x+shift,hr.y,Math.max(1,Math.abs(shift-oldShift)/moveTime),until);hr.px=hr.x+shift;hr.py=hr.y;}
+        plan.set(h,{arrive:at,until,front,dx:shift,defShift,timed:true});prior={h,shift};
+      }
+    }
+  }
+  return plan;
+}
 // a line strikes from where it stands: pairs, victims (front ranks first) and the man behind stepping up
 function lineClash(h, P, S, planned, ev, p) {
   const g = h.from, T = h.to, tsi = sideOf(T), tface = sideDir(tsi);
-  const front = P.front.filter(q => q.alive && !planned.has(q));
+  const front = P.front.filter(q => q.alive && (!planned.has(q)||planned.get(q)>P.arrive));
   const def = T.spr.filter(q => q.alive && !planned.has(q)); if (!front.length || !def.length) return null;
-  const pairs = front.map(a => { const d = def.slice().sort((x, y) => Math.abs((x._ay ?? x.y) - a._ay) - Math.abs((y._ay ?? y.y) - a._ay))[0]; return { a, d, tm: P.arrive, ax: a._ax }; });
+  const pairs = front.map(a => { const ay=P.timed?a.y:a._ay,d = def.slice().sort((x, y) => Math.abs((x._ay ?? x.y) - ay) - Math.abs((y._ay ?? y.y) - ay))[0]; return { a, d, tm: P.arrive, ax: P.timed?a.x+P.dx:a._ax }; });
   const t0 = P.arrive, t1 = P.until;
   pairs.forEach(pr => { pr.d.hurtFrom = t0; pr.d.hurtUntil = t1; });
   // victims: the men nearest the foe go first
-  const pos = q => tface * (q._ax ?? q.x);
+  const px=q=>P.timed?q.x+P.defShift:(q._ax??q.x),pos = q => tface * px(q);
   const victims = def.slice().sort((a, b) => pos(b) - pos(a) + rnd(-4, 4)).slice(0, h.deaths || 0).sort((a, b) => pos(b) - pos(a));
   const vEvs = [], stepped = new Set();
-  victims.forEach((v, k) => { const td = lerp(t0 + .25, t1 - .15, victims.length > 1 ? k / (victims.length - 1) : .3) + rnd(-.05, .05); planned.set(v, td);
-    const e = { t: td, k: 'die', s: v, h, cred: h.kills / Math.max(1, victims.length) }; S.ev.push(e); vEvs.push(e);
-    const vx = v._ax ?? v.x, vy = v._ay ?? v.y;
+  victims.forEach((v, k) => { const pad=P.timed?Math.min(.16,(t1-t0)*.3):.25,endPad=P.timed?.03:.15,
+    td=clamp(lerp(t0+pad,t1-endPad,victims.length>1?k/(victims.length-1):.3)+rnd(-.02,.02),t0+.03,t1-.02);planned.set(v, td);
+    const e = { t: td, k: 'die', s: v, h, cred: h.kills / Math.max(1, victims.length),impactX:px(v),impactY:v.y }; S.ev.push(e); vEvs.push(e);
+    const vx = px(v), vy = v._ay ?? v.y;
     const nx = T.spr.filter(q => q.alive && q !== v && !victims.includes(q) && !stepped.has(q) && Math.abs((q._ay ?? q.y) - vy) < (T.rowStep || BT.rowStep) * .55 && tface * (vx - (q._ax ?? q.x)) > 2)
       .sort((a, b) => tface * ((b._ax ?? b.x) - (a._ax ?? a.x)))[0];
     if (nx) { stepped.add(nx); queueMove(nx, td + .15, vx, vy, 40, t1); nx._ax = vx; } });
@@ -12354,15 +12422,16 @@ function retStrikes(g, vEvs, share) {
   const qs = (g.heroes || []).filter(hr => !hr.out && !hr.hero.ko).flatMap(hr => (hr.guards || []).filter(q => q.alive && q.retRef && !q.retRef.out)); if (!qs.length) return;
   const face = sideDir(sideOf(g)), pool = vEvs.filter(e => !e.hero && !e.ret).sort((a, b) => a.t - b.t), n = Math.min(pool.length, qs.length * 2, Math.round(vEvs.length * share * 1.5 + Math.random()));
   for (let k = 0; k < n; k++) { const e = pool[Math.floor(k * pool.length / n)], q = qs[k % qs.length], v = e.s; e.ret = q;
-    (q.lunges || (q.lunges = [])).push({ t0: e.t - .32, t1: e.t + .14, x: (v._ax ?? v.x) - face * 9, y: (v._ay ?? v.y) + rnd(-1, 1) }); }
+    (q.lunges || (q.lunges = [])).push({ t0: e.t - .32, t1: e.t + .14, x: (e.impactX ?? v._ax ?? v.x) - face * 9, y: (e.impactY ?? v._ay ?? v.y) + rnd(-1, 1) }); }
 }
 function heroLineStrikes(g, P, vEvs, ev) {
-  const face = sideDir(sideOf(g)), hs = (g.heroes || []).filter(hr => !hr.out && !hr.hero.ko && hr._ax != null); if (!hs.length || !vEvs.length) return;
+  const face = sideDir(sideOf(g)), hs = (g.heroes || []).filter(hr => !hr.out && !hr.hero.ko && (P.timed||hr._ax != null)); if (!hs.length || !vEvs.length) return;
   const pool = vEvs.slice(), cap = Math.ceil(pool.length * .5);
   hs.forEach((hr, hi) => { for (let k = 0; k < 2 && pool.length && cap > vEvs.length - pool.length; k++) {
-    const i = pool.reduce((b, e, j) => Math.abs((e.s._ay ?? e.s.y) - hr._ay) < Math.abs((pool[b].s._ay ?? pool[b].s.y) - hr._ay) ? j : b, 0), e = pool.splice(i, 1)[0];
-    e.t = Math.max(e.t, P.arrive + .2 + hi * .1 + k * .35); e.hero = hr; ev(e.t - .12, 'windup', { hero: hr });
-    queueMove(hr, e.t - .16, hr._ax + face * 5, hr._ay, 90, P.until); queueMove(hr, e.t + .12, hr._ax, hr._ay, 50, P.until); } });
+    const hy=P.timed?hr.y:hr._ay,i = pool.reduce((b, e, j) => Math.abs((e.s._ay ?? e.s.y) - hy) < Math.abs((pool[b].s._ay ?? pool[b].s.y) - hy) ? j : b, 0), e = pool.splice(i, 1)[0];
+      e.t = Math.max(e.t, P.arrive + .2 + hi * .1 + k * .35);if(P.timed)e.t=Math.min(e.t,P.until-.02);e.hero = hr; ev(Math.max(P.arrive,e.t-.12), 'windup', { hero: hr });
+      const x=P.timed?hr.x+P.dx:hr._ax,y=P.timed?hr.y:hr._ay;
+      queueMove(hr, Math.max(P.arrive,e.t-.16), x + face * 5, y, 90, P.until); queueMove(hr, e.t + .12, x, y, 50, P.until); } });
 }
 const BRANDISH = .7, MAX_RUN = 1.15; // a melee charge reaches its foe within this many seconds
 // the ready beat: riders twirl their lances; foot soldiers throw their weapons up and jump (the cheer); when `brace` is
@@ -13349,15 +13418,25 @@ function grantRetake(X, rewards) {
 function rebelTick() {
   if (!G.camps) G.camps = []; const m = monthIdx();
   G.camps.filter(c => c.rebel && c.expires <= m).forEach(c => { const P = PROVINCES.find(p => p.id === c.rebel);
-    if (P && G.prov[P.id].owner === 'kage') { const st = G.prov[P.id]; st.owner = P.clan; if (P.type !== 'clan') st.power = Math.max(st.power || 0, Math.round(c.power * 1.2)); st.retake = rollRetake(P, Math.max(st.power || 0, c.power), c); Sound.play('alert'); announce('Province lost', `The rebels of <b>${esc(P.name)}</b> threw out your governor. It falls back to the ${esc(CLANS[P.clan].name)} — retake it.`, 'scroll'); } });
+    if (P && G.prov[P.id].owner === 'kage') { const st = G.prov[P.id]; st.owner = P.clan;
+      // Camp power is already battle-scaled; clan garrisons store unscaled province power.
+      st.power=Math.max(st.power||P.power||0,Math.ceil(c.power*(P.type==='clan'?1.05:1.2)/sitePowerScale(P)));
+      st.retake = rollRetake(P, Math.max(st.power || 0, c.power), c); Sound.play('alert'); announce('Province lost', `The rebels of <b>${esc(P.name)}</b> threw out your governor. It falls back to the ${esc(CLANS[P.clan].name)} — retake it.`, 'scroll'); } });
   G.camps = G.camps.filter(c => !(c.rebel && c.expires <= m));
   if (G.camps.some(c => c.rebel)) return;
   const owned = PROVINCES.filter(p => p.type !== 'home' && p.type !== 'dojo' && !p.boss && G.prov[p.id].owner === 'kage');
   if (owned.length < 3 || Math.random() > Math.min(.22, .04 + owned.length * .006)) return;
   spawnRebellion(pick(owned));
 }
+// Local unrest follows the province's original strength and existing world growth, never the player's equipment
+// or an earlier uprising's inflated power. Lawless Coasts applies to roaming raiders, not held-province unrest.
+function rebellionBase(P){return Math.max(80,(P.power||80)*sitePowerScale(P));}
+function migrateRebellions(){
+  for(const c of G.camps||[])if(c.rebel&&!c.rebelV){const P=PROVINCES.find(p=>p.id===c.rebel);if(!P)continue;
+    const ceiling=Math.round(rebellionBase(P)*1.05);c.power=Math.max(1,Math.min(c.power||ceiling,ceiling));c.rebelV=1;}
+}
 function spawnRebellion(P) {
-  const m = monthIdx(), pw = Math.max(80, Math.round(armyPower(playerArmy()) * rnd(.25, .5)));
+  const m = monthIdx(), pw = Math.max(60, Math.round(rebellionBase(P) * rnd(.75, 1.05)));
   const maxT=Math.max(1,maxTier()),table=enemyLootTable({type:'camp',clan:'ikki',power:pw},maxT).filter(o=>['weapon','armor','head'].includes(ITEMS[o.k].slot));
   const items=[];for(let i=rint(1,3);i>0&&table.length;i--)items.push(enemyWeightedPick(table));
   // spoils: their purse and arms, a handful of men won over (10–50: a top-up, not a second army), and captured people —
@@ -13369,7 +13448,7 @@ function spawnRebellion(P) {
     if (fighters.length && Math.random() < .7) R.recruits.push(pick(fighters).id);
     if (workers.length && Math.random() < .7) R.recruits.push(pick(workers).id);
     if (!R.recruits.length && free.length) R.recruits.push(pick(free).id); }
-  const c = { id: 'camp' + (G.campUid = (G.campUid || 1) + 1), type: 'camp', clan: 'ikki', mode: 'army', rebel: P.id, name: P.name + ' Uprising', x: P.x + 24, y: P.y - 20, power: pw, owner: 'ikki', reward: R, expires: m + REBEL_MONTHS, near: P.name, links: [] };
+  const c = { id: 'camp' + (G.campUid = (G.campUid || 1) + 1), type: 'camp', clan: 'ikki', mode: 'army', rebel: P.id, rebelV: 1, name: P.name + ' Uprising', x: P.x + 24, y: P.y - 20, power: pw, owner: 'ikki', reward: R, expires: m + REBEL_MONTHS, near: P.name, links: [] };
   G.camps.push(c); Sound.play('alert');
   announce('Rebellion! 一揆', `Peasants in <b>${esc(P.name)}</b> have risen against your rule. Crush them within <b>${REBEL_MONTHS} months</b> or lose the province.<br>${icon('gold')} ~${fmt(R.gold)} · ${R.items.length} pieces of gear · ${R.troops} men to win over${R.recruits.length ? ` · ${R.recruits.length} captive${R.recruits.length > 1 ? 's' : ''} to free` : ''}.`, 'scroll');
   return c;
@@ -13429,6 +13508,7 @@ function afterLoad() {
   PROVINCES.forEach(p => { if (!G.prov[p.id]) G.prov[p.id] = { owner: p.clan, power: p.power || 0 }; });
   if ((G.campV || 1) < 2) { G.campV = 2; G.camps = []; G.campSeeded = 0; }
   if (!G.camps) G.camps = []; if (G.allHands === undefined) G.allHands = true; if (!G.campSeeded) { G.campSeeded = 1; if (!G.camps.length) spawnCamp(true); }
+  migrateRebellions();
   RT.ready = false; RT.agents = []; ensureVillagerAgents(); refreshBoosts(); RT.ready = true;
   updateVillageWeather(0);perfPrewarm();centerOnHall(); updateHUD(); Sound.music('village');
   if (!G.tut) { G.tut = 1; const k = vData('kaede');

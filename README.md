@@ -69,13 +69,15 @@ The whole game is one self-contained HTML file. It has no build step, no server 
   - a free commander or worker.
   Bigger prizes bring stronger sparring partners. A recruits prize matches the old dojo's difficulty; armor or a horse brings partners 20% stronger, and a person 40% stronger. A loss still sends a few recruits home with you, and nobody is ever lost. A new prize is rolled after every spar.
 - **Uprisings:** when rebels throw out your governor, the province falls back to its clan.
-  - Lairs and other non-castle sites come back as strong as the uprising that took them, plus 20%. Castles keep their own strength.
+  - Uprisings follow the province's original strength and normal world growth, rather than the player's army/gear. Lawless Coasts affects roaming raiders only. Lairs and other non-castle sites return at uprising strength +20%; clan garrisons keep at least their old budget or uprising strength +5%, with world growth applied once.
   - Its spoils are rolled afresh: 1–2 pieces of gear, and often a commander or worker (one of the uprising's captives when it held any). The map card shows them.
   - The province's one-time rewards (deeds, unlocks, buildings, its named item and recruit) are not granted again.
 
 ## Battles: formation tactics and ninjutsu
 
 Battles are prepared, not micromanaged. Everything is set in the **Army** screen, and once you press *Attack!* the rounds play out without pausing. *Retreat* and speed stay on the battle bar, and a retreat takes effect at the end of the current round.
+
+Army infantry has a **2.7-second clash window** after approach. Defeating a line uses fighting time; reaching the next line costs **1.25 seconds** with no melee attacks. Surviving infantry protects the ranks behind it. Strong forces can still break through and attack the rear with their remaining time. See [infantry and uprising balance notes](docs/melee-rebellion-balance.md).
 
 **Auto Duel** is a separate saved choice under **Village → Options**, off by default. With it off, a challenge pauses Auto Battle so you can choose champions and Fight or Refuse. Turn it on to let Auto Battle accept and assign champions. Manual battles always show the picker; refusing retains its existing cohesion penalty.
 
