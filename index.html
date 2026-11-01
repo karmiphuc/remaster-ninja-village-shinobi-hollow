@@ -135,6 +135,10 @@ img.px, canvas.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 .card:active { transform: translateY(1px); }
 .card .thumb { height: 62px; display: flex; align-items: flex-end; justify-content: center; background: linear-gradient(180deg, #a8d08a, #78b25a); border: 1px solid rgba(42, 29, 26, .4); overflow: hidden; }
 .card .thumb img { image-rendering: pixelated; max-height: 60px; width: auto; }
+/* army crates at the merchant: a sets-for-your-troops lot, set apart by a doubled vermilion border and a war-camp red ribbon */
+.card.crate-army { border: 3px double #9a2a22; background: linear-gradient(180deg, rgba(255, 232, 214, .7), rgba(255, 255, 255, .42)); box-shadow: 0 2px 0 rgba(42, 29, 26, .35), inset 0 0 0 1px #e0b54a; }
+.card.crate-army .thumb { background: linear-gradient(180deg, #d9b88a, #a8835a); border-color: #9a2a22; }
+.tagx.army { background: #9a2a22; color: #f6e7c8; }
 .card .nm { font-size: 13px; line-height: 1.2; }
 .card .sub { font-size: 11px; color: var(--ink-2); line-height: 1.3; }
 .card .cost { display: flex; align-items: center; gap: 4px; font-size: 12px; font-variant-numeric: tabular-nums; }
@@ -1239,6 +1243,7 @@ const ITEMS = {
   corps_arc: { name: 'Bow Corps',   jp: '弓組', slot: 'perk', cost: 0, tier: 1, corps: 'arc', desc: 'Raise Archer troops and name archer commanders.' },
   corps_gun: { name: 'Gun Corps',   jp: '鉄砲組', slot: 'perk', cost: 0, tier: 2, corps: 'gun', desc: 'Raise Gunner troops and name gunner commanders.' },
   corps_cav: { name: 'Horse Corps', jp: '騎馬組', slot: 'perk', cost: 0, tier: 2, corps: 'cav', desc: 'Raise Cavalry troops and name cavalry commanders.' },
+  guild_charter: { name: 'Guild Charter', jp: '株仲間', slot: 'perk', cost: 0, tier: 1, desc: "Your Ton'ya seal the guild's offers on their own, for the raw goods you choose in the Ton'ya's Auto-accept tab. Needs a Tokumi Don'ya (Lv3 Ton'ya)." },
   horo:     { name: 'Horo-shū Corps',  slot: 'perk', cost: 0, tier: 3, desc: 'Unlocks retainers — elite cloaked bodyguards for your commanders.' },
   siegegun: { name: 'Siege Battery',   slot: 'perk', cost: 0, tier: 5, desc: 'Lets you buy siege engines with their crews for one siege at a time, before the attack: up to 2 Bombards (4,000G, then 5,000G) that batter the gate, and up to 4 Hwacha (2,000–3,500G) that sweep defenders on the ramparts.' },
   hawk:     { name: 'War Hawk',        slot: 'mount', atk: 1, def: 1, mrk: 2, wrk: 4, wild: 1, beast: 'arc', bonus: 0.12, cost: 800, tier: 2, desc: 'Beast: all Archers +12% damage. Found by hunting, loot or merchants; up to 3 stack (diminishing).' },
@@ -1286,6 +1291,7 @@ ITEMS.yakuro.desc='An herbal medicine case. HP +14 and Duel +3; once per battle 
 
 // research projects unlock items for the Armory shop
 const RESEARCH = [
+  { id: 'r_charter', item: 'guild_charter', weeks: 6, gold: 2400, needB: 'tonya3' },
   { id: 'r_carc',   item: 'corps_arc', weeks: 3, gold: 300 },
   { id: 'r_cgun',   item: 'corps_gun', weeks: 5, gold: 900 },
   { id: 'r_ccav',   item: 'corps_cav', weeks: 5, gold: 900 },
@@ -1591,7 +1597,7 @@ const WARES = {
 /* ---------- Renovation: homes go Villa -> Mansion, shops become shophouses with a home upstairs ---------- */
 const HOME_LV = {
   hut:       [{ name: 'Thatched Hut', cap: 2 }, { name: 'Villa', jp: '別邸', cap: 3, work: .1, rest: 1.6, appeal: 2, cost: 420 }, { name: 'Mansion', jp: '屋敷', cap: 4, work: .22, rest: 2.4, appeal: 5, cost: 1100, res: { wood: 12, ore: 4 }, wins: 2 }],
-  tonya:     [{ name: "Ton'ya", deal: 'goods' }, { name: "Ō-don'ya", jp: '大問屋', deal: 'goods · 1 ware', appeal: 2, cost: 1800 }, { name: "Tokumi Don'ya", jp: '十組問屋', deal: 'goods · 1 ware · 2 wares', appeal: 3, cost: 3600, wins: 5 }],
+  tonya:     [{ name: "Ton'ya", deal: '1 at a time · goods' }, { name: "Ō-don'ya", jp: '大問屋', deal: '2 at a time · goods · 1 ware', appeal: 2, cost: 1800 }, { name: "Tokumi Don'ya", jp: '十組問屋', deal: '3 at a time · goods · 1 ware · 2 wares · Guild Charter research', appeal: 3, cost: 3600, wins: 5 }],
   longhouse: [{ name: 'Longhouse', cap: 4 }, { name: 'Grand Longhouse', jp: '大長屋', cap: 6, work: .05, rest: 1.25, hp: 10, appeal: 3, cost: 900 }, { name: 'Manor House', jp: '御殿', cap: 8, work: .12, rest: 1.5, hp: 15, appeal: 7, cost: 2200, res: { wood: 18, ore: 6, silk: 4 }, wins: 2 }],
 };
 const SHOP_LV2 = { name: 'Shophouse', jp: '町屋', cap: 1, sale: .15, appeal: 2, work: .05, rest: 1.3 };
@@ -2674,6 +2680,7 @@ function buildItemIcons() {
   D.steel_yari=D.yari; D.yari=artBambooIcon; D.nanbu=artNanbuIcon; D.nanbando=artNanbanIcon; ['iron_jingasa','clothmask','mensho','gunnerhat'].forEach(k=>D[k]=p=>artHeadItemIcon(p,k));
   PROGRESSION_GEAR.forEach(g=>D[g.id]=p=>artProgressIcon(p,g.id));Object.keys(GUSOKU_STYLES).forEach(k=>D[k]=p=>gusokuIcon(p,k));D.eboshi_cloth=p=>eboshiIcon(p,'eboshi_cloth');D.eboshi_samurai=p=>eboshiIcon(p,'eboshi_samurai');D.shokunin_happi=happiIcon;
   TACTICAL_GEAR.forEach(o=>D[o.id]=p=>tacticalItemIcon(p,o.id));
+  D.guild_charter = p => { p.rect(2, 1, 8, 10, '#6b3a22'); p.rect(3, 2, 6, 8, '#f2efe2'); for (const y of [3, 5]) p.hline(4, y, 4, '#3a2a22'); p.vline(2, 1, 10, '#8a4e2e'); p.rect(6, 7, 3, 3, '#c8452c'); p.set(7, 8, '#f2c9a0'); }; // the guild's ledger, sealed
   Object.keys(ITEMS).forEach(k => { const p = TACTICAL_GEAR.some(o=>o.id===k)||PROGRESSION_GEAR.some(g=>g.id===k)||['yari','steel_yari','nanbu','nanbando','iron_jingasa','clothmask','mensho','gunnerhat'].includes(k) ? new ArtPB(12,12) : new PB(12, 12); (D[k] || EXTRA_ITEM_ICONS[k] || EXTRA_ITEM_ICONS2[k] || EXTRA_ITEM_ICONS3[k] || (q => q.circle(6, 6, 4, '#888')))(p); p.shadeEdges(.82, 1.12); ICONS['it_' + k] = dataURL(p.outlined().canvas(), 4); });
 }
 
@@ -6592,6 +6599,7 @@ function resTier(r) { return Math.max(1, Math.min(5, ITEMS[r.item].tier || 0)); 
 function resState(r) { // → { ok, tier, why:[{t:'pts'|'prev'|'pre'|'unit', ...}] }
   const T = resTier(r), Gt = RES_GATE[T], why = [];
   if (r.need && !unitOpen(r.need)) why.push({ t: 'unit', u: r.need });
+  if (r.needB === 'tonya3' && !G.buildings.some(b => b.id === 'tonya' && bLv(b) >= 3)) why.push({ t: 'bld' });
   if (rankPts() < Gt.pts) why.push({ t: 'pts', n: Gt.pts });
   if (Gt.prev) { const have = RESEARCH.filter(q => G.researched[q.item] && (ITEMS[q.item].tier || 0) >= T - 1 && !q.item.startsWith('rcp_')).length + Object.keys(G.researched).filter(k => ITEMS[k] && (ITEMS[k].tier || 0) >= T - 1 && !RESEARCH.some(q => q.item === k)).length; if (have < Gt.prev) why.push({ t: 'prev', n: Gt.prev, have, tier: T - 1 }); }
   const pre = RES_PRE[r.item]; if (pre && !pre.some(k => G.researched[k])) why.push({ t: 'pre', any: pre });
@@ -8084,8 +8092,9 @@ function doDemolish(b) { G.gold += Math.floor(BUILDINGS[b.id].cost / 2); removeB
 /* ---------- Building info ---------- */
 function openBuildingInfo(b) {
   UI.panel = 'binfo';
-  openSheet(esc(bName(b)) + (bLv(b) > 1 ? ` <small>Lv ${bLv(b)}</small>` : ''), null, body => {
+  openSheet(esc(bName(b)) + (bLv(b) > 1 ? ` <small>Lv ${bLv(b)}</small>` : ''), b.id === 'tonya' ? [['deals', 'Contracts'], ['auto', 'Auto-accept']] : null, (body, tab) => {
     const B = BUILDINGS[b.id];
+    if (b.id === 'tonya' && tab === 'auto') { body.appendChild(tradeAutoPanel(b)); return; }
     const conn = entranceOf(b);
     let html = `<div class="row" style="align-items:flex-start;gap:12px"><div class="card" style="flex:0 0 120px;padding:4px"><div class="thumb" style="height:84px"><img src="${dataURL((WORKSITE_DUTY[b.id]?worksiteInfoSprite(b):buildingSprite(b.id,b.id==='dojo'?dojoTrainingVariant(b):B.forgeType&&forgeFocus(b)==='armor'?4:1,bLv(b))).cv,2)}" alt="" style="max-height:80px"></div></div><div style="flex:1;min-width:0"><p class="note" style="margin-top:0">${esc(B.desc)}</p>`;
     if ((B.cat === 'ind' || B.cat === 'shop' || B.craft || B.forgeType) && !conn) html += `<p class="note" style="color:#a02a1a">Not connected to a road — nobody can reach it.</p>`;
@@ -8409,7 +8418,7 @@ function renderArmory(body, tab) {
       body.appendChild(h(`<div class="rtier${open ? '' : ' lock'}">${open ? '' : '🔒 '}Tier ${'Ⅰ Ⅱ Ⅲ Ⅳ Ⅴ'.split(' ')[T - 1]} ${req}</div>`));
       rs.forEach(r => { const I = ITEMS[r.item], st = stateOf(r), pre = st.why.find(w => w.t === 'pre'), qfull = !!G.research && Q.length >= 3;
         const preHtml = pre ? `<span class="rpre"${tipAttr('Needs one of: ' + pre.any.map(k => ITEMS[k].name).join(' / '))}>🔗${pre.any.map(k => `<img class="px" src="${ICONS['it_' + k]}" alt="">`).join('')}</span>` : '';
-        const row = h(`<div class="rs${st.ok ? '' : ' locked'}"><div class="row" style="align-items:center"${tipAttr(esc(I.desc))}><img class="px rsico" src="${ICONS['it_' + r.item]}" alt=""><div><div class="nm">${esc(I.name)} ${itemStat(r.item)}</div><div class="sub">⏳${r.weeks}w · ${icon('gold')}${resCost(r) < r.gold ? `<s>${fmt(r.gold)}</s> ` : ''}${fmt(resCost(r))} ${preHtml}${st.why.some(w => w.t === 'seal') ? `<span class="rpre"${tipAttr(SEAL_TXT)}>封 Sealed by an omen</span>` : ''}</div></div></div><button class="btn${!st.ok || qfull ? '' : G.research ? ' ghost' : ' gold'}">${!st.ok ? '🔒' : G.research ? 'Queue' : 'Start'}</button></div>`);
+        const row = h(`<div class="rs${st.ok ? '' : ' locked'}"><div class="row" style="align-items:center"${tipAttr(esc(I.desc))}><img class="px rsico" src="${ICONS['it_' + r.item]}" alt=""><div><div class="nm">${esc(I.name)} ${itemStat(r.item)}</div><div class="sub">⏳${r.weeks}w · ${icon('gold')}${resCost(r) < r.gold ? `<s>${fmt(r.gold)}</s> ` : ''}${fmt(resCost(r))} ${preHtml}${st.why.some(w => w.t === 'seal') ? `<span class="rpre"${tipAttr(SEAL_TXT)}>封 Sealed by an omen</span>` : ''}${st.why.some(w => w.t === 'bld') ? `<span class="rpre"${tipAttr("Renovate a Ton'ya to Tokumi Don'ya (Lv3) first")}>🏯 Needs a Lv3 Ton'ya</span>` : ''}</div></div></div><button class="btn${!st.ok || qfull ? '' : G.research ? ' ghost' : ' gold'}">${!st.ok ? '🔒' : G.research ? 'Queue' : 'Start'}</button></div>`);
         const b = row.querySelector('button'); b.disabled = !st.ok || qfull;
         b.onclick = () => { if (!stateOf(r).ok || (G.research && Q.length >= 3)) return; const rc = resCost(r); if (G.gold < rc) { Sound.play('alert'); toast('Not enough gold'); return; } G.gold -= rc; if (rc < r.gold) G.boons.resHalf--;
           if (G.research) { Q.push({ id: r.id, paid: rc }); toast(`Queued <b>${esc(I.name)}</b> · paid`); } else G.research = { id: r.id, left: r.weeks }; Sound.play('research'); refreshSheet(); updateHUD(); };
@@ -8914,18 +8923,34 @@ function merchantKinds(season) {
   return Object.entries(MERCHANTS).filter(([k, M]) => !M.coast || coast).map(([k, M]) => ({ k, w: (M.seasons.includes(season) ? 3 : 1) * (k === 'sakai' && !unitOpen('gun') ? .7 : 1) * (k === 'horse' && !unitOpen('cav') ? 1.2 : 1) }));
 }
 function maxTier() { return Math.max(0, ...Object.keys(G.researched).filter(k => ITEMS[k]).map(k => ITEMS[k].tier || 0)); }
+// a merchant never sells below your research: nothing weaker than the best you have researched for that same slot and
+// troop type (an infantry weapon is measured against infantry weapons). Gear for no troop in particular, against its slot.
+const GEAR_SLOTS = ['weapon', 'armor', 'head', 'special', 'mount'], TROOPS4 = ['inf', 'arc', 'gun', 'cav'];
+function techFloor(slot, t) { let m = 0; for (const k in G.researched) { const I = ITEMS[k]; if (!G.researched[k] || !I || I.slot !== slot) continue; if (t && !itemFits(t, k)) continue; m = Math.max(m, I.tier || 0); } return m; }
+function atTech(k, t) { const I = ITEMS[k], tier = I.tier || 0; if (t) return tier >= techFloor(I.slot, t); const ts = TROOPS4.filter(u => itemFits(u, k)); return ts.length ? ts.some(u => tier >= techFloor(I.slot, u)) : tier >= techFloor(I.slot); }
+function gearTier() { return Math.max(0, ...Object.keys(G.researched).filter(k => G.researched[k] && ITEMS[k] && GEAR_SLOTS.includes(ITEMS[k].slot)).map(k => ITEMS[k].tier || 0)); }
+// 8-12 offers; the further your research has come (best gear tier), the more of them are crates for your army
+const MERCH_MIN = 8, MERCH_MAX = 12, MERCH_CRATE_SHARE = [.25, .25, .25, .35, .5, .6];
 function rollStock(kind) {
-  const M = MERCHANTS[kind], mt = maxTier(), out = [];
-  const pool = M.stock.slice().filter(k => ITEMS[k]);
+  const M = MERCHANTS[kind], mt = maxTier(), out = [], N = rint(MERCH_MIN, MERCH_MAX), share = MERCH_CRATE_SHARE[clamp(gearTier(), 0, 5)];
+  const pool = M.stock.filter(k => ITEMS[k] && atTech(k)), cpool = [], has = (k, t) => cpool.some(c => c.k === k && c.t === t);
+  const addCrates = list => list.filter(k => ITEMS[k]).forEach(k => kitTypesFor(k).filter(t => unitOpen(t) && atTech(k, t) && !has(k, t)).forEach(t => cpool.push({ k, t })));
+  addCrates(M.crates);
+  let nC = Math.round(N * share), nI = N - nC;
+  // when its own lists run short at your tech (late game), a merchant tops up with army crates from the other merchants' lists
+  if (pool.length + cpool.length < N || cpool.length < nC) Object.keys(MERCHANTS).filter(o => o !== kind).forEach(o => addCrates(MERCHANTS[o].crates));
+  if (pool.length < nI) { nC += nI - pool.length; nI = pool.length; }          // too few single pieces: more crates
+  if (cpool.length < nC) { nI = Math.min(pool.length, nI + nC - cpool.length); nC = cpool.length; } // too few crates: more pieces
   const wt = k => (ITEMS[k].rare ? 2.2 : 1) * (ITEMS[k].tier > mt ? 2.5 : G.researched[k] ? .6 : 1.4);
-  const n = Math.min(pool.length, rint(4, 5));
-  for (let i = 0; i < n; i++) { const tot = pool.reduce((s, k) => s + wt(k), 0); let r = Math.random() * tot, k = pool[0]; for (const q of pool) { r -= wt(q); if (r <= 0) { k = q; break; } }
+  for (let i = 0; i < nI; i++) { const tot = pool.reduce((s, k) => s + wt(k), 0); let r = Math.random() * tot, k = pool[0]; for (const q of pool) { r -= wt(q); if (r <= 0) { k = q; break; } }
     pool.splice(pool.indexOf(k), 1); const I = ITEMS[k];
     const mats = I.res ? Object.entries(I.res).reduce((s, [g, q]) => s + q * GOOD_PRICE[g] * 1.6, 0) : 0;
     out.push({ k, price: Math.round((I.cost + mats) * (I.rare ? rnd(1, 1.2) : rnd(1.15, 1.45)) / 10) * 10, left: I.rare ? 1 : rint(1, 2), ahead: !I.rare && I.tier > mt && !G.researched[k] }); }
-  // one or two crates of troop gear
-  const crates = M.crates.filter(k => ITEMS[k] && kitTypesFor(k).some(t => unitOpen(t)) && !out.some(o => o.k === k));
-  for (let i = 0; i < Math.min(crates.length, rint(1, 2)); i++) { const k = crates.splice((Math.random() * crates.length) | 0, 1)[0], ts = kitTypesFor(k).filter(t => unitOpen(t)), t = pick(ts);
+  // army crates: a set for every man of one troop type's share; a new kind of gear first, then the same gear for another troop
+  const cw = c => ((ITEMS[c.k].tier || 0) + 1) * (G.researched[c.k] ? 1 : 1.5);
+  for (let i = 0; i < nC; i++) { const fresh = cpool.filter(c => !out.some(o => (o.crate || o.k) === c.k)), src = fresh.length ? fresh : cpool;
+    const tot = src.reduce((s, c) => s + cw(c), 0); let r = Math.random() * tot, c = src[0]; for (const q of src) { r -= cw(q); if (r <= 0) { c = q; break; } }
+    cpool.splice(cpool.indexOf(c), 1); const { k, t } = c;
     const nn = clamp(Math.round((G.troops[t] || 40) * rnd(.25, .5) / 5) * 5, 15, 120);
     out.push({ crate: k, t, n: nn, price: Math.round(nn * setCost(k) * rnd(1.4, 1.9) / 10) * 10, left: 1, ahead: !G.researched[k] }); }
   return out;
@@ -8994,9 +9019,9 @@ function openMerchant(b) {
     const g = h('<div class="grid"></div>');
     C.stock.forEach((o, i) => {
       const k = o.crate || o.k, I = ITEMS[k], ok = o.left > 0 && G.gold >= o.price;
-      const tag = o.ahead ? '<span class="tagx">Beyond your research</span>' : I.rare ? '<span class="tagx rare">Rare</span>' : '';
+      const tag = (o.crate ? '<span class="tagx army">軍 Army crate</span> ' : '') + (o.ahead ? '<span class="tagx">Beyond your research</span>' : I.rare ? '<span class="tagx rare">Rare</span>' : '');
       const what = o.crate ? `<div class="sub"><b>Crate · ${o.n} sets</b> for your ${UNITS[o.t].name} (${kitStatText(k, o.t)} each)</div>` : `<div class="sub">${itemStat(k)}${I.for ? ' · ' + I.for.map(u => UNITS[u].short).join('/') : ''} · ${SLOT_NAME[I.slot] || ''}</div>`;
-      const c = h(`<div class="card${ok ? '' : ' poor'}${o.left ? '' : ' soldout'}"><div class="thumb it"><img src="${ICONS['it_' + k]}" alt="">${o.crate ? '<span class="crate">×' + o.n + '</span>' : ''}</div><div class="nm">${esc(I.name)} ${tag}</div><div class="sub">${esc(I.desc)}</div>${what}<div class="cost">${icon('gold')}${fmt(o.price)}${C.haggled[i] === 'won' ? ' <span class="muted">haggled</span>' : ''}</div><div class="row" style="gap:4px"><button class="btn gold"${o.left ? '' : ' disabled'}>${o.left ? 'Buy' : 'Sold'}</button><button class="btn ghost"${o.left && !C.haggled[i] ? '' : ' disabled'}>Haggle</button></div></div>`);
+      const c = h(`<div class="card${ok ? '' : ' poor'}${o.left ? '' : ' soldout'}${o.crate ? ' crate-army' : ''}"><div class="thumb it"><img src="${ICONS['it_' + k]}" alt="">${o.crate ? '<span class="crate">×' + o.n + '</span>' : ''}</div><div class="nm">${esc(I.name)} ${tag}</div><div class="sub">${esc(I.desc)}</div>${what}<div class="cost">${icon('gold')}${fmt(o.price)}${C.haggled[i] === 'won' ? ' <span class="muted">haggled</span>' : ''}</div><div class="row" style="gap:4px"><button class="btn gold"${o.left ? '' : ' disabled'}>${o.left ? 'Buy' : 'Sold'}</button><button class="btn ghost"${o.left && !C.haggled[i] ? '' : ' disabled'}>Haggle</button></div></div>`);
       const [buy, hag] = c.querySelectorAll('button');
       buy.onclick = () => { if (!o.left || !live()) return; if (G.gold < o.price) { Sound.play('alert'); toast('Not enough gold.'); return; }
         G.gold -= o.price; o.left--;
@@ -9411,8 +9436,12 @@ function tradeState() {
 }
 function tradeHouses() { return G.buildings.filter(b => b.id === 'tonya'); }
 function tradeHouse() { return tradeHouses()[0]; }
-function houseC(b) { return b ? tradeState().cs.find(c => c.house === b.uid) || null : null; }
-function freeHouses() { const T = tradeState(); return tradeHouses().filter(b => !T.cs.some(c => c.house === b.uid)); }
+// each house runs as many contracts at once as its level: Ton'ya 1, Ō-don'ya 2, Tokumi Don'ya 3
+function houseCap(b) { return clamp(bLv(b), 1, 3); }
+function houseCs(b) { return b ? tradeState().cs.filter(c => c.house === b.uid) : []; }
+function houseC(b) { return houseCs(b)[0] || null; }
+function freeHouses() { return tradeHouses().filter(b => houseCs(b).length < houseCap(b)); }
+function freeSlots() { return tradeHouses().reduce((n, b) => n + Math.max(0, houseCap(b) - houseCs(b).length), 0); }
 function tradeLv() { return Math.max(0, ...freeHouses().map(bLv)); }
 function tradeCs() { return tradeState().cs; }
 const tIsWare = k => !!WARES[k], tHave = k => Math.floor((tIsWare(k) ? G.wares[k] : G.stock[k]) || 0);
@@ -9443,25 +9472,34 @@ function tradeOffer(kind) {
 }
 function tradeOffers() {
   const lv = Math.max(0, ...tradeHouses().map(bLv)); if (!lv) return [];
-  const kinds = [1, 4, 2, 3].filter(k => (k === 4 ? 1 : k) <= lv), n = Math.min(5, 1 + ((Math.random() * 3) | 0) + Math.max(0, freeHouses().length - 1)), out = [];
+  const kinds = [1, 4, 2, 3].filter(k => (k === 4 ? 1 : k) <= lv), n = Math.min(5, 1 + ((Math.random() * 3) | 0) + Math.max(0, freeSlots() - 1)), out = [];
   for (let i = 0; i < n * 3 && out.length < n; i++) { const o = tradeOffer(pick(kinds)); if (o && !out.some(x => x.items.map(t => t.k).join() === o.items.map(t => t.k).join())) out.push(o); }
   return out.sort((p, q) => p.lv - q.lv || p.items.length - q.items.length);
 }
-function tradeMonth() { const T = tradeState(); if (!freeHouses().length || T.cd > 0) return; T.offers = tradeOffers(); }
+function tradeMonth() { const T = tradeState(); if (!freeHouses().length || T.cd > 0) return; T.offers = tradeOffers(); tradeAutoRun(); }
 // which free house takes an offer: the one asked for if it can, else the humblest that can
 function houseFor(o, prefer) { const fs = freeHouses().filter(b => bLv(b) >= o.lv); return fs.includes(prefer) ? prefer : fs.sort((a, b) => bLv(a) - bLv(b))[0] || null; }
-function tradeAccept(i, prefer) {
-  const T = tradeState(), o = T.offers[i]; if (!o || T.cd > 0) return;
-  const b = houseFor(o, prefer); if (!b) { Sound.play('alert'); toast(o.lv > 1 ? `Needs a free Lv${o.lv} Ton'ya.` : "Every Ton'ya is busy with a contract."); return; }
+function tradeAccept(i, prefer, auto) {
+  const T = tradeState(), o = T.offers[i]; if (!o || T.cd > 0) return false;
+  const b = houseFor(o, prefer); if (!b) { if (!auto) { Sound.play('alert'); toast(o.lv > 1 ? `Needs a Lv${o.lv} Ton'ya with a free slot.` : "Every Ton'ya is running all the contracts it can."); } return false; }
   T.cs.push(Object.assign({ left: o.weeks, grace: 1, got: 0, house: b.uid }, o)); T.offers.splice(i, 1); Sound.play('combo');
-  toast(`${o.items.map(it => `${tIcon(it.k)}×${it.qty}`).join(' + ')} a week × ${o.weeks} — <b>contract sealed</b>`);
-  rushOrders();
+  toast(`${o.items.map(it => `${tIcon(it.k)}×${it.qty}`).join(' + ')} a week × ${o.weeks} — <b>contract ${auto ? 'auto-sealed' : 'sealed'}</b>${auto ? ` at the ${esc(bName(b))}` : ''}`);
+  rushOrders(); return true;
+}
+// Guild Charter: seal, unasked, every offer made only of raw goods ticked in the Auto-accept tab, while a slot is free
+function tradeAutoOn() { return !!G.researched.guild_charter; }
+function tradeAutoList() { const T = tradeState(); if (!T.auto) T.auto = {}; return T.auto; }
+function tradeAutoFits(o) { const A = tradeAutoList(); return o.items.every(it => !tIsWare(it.k) && A[it.k]); }
+function tradeAutoRun() {
+  const T = tradeState(); if (!tradeAutoOn() || T.cd > 0) return 0; let n = 0;
+  for (let i = 0; i < T.offers.length;) { if (tradeAutoFits(T.offers[i]) && tradeAccept(i, null, true)) n++; else i++; }
+  return n;
 }
 function tradeBreak(T, c, msg) { T.cs = T.cs.filter(x => x !== c); T.cd = TRADE_CD; T.offers = []; T.broke = (T.broke || 0) + 1; Sound.play('alert');
   announce('Contract broken', msg + ` The guild will sign no new contracts for a month${T.cs.length ? ' — your other contracts carry on' : ''}.`, 'scroll'); }
 function tradeWeek() {
   const T = tradeState();
-  if (T.cd > 0 && --T.cd === 0 && freeHouses().length) { T.offers = tradeOffers(); if (T.offers.length) toast(`${icon('scroll')} The wholesalers will deal with you again.`); }
+  if (T.cd > 0 && --T.cd === 0 && freeHouses().length) { T.offers = tradeOffers(); if (T.offers.length) toast(`${icon('scroll')} The wholesalers will deal with you again.`); tradeAutoRun(); }
   T.cs.slice().forEach(c => {
     const b = G.buildings.find(x => x.uid === c.house);
     if (!b) { tradeBreak(T, c, "A Ton'ya holding a contract is gone."); return; }
@@ -9471,7 +9509,7 @@ function tradeWeek() {
     c.items.forEach(it => { destroyGoods(economyCentral(it.k),it.k,it.qty,'contract'); });
     G.gold += c.pay; G.stats.sales += c.pay; RT.monthSales += c.pay; c.got += c.pay; c.left--;
     floater(b.x * 16 + 16, b.y * 16 - 2, '+' + c.pay, 'gold', '#f2d27a'); Sound.play('coin', { vol: .7 });
-    if (c.left <= 0) { T.cs = T.cs.filter(x => x !== c); T.done = (T.done || 0) + 1; if (!T.cd) T.offers = tradeOffers();
+    if (c.left <= 0) { T.cs = T.cs.filter(x => x !== c); T.done = (T.done || 0) + 1; if (!T.cd) { T.offers = tradeOffers(); tradeAutoRun(); }
       announce('Contract fulfilled', `${c.items.map(it => tIcon(it.k)).join('')} Every lot delivered — <b>${fmt(c.got)}G</b> earned. New offers wait at the Ton'ya.`, 'gold'); }
   });
   rushOrders();
@@ -9501,24 +9539,38 @@ function sitesOrder(site, k, craft) {
 }
 /* ---------- the Ton'ya's counter ---------- */
 function tradePanel(b) {
-  const T = tradeState(), c = houseC(b), el = h('<div class="trade"></div>');
+  const T = tradeState(), mine = houseCs(b), cap = houseCap(b), c = mine.length < cap ? null : mine[0], el = h('<div class="trade"></div>');
   if (!T.cd && !T.offers.length && freeHouses().length) T.offers = tradeOffers(); // a new house opens its books at once
   const lvTag = o => `<span class="tl">${TRADE_TAG[o.kind || (o.lv === 1 ? (o.items.length > 1 ? 4 : 1) : o.lv)]}</span>`;
   const goods = (o, live) => `<span class="tw">${lvTag(o)}${o.items.map(it => `${tIcon(it.k)}<b>×${it.qty}</b>${live ? `<small class="${tHave(it.k) >= it.qty ? 'ok' : 'bad'}">${tHave(it.k)}</small>` : ''}`).join('')}</span>`;
   const row = (o, extra, live) => `${goods(o, live)}<span>${live ? `${o.left}/${o.weeks}` : o.weeks}wk</span><span class="tp">${icon('gold')}${fmt(o.pay)}/wk</span>${extra || ''}`;
-  if (c) { const ok = c.items.every(it => tHave(it.k) >= it.qty);
-    el.appendChild(h(`<div class="sec">This house's contract ${ib('Collected and paid every week. The lots are held back from shops and artisans, and a free hand is put on any order running short. Miss one: this contract breaks and the guild signs no new contracts for a month (the others carry on).')}</div>`));
-    el.appendChild(h(`<div class="tc on">${row(c, `<span class="${ok ? 'ok' : 'bad'}">${ok ? '✓' : '⚠'}</span>`, true)}</div>`));
-    if (c.grace) el.appendChild(h(`<p class="note">First collection next week.</p>`)); }
-  const others = T.cs.filter(x => x !== c);
+  el.appendChild(h(`<div class="sec">This house's contracts <b>${mine.length}/${cap}</b> ${ib(`A Ton'ya runs 1 contract at a time, an Ō-don'ya 2, a Tokumi Don'ya 3. Each is collected and paid every week; the lots are held back from shops and artisans, and a free hand is put on any order running short. Miss one: that contract breaks and the guild signs no new contracts for a month (the others carry on).`)}</div>`));
+  mine.forEach(x => { const ok = x.items.every(it => tHave(it.k) >= it.qty);
+    el.appendChild(h(`<div class="tc on">${row(x, `<span class="${ok ? 'ok' : 'bad'}">${ok ? '✓' : '⚠'}</span>`, true)}</div>`));
+    if (x.grace) el.appendChild(h(`<p class="note">First collection next week.</p>`)); });
+  if (!mine.length) el.appendChild(h(`<p class="note">No contract yet${cap > 1 ? ` · room for ${cap}` : ''}.</p>`));
+  const others = T.cs.filter(x => x.house !== b.uid);
   if (others.length) el.appendChild(h(`<p class="note">Other houses: ${others.map(o => `${o.items.map(it => tIcon(it.k)).join('')} ${o.left}wk`).join(' · ')}</p>`));
   if (T.cd > 0) el.appendChild(h(`<p class="note">❄ The guild signs no new contracts · ${T.cd}wk${T.cs.length ? ' · running contracts carry on' : ''}</p>`));
-  else if (!T.offers.length) el.appendChild(h(`<p class="note">${ib('Offers come monthly, for goods your fields grow and wares your workshops can make.')} ${freeHouses().length ? 'No offers yet.' : 'Every house is busy — build another Ton\'ya to run more contracts.'}</p>`));
-  else { el.appendChild(h(`<div class="sec">Offers ${ib('品 one raw good in bulk · 双 two raw goods · 壱 one ware · 弐 two wares (best margin). Each Ton\'ya runs one contract; renovate to unlock 壱 and 弐.')}</div>`));
+  else if (!T.offers.length) el.appendChild(h(`<p class="note">${ib('Offers come monthly, for goods your fields grow and wares your workshops can make.')} ${freeHouses().length ? 'No offers yet.' : 'Every house is running all the contracts it can — renovate a Ton\'ya (2 at Lv2, 3 at Lv3) or build another.'}</p>`));
+  else { el.appendChild(h(`<div class="sec">Offers ${ib('品 one raw good in bulk · 双 two raw goods · 壱 one ware · 弐 two wares (best margin). A Ton\'ya runs 1 contract at a time, an Ō-don\'ya 2, a Tokumi Don\'ya 3; renovate to unlock 壱 and 弐.')}</div>`));
     T.offers.forEach((o, i) => { const hb = houseFor(o, c ? null : b), lbl = hb ? (hb === b ? 'Seal' : 'Seal ↗') : o.lv > 1 ? `Lv${o.lv}` : 'Busy';
       const r = h(`<div class="tc">${row(o, `<button class="btn gold${hb ? '' : ' dim'}"${hb && hb !== b ? tipAttr('Signed at another free house') : ''}>${lbl}</button>`)}</div>`); r.querySelector('button').onclick = () => { tradeAccept(i, c ? null : b); refreshSheet(); }; el.appendChild(r); }); }
   if (T.done || T.broke) el.appendChild(h(`<p class="note">✓ ${T.done || 0} · ✕ ${T.broke || 0}</p>`));
   return el;
+}
+// the second tab: which raw goods the Guild Charter may seal contracts for on its own
+function tradeAutoPanel(b) {
+  const on = tradeAutoOn(), A = tradeAutoList(), mk = Object.keys(GOODS), all = mk.every(g => A[g]);
+  const lv3 = G.buildings.some(x => x.id === 'tonya' && bLv(x) >= 3);
+  const box = h(`<div class="trade"><div class="sec">Auto-accept ${ib("With the Guild Charter researched, any Ton'ya with a free slot seals, unasked, every offer made only of the raw goods ticked here. Offers with crafted wares are always left for you. Broken contracts still freeze new ones for a month.")}</div>
+    ${on ? '' : `<p class="note" style="color:#a02a1a">${lv3 ? 'Research the <b>Guild Charter</b> to switch this on.' : "Renovate a Ton'ya to <b>Tokumi Don'ya</b> (Lv3), then research the <b>Guild Charter</b> to switch this on."}</p>`}
+    <div class="row wrap"><button class="btn ${all ? 'ghost' : 'gold'}" data-auto-all${on ? '' : ' disabled'}>${all ? 'Accept none automatically' : 'Accept all raw goods automatically'}</button></div>
+    <div class="row wrap" style="margin-top:8px">${mk.map(g => `<button class="btn ${A[g] ? 'gold' : 'ghost'}" data-auto="${g}" aria-pressed="${A[g] ? 'true' : 'false'}"${on ? '' : ' disabled'}>${icon('g_' + g)} ${esc(GOODS[g].name)} ${A[g] ? '✓' : ''}</button>`).join('')}</div>
+    <p class="note" style="margin-top:6px">${on ? (mk.some(g => A[g]) ? `Auto-sealing: ${mk.filter(g => A[g]).map(g => icon('g_' + g)).join('')}` : 'Nothing ticked — every offer waits for you.') : ''}</p></div>`);
+  if (on) { box.querySelector('[data-auto-all]').onclick = () => { mk.forEach(g => A[g] = !all); Sound.play('tap'); tradeAutoRun(); refreshSheet(); };
+    box.querySelectorAll('[data-auto]').forEach(bt => bt.onclick = () => { const g = bt.dataset.auto; A[g] = !A[g]; Sound.play('tap'); tradeAutoRun(); refreshSheet(); }); }
+  return box;
 }
 
 /* ================= CHRONICLE: the year in review, and bonds between villagers =================

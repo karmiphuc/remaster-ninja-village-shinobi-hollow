@@ -1,0 +1,142 @@
+{
+  "tonya": {
+    "cap": {
+      "Lv1": 1,
+      "Lv2": 2,
+      "Lv3": 3
+    },
+    "weekly": {
+      "paidAtOneHouse": 600,
+      "afterTeaRanShort": [
+        "rice",
+        "veg"
+      ],
+      "freezeWeeks": 4
+    },
+    "offersMakeable": true,
+    "charter": {
+      "research": "r_charter",
+      "weeks": 6,
+      "gold": 2400,
+      "blockedBelowLv3": true
+    },
+    "auto": {
+      "beforeResearch": 0,
+      "riceTicked": 2,
+      "vegTickedToo": 1,
+      "frozen": 0,
+      "wareOffers": "never"
+    },
+    "saveLoad": true
+  },
+  "ui": {
+    "tabs": [
+      "Contracts",
+      "Auto-accept"
+    ],
+    "tickTea": {
+      "tea": true,
+      "pressed": "true"
+    },
+    "acceptAll": true,
+    "contractsTab": "1/3"
+  },
+  "merchants": {
+    "stages": {
+      "early": {
+        "gearTier": 0,
+        "perMerchant": {
+          "smith": {
+            "min": 8,
+            "max": 12
+          },
+          "sakai": {
+            "min": 8,
+            "max": 12
+          },
+          "nanban": {
+            "min": 8,
+            "max": 12
+          },
+          "horse": {
+            "min": 8,
+            "max": 12
+          },
+          "peddler": {
+            "min": 8,
+            "max": 12
+          }
+        },
+        "crateShare": 0.27,
+        "min": 8,
+        "max": 12
+      },
+      "mid": {
+        "gearTier": 2,
+        "perMerchant": {
+          "smith": {
+            "min": 8,
+            "max": 12
+          },
+          "sakai": {
+            "min": 8,
+            "max": 12
+          },
+          "nanban": {
+            "min": 8,
+            "max": 12
+          },
+          "horse": {
+            "min": 8,
+            "max": 12
+          },
+          "peddler": {
+            "min": 8,
+            "max": 12
+          }
+        },
+        "crateShare": 0.28,
+        "min": 8,
+        "max": 12
+      },
+      "late": {
+        "gearTier": 4,
+        "perMerchant": {
+          "smith": {
+            "min": 8,
+            "max": 12
+          },
+          "sakai": {
+            "min": 8,
+            "max": 12
+          },
+          "nanban": {
+            "min": 8,
+            "max": 12
+          },
+          "horse": {
+            "min": 8,
+            "max": 12
+          },
+          "peddler": {
+            "min": 8,
+            "max": 12
+          }
+        },
+        "crateShare": 0.56,
+        "min": 8,
+        "max": 12
+      }
+    },
+    "floorExample": "tanegashima (t1) below ozutsu (t2) for gunners"
+  },
+  "stall": {
+    "offers": 10,
+    "crates": 3,
+    "armyCards": 3,
+    "armyBorder": "double 3px rgb(154, 42, 34)",
+    "plainBorder": "solid 2px rgb(59, 74, 122)",
+    "ribbon": true
+  },
+  "errors": []
+}
