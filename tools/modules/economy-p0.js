@@ -1,7 +1,8 @@
-/* Runtime mirror of the standalone game. Navigation and agent lifecycle changes
-   in index.html are also required; historical builder scripts are not a current build system. */
+/* Runtime mirror of the standalone game. Navigation, shared storage-capacity
+   helpers and agent lifecycle code in index.html are also required;
+   historical builder scripts are not a current build system. */
 function wantsGood(w,g) {
- if((w.inbox&&w.inbox[g]||0)>=INBOX_CAP)return false;
+ if(inboxRoom(w,g)<=0)return false;
  for(const k in WARES)if(wareKnown(k)&&WARES[k].from[g]&&craftNeed(w,k)>0)return true;
  return false;
 }
@@ -204,7 +205,7 @@ function economyAvailable(p,good,except){
 function spendableGood(good){return economyAvailable(economyCentral(good),good);}
 function economyRoom(p,good,except){
  if(p.kind==='shelf')return shopRoom(p.owner,good,except&&except.agent);
- if(p.kind==='inbox')return Math.max(0,INBOX_CAP+4-economyCount(p,good)-economyReserved(p,good,true,except));
+ if(p.kind==='inbox'){let all=0;for(const g in GOODS)all+=economyReserved(p,g,true,except);return inboxRoom(p.owner,good,all,economyReserved(p,good,true,except));}
  return Infinity;
 }
 function economyClaim(a,from,to,good,n,source,target){
@@ -263,7 +264,7 @@ function economyFlush(b){
 function economyJobs(){
  const E=economyState();E.jobCount=0;
  for(let i=0;i<E.producers.length;i++){const b=E.producers[i],g=BUILDINGS[b.id].makes,p=economyPoint(b,'pile');economyFlush(b);
-  if(economyAvailable(p,g)<2)continue;const target=economyOutputTarget(g,b);if(target)economyJob(p,economyDestination(target,g),g,PORTER_LOAD,economyFull(b)?18:(b.pile||0)>=PILE_CAP*.6?12:5,b,target);}
+  if(economyAvailable(p,g)<2)continue;const target=economyOutputTarget(g,b);if(target)economyJob(p,economyDestination(target,g),g,PORTER_LOAD,economyFull(b)?18:(b.pile||0)>=FIELD_HAUL?12:5,b,target);}
  for(let i=0;i<E.crafts.length;i++){const b=E.crafts[i];economyFlush(b);
   for(const g in b.outs||{}){const p=economyPoint(b,'outs');if(economyAvailable(p,g)<1)continue;const target=economyOutputTarget(g,b);
    if(target)economyJob(p,economyDestination(target,g),g,20,economyFull(b)?13:9,b,target);}
@@ -562,7 +563,7 @@ function workerPlan(a,v,J){
  if(B.makes){
   economyFlush(J);
   const pile=economyPoint(J,'pile'),avail=economyAvailable(pile,B.makes),reach=porterReach(J),full=economyFull(J);
-  const haulAt=reach?Math.round(PILE_CAP*.6):Math.round(HAUL_AT*(1+vStats(v).carry));
+  const haulAt=reach?FIELD_HAUL:Math.round(HAUL_AT*(1+vStats(v).carry));
   if(avail>=1&&(avail>=haulAt||full)){
    const to=dropFor(B.makes,J,a);if(to){const plan=economyStart(a,v,pile,economyDestination(to,B.makes),B.makes,Math.max(capacity,avail),J,to);if(plan)return plan;}
   }
@@ -573,7 +574,7 @@ function workerPlan(a,v,J){
   J.inbox=J.inbox||{};J.outs=J.outs||{};
   const c=chooseCraft(J),outs=economyPoint(J,'outs'),reach=porterReach(J),full=outTotal(J)>=OUT_CAP;
   let ready=null,readyTo=null,n=0;for(const g in J.outs){const k=economyAvailable(outs,g);if(k>n){const to=dropFor(g,J,a);if(to&&to!==J){ready=g;readyTo=to;n=k;}}}
-  if(ready&&(full||(reach?n>=Math.ceil(OUT_CAP*.5):n>=3||!c||c.mode!=='craft'))){
+  if(ready&&(full||(reach?n>=WS_HAUL:n>=3||!c||c.mode!=='craft'))){
    const plan=economyStart(a,v,outs,economyDestination(readyTo,ready),ready,capacity,J,readyTo);if(plan)return plan;}
   if(full&&Object.keys(J.outs).some(g=>economyReserved(outs,g,false)>0))return economyWait(a,J);
   if(c&&c.mode==='craft'&&!full&&craftReserve(a,v,J,c.w,c.n)){a.mission='craft';return J;}

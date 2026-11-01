@@ -1,3 +1,4 @@
+// Unattended battle simulations explicitly opt in to automatic duel acceptance.
 // Wooden Tate (盾) for Gunner formations: the Yamashiro unlock (and old saves that hold it), buying and replenishing
 // with gold and timber, coverage capped at 100% (player) and 50% (AI), no Tate for AI castle garrisons, the combat
 // effects (−20% arrow casualties, −8% Gunner attack at full coverage, nothing else), the cumulative death ledger
@@ -19,7 +20,7 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
       const check = (x, m) => { if (!x) throw Error(m); };
       const near = (a, b, tol, m) => check(Math.abs(a - b) <= tol, `${m}: ${a.toFixed ? a.toFixed(4) : a} vs ${b}`);
       const clearModals = () => { MQ.length = 0; $('#modal').hidden = true; };
-      const fresh = () => { newGame(); G.tut = 1; G.speed = 0; G.boons.pending = null; G.roll.v = false; $('#title').hidden = true; resizeView(); afterLoad(); clearModals(); };
+      const fresh = () => { newGame(); G.autoDuel = true; G.tut = 1; G.speed = 0; G.boons.pending = null; G.roll.v = false; $('#title').hidden = true; resizeView(); afterLoad(); clearModals(); };
       const arm = (troops) => { ['arc', 'gun', 'cav'].forEach(t => { G.researched['corps_' + t] = 1; G.units[t] = true; }); G.troops = Object.assign({ inf: 0, arc: 0, gun: 0, cav: 0 }, troops); };
       const endAs = res => { BT.A[res === 'win' ? 1 : 0].groups.forEach(g => g.troops = 0); check(finishBattle(res) !== false, 'Battle did not end'); };
       // a seeded Math.random, so two resolutions differ only by what is being measured

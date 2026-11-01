@@ -1,3 +1,4 @@
+// Unattended battle simulations explicitly opt in to automatic duel acceptance.
 // Castle sieges: a standing gate shelters its defenders (attacking infantry and cavalry strike only the gate, the
 // defenders' infantry and cavalry never attack, archers and gunners still trade volleys, duels still happen), the
 // breach restarts the fight cleanly at Round 1 with survivors, casualties, commanders and Ki carried over; and siege
@@ -20,7 +21,7 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
       const clearModals = () => { MQ.length = 0; $('#modal').hidden = true; };
       const seeded = s => () => (s = (s * 16807) % 2147483647) / 2147483647;
       const castle = PROVINCES.find(q => q.id === 'yamashiro'), out = {};
-      const fresh = () => { newGame(); G.tut = 1; G.speed = 0; G.boons.pending = null; G.roll.v = false; $('#title').hidden = true; resizeView(); afterLoad(); clearModals();
+      const fresh = () => { newGame(); G.autoDuel = true; G.tut = 1; G.speed = 0; G.boons.pending = null; G.roll.v = false; $('#title').hidden = true; resizeView(); afterLoad(); clearModals();
         ['arc', 'gun', 'cav'].forEach(t => { G.researched['corps_' + t] = 1; G.units[t] = true; });
         G.villagers.forEach((v, i) => { v.role = ['inf', 'inf', 'cav', 'gun', 'arc'][i] || 'work'; delete v.hp; }); G.allHands = false;
         G.troops = { inf: 900, arc: 400, gun: 500, cav: 300 }; G.ki = 0; G.gold = 50000; };
