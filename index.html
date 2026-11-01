@@ -155,6 +155,9 @@ img.px, canvas.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 .vcard { display: flex; gap: 8px; align-items: center; padding: 6px; background: rgba(255, 255, 255, .45); border: 2px solid var(--ink); text-align: left; color: var(--ink); min-width: 0; }
 .vcard img { width: 48px; height: 48px; image-rendering: pixelated; background: #c8d8b0; border: 1px solid rgba(0, 0, 0, .3); flex: 0 0 auto; }
 .vcard .nm { font-size: 14px; }
+.resident { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.resident > .vcard { flex: 1; width: 100%; }
+.resident > .btn { width: 100%; font-size: 12px; }
 .gstrip { display: flex; gap: 2px; margin-top: 3px; }
 .gstrip img, .gstrip i { width: 18px; height: 18px; flex: 0 0 18px; image-rendering: pixelated; background: rgba(42, 29, 26, .12); border: 1px solid rgba(42, 29, 26, .28); }
 .gstrip i { border-style: dashed; background: none; opacity: .5; }
@@ -1589,13 +1592,13 @@ const WARES = {
   blade:   { name: 'Forged Blade', jp: '刃', from: { ore: 2 }, shops: ['smithy'], price: 130, desc: 'Kitchen knives and tanto for the wealthy.' },
   kimono:  { name: 'Silk Kimono',  jp: '絹', from: { silk: 2 }, shops: ['kimono'], price: 180, desc: 'Dyed and sewn by your best hands.' },
 };
-/* ---------- Renovation: homes go Villa -> Mansion, shops become shophouses with a home upstairs ---------- */
+/* ---------- Renovation: homes go Villa -> Mansion; Shophouses improve trade, not housing ---------- */
 const HOME_LV = {
   hut:       [{ name: 'Thatched Hut', cap: 2 }, { name: 'Villa', jp: '別邸', cap: 3, work: .1, rest: 1.6, appeal: 2, cost: 420 }, { name: 'Mansion', jp: '屋敷', cap: 4, work: .22, rest: 2.4, appeal: 5, cost: 1100, res: { wood: 12, ore: 4 }, wins: 2 }],
   tonya:     [{ name: "Ton'ya", deal: 'goods' }, { name: "Ō-don'ya", jp: '大問屋', deal: 'goods · 1 ware', appeal: 2, cost: 1800 }, { name: "Tokumi Don'ya", jp: '十組問屋', deal: 'goods · 1 ware · 2 wares', appeal: 3, cost: 3600, wins: 5 }],
   longhouse: [{ name: 'Longhouse', cap: 4 }, { name: 'Grand Longhouse', jp: '大長屋', cap: 6, work: .05, rest: 1.25, hp: 10, appeal: 3, cost: 900 }, { name: 'Manor House', jp: '御殿', cap: 8, work: .12, rest: 1.5, hp: 15, appeal: 7, cost: 2200, res: { wood: 18, ore: 6, silk: 4 }, wins: 2 }],
 };
-const SHOP_LV2 = { name: 'Shophouse', jp: '町屋', cap: 1, sale: .15, appeal: 2, work: .05, rest: 1.3 };
+const SHOP_LV2 = { name: 'Shophouse', jp: '町屋', sale: .15, appeal: 2 };
 /* level 2 wares: researched recipes, one more ingredient, much better prices */
 const WARES2 = {
   sakuramochi: { base: 'mochi',   name: 'Sakura Mochi',     jp: '桜', from: { rice: 2, tea: 1 }, shops: ['onigiri', 'noodle'], price: 66, weeks: 3, gold: 260, desc: 'Pink rice cakes wrapped in a salted cherry leaf.' },
@@ -3315,7 +3318,7 @@ const SHOP_LOOK = { // lv1 palettes and ground-floor dressing, so a Shophouse is
   smithy:   { roof: '#4a4a52', plaster: '#c8c0b0', noren: '#2a2a33', sign: 'ore', chimney: true, extra: (pb, W, Y, H) => { pb.rect(3, Y + H - 6, 6, 3, '#3a3a42'); pb.rect(4, Y + H - 7, 4, 1, '#5a5a62'); } },
   kimono:   { roof: '#2a4a5a', plaster: '#f8f2e4', noren: '#d0789a', sign: 'silk', extra: (pb, W, Y, H) => { pb.rect(3, Y + H - 12, 6, 9, '#d0789a'); pb.rect(3, Y + H - 9, 6, 1, '#e0b54a'); pb.hline(2, Y + H - 12, 8, '#6b4a2e'); } },
 };
-function x2Shophouse(id, W, H) { // 町屋: the shop below, a hisashi eave, a lattice-windowed home upstairs, the shop's own roof on top
+function x2Shophouse(id, W, H) { // 町屋: the shop below, a hisashi eave, a lattice-windowed upper floor, the shop's own roof on top
   const S = SHOP_LOOK[id] || SHOP_LOOK.onigiri, top = 16, Y = top, pb = new PB(W, H + top), wood = '#6b4a2e';
   const wallY = Y + H - 12; wallFront(pb, 2, wallY, W - 4, 11, { plaster: S.plaster, wood, door: true, noren: S.noren });
   x2Eave(pb, 0, wallY - 5, W, S.roof);
@@ -8252,7 +8255,11 @@ function openBuildingInfo(b) {
     if(B.cat==='shop'){body.appendChild(shopStockPanel(b));const m = (1 + (b.boost || 0)) * (b.combo ? b.combo.m : 1) * (1 + ((lvInfo(b) || {}).sale || 0)) * (1+(b.wideStreet?WIDE_STREET_BONUS.sale:0)), ws = waresOf(b.id);
       body.appendChild(h(`<p class="note shop-prices">${ws.length ? `Wares: ${ws.map(w => `${icon('w_' + w)} <b>${WARES[w].name}</b> ~${Math.round(WARES[w].price * m)}G (here ${shopStock(b,true)[w]||0})`).join(' · ')}.<br>` : ''}${B.needWares ? '<b>Sells only wares</b> — a Workshop must craft them.' : `Otherwise ${B.sells.map(g => `${icon('g_' + g)} ${GOODS[g].name} (here ${shopStock(b)[g]||0})`).join(' + ')} at ~<b>${Math.round(B.price * m)}G</b>.`}</p>`)); }
     if (HOME_LV[b.id] || B.cat === 'shop') body.appendChild(renoPanel(b));
-    if (B.cap) { const rs = G.villagers.filter(v => v.home === b.uid); body.appendChild(h(`<div class="sec">Residents ${rs.length}/${B.cap}</div>`)); const l = h('<div class="vlist"></div>'); rs.forEach(v => l.appendChild(vCard(v))); body.appendChild(l); }
+    const beds=capOf(b);
+    if(beds){const rs=G.villagers.filter(v=>v.home===b.uid);body.appendChild(h(`<div class="sec">Residents ${rs.length}/${beds}</div>`));const l=h('<div class="vlist"></div>');
+      rs.forEach(v=>{const row=h('<div class="resident"></div>'),name=esc(vData(v.id).name);
+        row.appendChild(vCard(v));const bt=h(`<button class="btn ghost" data-recall-resident="${esc(v.id)}" aria-label="Recall ${name} home"${tipAttr('Teleport home and rest until energy and wounds recover. Safely returns carried goods to storage; keeps their job and equipment.')}>↩ Recall home</button>`);
+        bt.onclick=()=>{if(!recallResident(v.id,b.uid))return;Sound.play('tap');toast(`${name} is resting at <b>${esc(bName(b))}</b>.`);refreshSheet();updateHUD();};row.appendChild(bt);l.appendChild(row);});body.appendChild(l);}
     if (B.cat === 'env') body.appendChild(h(`<p class="note">+${Math.round(B.boost * 100)}% within ${B.radius} tiles · appeal +${B.appeal} ${ib('Boosts nearby shops, fields and workshops, and helps neighbours rest faster.')}</p>`));
     const movable=!buildingMoveBlock(b),removable=b.id!=='hall'&&tileOpen(b.x,b.y);
     if(movable||removable){const r=h(`<div class="row wrap" style="margin-top:10px"><span class="sp"></span>${movable?'<button class="btn" data-building-move>↔ Move</button>':''}${removable?`<button class="btn red" data-building-remove>${icon('demolish')} Remove (+${fmt(B.cost/2)}G)</button>`:''}</div>`);
@@ -8647,7 +8654,7 @@ function renoPanel(b) {
   el.innerHTML = `<div class="sec">Renovation 改築</div><div class="lvsteps">${steps.map((S, i) => `<span class="${i + 1 === bLv(b) ? 'on' : i + 1 < bLv(b) ? 'done' : ''}">${S.jp ? `<b>${S.jp}</b>` : ''}${esc(S.name)}</span>`).join('<i>→</i>')}</div>
     ${L && bLv(b) > 1 ? `<p class="note">Now: ${perk(L)}.</p>` : ''}
     ${b.reno ? `<p class="note">${icon('build')} Carpenters at work — <b>${b.reno.w}</b> week${b.reno.w === 1 ? '' : 's'} left. Everything keeps running meanwhile.</p>`
-      : N ? `<div class="row wrap" style="align-items:center;gap:8px"><div class="note" style="flex:1;margin:0"><b>${esc(N.name)}</b>: ${perk(N)}${B.cat === 'shop' ? ' · a room upstairs for one villager' : ''}.<br>${icon('gold')}${fmt(N.cost)} ${Object.entries(N.res || {}).map(([r, n]) => `${icon('g_' + r)}${n}`).join(' ')} · ${N.lv >= 3 ? 3 : 2} weeks${N.wins ? ` · needs ${N.wins} clan victories` : ''}</div><button class="btn gold">Renovate</button></div>`
+      : N ? `<div class="row wrap" style="align-items:center;gap:8px"><div class="note" style="flex:1;margin:0"><b>${esc(N.name)}</b>: ${perk(N)}.<br>${icon('gold')}${fmt(N.cost)} ${Object.entries(N.res || {}).map(([r, n]) => `${icon('g_' + r)}${n}`).join(' ')} · ${N.lv >= 3 ? 3 : 2} weeks${N.wins ? ` · needs ${N.wins} clan victories` : ''}</div><button class="btn gold">Renovate</button></div>`
       : `<p class="note">Fully renovated.</p>`}`;
   const bt = el.querySelector('.btn'); if (bt) { const err = renoBlock(b, N); if (err) bt.classList.add('dim');
     bt.onclick = () => { const e = startReno(b); if (e) { Sound.play('alert'); toast(e); return; } Sound.play('build'); toast(`Carpenters raise scaffolding around the ${esc(bName(b))}.`); refreshSheet(); updateHUD(); }; }
@@ -9158,7 +9165,7 @@ const HAUL_AT = 6, PILE_CAP = 60, WS_IN_CAP = 30, OUT_CAP = 30, CART_AT = 9, PIL
 /* ---------- levels ---------- */
 function bLv(b) { return b.lv || 1; }
 function lvInfo(b) { const L = HOME_LV[b.id]; if (L) return L[bLv(b) - 1]; if (BUILDINGS[b.id].cat === 'shop' && bLv(b) >= 2) return SHOP_LV2; return null; }
-function capOf(b) { const L = lvInfo(b), c = (L ? L.cap : BUILDINGS[b.id].cap) || 0; return c > 0 && G.boons && G.boons.homeCap ? Math.max(1, c - G.boons.homeCap) : c; } // Cramped Homes
+function capOf(b) { if(BUILDINGS[b.id].cat==='shop')return 0;const L = lvInfo(b), c = (L ? L.cap : BUILDINGS[b.id].cap) || 0; return c > 0 && G.boons && G.boons.homeCap ? Math.max(1, c - G.boons.homeCap) : c; } // Cramped Homes
 function appealOf(b) { const L = lvInfo(b); return (BUILDINGS[b.id].appeal || 0) + (L && L.appeal || 0); }
 function bName(b) { const L = lvInfo(b); return L && bLv(b) > 1 ? (BUILDINGS[b.id].cat === 'shop' ? `${BUILDINGS[b.id].name} · ${L.name}` : L.name) : BUILDINGS[b.id].name; }
 function nextLv(b) {
@@ -9186,9 +9193,23 @@ function renoWeek() {
       toast(`${icon('build')} The carpenters finish: <b>${esc(bName(b))}</b>!`); assignHomes(true); refreshBoosts(); } });
 }
 /* ---------- the home a villager comes back to ---------- */
-function homeOf(v) { return v.home >= 0 ? bByUid(v.home) : null; }
+function homeOf(v) { const b=v.home>=0?bByUid(v.home):null;return b&&capOf(b)>0?b:null; }
 // scenery around a home (the same boost shops get) also helps its residents rest
 function homePerk(v) { const h = homeOf(v), L = h && lvInfo(h); return { work: L && L.work || 0, rest: (L && L.rest || (h ? 1 : .6)) * (1 + Math.min(.8, h && h.boost || 0)) * (1+(h&&h.wideStreet?WIDE_STREET_BONUS.rest:0)), decor: h && h.boost || 0 }; }
+// Manual navigation reset: return real cargo once, release claims, then use normal bed recovery.
+function recallResident(id,uid){
+  if(!G||BT)return false;const v=vById(id),home=bByUid(uid);
+  if(!v||!home||v.home!==uid||!capOf(home))return false;
+  let a=RT.agents.find(a=>a.kind==='villager'&&a.vid===id);
+  if(!a){ensureVillagerAgents();a=RT.agents.find(a=>a.kind==='villager'&&a.vid===id);}if(!a)return false;
+  dropLost(a);
+  const edge=entranceOf(home),B=BUILDINGS[home.id];
+  agentAtTile(a,edge?edge[0]:home.x+Math.floor(B.w/2),edge?edge[1]:home.y+B.h-1);
+  a.px=a.x;a.py=a.y;a.path.length=0;a.entryTile=edge||null;a.pathRevision=ROAD_TRAFFIC.revision;
+  a.target=uid;a.dest=a.home2=-1;a.haulSite=0;a.speedMul=1;a.moving=false;a.stoppedAt=RT.t;a.dir='down';a.fr=a.ft=0;
+  a.dead=false;a.leaving=false;a.bubble=null;a.cheer=0;a.timer=0;a.mission='rest';arrive(a,v,home);
+  return true;
+}
 function villagerSpeed(v) { const s = vStats(v); return Math.min(60, (18 + s.wrk * .45) * (1 + s.move)); }
 function carryOf(a) { const v = a.vid && vById(a.vid); return v ? vStats(v).carry : 0; }
 function workMul(v) { const en = v.en ?? 100; return (1 + homePerk(v).work) * (en > 70 ? 1.05 : en < 30 ? .9 : 1); }
@@ -13351,6 +13372,7 @@ function afterLoad() {
   if (G.boons && G.boons.pending && !window.__noIntro) setTimeout(() => G && G.boons.pending && !MQ.some(m => m.opts.must) && reofferDilemma(), 600);
   if (G.roll && G.roll.v && !G.boons.doc && !window.__noIntro) setTimeout(() => G && G.roll && G.roll.v && !G.boons.doc && !MQ.some(m => m.opts.must) && offerDoctrine(), 400);
   applyPlots(G.plots); migrateMap(); migrateGear(); migrateCorps(); migrateRoles(); migrateArsenal(); migrateLogistics();
+  assignHomes(); // Legacy Shophouse residents move into free house beds, or use the existing Clan Hall fallback.
   // the campaign map grew to all of Akitsu: add the new provinces, drop camps drawn on the old sheet
   PROVINCES.forEach(p => { if (!G.prov[p.id]) G.prov[p.id] = { owner: p.clan, power: p.power || 0 }; });
   if ((G.campV || 1) < 2) { G.campV = 2; G.camps = []; G.campSeeded = 0; }
