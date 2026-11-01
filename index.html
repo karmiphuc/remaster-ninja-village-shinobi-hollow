@@ -10436,7 +10436,7 @@ function cohesionOffsets(s,t){
 /* ---------- Resolution ---------- */
 function totalOf(A) { return A.groups.reduce((n, g) => n + Math.max(0, g.troops), 0); }
 function alive(A, type) { return A.groups.filter(g => g.troops > 0 && (!type || g.type === type)); }
-const PREF = { gun: ['inf', 'cav', 'arc', 'gun'], arc: ['gun', 'arc', 'inf', 'cav'], inf: ['inf', 'gun', 'arc', 'cav'], cav: ['cav', 'inf', 'gun', 'arc'] };
+const PREF = { gun: ['inf', 'gun', 'arc', 'cav'], arc: ['gun', 'arc', 'inf', 'cav'], inf: ['inf', 'gun', 'arc', 'cav'], cav: ['cav', 'inf', 'gun', 'arc'] };
 // Infantry shares one post-contact clock. Clearing a line spends fighting time; moving to a new line spends time
 // with no attacks. Logical timings never depend on screen width, sprite density or playback speed.
 const INF_CLOCK={fight:2.7,advance:1.25,retarget:.14,swing:.25,approach:1.15};
@@ -10468,7 +10468,8 @@ function guardInfantryBreakthrough(hits){
   // make posthumous attacks against the rear. Independent surviving infantry can still press their own attack.
   for(let i=hits.length-1;i>=0;i--){const h=hits[i];if(h.infAt!=null&&h.depth>0&&fallen.has(h.from)&&h.infAt>=fallen.get(h.from)-1e-8)hits.splice(i,1);}
 }
-// Ranged/cavalry retain their existing cascade rules. Infantry converts the same stats into timed engagements.
+// Guns pass remaining volley damage down the ranks. Field arrows stay within one aimed line and its neighbours.
+// Only infantry converts the same stats into timed engagements; ranged attacks never spend its travel/fight clock.
 // Returns hits: {from, to, kills, depth}
 function resolvePhase(phase, A, D, ctx) {
   const hits = [],strikes=[],timedInf=phase==='inf'&&A.mode==='army'&&D.mode==='army'&&!ctx.siege;
@@ -10493,9 +10494,14 @@ function resolvePhase(phase, A, D, ctx) {
       else dmg *= phase === 'gun' || phase === 'arc' ? 1.35 : phase === 'inf' ? .7 : .25; }
     if(timedInf){strikes.push({g,dmg,retShare,tacT,rate:0});return;}
     const order = PREF[phase].flatMap(t => D.groups.filter(x => x.type === t && left.get(x) > 0));
-    // stray arrows: the volley is aimed at the back ranks, but some of it always comes down on another formation
+    // Keep the footprint anchored to this volley's original aim, even if it clears that line. Missing ranks do not
+    // turn a distant formation into a neighbour. Another attacking group can aim afresh using the remaining troops.
+    if(phase==='arc'&&!ctx.siege&&order.length){const aim=GROUP_ORDER[order[0].type];
+      for(let i=order.length-1;i>0;i--)if(Math.abs(GROUP_ORDER[order[i].type]-aim)>1)order.splice(i,1);}
+    // A small part of the volley may land next door while the aimed formation is still standing.
     let stray = null;
-    if (phase === 'arc' && !ctx.siege && order.length > 1 && Math.random() < .85) { const others = order.slice(1); stray = { t: others[(Math.random() * others.length) | 0], dmg: dmg * .15 }; dmg -= stray.dmg; }
+    if (phase === 'arc' && !ctx.siege && order.length > 1) { const others = order.filter(t=>t.type!==order[0].type);
+      if(others.length&&Math.random()<.85){stray={t:others[(Math.random()*others.length)|0],dmg:dmg*.15};dmg-=stray.dmg;} }
     let depth = 0;
     for (const t of order) {
       const res = battleResistance(t);
@@ -10512,7 +10518,7 @@ function resolvePhase(phase, A, D, ctx) {
       dmg -= kills * res / mult;
       if (dmg <= .05) break;
       dmg *= melee ? .9 : .75; depth++;
-      if (ranged && depth >= 2) break;
+      if (phase === 'arc' && ctx.siege && depth >= 2) break; // rampart volleys retain their existing two-group cascade
     }
     if (stray) { const t = stray.t, need = left.get(t); if (need > 0) {
       const res = battleResistance(t), mult = (1 - Math.min(.6, (t.mods.arrowres || 0) * .1)) * tacT(t) * (1 - Math.min(.3, t.mods.shadow * .05)) * (t.type === 'inf' ? 1 : 1) * tateTake(t, 'arc');

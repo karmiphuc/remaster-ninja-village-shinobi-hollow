@@ -1,6 +1,6 @@
 // Campaign fixes: the province count excludes the training grounds (49 holdable, so the map can reach 49/49); the dojo
 // puts up a rolled prize (recruits of an unlocked arm, latest armor or horse, or a free commander or worker) with
-// stronger partners for bigger prizes; and a province lost to rebels comes back as strong as the uprising (non-castles)
+// stronger partners for bigger prizes; and a province lost to rebels keeps its old budget or the uprising's strength
 // with freshly rolled spoils instead of its one-time rewards. Writes reports/campaign.json.
 const fs = require('fs'), http = require('http'), assert = require('assert'), path = require('path'), { chromium } = require('playwright');
 const dir = path.resolve(__dirname, '..');
@@ -98,7 +98,10 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
       check(st.retake && (st.retake.items.length + st.retake.recruits.length) > 0, 'No rerolled spoils');
       { openMap(); showProvCard(lair); const txt = $('#prov-card').textContent; st.retake.items.forEach(k => check(txt.includes(ITEMS[k].name), 'Card lacks rolled item ' + ITEMS[k].name));
         st.retake.recruits.forEach(id => check(txt.includes(vData(id).name), 'Card lacks rolled recruit')); (lair.reward && lair.reward.item && !st.retake.items.includes(lair.reward.item)) && check(!txt.includes(ITEMS[lair.reward.item].name), 'Card still shows the one-time item'); $('#prov-card').hidden = true; closeMap(); }
-      const cpow = G.prov[castle.id].power, c2 = lose(castle, .3); check(G.prov[castle.id].power === cpow, 'Castle strength changed'); check(G.prov[castle.id].retake && G.prov[castle.id].retake.recruits.length === 1, 'Castle spoils not rerolled with a recruit');
+      const cpow = G.prov[castle.id].power, c2 = lose(castle, .3), returnedPower = G.prov[castle.id].power;
+      check(returnedPower >= cpow, 'Castle lost its original garrison budget');
+      check(returnedPower * sitePowerScale(castle) >= c2.power * 1.05, 'Castle returned weaker than its uprising');
+      check(G.prov[castle.id].retake && G.prov[castle.id].retake.recruits.length === 1, 'Castle spoils not rerolled with a recruit');
       { const held = [c2.reward.recruit, ...(c2.reward.recruits || [])].filter(Boolean); if (held.length) check(held.includes(G.prov[castle.id].retake.recruits[0]), 'Retake recruit is not one of the uprising\'s captives'); }
       // retaking grants the rolled spoils, not the one-time rewards again
       const X = G.prov[castle.id].retake, origItem = castle.reward.item, origCount = origItem ? (G.items[origItem] || 0) : 0, itemsBefore = Object.assign({}, G.items); offered = null;
@@ -109,7 +112,7 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
       check(!G.prov[castle.id].retake && G.prov[castle.id].owner === 'kage', 'Retake not consumed');
       if (castle.reward.recruit && castle.reward.recruit !== X.recruits[0]) check(!(offered && offered[0] === castle.reward.recruit), 'One-time recruit offered again');
       out.rebels = { lair: { name: lair.name, before: p0, after: st.power, uprising: c1.power, spoils: { items: st.retake.items.map(k => ITEMS[k].name), recruits: st.retake.recruits.map(id => vData(id).name) } },
-        castle: { name: castle.name, strengthKept: cpow, spoilsGranted: X.items.map(k => ITEMS[k].name), recruitOffered: X.recruits.length ? (check(offered && offered[0] === X.recruits[0], 'Retake recruit not offered'), vData(X.recruits[0]).name) : 'none rolled' } };
+        castle: { name: castle.name, before: cpow, after: returnedPower, uprising: c2.power, spoilsGranted: X.items.map(k => ITEMS[k].name), recruitOffered: X.recruits.length ? (check(offered && offered[0] === X.recruits[0], 'Retake recruit not offered'), vData(X.recruits[0]).name) : 'none rolled' } };
       window.offerHire = oh;
 
       // ---------- old saves ----------
