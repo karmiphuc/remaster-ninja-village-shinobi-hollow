@@ -1,0 +1,1925 @@
+{
+  "source": "d6b0970aecd75a043e82d55188c463596b0781b0",
+  "ledger": [
+    {
+      "w": "katana",
+      "n": 1,
+      "seed": 11,
+      "win": 0,
+      "rounds": 3,
+      "events": 8,
+      "damage": 217,
+      "endHP": [
+        91,
+        0
+      ],
+      "hash": 591169947
+    },
+    {
+      "w": "katana",
+      "n": 1,
+      "seed": 29,
+      "win": 1,
+      "rounds": 3,
+      "events": 11,
+      "damage": 275,
+      "endHP": [
+        0,
+        29
+      ],
+      "hash": 2754197439
+    },
+    {
+      "w": "katana",
+      "n": 1,
+      "seed": 53,
+      "win": 0,
+      "rounds": 3,
+      "events": 7,
+      "damage": 144,
+      "endHP": [
+        140,
+        0
+      ],
+      "hash": 3638421527
+    },
+    {
+      "w": "katana",
+      "n": 1,
+      "seed": 97,
+      "win": 0,
+      "rounds": 3,
+      "events": 8,
+      "damage": 203,
+      "endHP": [
+        85,
+        0
+      ],
+      "hash": 2306702458
+    },
+    {
+      "w": "katana",
+      "n": 2,
+      "seed": 11,
+      "win": 0,
+      "rounds": 5,
+      "events": 23,
+      "damage": 598,
+      "endHP": [
+        19,
+        0,
+        0,
+        0
+      ],
+      "hash": 1121040592
+    },
+    {
+      "w": "katana",
+      "n": 2,
+      "seed": 29,
+      "win": 0,
+      "rounds": 5,
+      "events": 20,
+      "damage": 467,
+      "endHP": [
+        59,
+        0,
+        40,
+        0
+      ],
+      "hash": 3138768997
+    },
+    {
+      "w": "katana",
+      "n": 2,
+      "seed": 53,
+      "win": 0,
+      "rounds": 5,
+      "events": 19,
+      "damage": 518,
+      "endHP": [
+        88,
+        0,
+        0,
+        0
+      ],
+      "hash": 3648811721
+    },
+    {
+      "w": "katana",
+      "n": 2,
+      "seed": 97,
+      "win": 1,
+      "rounds": 4,
+      "events": 20,
+      "damage": 580,
+      "endHP": [
+        0,
+        19,
+        0,
+        0
+      ],
+      "hash": 261665368
+    },
+    {
+      "w": "katana",
+      "n": 3,
+      "seed": 11,
+      "win": 0,
+      "rounds": 4,
+      "events": 26,
+      "damage": 756,
+      "endHP": [
+        72,
+        0,
+        0,
+        0,
+        101,
+        0
+      ],
+      "hash": 2590213478
+    },
+    {
+      "w": "katana",
+      "n": 3,
+      "seed": 29,
+      "win": 0,
+      "rounds": 5,
+      "events": 31,
+      "damage": 829,
+      "endHP": [
+        0,
+        0,
+        76,
+        0,
+        13,
+        0
+      ],
+      "hash": 1968114338
+    },
+    {
+      "w": "katana",
+      "n": 3,
+      "seed": 53,
+      "win": 1,
+      "rounds": 4,
+      "events": 30,
+      "damage": 858,
+      "endHP": [
+        0,
+        0,
+        0,
+        80,
+        0,
+        33
+      ],
+      "hash": 2818973556
+    },
+    {
+      "w": "katana",
+      "n": 3,
+      "seed": 97,
+      "win": 0,
+      "rounds": 4,
+      "events": 25,
+      "damage": 717,
+      "endHP": [
+        24,
+        0,
+        51,
+        0,
+        96,
+        0
+      ],
+      "hash": 2067510879
+    },
+    {
+      "w": "ninjato",
+      "n": 1,
+      "seed": 11,
+      "win": 0,
+      "rounds": 2,
+      "events": 6,
+      "damage": 171,
+      "endHP": [
+        116,
+        0
+      ],
+      "hash": 3968102837
+    },
+    {
+      "w": "ninjato",
+      "n": 1,
+      "seed": 29,
+      "win": 0,
+      "rounds": 3,
+      "events": 8,
+      "damage": 196,
+      "endHP": [
+        109,
+        0
+      ],
+      "hash": 674196766
+    },
+    {
+      "w": "ninjato",
+      "n": 1,
+      "seed": 53,
+      "win": 0,
+      "rounds": 3,
+      "events": 7,
+      "damage": 169,
+      "endHP": [
+        140,
+        0
+      ],
+      "hash": 2691144485
+    },
+    {
+      "w": "ninjato",
+      "n": 1,
+      "seed": 97,
+      "win": 0,
+      "rounds": 3,
+      "events": 8,
+      "damage": 232,
+      "endHP": [
+        85,
+        0
+      ],
+      "hash": 3763843932
+    },
+    {
+      "w": "ninjato",
+      "n": 2,
+      "seed": 11,
+      "win": 0,
+      "rounds": 4,
+      "events": 19,
+      "damage": 503,
+      "endHP": [
+        45,
+        0,
+        51,
+        0
+      ],
+      "hash": 4123073509
+    },
+    {
+      "w": "ninjato",
+      "n": 2,
+      "seed": 29,
+      "win": 0,
+      "rounds": 5,
+      "events": 21,
+      "damage": 549,
+      "endHP": [
+        8,
+        0,
+        22,
+        0
+      ],
+      "hash": 1682207270
+    },
+    {
+      "w": "ninjato",
+      "n": 2,
+      "seed": 53,
+      "win": 0,
+      "rounds": 5,
+      "events": 19,
+      "damage": 608,
+      "endHP": [
+        6,
+        0,
+        13,
+        0
+      ],
+      "hash": 110142654
+    },
+    {
+      "w": "ninjato",
+      "n": 2,
+      "seed": 97,
+      "win": 1,
+      "rounds": 4,
+      "events": 20,
+      "damage": 601,
+      "endHP": [
+        0,
+        16,
+        0,
+        0
+      ],
+      "hash": 3515284480
+    },
+    {
+      "w": "ninjato",
+      "n": 3,
+      "seed": 11,
+      "win": 0,
+      "rounds": 3,
+      "events": 22,
+      "damage": 710,
+      "endHP": [
+        87,
+        0,
+        1,
+        0,
+        101,
+        0
+      ],
+      "hash": 2307412950
+    },
+    {
+      "w": "ninjato",
+      "n": 3,
+      "seed": 29,
+      "win": 0,
+      "rounds": 4,
+      "events": 26,
+      "damage": 726,
+      "endHP": [
+        55,
+        0,
+        79,
+        0,
+        51,
+        0
+      ],
+      "hash": 119416271
+    },
+    {
+      "w": "ninjato",
+      "n": 3,
+      "seed": 53,
+      "win": 0,
+      "rounds": 4,
+      "events": 22,
+      "damage": 728,
+      "endHP": [
+        43,
+        0,
+        76,
+        0,
+        52,
+        0
+      ],
+      "hash": 3951357754
+    },
+    {
+      "w": "ninjato",
+      "n": 3,
+      "seed": 97,
+      "win": 0,
+      "rounds": 4,
+      "events": 25,
+      "damage": 751,
+      "endHP": [
+        24,
+        0,
+        10,
+        0,
+        96,
+        0
+      ],
+      "hash": 3650091154
+    },
+    {
+      "w": "yari",
+      "n": 1,
+      "seed": 11,
+      "win": 0,
+      "rounds": 3,
+      "events": 8,
+      "damage": 217,
+      "endHP": [
+        91,
+        0
+      ],
+      "hash": 591169947
+    },
+    {
+      "w": "yari",
+      "n": 1,
+      "seed": 29,
+      "win": 0,
+      "rounds": 4,
+      "events": 10,
+      "damage": 249,
+      "endHP": [
+        57,
+        0
+      ],
+      "hash": 2901241903
+    },
+    {
+      "w": "yari",
+      "n": 1,
+      "seed": 53,
+      "win": 0,
+      "rounds": 5,
+      "events": 10,
+      "damage": 254,
+      "endHP": [
+        43,
+        0
+      ],
+      "hash": 2457171560
+    },
+    {
+      "w": "yari",
+      "n": 1,
+      "seed": 97,
+      "win": 0,
+      "rounds": 3,
+      "events": 8,
+      "damage": 203,
+      "endHP": [
+        85,
+        0
+      ],
+      "hash": 2306702458
+    },
+    {
+      "w": "yari",
+      "n": 2,
+      "seed": 11,
+      "win": 0,
+      "rounds": 4,
+      "events": 19,
+      "damage": 496,
+      "endHP": [
+        45,
+        0,
+        51,
+        0
+      ],
+      "hash": 2052843030
+    },
+    {
+      "w": "yari",
+      "n": 2,
+      "seed": 29,
+      "win": 0,
+      "rounds": 5,
+      "events": 22,
+      "damage": 545,
+      "endHP": [
+        8,
+        0,
+        22,
+        0
+      ],
+      "hash": 3202032587
+    },
+    {
+      "w": "yari",
+      "n": 2,
+      "seed": 53,
+      "win": 0,
+      "rounds": 5,
+      "events": 19,
+      "damage": 522,
+      "endHP": [
+        78,
+        0,
+        0,
+        0
+      ],
+      "hash": 1369591676
+    },
+    {
+      "w": "yari",
+      "n": 2,
+      "seed": 97,
+      "win": 1,
+      "rounds": 4,
+      "events": 20,
+      "damage": 580,
+      "endHP": [
+        0,
+        19,
+        0,
+        0
+      ],
+      "hash": 261665368
+    },
+    {
+      "w": "yari",
+      "n": 3,
+      "seed": 11,
+      "win": 0,
+      "rounds": 4,
+      "events": 25,
+      "damage": 621,
+      "endHP": [
+        115,
+        0,
+        30,
+        0,
+        111,
+        0
+      ],
+      "hash": 1455804576
+    },
+    {
+      "w": "yari",
+      "n": 3,
+      "seed": 29,
+      "win": 0,
+      "rounds": 5,
+      "events": 28,
+      "damage": 803,
+      "endHP": [
+        0,
+        0,
+        0,
+        0,
+        111,
+        0
+      ],
+      "hash": 1046749586
+    },
+    {
+      "w": "yari",
+      "n": 3,
+      "seed": 53,
+      "win": 1,
+      "rounds": 3,
+      "events": 25,
+      "damage": 692,
+      "endHP": [
+        0,
+        46,
+        0,
+        77,
+        0,
+        68
+      ],
+      "hash": 3075730703
+    },
+    {
+      "w": "yari",
+      "n": 3,
+      "seed": 97,
+      "win": 0,
+      "rounds": 5,
+      "events": 27,
+      "damage": 806,
+      "endHP": [
+        24,
+        0,
+        0,
+        0,
+        96,
+        0
+      ],
+      "hash": 3397393412
+    },
+    {
+      "w": "naginata",
+      "n": 1,
+      "seed": 11,
+      "win": 0,
+      "rounds": 3,
+      "events": 8,
+      "damage": 217,
+      "endHP": [
+        91,
+        0
+      ],
+      "hash": 591169947
+    },
+    {
+      "w": "naginata",
+      "n": 1,
+      "seed": 29,
+      "win": 0,
+      "rounds": 4,
+      "events": 10,
+      "damage": 249,
+      "endHP": [
+        57,
+        0
+      ],
+      "hash": 2901241903
+    },
+    {
+      "w": "naginata",
+      "n": 1,
+      "seed": 53,
+      "win": 0,
+      "rounds": 3,
+      "events": 7,
+      "damage": 144,
+      "endHP": [
+        140,
+        0
+      ],
+      "hash": 3638421527
+    },
+    {
+      "w": "naginata",
+      "n": 1,
+      "seed": 97,
+      "win": 0,
+      "rounds": 3,
+      "events": 8,
+      "damage": 203,
+      "endHP": [
+        85,
+        0
+      ],
+      "hash": 2306702458
+    },
+    {
+      "w": "naginata",
+      "n": 2,
+      "seed": 11,
+      "win": 0,
+      "rounds": 4,
+      "events": 19,
+      "damage": 496,
+      "endHP": [
+        45,
+        0,
+        51,
+        0
+      ],
+      "hash": 2052843030
+    },
+    {
+      "w": "naginata",
+      "n": 2,
+      "seed": 29,
+      "win": 0,
+      "rounds": 5,
+      "events": 22,
+      "damage": 545,
+      "endHP": [
+        8,
+        0,
+        22,
+        0
+      ],
+      "hash": 3202032587
+    },
+    {
+      "w": "naginata",
+      "n": 2,
+      "seed": 53,
+      "win": 0,
+      "rounds": 5,
+      "events": 19,
+      "damage": 522,
+      "endHP": [
+        78,
+        0,
+        0,
+        0
+      ],
+      "hash": 1369591676
+    },
+    {
+      "w": "naginata",
+      "n": 2,
+      "seed": 97,
+      "win": 1,
+      "rounds": 4,
+      "events": 20,
+      "damage": 580,
+      "endHP": [
+        0,
+        19,
+        0,
+        0
+      ],
+      "hash": 261665368
+    },
+    {
+      "w": "naginata",
+      "n": 3,
+      "seed": 11,
+      "win": 0,
+      "rounds": 3,
+      "events": 23,
+      "damage": 706,
+      "endHP": [
+        87,
+        0,
+        1,
+        0,
+        101,
+        0
+      ],
+      "hash": 1797672618
+    },
+    {
+      "w": "naginata",
+      "n": 3,
+      "seed": 29,
+      "win": 0,
+      "rounds": 4,
+      "events": 26,
+      "damage": 692,
+      "endHP": [
+        55,
+        0,
+        79,
+        0,
+        51,
+        0
+      ],
+      "hash": 1697573372
+    },
+    {
+      "w": "naginata",
+      "n": 3,
+      "seed": 53,
+      "win": 1,
+      "rounds": 3,
+      "events": 27,
+      "damage": 820,
+      "endHP": [
+        0,
+        23,
+        0,
+        48,
+        0,
+        62
+      ],
+      "hash": 2666748795
+    },
+    {
+      "w": "naginata",
+      "n": 3,
+      "seed": 97,
+      "win": 0,
+      "rounds": 4,
+      "events": 25,
+      "damage": 717,
+      "endHP": [
+        24,
+        0,
+        51,
+        0,
+        96,
+        0
+      ],
+      "hash": 2067510879
+    },
+    {
+      "w": "nodachi",
+      "n": 1,
+      "seed": 11,
+      "win": 0,
+      "rounds": 3,
+      "events": 8,
+      "damage": 217,
+      "endHP": [
+        91,
+        0
+      ],
+      "hash": 591169947
+    },
+    {
+      "w": "nodachi",
+      "n": 1,
+      "seed": 29,
+      "win": 0,
+      "rounds": 4,
+      "events": 9,
+      "damage": 240,
+      "endHP": [
+        75,
+        0
+      ],
+      "hash": 725370407
+    },
+    {
+      "w": "nodachi",
+      "n": 1,
+      "seed": 53,
+      "win": 1,
+      "rounds": 5,
+      "events": 11,
+      "damage": 286,
+      "endHP": [
+        0,
+        9
+      ],
+      "hash": 3612192115
+    },
+    {
+      "w": "nodachi",
+      "n": 1,
+      "seed": 97,
+      "win": 0,
+      "rounds": 3,
+      "events": 8,
+      "damage": 203,
+      "endHP": [
+        85,
+        0
+      ],
+      "hash": 2306702458
+    },
+    {
+      "w": "nodachi",
+      "n": 2,
+      "seed": 11,
+      "win": 0,
+      "rounds": 4,
+      "events": 17,
+      "damage": 519,
+      "endHP": [
+        77,
+        0,
+        0,
+        0
+      ],
+      "hash": 1267136618
+    },
+    {
+      "w": "nodachi",
+      "n": 2,
+      "seed": 29,
+      "win": 0,
+      "rounds": 5,
+      "events": 22,
+      "damage": 549,
+      "endHP": [
+        23,
+        0,
+        11,
+        0
+      ],
+      "hash": 2858137890
+    },
+    {
+      "w": "nodachi",
+      "n": 2,
+      "seed": 53,
+      "win": 0,
+      "rounds": 5,
+      "events": 19,
+      "damage": 522,
+      "endHP": [
+        78,
+        0,
+        0,
+        0
+      ],
+      "hash": 1369591676
+    },
+    {
+      "w": "nodachi",
+      "n": 2,
+      "seed": 97,
+      "win": 0,
+      "rounds": 5,
+      "events": 22,
+      "damage": 585,
+      "endHP": [
+        0,
+        0,
+        24,
+        0
+      ],
+      "hash": 3317944137
+    },
+    {
+      "w": "nodachi",
+      "n": 3,
+      "seed": 11,
+      "win": 0,
+      "rounds": 4,
+      "events": 26,
+      "damage": 903,
+      "endHP": [
+        17,
+        0,
+        0,
+        0,
+        10,
+        0
+      ],
+      "hash": 1088308382
+    },
+    {
+      "w": "nodachi",
+      "n": 3,
+      "seed": 29,
+      "win": 0,
+      "rounds": 4,
+      "events": 27,
+      "damage": 783,
+      "endHP": [
+        19,
+        0,
+        50,
+        0,
+        19,
+        0
+      ],
+      "hash": 10568926
+    },
+    {
+      "w": "nodachi",
+      "n": 3,
+      "seed": 53,
+      "win": 1,
+      "rounds": 4,
+      "events": 25,
+      "damage": 705,
+      "endHP": [
+        0,
+        46,
+        0,
+        78,
+        0,
+        68
+      ],
+      "hash": 699498619
+    },
+    {
+      "w": "nodachi",
+      "n": 3,
+      "seed": 97,
+      "win": 0,
+      "rounds": 5,
+      "events": 25,
+      "damage": 753,
+      "endHP": [
+        24,
+        0,
+        10,
+        0,
+        96,
+        0
+      ],
+      "hash": 3940028702
+    },
+    {
+      "w": "zanbato",
+      "n": 1,
+      "seed": 11,
+      "win": 0,
+      "rounds": 3,
+      "events": 8,
+      "damage": 203,
+      "endHP": [
+        91,
+        0
+      ],
+      "hash": 3302368494
+    },
+    {
+      "w": "zanbato",
+      "n": 1,
+      "seed": 29,
+      "win": 0,
+      "rounds": 4,
+      "events": 9,
+      "damage": 226,
+      "endHP": [
+        75,
+        0
+      ],
+      "hash": 2636711111
+    },
+    {
+      "w": "zanbato",
+      "n": 1,
+      "seed": 53,
+      "win": 1,
+      "rounds": 5,
+      "events": 11,
+      "damage": 275,
+      "endHP": [
+        0,
+        20
+      ],
+      "hash": 2142025457
+    },
+    {
+      "w": "zanbato",
+      "n": 1,
+      "seed": 97,
+      "win": 0,
+      "rounds": 4,
+      "events": 10,
+      "damage": 261,
+      "endHP": [
+        46,
+        0
+      ],
+      "hash": 985646714
+    },
+    {
+      "w": "zanbato",
+      "n": 2,
+      "seed": 11,
+      "win": 0,
+      "rounds": 5,
+      "events": 23,
+      "damage": 569,
+      "endHP": [
+        19,
+        0,
+        11,
+        0
+      ],
+      "hash": 3498022928
+    },
+    {
+      "w": "zanbato",
+      "n": 2,
+      "seed": 29,
+      "win": 1,
+      "rounds": 5,
+      "events": 22,
+      "damage": 538,
+      "endHP": [
+        0,
+        25,
+        0,
+        46
+      ],
+      "hash": 2908375139
+    },
+    {
+      "w": "zanbato",
+      "n": 2,
+      "seed": 53,
+      "win": 0,
+      "rounds": 5,
+      "events": 19,
+      "damage": 498,
+      "endHP": [
+        78,
+        0,
+        0,
+        0
+      ],
+      "hash": 3085737843
+    },
+    {
+      "w": "zanbato",
+      "n": 2,
+      "seed": 97,
+      "win": 0,
+      "rounds": 5,
+      "events": 22,
+      "damage": 562,
+      "endHP": [
+        0,
+        0,
+        24,
+        0
+      ],
+      "hash": 2324740717
+    },
+    {
+      "w": "zanbato",
+      "n": 3,
+      "seed": 11,
+      "win": 0,
+      "rounds": 4,
+      "events": 24,
+      "damage": 614,
+      "endHP": [
+        115,
+        0,
+        36,
+        0,
+        111,
+        0
+      ],
+      "hash": 3239206979
+    },
+    {
+      "w": "zanbato",
+      "n": 3,
+      "seed": 29,
+      "win": 1,
+      "rounds": 5,
+      "events": 31,
+      "damage": 906,
+      "endHP": [
+        0,
+        4,
+        0,
+        0,
+        0,
+        7
+      ],
+      "hash": 2833586112
+    },
+    {
+      "w": "zanbato",
+      "n": 3,
+      "seed": 53,
+      "win": 1,
+      "rounds": 4,
+      "events": 29,
+      "damage": 853,
+      "endHP": [
+        0,
+        16,
+        0,
+        32,
+        0,
+        0
+      ],
+      "hash": 2409311925
+    },
+    {
+      "w": "zanbato",
+      "n": 3,
+      "seed": 97,
+      "win": 1,
+      "rounds": 5,
+      "events": 32,
+      "damage": 824,
+      "endHP": [
+        0,
+        0,
+        0,
+        88,
+        0,
+        0
+      ],
+      "hash": 4120132801
+    },
+    {
+      "w": "ninja_claw",
+      "n": 1,
+      "seed": 11,
+      "win": 0,
+      "rounds": 4,
+      "events": 11,
+      "damage": 259,
+      "endHP": [
+        27,
+        0
+      ],
+      "hash": 2612691014
+    },
+    {
+      "w": "ninja_claw",
+      "n": 1,
+      "seed": 29,
+      "win": 1,
+      "rounds": 3,
+      "events": 13,
+      "damage": 245,
+      "endHP": [
+        0,
+        45
+      ],
+      "hash": 1242399075
+    },
+    {
+      "w": "ninja_claw",
+      "n": 1,
+      "seed": 53,
+      "win": 1,
+      "rounds": 3,
+      "events": 12,
+      "damage": 211,
+      "endHP": [
+        0,
+        73
+      ],
+      "hash": 3531531604
+    },
+    {
+      "w": "ninja_claw",
+      "n": 1,
+      "seed": 97,
+      "win": 1,
+      "rounds": 3,
+      "events": 13,
+      "damage": 290,
+      "endHP": [
+        0,
+        20
+      ],
+      "hash": 1813271004
+    },
+    {
+      "w": "ninja_claw",
+      "n": 2,
+      "seed": 11,
+      "win": 0,
+      "rounds": 4,
+      "events": 26,
+      "damage": 545,
+      "endHP": [
+        33,
+        0,
+        11,
+        0
+      ],
+      "hash": 1300966747
+    },
+    {
+      "w": "ninja_claw",
+      "n": 2,
+      "seed": 29,
+      "win": 0,
+      "rounds": 4,
+      "events": 29,
+      "damage": 563,
+      "endHP": [
+        2,
+        0,
+        3,
+        0
+      ],
+      "hash": 3693079321
+    },
+    {
+      "w": "ninja_claw",
+      "n": 2,
+      "seed": 53,
+      "win": 0,
+      "rounds": 5,
+      "events": 35,
+      "damage": 574,
+      "endHP": [
+        13,
+        0,
+        2,
+        0
+      ],
+      "hash": 3485867371
+    },
+    {
+      "w": "ninja_claw",
+      "n": 2,
+      "seed": 97,
+      "win": 0,
+      "rounds": 4,
+      "events": 24,
+      "damage": 534,
+      "endHP": [
+        26,
+        0,
+        37,
+        0
+      ],
+      "hash": 2107409182
+    },
+    {
+      "w": "ninja_claw",
+      "n": 3,
+      "seed": 11,
+      "win": 1,
+      "rounds": 3,
+      "events": 36,
+      "damage": 779,
+      "endHP": [
+        0,
+        0,
+        0,
+        85,
+        0,
+        17
+      ],
+      "hash": 2214983637
+    },
+    {
+      "w": "ninja_claw",
+      "n": 3,
+      "seed": 29,
+      "win": 1,
+      "rounds": 4,
+      "events": 35,
+      "damage": 805,
+      "endHP": [
+        0,
+        0,
+        0,
+        31,
+        0,
+        73
+      ],
+      "hash": 3435756287
+    },
+    {
+      "w": "ninja_claw",
+      "n": 3,
+      "seed": 53,
+      "win": 1,
+      "rounds": 4,
+      "events": 38,
+      "damage": 877,
+      "endHP": [
+        0,
+        26,
+        0,
+        0,
+        0,
+        18
+      ],
+      "hash": 419165782
+    },
+    {
+      "w": "ninja_claw",
+      "n": 3,
+      "seed": 97,
+      "win": 0,
+      "rounds": 4,
+      "events": 37,
+      "damage": 777,
+      "endHP": [
+        75,
+        0,
+        34,
+        0,
+        6,
+        0
+      ],
+      "hash": 1617330626
+    },
+    {
+      "w": "yumi",
+      "n": 1,
+      "seed": 11,
+      "win": 0,
+      "rounds": 4,
+      "events": 7,
+      "damage": 225,
+      "endHP": [
+        81,
+        0
+      ],
+      "hash": 3963915587
+    },
+    {
+      "w": "yumi",
+      "n": 1,
+      "seed": 29,
+      "win": 1,
+      "rounds": 3,
+      "events": 8,
+      "damage": 262,
+      "endHP": [
+        0,
+        49
+      ],
+      "hash": 3387483976
+    },
+    {
+      "w": "yumi",
+      "n": 1,
+      "seed": 53,
+      "win": 0,
+      "rounds": 5,
+      "events": 11,
+      "damage": 274,
+      "endHP": [
+        29,
+        0
+      ],
+      "hash": 2506845195
+    },
+    {
+      "w": "yumi",
+      "n": 1,
+      "seed": 97,
+      "win": 0,
+      "rounds": 5,
+      "events": 10,
+      "damage": 239,
+      "endHP": [
+        52,
+        0
+      ],
+      "hash": 4235452781
+    },
+    {
+      "w": "yumi",
+      "n": 2,
+      "seed": 11,
+      "win": 0,
+      "rounds": 5,
+      "events": 16,
+      "damage": 515,
+      "endHP": [
+        71,
+        0,
+        0,
+        0
+      ],
+      "hash": 4080795621
+    },
+    {
+      "w": "yumi",
+      "n": 2,
+      "seed": 29,
+      "win": 1,
+      "rounds": 6,
+      "events": 22,
+      "damage": 574,
+      "endHP": [
+        0,
+        18,
+        0,
+        0
+      ],
+      "hash": 3151694210
+    },
+    {
+      "w": "yumi",
+      "n": 2,
+      "seed": 53,
+      "win": 1,
+      "rounds": 4,
+      "events": 17,
+      "damage": 435,
+      "endHP": [
+        0,
+        42,
+        0,
+        109
+      ],
+      "hash": 4167416517
+    },
+    {
+      "w": "yumi",
+      "n": 2,
+      "seed": 97,
+      "win": 1,
+      "rounds": 3,
+      "events": 14,
+      "damage": 467,
+      "endHP": [
+        0,
+        37,
+        0,
+        81
+      ],
+      "hash": 4027552827
+    },
+    {
+      "w": "yumi",
+      "n": 3,
+      "seed": 11,
+      "win": 1,
+      "rounds": 3,
+      "events": 24,
+      "damage": 858,
+      "endHP": [
+        0,
+        12,
+        0,
+        44,
+        0,
+        7
+      ],
+      "hash": 2418994182
+    },
+    {
+      "w": "yumi",
+      "n": 3,
+      "seed": 29,
+      "win": 1,
+      "rounds": 5,
+      "events": 27,
+      "damage": 786,
+      "endHP": [
+        0,
+        0,
+        0,
+        52,
+        0,
+        58
+      ],
+      "hash": 2865524398
+    },
+    {
+      "w": "yumi",
+      "n": 3,
+      "seed": 53,
+      "win": 1,
+      "rounds": 4,
+      "events": 27,
+      "damage": 820,
+      "endHP": [
+        0,
+        9,
+        0,
+        63,
+        0,
+        0
+      ],
+      "hash": 2885910498
+    },
+    {
+      "w": "yumi",
+      "n": 3,
+      "seed": 97,
+      "win": 1,
+      "rounds": 4,
+      "events": 29,
+      "damage": 790,
+      "endHP": [
+        0,
+        79,
+        0,
+        58,
+        0,
+        0
+      ],
+      "hash": 76197265
+    },
+    {
+      "w": "repeater",
+      "n": 1,
+      "seed": 11,
+      "win": 0,
+      "rounds": 5,
+      "events": 14,
+      "damage": 294,
+      "endHP": [
+        3,
+        0
+      ],
+      "hash": 1222663914
+    },
+    {
+      "w": "repeater",
+      "n": 1,
+      "seed": 29,
+      "win": 1,
+      "rounds": 5,
+      "events": 15,
+      "damage": 296,
+      "endHP": [
+        0,
+        17
+      ],
+      "hash": 3693214080
+    },
+    {
+      "w": "repeater",
+      "n": 1,
+      "seed": 53,
+      "win": 1,
+      "rounds": 5,
+      "events": 14,
+      "damage": 223,
+      "endHP": [
+        0,
+        77
+      ],
+      "hash": 4049258905
+    },
+    {
+      "w": "repeater",
+      "n": 1,
+      "seed": 97,
+      "win": 1,
+      "rounds": 4,
+      "events": 11,
+      "damage": 251,
+      "endHP": [
+        0,
+        58
+      ],
+      "hash": 2591108638
+    },
+    {
+      "w": "repeater",
+      "n": 2,
+      "seed": 11,
+      "win": 1,
+      "rounds": 5,
+      "events": 27,
+      "damage": 624,
+      "endHP": [
+        0,
+        33,
+        0,
+        0
+      ],
+      "hash": 866842908
+    },
+    {
+      "w": "repeater",
+      "n": 2,
+      "seed": 29,
+      "win": 0,
+      "rounds": 7,
+      "events": 33,
+      "damage": 605,
+      "endHP": [
+        0,
+        0,
+        1,
+        0
+      ],
+      "hash": 1695063924
+    },
+    {
+      "w": "repeater",
+      "n": 2,
+      "seed": 53,
+      "win": 1,
+      "rounds": 4,
+      "events": 21,
+      "damage": 411,
+      "endHP": [
+        0,
+        98,
+        0,
+        69
+      ],
+      "hash": 3998053567
+    },
+    {
+      "w": "repeater",
+      "n": 2,
+      "seed": 97,
+      "win": 1,
+      "rounds": 4,
+      "events": 21,
+      "damage": 435,
+      "endHP": [
+        0,
+        80,
+        0,
+        68
+      ],
+      "hash": 3118767186
+    },
+    {
+      "w": "repeater",
+      "n": 3,
+      "seed": 11,
+      "win": 1,
+      "rounds": 3,
+      "events": 28,
+      "damage": 730,
+      "endHP": [
+        0,
+        36,
+        0,
+        28,
+        0,
+        89
+      ],
+      "hash": 2109327751
+    },
+    {
+      "w": "repeater",
+      "n": 3,
+      "seed": 29,
+      "win": 1,
+      "rounds": 4,
+      "events": 30,
+      "damage": 703,
+      "endHP": [
+        0,
+        58,
+        0,
+        91,
+        0,
+        54
+      ],
+      "hash": 3136995726
+    },
+    {
+      "w": "repeater",
+      "n": 3,
+      "seed": 53,
+      "win": 1,
+      "rounds": 5,
+      "events": 35,
+      "damage": 762,
+      "endHP": [
+        0,
+        73,
+        0,
+        45,
+        0,
+        26
+      ],
+      "hash": 589352814
+    },
+    {
+      "w": "repeater",
+      "n": 3,
+      "seed": 97,
+      "win": 1,
+      "rounds": 4,
+      "events": 31,
+      "damage": 731,
+      "endHP": [
+        0,
+        64,
+        0,
+        51,
+        0,
+        63
+      ],
+      "hash": 159439707
+    },
+    {
+      "w": "rifle",
+      "n": 1,
+      "seed": 11,
+      "win": 1,
+      "rounds": 2,
+      "events": 9,
+      "damage": 234,
+      "endHP": [
+        0,
+        50
+      ],
+      "hash": 3549535390
+    },
+    {
+      "w": "rifle",
+      "n": 1,
+      "seed": 29,
+      "win": 1,
+      "rounds": 3,
+      "events": 10,
+      "damage": 203,
+      "endHP": [
+        0,
+        84
+      ],
+      "hash": 1587515335
+    },
+    {
+      "w": "rifle",
+      "n": 1,
+      "seed": 53,
+      "win": 1,
+      "rounds": 4,
+      "events": 14,
+      "damage": 200,
+      "endHP": [
+        0,
+        82
+      ],
+      "hash": 2478013965
+    },
+    {
+      "w": "rifle",
+      "n": 1,
+      "seed": 97,
+      "win": 1,
+      "rounds": 4,
+      "events": 14,
+      "damage": 234,
+      "endHP": [
+        0,
+        47
+      ],
+      "hash": 1811007805
+    },
+    {
+      "w": "rifle",
+      "n": 2,
+      "seed": 11,
+      "win": 1,
+      "rounds": 4,
+      "events": 23,
+      "damage": 502,
+      "endHP": [
+        0,
+        5,
+        0,
+        73
+      ],
+      "hash": 3247565357
+    },
+    {
+      "w": "rifle",
+      "n": 2,
+      "seed": 29,
+      "win": 1,
+      "rounds": 3,
+      "events": 20,
+      "damage": 403,
+      "endHP": [
+        0,
+        84,
+        0,
+        96
+      ],
+      "hash": 4253197760
+    },
+    {
+      "w": "rifle",
+      "n": 2,
+      "seed": 53,
+      "win": 1,
+      "rounds": 4,
+      "events": 26,
+      "damage": 486,
+      "endHP": [
+        0,
+        57,
+        0,
+        56
+      ],
+      "hash": 1752155193
+    },
+    {
+      "w": "rifle",
+      "n": 2,
+      "seed": 97,
+      "win": 1,
+      "rounds": 4,
+      "events": 22,
+      "damage": 490,
+      "endHP": [
+        0,
+        40,
+        0,
+        107
+      ],
+      "hash": 109462039
+    },
+    {
+      "w": "rifle",
+      "n": 3,
+      "seed": 11,
+      "win": 1,
+      "rounds": 5,
+      "events": 36,
+      "damage": 832,
+      "endHP": [
+        0,
+        0,
+        0,
+        73,
+        0,
+        24
+      ],
+      "hash": 4170310537
+    },
+    {
+      "w": "rifle",
+      "n": 3,
+      "seed": 29,
+      "win": 1,
+      "rounds": 5,
+      "events": 44,
+      "damage": 828,
+      "endHP": [
+        0,
+        25,
+        0,
+        55,
+        0,
+        12
+      ],
+      "hash": 4051953730
+    },
+    {
+      "w": "rifle",
+      "n": 3,
+      "seed": 53,
+      "win": 1,
+      "rounds": 5,
+      "events": 43,
+      "damage": 818,
+      "endHP": [
+        0,
+        72,
+        0,
+        11,
+        0,
+        6
+      ],
+      "hash": 2195889918
+    },
+    {
+      "w": "rifle",
+      "n": 3,
+      "seed": 97,
+      "win": 1,
+      "rounds": 4,
+      "events": 37,
+      "damage": 721,
+      "endHP": [
+        0,
+        109,
+        0,
+        57,
+        0,
+        25
+      ],
+      "hash": 549064709
+    }
+  ]
+}

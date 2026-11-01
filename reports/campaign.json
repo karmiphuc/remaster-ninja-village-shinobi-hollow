@@ -4,18 +4,18 @@
     "dojoExcluded": "Training Ground",
     "completes": "49/49"
   },
-  "dojoCard": "Ginryū Gusoku",
+  "dojoCard": "Gunners recruits",
   "dojo": {
     "rolls": {
-      "armor": 72,
-      "troops": 174,
+      "troops": 163,
+      "person": 91,
       "horse": 61,
-      "person": 93
+      "armor": 85
     },
     "partnerPower": {
-      "troops": 778,
-      "armor": 859,
-      "person": 1058
+      "troops": 744,
+      "armor": 833,
+      "person": 1018
     }
   },
   "dojoPayouts": {
@@ -42,20 +42,25 @@
     "lair": {
       "name": "Yamato",
       "before": 64,
-      "after": 494,
-      "uprising": 412,
+      "after": 98,
+      "uprising": 81,
       "spoils": {
         "items": [
-          "Horned Kabuto"
+          "Riveted Hachigane",
+          "Riveted Hachigane"
         ],
-        "recruits": []
+        "recruits": [
+          "Mamezo"
+        ]
       }
     },
     "castle": {
       "name": "Ise",
-      "strengthKept": 178,
+      "before": 168,
+      "after": 168,
+      "uprising": 148,
       "spoilsGranted": [
-        "Uchigatana"
+        "Wakizashi"
       ],
       "recruitOffered": "Shinpei"
     }
