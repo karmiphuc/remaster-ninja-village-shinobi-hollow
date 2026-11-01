@@ -233,12 +233,18 @@ img.px, canvas.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 #placebar .t b { color: var(--gold-l); font-weight: 400; }
 
 /* announce modal */
-#modal { position: absolute; inset: 0; z-index: 20; display: grid; place-items: center; background: rgba(10, 6, 10, .55); padding: 20px max(16px, env(safe-area-inset-right, 0px)) 20px max(16px, env(safe-area-inset-left, 0px)); }
-.modal-in { width: 100%; max-width: 420px; max-height: 100%; display: flex; flex-direction: column; animation: pop .25s cubic-bezier(.2, 1.4, .4, 1); }
+#modal { position: absolute; inset: 0; z-index: 20; display: flex; background: rgba(10, 6, 10, .55); padding: calc(env(safe-area-inset-top, 0px) + 16px) max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 16px) max(16px, env(safe-area-inset-left, 0px)); overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch; }
+/* margin:auto centres it, and when it is taller than the screen it starts at the top instead of being cut off above it;
+   the max-height is a definite viewport size because a percentage inside the backdrop is not resolved by every browser */
+.modal-in { width: 100%; max-width: 420px; margin: auto; max-height: calc(100vh - 32px); max-height: calc(100dvh - 32px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; animation: pop .25s cubic-bezier(.2, 1.4, .4, 1); }
+.modal-ft-top { display: flex; justify-content: flex-end; gap: 8px; padding: 10px 14px 4px; flex: 0 0 auto; border-top: 2px solid var(--line); }
+.modal-ft-top[hidden], .dlg-top[hidden] { display: none !important; }
+.dlg-top { display: flex; gap: 6px; align-items: center; padding: 8px 10px; border-bottom: 1px dashed rgba(90, 60, 30, .35); }
+.dlg-top .sp { flex: 1; }
 .modal-hd { display: flex; align-items: center; gap: 10px; padding: 8px 12px; }
 .modal-hd h3 { margin: 0; font-family: var(--f-brush); font-weight: 400; color: var(--gold-l); font-size: 20px; text-shadow: 0 2px 0 var(--line); }
 .modal-hd img { width: 30px; image-rendering: pixelated; }
-.modal-bd { padding: 14px; border-top: 2px solid var(--line); display: flex; gap: 12px; align-items: flex-start; line-height: 1.55; font-size: 14px; overflow-y: auto; min-height: 0; flex: 1 1 auto; }
+.modal-bd { padding: 14px; border-top: 2px solid var(--line); display: flex; gap: 12px; align-items: flex-start; line-height: 1.55; font-size: 14px; overflow-y: auto; min-height: 0; flex: 1 1 auto; overscroll-behavior: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch; }
 .modal-bd > div { min-width: 0; flex: 1; }
 .modal-hd h3 { flex: 1; min-width: 0; }
 .modal-hd .x { width: 34px; height: 34px; flex: 0 0 34px; border: 2px solid var(--line); background: #8a2b2b; color: #fff4dc; font-size: 16px; }
@@ -312,6 +318,7 @@ img.px, canvas.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 @keyframes cutl { from { transform: translateX(-110%); } } @keyframes cutr { from { transform: translateX(110%); } }
 #btac { position: absolute; z-index: 4; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; padding: 0 max(8px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 10px) max(8px, env(safe-area-inset-left, 0px)); }
 #btac .in { width: 100%; max-width: 620px; }
+#btac .in > .paper { max-height: calc(100vh - 96px); max-height: calc(100dvh - 96px - env(safe-area-inset-top, 0px)); overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch; }
 .tacs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 10px; }
 .tac { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 4px; border: 2px solid var(--ink); background: rgba(255, 255, 255, .5); color: var(--ink); font-size: 11px; line-height: 1.25; text-align: center; min-width: 0; }
 .tac .k { font-family: var(--f-brush); font-size: 26px; line-height: 1; color: var(--verm-d); }
@@ -7219,7 +7226,7 @@ function hireMonth() { const m = monthIdx(); (G.hire || []).filter(x => x.until 
 function joinVillager(id, title) { const d = vData(id); addVillager(id); ensureVillagerAgents(); Sound.play('alert'); announce(title || 'A new villager joins!', `<b>${d.name}</b> has moved into the village. ${d.bio}`, 'people', d); }
 function yearTick() {
   if (G.year > (G.endYear || 25) && !G.ended) { G.ended = true; showEnding(false); }
-  else { const R = yearReport(); if (R) modal(R.title, R.html, [['Onward', null]], { icon: 'scroll' }); else announce(`Year ${G.year} begins`, `Last month: <b>${fmt(G.stats.lastSales)} G</b> in sales from ${G.stats.lastTrav} travellers.`, 'scroll'); }
+  else { const R = yearReport(); if (R) modal(R.title, R.html, [['Onward', null]], { icon: 'scroll', quick: true }); else announce(`Year ${G.year} begins`, `Last month: <b>${fmt(G.stats.lastSales)} G</b> in sales from ${G.stats.lastTrav} travellers.`, 'scroll'); }
   yrLedger(); // open the new year's ledger
 }
 function dateStr() { return `Y${G.year} ${SEASONS[G.month - 1]} M${G.month}·W${G.week}`; }
@@ -8410,12 +8417,16 @@ function showModal() {
   RT.paused = true;
   const el = $('#modal'); el.hidden = false;
   el.innerHTML = `<div class="modal-in lac"><div class="modal-hd">${m.opts.icon ? icon(m.opts.icon) : ''}<h3>${m.title}</h3>${m.opts.must ? '' : '<button class="x" aria-label="Close">✕</button>'}</div><div class="modal-bd paper">${m.opts.look ? `<img class="pt" src="${pURL(m.opts.look)}" alt="">` : ''}<div>${m.html}</div></div><div class="modal-ft paper"></div></div>`;
-  const ft = el.querySelector('.modal-ft');
+  const ft = el.querySelector('.modal-ft'), top = h('<div class="modal-ft-top paper" hidden></div>'); el.querySelector('.modal-hd').after(top);
   // two more ways out: the ✕ and a tap on the dimmed backdrop (same as dismissing without choosing)
   const dismiss = () => { if (MQ[0] !== m) return; Sound.play('tap'); MQ.shift(); showModal(); if (m.opts.onClose) m.opts.onClose(); };
   if (m.opts.must) el.onclick = null; else { el.querySelector('.modal-hd .x').onclick = dismiss; el.onclick = e => { if (e.target === el) dismiss(); }; }
   if (m.opts.onShow) m.opts.onShow(el); if (!m.buttons.length) ft.hidden = true;
-  m.buttons.forEach(([lbl, fn, cls]) => { const b = h(`<button class="btn ${cls || 'gold'}">${lbl}</button>`); b.onclick = () => { Sound.play('tap'); MQ.shift(); showModal(); if (fn) fn(); }; ft.appendChild(b); });
+  m.buttons.forEach(([lbl, fn, cls]) => { for (const row of [top, ft]) { const b = h(`<button class="btn ${cls || 'gold'}">${lbl}</button>`); b.onclick = () => { if (MQ[0] !== m) return; Sound.play('tap'); MQ.shift(); showModal(); if (fn) fn(); }; row.appendChild(b); } });
+  // a second set of buttons at the top: always on dialogs players click straight through, and on any dialog whose
+  // content runs past the screen, so the way on never sits below a long scroll
+  const fitTop = () => { if (MQ[0] !== m || !m.buttons.length) return; const bd = el.querySelector('.modal-bd'); top.hidden = !(m.opts.quick || bd.scrollHeight > bd.clientHeight + 4); };
+  fitTop(); requestAnimationFrame(fitTop); el.querySelectorAll('.modal-bd img').forEach(im => { if (!im.complete) im.addEventListener('load', fitTop, { once: true }); });
   setTimeout(() => { const b = ft.querySelector('button:last-child'); if (b) b.focus({ preventScroll: true }); }, 50);
 }
 function announce(title, html, ic, look) { modal(title, html, [['OK', null]], { icon: ic, look }); }
@@ -9267,6 +9278,7 @@ function openHunt(H) {
   openSheet(`狩 <small>Hunt · ${esc(I.name)}</small>`, null, body => {
     const pick = UI.hunters.ids.map(vById).filter(Boolean), pp = pick.length ? armyPower(playerSkirmish(pick)) : 0, ep = armyPower(huntArmy(H)), odds = pp / (pp + ep || 1);
     body.appendChild(h(`<div class="row" style="align-items:center;gap:10px"><img class="px" src="${ICONS['it_' + H.k]}" style="width:48px;height:48px" alt=""><div style="flex:1"><b>${esc(H.n > 1 ? H.n + ' × ' + H.name : H.name)}</b> in ${esc(H.where)} · level ${huntLevel().toFixed(1)}<div class="odds" style="margin-top:4px"><i style="width:${Math.round(odds * 100)}%;background:#3b4a7a"></i><i style="flex:1;background:#6b8a3a"></i></div><div class="muted">Hunters ${fmt(pp)} vs beast ${fmt(ep)}</div></div></div>`));
+    const top = h(`<div class="row" data-top-of="hunt" style="margin:8px 0 2px"><button class="btn ghost">Let it go</button><span class="sp"></span><button class="btn red"${pick.length ? '' : ' disabled'}>狩 · Begin the hunt</button></div>`); body.appendChild(top);
     body.appendChild(h(`<div class="sec">Hunting party ${pick.length}/3</div>`));
     const l = h('<div class="vlist"></div>');
     G.villagers.forEach(v => { const on = UI.hunters.ids.includes(v.id), c = vCard(v); c.classList.toggle('on', on); c.onclick = () => { const ids = UI.hunters.ids; if (on) ids.splice(ids.indexOf(v.id), 1); else if (ids.length < 3) ids.push(v.id); else { Sound.play('alert'); toast('Three hunters at most.'); return; } Sound.play('tap'); refreshSheet(); }; l.appendChild(c); });
@@ -9277,6 +9289,7 @@ function openHunt(H) {
     go.onclick = () => { const party = UI.hunters.ids.map(vById).filter(Boolean); if (!party.length) return; UI.hunters = null; closeSheet();
       startBattle(null, { site: { id: 'hunt', type: 'hunt', clan: 'wild', name: H.where, power: Math.round(40 + huntLevel() * 40), hunt: Object.assign({ lvl: huntLevel() }, H), reward: {} }, pa: playerSkirmish(party), ea: huntArmy(H) }); };
     body.appendChild(row);
+    const [tno, tgo] = top.querySelectorAll('button'); tno.onclick = no.onclick; tgo.onclick = go.onclick;
   });
 }
 // beasts taken from a beaten army: mounted clans leave horses, hawk clans their birds
@@ -9703,7 +9716,7 @@ function offerDoctrine() {
     .concat(H.omens.map((o, i) => { const O = omenOf(o); return card(O.kind, `<span class="hk">${O.jp}</span>`, O.kind === 'boon' ? 'Blessing' : O.kind === 'twist' ? 'Twist' : 'Hardship', O.name, O.txt(o.arg), O.tip); }));
   const btns = [['承 Accept the hand', () => applyHand(H)]];
   if (!rr) btns.unshift(['Redraw once', () => { B.rr = 1; saveGame(); offerDoctrine(); }, 'ghost']);
-  modal('家訓 The campaign hand', `${news ? `<p class="note" style="margin:0 0 8px">📜 ${esc(news)}</p>` : ''}<p class="note" style="margin:0 0 8px">Fate deals every house its hand: a doctrine, a hardship and one more omen. ${rr ? 'This is your redrawn hand. It stands.' : 'You may redraw the whole hand once.'}</p><div class="choices hand">${cards.join('')}</div>`, btns, { icon: 'scroll', must: true });
+  modal('家訓 The campaign hand', `${news ? `<p class="note" style="margin:0 0 8px">📜 ${esc(news)}</p>` : ''}<p class="note" style="margin:0 0 8px">Fate deals every house its hand: a doctrine, a hardship and one more omen. ${rr ? 'This is your redrawn hand. It stands.' : 'You may redraw the whole hand once.'}</p><div class="choices hand">${cards.join('')}</div>`, btns, { icon: 'scroll', must: true, quick: true });
 }
 
 /* ----- the occasional crossroads: two lasting effects, pick one ----- */
@@ -10386,13 +10399,14 @@ function showTacticPanel() {
       return `<div><b>${UNITS[t].name}</b> <span class="muted">Strategy ${lv}</span> · ${seq ? (new Set(seq).size === 1 ? esc(seq[0]) : seq.map(esc).join(' → ')) : 'Default formation'}</div>`; }).join('')}</div>` : '';
   const K = BT.autoKi, J = K && JUTSU[K.pref];
   const kiLine = K ? `<div class="note" style="margin:6px 10px 0">${icon('ki')} Ki ${Math.max(0, BT.ki[0])}/${BT.kiCap} · ${!K.on ? 'Auto-cast off' : `Auto-cast ${J.name} (${J.ki} Ki): ${!K.eligible ? `holds — your strength share is ${Math.round(K.share * 100)}%, outside 33–67%` : BT.ki[0] < J.ki ? 'not enough Ki banked' : 'ready'}`}</div>` : '';
-  $('#btac').innerHTML = `<div class="in lac"><div class="paper" style="border-top:0">${head}${orders}${kiLine}
+  $('#btac').innerHTML = `<div class="in lac"><div class="paper" style="border-top:0"><div class="dlg-top" data-top-of="deploy"><button class="btn ghost" data-press="bt-retreat">Withdraw</button><span class="sp"></span><button class="btn red" data-press="bt-go">出陣 · Attack!</button></div>${head}${orders}${kiLine}
     ${BT.siege ? engineRows() : ''}
     <div class="row" style="padding:10px"><button class="btn ghost" id="bt-retreat">Withdraw</button><button class="btn ghost" id="bt-speed">Speed ×${BT.speed}</button><span class="sp"></span><button class="btn red" id="bt-go" style="min-width:120px">出陣 · Attack!</button></div></div></div>`;
   $$('#btac [data-eng-more]').forEach(b => b.onclick = () => { const k = b.dataset.engMore, fee = engNext(k); if (!engBuy(k)) { Sound.play('alert'); toast(fee == null ? `No more ${ENGINES[k].name}s for this siege.` : 'Not enough gold.'); return; }
     Sound.play('coin'); Sound.play('taiko', { vol: .6 }); toast(`A ${ENGINES[k].name} rolls up behind your lines <span class="muted">(−${fmt(fee)}G)</span>.`); updateHUD(); showTacticPanel(); });
   $$('#btac [data-eng-less]').forEach(b => b.onclick = () => { const k = b.dataset.engLess; if (!engRefund(k)) return; Sound.play('tap'); updateHUD(); showTacticPanel(); });
   $('#bt-go').onclick = () => { Sound.play('horn'); beginRound(); };
+  $$('#btac [data-press]').forEach(el => el.onclick = e => { e.stopPropagation(); const t = $('#' + el.dataset.press); if (t && !t.disabled) t.click(); });
   $('#bt-speed').onclick = () => { BT.speed = BT.speed >= 4 ? 1 : BT.speed + 1; Sound.play('tap'); showTacticPanel(); };
   $('#bt-retreat').onclick = () => { engRefundAll(); closeBattle(); openMap(); };
 }
@@ -11450,6 +11464,7 @@ function openDuelPicker(B, mine) {
   const draw = () => {
     const ok = sel.every(j => j != null);
     $('#btac').innerHTML = `<div class="in lac"><div class="paper duelpick">
+    <div class="dlg-top" data-top-of="duel"><button class="btn ghost" data-press="dp-no">Refuse</button>${n > 1 ? '<button class="btn ghost" data-press="dp-auto">Auto-assign</button>' : ''}<span class="sp"></span><button class="btn" data-press="dp-go"${ok ? '' : ' disabled'}>Fight!</button></div>
     <div class="dp-hd"><span class="k">一騎打ち</span><div><b>${title}</b><br>${esc(B[0].hero.name)}${B[0].hero.lord ? ' <span class="tg lord">Lord</span>' : ''} ${n > 1 ? `and ${n - 1} other${n > 2 ? 's' : ''} ride out` : 'calls for a champion'}! <span class="muted">Their strength is hidden — read their gear.</span></div></div>
     <div class="dp-vs n${n}">${B.map((b, i) => { const m = sel[i] != null ? mine[sel[i]] : null; return `<button class="dp-slot${i === cur ? ' on' : ''}" data-s="${i}">
       <div class="dp-side foe"><img class="px" src="${pURL(b.hero.look)}" alt=""><div><div class="nm">${esc(b.hero.name)}${b.hero.lord ? ' <span class="tg lord">Lord</span>' : ''}</div><div class="dp-gear">${gearHtml(b.hero)}</div><div>${tags(b.hero, 1)}</div></div></div>
@@ -11458,6 +11473,7 @@ function openDuelPicker(B, mine) {
     <div class="dp-list">${mine.map((hr, j) => { const k = sel.indexOf(j), c = hr.hero; return `<button class="dp-c${k >= 0 ? ' used' : ''}" data-i="${j}"><img class="px" src="${pURL(c.look)}" alt=""><div class="dp-b"><div class="nm">${esc(c.name)}${c.lord ? ' <span class="tg lord">Lord</span>' : ''}</div>${st(c)}<div>${tags(c)}</div></div><div class="dp-p">${k >= 0 ? (n > 1 ? '#' + (k + 1) : '✓') : ''}</div></button>`; }).join('')}</div>
     <div class="row" style="padding:0 10px 10px;gap:6px"><button class="btn ghost" id="dp-no"${tipAttr('Refusing shakes your ranks: −10% this round')}>Refuse</button>${n > 1 ? `<button class="btn ghost" id="dp-auto"${tipAttr('Your strongest against their best-armed')}>Auto-assign</button>` : ''}<span style="flex:1"></span><button class="btn" id="dp-go"${ok ? '' : ' disabled'}>Fight!</button></div>
     <p class="note" style="margin:0 10px 10px">${ib(`Blows are traded until HP runs out. ${n > 1 ? 'A champion who downs their foe turns to help a teammate — on both sides. ' : ''}The loser's unit loses cohesion but fights on without losing soldiers to morale. A beaten commander is out for the battle unless retainers carry them off or a talisman holds.`, 'Stakes')}</p></div></div>`;
+    $$('#btac [data-press]').forEach(el => el.onclick = e => { e.stopPropagation(); const t = $('#' + el.dataset.press); if (t && !t.disabled) t.click(); });
     $$('#btac .dp-slot').forEach(el => el.onclick = () => { Sound.play('tap'); cur = +el.dataset.s; draw(); });
     $$('#btac .dp-c').forEach(el => el.onclick = () => { Sound.play('tap'); const j = +el.dataset.i, k = sel.indexOf(j);
       if (k >= 0 && k !== cur) { sel[k] = sel[cur]; sel[cur] = j; } else sel[cur] = j;

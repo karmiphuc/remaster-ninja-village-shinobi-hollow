@@ -12,6 +12,7 @@ The whole game is one self-contained HTML file. It has no build step, no server 
 - **Main menu (bottom bar):** Build · Villagers · Army · Armory · Campaign · Village.
 - **Top bar:** date (year, season, month, week), village appeal and star rating, population, coin, and time controls (pause, play, fast-forward, music).
 - **Input:** mouse, touch and scroll wheel. It works on desktop and phone-sized screens. In the Warrior Atelier, `Esc` closes the panel and `Tab` cycles focus.
+- **Dialogs:** a dialog never grows past the screen; its content scrolls. The dialogs you click straight through (the New Game campaign hand, the Year in review, duels, hunts and the battle deployment) have their buttons at the top as well as the bottom, and any other dialog too tall for the screen gets the top row too.
 
 ## Battlefield density and formations
 

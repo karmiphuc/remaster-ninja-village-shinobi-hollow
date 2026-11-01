@@ -1,0 +1,131 @@
+{
+  "375x667": {
+    "hand": {
+      "fits": true,
+      "topButtons": [
+        "Redraw once",
+        "承 Accept the hand"
+      ],
+      "scrolls": true,
+      "topWorks": true
+    },
+    "yearReview": {
+      "topButtons": [
+        "Onward"
+      ]
+    },
+    "generic": {
+      "shortOneRow": true,
+      "longTopRow": true
+    },
+    "hunt": {
+      "topButtons": [
+        "Let it go",
+        "Begin the hunt"
+      ]
+    },
+    "duel": {
+      "topButtons": [
+        "Refuse",
+        "Fight!"
+      ]
+    }
+  },
+  "390x844": {
+    "hand": {
+      "fits": true,
+      "topButtons": [
+        "Redraw once",
+        "承 Accept the hand"
+      ],
+      "scrolls": false,
+      "topWorks": true
+    },
+    "yearReview": {
+      "topButtons": [
+        "Onward"
+      ]
+    },
+    "generic": {
+      "shortOneRow": true,
+      "longTopRow": true
+    },
+    "hunt": {
+      "topButtons": [
+        "Let it go",
+        "Begin the hunt"
+      ]
+    },
+    "duel": {
+      "topButtons": [
+        "Refuse",
+        "Fight!"
+      ]
+    }
+  },
+  "844x390": {
+    "hand": {
+      "fits": true,
+      "topButtons": [
+        "Redraw once",
+        "承 Accept the hand"
+      ],
+      "scrolls": true,
+      "topWorks": true
+    },
+    "yearReview": {
+      "topButtons": [
+        "Onward"
+      ]
+    },
+    "generic": {
+      "shortOneRow": true,
+      "longTopRow": true
+    },
+    "hunt": {
+      "topButtons": [
+        "Let it go",
+        "Begin the hunt"
+      ]
+    },
+    "duel": {
+      "topButtons": [
+        "Refuse",
+        "Fight!"
+      ]
+    }
+  },
+  "1280x800": {
+    "hand": {
+      "fits": true,
+      "topButtons": [
+        "Redraw once",
+        "承 Accept the hand"
+      ],
+      "scrolls": false,
+      "topWorks": true
+    },
+    "yearReview": {
+      "topButtons": [
+        "Onward"
+      ]
+    },
+    "generic": {
+      "shortOneRow": true,
+      "longTopRow": true
+    },
+    "hunt": {
+      "topButtons": [
+        "Let it go",
+        "Begin the hunt"
+      ]
+    },
+    "duel": {
+      "topButtons": [
+        "Refuse",
+        "Fight!"
+      ]
+    }
+  },
+  "errors": []
+}
