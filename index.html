@@ -6635,16 +6635,37 @@ function roadEraseBox(tx,ty) {
   }
   return {x:tx,y:ty,w:1,h:1};
 }
+// the last GATE_KEEP tiles of road at each entrance (both lanes) stay, so travellers always have a way in;
+// every other road, the starting avenue and the south approach included, can be dug up to reshape the visitors' flow
+const GATE_KEEP = 3;
+function gateKeep(x, y) {
+  return gates().some(([gx, gy, sd]) => sd === 'S' ? x >= gx - 1 && x <= gx && y >= MAP_H - GATE_KEEP
+    : sd === 'N' ? x >= gx && x <= gx + 1 && y < GATE_KEEP
+    : sd === 'W' ? x < GATE_KEEP && y >= gy && y <= gy + 1
+    : sd === 'E' ? x >= MAP_W - GATE_KEEP && y >= gy && y <= gy + 1 : false);
+}
+// entrances with no road to any shop (travellers coming that way turn to another gate)
+function cutGates() {
+  const shops = G.buildings.filter(b => BUILDINGS[b.id].cat === 'shop' && entranceOf(b)); if (!shops.length) return [];
+  return gates().filter(([gx, gy]) => !shops.some(b => roadEntranceTiles(b).some(e => roadPath(gx, gy, e[0], e[1], false))));
+}
+const GATE_NAME = { S: 'South', N: 'North', W: 'West', E: 'East' };
 function eraseRoad(tx,ty) {
-  const box=roadEraseBox(tx,ty);if(!box)return false;const cells=[];
+  const box=roadEraseBox(tx,ty);if(!box)return false;const cells=[];let kept=0;
   for(let j=0;j<box.h;j++)for(let i=0;i<box.w;i++){
     const x=box.x+i,y=box.y+j;
-    // Preserve the protected southern approach, including its partner lane.
-    if(x===GATE[0]||!tileOpen(x,y))return false;
+    if(gateKeep(x,y)){kept++;continue;}
+    if(!tileOpen(x,y)){toast('Locked land');return false;}
     cells.push(idx(x,y));
   }
+  if(!cells.length){if(kept)toast('The road at the gate stays: travellers need a way in.');return false;}
+  const before=new Set(cutGates().map(g=>g[2]));
   for(const k of cells)G.roads[k]=0;
-  invalidateRoadTraffic();RT.groundDirty=true;Sound.play('demolish');assignJobs();refreshBoosts();updateHUD();return true;
+  invalidateRoadTraffic();RT.groundDirty=true;Sound.play('demolish');assignJobs();refreshBoosts();updateHUD();
+  const cut=cutGates(),fresh=cut.filter(g=>!before.has(g[2]));
+  if(fresh.length)toast(cut.length===gates().length?'No gate reaches a shop by road now: travellers will stop coming until a road joins them.'
+    :`The ${fresh.map(g=>GATE_NAME[g[2]]).join(' and ')} gate no longer reaches a shop: travellers will come in by the other gate${gates().length-cut.length>1?'s':''}.`);
+  return true;
 }
 function wideStreetFrontage(b) {
   const B=BUILDINGS[b.id];if(B.cat!=='shop'&&!capOf(b))return false;
@@ -7142,7 +7163,9 @@ function spawnTraveller() {
   const a = spawnAgent({ kind: 'trav', prof: P.id, look, speed: P.speed ? rnd(P.speed[0], P.speed[1]) : rnd(17, 25), wallet: rint(P.wallet[0], P.wallet[1]), visits: 0, stay: 0, bonus: 0, stayMul: (STAY[P.id] || 1) * rnd(.75, 1.35) });
   const gt = pick(gates()); agentAtTile(a, gt[0], gt[1]); a.x += GATE_OFF[gt[2]][0] * 8; a.y += GATE_OFF[gt[2]][1] * 8;
   a.goal = pickShop(shops, a);
-  if (!walkTo(a, a.goal)) { agentAtTile(a, GATE[0], GATE[1]); a.y += 8; if (!walkTo(a, a.goal)) { a.dead = true; return; } } // a cut road: come in by the south gate
+  if (!walkTo(a, a.goal)) { // a cut road: come in by another gate that still reaches the shop
+    const alt = gates().filter(g => g !== gt); let ok = false; for (const g of alt) { agentAtTile(a, g[0], g[1]); a.x += GATE_OFF[g[2]][0] * 8; a.y += GATE_OFF[g[2]][1] * 8; if (walkTo(a, a.goal)) { ok = true; break; } }
+    if (!ok) { a.dead = true; return; } }
   G.stats.trav++; RT.monthTrav++; G.travM = (G.travM || 0) + 1;
 }
 function pickShop(shops, a) { let tot = 0; const w = shops.map(s => { const v = ((BUILDINGS[s.id].appeal || 1) + (s.boost || 0) * 10 + 1) * (a && likes(a, s) ? 3 : 1); tot += v; return v; }); let r = Math.random() * tot; for (let i = 0; i < shops.length; i++) { r -= w[i]; if (r <= 0) return shops[i]; } return shops[0]; }
