@@ -1,0 +1,103 @@
+{
+  "art": {
+    "swordTripleThrust": true,
+    "blackZ": true,
+    "kneeDownPoses": true,
+    "distinctEffectFamilies": 9,
+    "steadyCanvasAllocations": 0,
+    "privateVisualChoice": true,
+    "noDamageFromDrawing": true,
+    "poseLimit": 24,
+    "releasedOnClose": true
+  },
+  "runs": [
+    {
+      "champions": 1,
+      "weapon": "katana",
+      "save": null,
+      "mounted": false,
+      "speed": 1,
+      "fps": 60,
+      "hits": 10,
+      "finishers": 1,
+      "helpers": 0,
+      "rescues": 0
+    },
+    {
+      "champions": 2,
+      "weapon": "ninjato/naginata",
+      "save": null,
+      "mounted": false,
+      "speed": 1,
+      "fps": 60,
+      "hits": 19,
+      "finishers": 2,
+      "helpers": 1,
+      "rescues": 0
+    },
+    {
+      "champions": 3,
+      "weapon": "katana/yari/ninja_claw",
+      "save": null,
+      "mounted": false,
+      "speed": 4,
+      "fps": 30,
+      "hits": 36,
+      "finishers": 5,
+      "helpers": 3,
+      "rescues": 0
+    },
+    {
+      "champions": 1,
+      "weapon": "katana",
+      "save": "ward",
+      "mounted": false,
+      "speed": 1,
+      "fps": 60,
+      "hits": 7,
+      "finishers": 1,
+      "helpers": 0,
+      "rescues": 1
+    },
+    {
+      "champions": 1,
+      "weapon": "ninjato",
+      "save": "guard",
+      "mounted": false,
+      "speed": 1,
+      "fps": 60,
+      "hits": 8,
+      "finishers": 1,
+      "helpers": 0,
+      "rescues": 1
+    },
+    {
+      "champions": 1,
+      "weapon": "katana",
+      "save": null,
+      "mounted": true,
+      "speed": 1,
+      "fps": 60,
+      "hits": 10,
+      "finishers": 1,
+      "helpers": 0,
+      "rescues": 0
+    },
+    {
+      "champions": 1,
+      "weapon": "rifle",
+      "save": null,
+      "mounted": false,
+      "speed": 1,
+      "fps": 60,
+      "hits": 10,
+      "finishers": 1,
+      "helpers": 0,
+      "rescues": 0
+    }
+  ],
+  "cinematicSeconds": 1.18,
+  "checks": 347,
+  "ledgerCases": 120,
+  "unchangedHPDamage": true
+}
