@@ -1,0 +1,44 @@
+{
+  "southApproach": "removed at row 23 (owned land) by a real tap",
+  "warning": "The South gate no longer reaches a shop: travellers will come in by the other gates.",
+  "southGateKept": [
+    true,
+    true,
+    true
+  ],
+  "avenue": "removable",
+  "otherGates": [
+    {
+      "side": "E",
+      "kept3": true,
+      "fourthRemovable": true
+    },
+    {
+      "side": "N",
+      "kept3": true,
+      "fourthRemovable": true
+    },
+    {
+      "side": "W",
+      "kept3": true,
+      "fourthRemovable": true
+    }
+  ],
+  "unboughtLand": {
+    "refused": true,
+    "note": "Locked land"
+  },
+  "travellers": {
+    "cutGates": [
+      "S"
+    ],
+    "picked": "South (cut)",
+    "arrived": 20,
+    "enteredAt": [
+      "27,0",
+      "0,17",
+      "42,17"
+    ]
+  },
+  "errors": []
+}
