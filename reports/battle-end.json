@@ -1,0 +1,21 @@
+{
+  "direct": {
+    "foeTroops": 12,
+    "blows": [
+      8.4,
+      3.6
+    ],
+    "bothLanded": true,
+    "left": 0
+  },
+  "fights": 52,
+  "maxRound": 7,
+  "seed18": [
+    "hollow: win in 3 rounds",
+    "hollow: win in 3 rounds",
+    "ronin: win in 3 rounds",
+    "shrine: win in 7 rounds"
+  ],
+  "stuck": [],
+  "errors": []
+}
