@@ -10072,7 +10072,10 @@ function normalizeBattleHits(hits){
     h.kills=Math.min(n,Math.max(0,Number.isFinite(h.kills)?h.kills:0));left.set(h.to,n-h.kills);}
   for(let i=hits.length-1;i>=0;i--)if(!(hits[i].kills>0))hits.splice(i,1);
 }
+// losses are fractions of men: what float rounding leaves of a spent unit (1e-16 of a man) is no one, and no figure shows it
+const TROOP_EPS=1e-6;
 function endRound(){
+  BT.A.forEach(A=>A.groups.forEach(g=>{if(g.troops>0&&g.troops<TROOP_EPS)g.troops=0;}));
   const t0=totalOf(BT.A[0]),t1=totalOf(BT.A[1]);
   if(!(t0>0)||!(t1>0))return finishBattle(!(t0>0)&&!(t1>0)?'draw':!(t1>0)?'win':'lose',!(t0>0)&&!(t1>0)?'Neither army has combatants remaining.':undefined);
   recoverEquipment();
@@ -11026,7 +11029,7 @@ function regroup(types) {
   });
 }
 // a unit down to its last handful still shows that handful: at least min(3, troops) soldiers stand while it lives
-function visibleCount(g) { if(g.heroOnly)return g.troops>0?1:0; return g.troops <= 0 ? 0 : clamp(Math.max(Math.ceil(g.troops / BT.per), Math.min(3, Math.ceil(g.troops))), 1, BT.maxVis || 20); }
+function visibleCount(g) { if(g.heroOnly)return g.troops>0?1:0; return g.troops < TROOP_EPS ? 0 : clamp(Math.max(Math.ceil(g.troops / BT.per), Math.min(3, Math.ceil(g.troops))), 1, BT.maxVis || 20); }
 function syncSprites(g, kind = 'burn') {
   independentDamage(g,null);
   updateCohesion(g,true);
@@ -11985,6 +11988,12 @@ function buildScript(p, hits, ex = { procs: [], bonus: new Map() }) {
     else if (hr.hero) { hr.hero.kills = (hr.hero.kills || 0) + k; const h0 = hits.find(h => h.from && (h.from.heroes || []).includes(hr)); if (h0) ev((h0.t0 || T0 + .5) + .2, 'herobonus', { hr, n: k }); }
     else hr.kills = (hr.kills || 0) + k; });
   S.dur = Math.max(S.dur, ...S.ev.map(e => e.t - BT.t + .5).filter(isFinite));
+  // every resolved hit lands. A blow can find no figure left to animate it (a lone fighter already falling to another
+  // blow, or a shooter whose figures are down); its losses still count, or the unit would keep men that no figure shows
+  // and melee could never reach again, and the battle would not end.
+  { const landed = new Set(S.ev.filter(e => e.k === 'hit').map(e => e.h));
+    hits.forEach(h => { if (landed.has(h) || !(h.kills > 0)) return; const dies = S.ev.filter(o => o.k === 'die' && o.h && o.h.to === h.to).map(o => o.t);
+      ev(dies.length ? Math.min(...dies) - .01 : T0 + .5, 'hit', { h }); }); }
   S.ev.forEach(e => { if (e.k !== 'hit') return; const first = Math.min(...S.ev.filter(o => o.k === 'die' && o.h === e.h).map(o => o.t)); if (isFinite(first) && first < e.t) e.t = first - .01; });
   tacticalShotScript(S,p);S.dur=Math.max(S.dur,...S.ev.map(e=>e.t-BT.t+.5));
   S.ev.sort((a, b) => a.t - b.t);
@@ -12163,7 +12172,7 @@ function doEvent(e) {
     const h=e.h;if(h.applied)return;h.applied=true;h.kills=Math.min(Math.max(0,h.to.troops),h.kills);if(!(h.kills>0))return; if (BT.A[0].mode === 'army') { if (h.retShare) retCredit(h.from, h.kills * h.retShare);
       retHit(h.to, h.kills).forEach(([c, f]) => { const hr = (h.to.heroes || []).find(x => x.hero === c), q = hr && (hr.guards || []).find(x => x.retRef === f); if (q && q.alive) killSprite(h.to, q, 'knock', sideDir(sideOf(h.from))); const pc = q || hr || gCenter(h.to); BT.labels.push({ x: pc.x, y: pc.y - 24, text: '郎党↓', t: .3, side: sideOf(h.to) }); }); }
     cmdPressure(h).forEach(([c, d]) => cmdHurt(h.to, c, d, h.from));
-    h.to.troops=Math.max(0,h.to.troops-h.kills);independentDamage(h.to,h.from);if(h.to.solo&&!h.to.heroOnly&&BT.A[sideOf(h.to)].mode==='skirmish'&&h.to.solo.vref)h.to.solo.hp=Math.min(h.to.solo.hpMax||h.to.solo.s.hp,h.to.troops*3); if(h.from.heroOnly)h.from.solo.pk=(h.from.solo.pk||0)+h.kills;if (h.from.solo) h.from.solo.kills = (h.from.solo.kills || 0) + h.kills;
+    h.to.troops=Math.max(0,h.to.troops-h.kills);if(h.to.troops<TROOP_EPS)h.to.troops=0;independentDamage(h.to,h.from);if(h.to.solo&&!h.to.heroOnly&&BT.A[sideOf(h.to)].mode==='skirmish'&&h.to.solo.vref)h.to.solo.hp=Math.min(h.to.solo.hpMax||h.to.solo.s.hp,h.to.troops*3); if(h.from.heroOnly)h.from.solo.pk=(h.from.solo.pk||0)+h.kills;if (h.from.solo) h.from.solo.kills = (h.from.solo.kills || 0) + h.kills;
     if (h.kills >= 20 || BT.A[0].mode === 'skirmish' || h.to.troops <= 0) addNum(h.to, h.kills, h.depth);
     cohesionDamage(h.to,h.kills,h.from);unitBreak(h.to);
     BT.hudDirty = true; return;
