@@ -1,0 +1,80 @@
+{
+  "caps": {
+    "field": 60,
+    "shopShelf": 30,
+    "workshopIn": 30,
+    "workshopOut": 30,
+    "unit": 6,
+    "fieldHaul": 18,
+    "workshopHaul": 6
+  },
+  "field": {
+    "filledTo": 60,
+    "harvests": 12,
+    "nextHarvestWaits": 5,
+    "paused": true
+  },
+  "shops": {
+    "onigiriRice": 30,
+    "noodleRice": 15,
+    "noodleVeg": 15,
+    "noodleWares": 30
+  },
+  "workshop": {
+    "bentoInputs": "15 rice + 15 veg",
+    "afterFullRice": "veg still 15",
+    "full": "30/30",
+    "loneMaterial": 30
+  },
+  "icons": {
+    "1": 1,
+    "5": 1,
+    "6": 1,
+    "7": 2,
+    "12": 2,
+    "13": 3,
+    "24": 4,
+    "25": 5,
+    "30": 5,
+    "31": 6,
+    "54": 9,
+    "55": 10,
+    "60": 10
+  },
+  "stacks": {
+    "field10": [
+      4,
+      3,
+      2,
+      1
+    ],
+    "shelf5": [
+      2,
+      2,
+      1
+    ]
+  },
+  "mixed": {
+    "18 rice + 12 veg": "rice rice rice veg veg",
+    "25 rice + 1 veg": "rice rice rice rice veg"
+  },
+  "sizes": {
+    "field10": [
+      29,
+      18
+    ],
+    "shelf5Rice": [
+      15,
+      14
+    ],
+    "shelf5Crates": [
+      15,
+      17
+    ]
+  },
+  "panels": {
+    "shop": "Materials 0/30 · Wares 0/30",
+    "workshop": "Materials 0/30 → Wares 0/30"
+  },
+  "errors": []
+}

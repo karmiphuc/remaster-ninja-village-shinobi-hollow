@@ -24,8 +24,8 @@ const result=await p.evaluate((uncroppedSource)=>{
  createGoods(central,'rice',50,'test-seed');
  const visitor={wallet:1,likes:[],bubble:null};let before=G.stats.sales;
  ok(sell(visitor,shop)===0&&G.stats.sales===before,'shops may not sell central stock');out.localOnlySales=true;
- const c=economyClaim(a,central,shelf,'rice',8,E.stores[0],shop),c2=economyClaim(b,central,shelf,'rice',8,E.stores[0],shop);
- ok(c&&c.n===8&&c2&&c2.n===2,'delivery claims cap shelves at ten');
+ const c=economyClaim(a,central,shelf,'rice',SHOP_CAP-2,E.stores[0],shop),c2=economyClaim(b,central,shelf,'rice',8,E.stores[0],shop);
+ ok(c&&c.n===SHOP_CAP-2&&c2&&c2.n===2,'delivery claims cap shelves at SHOP_CAP');
  economyRelease(a);economyRelease(b);
  const pick=economyStart(a,porters[0],central,shelf,'rice',6,E.stores[0],shop);
  ok(pick===E.stores[0]&&!a.carry,'goods stay at source until pickup');
@@ -42,8 +42,8 @@ const result=await p.evaluate((uncroppedSource)=>{
  const contract=G.trade;G.trade={cs:[{items:[{k:'rice',qty:7}]}]};
  const available=spendableGood('rice');ok(available===Math.max(0,G.stock.rice-7),'contracts protect stock');
  const cl=economyClaim(a,central,shelf,'rice',999,E.stores[0],shop);if(cl)ok(cl.n<=available,'claims respect contracts');economyRelease(a);G.trade=contract;out.contractReserves=true;
- createGoods(economyPoint(field,'pile'),'rice',29.5,'test-seed');produce(field,porters[0]);
- ok((field.pile||0)<=30&&(field.buffer||0)>0,'overflow is preserved in a counted batch');out.noSilentOverflow=true;
+ createGoods(economyPoint(field,'pile'),'rice',PILE_CAP-.5,'test-seed');produce(field,porters[0]);
+ ok((field.pile||0)<=PILE_CAP&&(field.buffer||0)>0,'overflow is preserved in a counted batch');out.noSilentOverflow=true;
  economyStart(a,porters[0],central,shelf,'rice',2,E.stores[0],shop);a.mission='goodsPick';missionArrive(a,porters[0],E.stores[0]);
  removeBuilding(shop);ok(!a.carry&&!a.goodsClaim,'demolish shop recovers in-transit goods');
  removeBuilding(field);out.demolition=true;
