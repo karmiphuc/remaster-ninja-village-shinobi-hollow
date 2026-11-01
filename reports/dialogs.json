@@ -1,12 +1,13 @@
 {
   "375x667": {
     "hand": {
-      "fits": true,
+      "fits": false,
+      "bottomReachable": false,
       "topButtons": [
         "Redraw once",
         "承 Accept the hand"
       ],
-      "scrolls": true,
+      "scrolls": false,
       "topWorks": true
     },
     "yearReview": {
@@ -36,12 +37,13 @@
         "First steps: 1 tap",
         "家訓 The campaign hand: 1 tap (top row, finger drifted 6px)"
       ],
-      "handSwipe": "48px"
+      "handSwipe": "fits without scrolling"
     }
   },
   "390x844": {
     "hand": {
       "fits": true,
+      "bottomReachable": true,
       "topButtons": [
         "Redraw once",
         "承 Accept the hand"
@@ -81,12 +83,13 @@
   },
   "844x390": {
     "hand": {
-      "fits": true,
+      "fits": false,
+      "bottomReachable": false,
       "topButtons": [
         "Redraw once",
         "承 Accept the hand"
       ],
-      "scrolls": true,
+      "scrolls": false,
       "topWorks": true
     },
     "yearReview": {
@@ -104,24 +107,21 @@
         "Begin the hunt"
       ]
     },
-    "duel": {
-      "topButtons": [
-        "Refuse",
-        "Fight!"
-      ]
-    },
+    "deploy": "top row hidden: panel already at the top edge; bottom Attack on screen",
+    "duel": "top row hidden: panel already at the top edge; bottom Fight! on screen",
     "touch": {
       "steps": [
         "隠れ里へようこそ: 1 tap",
         "First steps: 1 tap",
         "家訓 The campaign hand: 1 tap (top row, finger drifted 6px)"
       ],
-      "handSwipe": "105px"
+      "handSwipe": "fits without scrolling"
     }
   },
   "1280x800": {
     "hand": {
       "fits": true,
+      "bottomReachable": true,
       "topButtons": [
         "Redraw once",
         "承 Accept the hand"
