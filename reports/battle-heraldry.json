@@ -1,0 +1,75 @@
+{
+  "coverage": [
+    {
+      "mode": "camp",
+      "officers": 5,
+      "ranks": [
+        "enemyLord",
+        "enemyCaptain",
+        "enemyVanguard"
+      ]
+    },
+    {
+      "mode": "dojo",
+      "officers": 5,
+      "ranks": [
+        "enemyLord",
+        "enemyCaptain",
+        "enemyVanguard"
+      ]
+    },
+    {
+      "mode": "clan",
+      "officers": 5,
+      "ranks": [
+        "enemyLord",
+        "enemyCaptain",
+        "enemyVanguard"
+      ]
+    },
+    {
+      "mode": "skirmish",
+      "officers": 4,
+      "ranks": [
+        "enemyLord",
+        "enemyCaptain",
+        "enemyVanguard"
+      ]
+    }
+  ],
+  "render": {
+    "friendlyRimAlpha": 0.28,
+    "friendlyRimPadding": 0.4234153846153852,
+    "enemyRimDraws": 0,
+    "steadyCanvasAllocations": 0,
+    "leadershipPole": 61,
+    "formationPole": 31.5,
+    "curtainWidth": 70,
+    "cacheLimit": 48,
+    "cacheMBLimit": 8
+  },
+  "checks": 119,
+  "viewports": [
+    {
+      "width": 430,
+      "height": 932,
+      "hudClear": true,
+      "worldEdgesClear": true,
+      "formationPositionsPreserved": true
+    },
+    {
+      "width": 1280,
+      "height": 820,
+      "hudClear": true,
+      "worldEdgesClear": true,
+      "formationPositionsPreserved": true
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "hudClear": true,
+      "worldEdgesClear": true,
+      "formationPositionsPreserved": true
+    }
+  ]
+}
