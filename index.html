@@ -4529,7 +4529,7 @@ function horsePB(coat, frame, tack, lean = 0) {
   const nod = custom ? frame.nod || 0 : frame === 'g1' ? -1 : frame === 'g3' || frame === 'g4' ? 1 : frame === 'stand2' ? 1 : 0;
   const oy = bob;
   const farU = shade(C.b, -.32), farL = shade(C.b, -.42), hoof = '#2a2020', hoofL = '#4a3a3a';
-  const rear = !!lean;
+  const rear = !!lean,forePivot=rear&&custom&&frame.pivot==='fore';
   // lacquered scale armour painted over whatever the horse already has in a box; bands of 3 rows (rim / plate / shadow) with lacing knots
   const bardingScales = (x0, y0, x1, y1, B, skip) => { for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) { if (!pb.get(x, y) || (skip && skip(x, y))) continue;
     const r = (y - y0) % 3, band = ((y - y0) / 3) | 0; pb.set(x, y, r === 0 ? B.rim : r === 2 ? B.dark : ((x + band * 2) % 4 === 0 ? B.lace : B.plate)); } };
@@ -4542,7 +4542,7 @@ function horsePB(coat, frame, tack, lean = 0) {
     if (C.sock && near) pb.rect(hx, hy - 3, 2, 2, C.sock);
     pb.rect(hx, hy - 1, 2, 2, hoof); pb.set(hx, hy - 1, hoofL); };
   // --- far legs (hind legs are re-planted after the body rotates when rearing) ---
-  if (!rear) leg(gait[1], false); leg(gait[0], false);
+  if (!rear||forePivot) leg(gait[1], false); if(!rear||!forePivot)leg(gait[0], false);
   // --- tail: three segments from the dock, swaying with the gait ---
   const tw = custom ? frame.tail || 0 : frame === 'g1' ? -3 : frame === 'g2' ? -2 : frame === 'g3' ? -1 : frame === 'g4' ? 0 : frame === 'stand2' ? 1 : 0;
   const ty = 15 + oy;
@@ -4582,7 +4582,7 @@ function horsePB(coat, frame, tack, lean = 0) {
     pb.hline(10, 12 + oy, 8, bardPal.rim); // rim along the loins
   }
   // --- near legs over the body ---
-  if (!rear) leg(gait[3], true); leg(gait[2], true);
+  if (!rear||forePivot) leg(gait[3], true); if(!rear||!forePivot)leg(gait[2], true);
   // --- tack ---
   if (tack) {
     pb.poly([[17, 14 + oy], [26, 14 + oy], [27, 22 + oy], [16, 22 + oy]], tack.cloth); pb.hline(16, 22 + oy, 12, tack.trim); pb.vline(16, 15 + oy, 7, shade(tack.cloth, .2));
@@ -4602,40 +4602,42 @@ function horsePB(coat, frame, tack, lean = 0) {
       pb.set(hx + 9, hy + 1, '#e0b54a'); pb.set(hx + 10, hy + 0, '#f2d27a'); pb.set(hx + 4, hy + 1, '#e0b54a'); pb.set(hx + 3, hy + 0, '#f2d27a'); // horns beside the ears
     }
   }
-  artHorseFinish(pb, C, tack, oy, hx, hy, gait);
+  artHorseFinish(pb, C, tack, oy, hx, hy, gait,rear?(forePivot?'fore':'hind'):null);
   if (!rear) return { pb, oy, hx, hy };
-  // --- rear: swing everything but the hind legs up about the hind hooves, then plant the hind legs under the croup ---
-  const out = new ArtPB(46, 52), DY = 16, px = 14, py = 33, s = Math.sin(lean), c = Math.cos(lean);
+  // Rear on the hind hooves, or load a backwards kick over planted forelegs. Extra bucking headroom keeps the nose intact.
+  const out = new ArtPB(forePivot?60:46, 52), DY = 16, px = forePivot?29:14, py = 33, s = Math.sin(lean), c = Math.cos(lean);
   const rot = (x, y) => [px + (x - px) * c - (y - py) * s, py + (x - px) * s + (y - py) * c];
-  const hind = (L, near) => { const [sx, sy] = L, [rx, ry] = rot(sx, sy + oy), hxx = Math.round(rx) - (near ? 0 : 1), kx = Math.round(rx) - 2, ky = Math.round((ry + 32) / 2);
+  const planted = (L, near) => { const [sx, sy] = L, [rx, ry] = rot(sx, sy + oy), hxx = Math.round(rx) - (near ? 0 : 1), kx = Math.round(rx) + (forePivot?1:-2), ky = Math.round((ry + 32) / 2);
     thick(out, Math.round(rx), Math.round(ry) + DY, kx, ky + DY, 3, near ? C.b : farU); thick(out, kx, ky + DY, hxx, 31 + DY, 2, near ? (C.points || shade(C.b, -.12)) : farL);
     out.rect(hxx, 32 + DY, 2, 2, hoof); out.set(hxx, 32 + DY, hoofL); if(tack&&tack.barding==='nanban'){artStroke(out,[[Math.round(rx),Math.round(ry)+DY],[kx,ky+DY],[hxx,31+DY]],2.4,near?'#7f949f':'#4d636f');artStroke(out,[[Math.round(rx)-.4,Math.round(ry)+DY],[kx-.4,ky+DY],[hxx-.4,31+DY]],.5,'#cad6d6');artIronRivet(out,kx,ky+DY,.22);} };
-  hind(gait[1], false);
-  for (let y = 0; y < 52*3; y++) for (let x = 0; x < 46*3; x++) { const X=x/3,Y=y/3-DY,dx=X-px,dy=Y-py,sx=px+dx*c+dy*s,sy=py-dx*s+dy*c,v=pb._p.get(Math.round(sx*3),Math.round(sy*3)); if(v)out._p.set(x,y,v); }
-  hind(gait[3], true);
+  planted(gait[forePivot?0:1], false);
+  for (let y = 0; y < 52*3; y++) for (let x = 0; x < out.w*3; x++) { const X=x/3,Y=y/3-DY,dx=X-px,dy=Y-py,sx=px+dx*c+dy*s,sy=py-dx*s+dy*c,v=pb._p.get(Math.round(sx*3),Math.round(sy*3)); if(v)out._p.set(x,y,v); }
+  planted(gait[forePivot?2:3], true);
   return { pb: out, oy, hx, hy, tall: true };
 }
 /* rider frame: the 46 x 36 horse is drawn at (OX, OY) inside a W x H frame so the ground stays on the bottom row
    and the horse keeps its old place under the frame centre; the margins are headroom for the oversized weapons.
    W is 84 (was 52) so a couched lance twice the rider's height fits; H stays 50. */
 const RIDER_W = 128, RIDER_H = 70;
-function riderFrame(L, pose, hero, wid, coat, tack) {
+function riderFrame(L, pose, hero, wid, coat, tack, mount=null) {
   L=artEquipmentLook(L);
   const W = RIDER_W, H = RIDER_H, OX = W / 2 - 23;
   const spinI = pose.startsWith('spin') ? +pose[4] : -1;
   const k = wid === 'unarmed' ? 'unarmed' : WEAPON_KIND[wid] || 'spear', pole = k === 'spear' || k === 'glaive', melee = pole || k === 'sword';
   const frame = { studio: 'stand', spin0: 'stand', spin1: 'stand2', spin2: 'stand', spin3: 'stand2', idle: 'stand', idle2: 'stand2', idle3: 'stand', runA: 'g1', runB: 'g3', run3: 'g2', run4: 'g4', wind: 'g2', aim: 'g2', atk: 'g1', follow: 'g2', recover: 'g3', reload: 'stand2', brace: 'stand', hurt: 'stand2' }[pose] || 'stand';
   // melee wind-up: the horse checks and rears a touch (nose up) while the rider chambers the blow
-  const rear = melee && pose === 'wind' ? -0.16 : 0;
-  const pb = new ArtPB(W, H), hr = horsePB(coat, frame, tack, rear);
+  const rear = mount?mount.lean||0:melee && pose === 'wind' ? -0.16 : 0;
+  const pb = new ArtPB(W, H), hr = horsePB(coat, mount||frame, tack, rear);
   const OY = hr.tall ? H - 50 : H - 34, HX0 = OX + hr.hx, HY0 = OY + hr.hy; // horse head origin in frame space
   const sk = L.skin || SKIN[1], c = L.cloth || '#3b4a7a', C = shade(c, -.25), lp = legPal(L, false);
   if(happiEquipment(L)){lp.happi=happiOptions(L);lp.p=lp.happi.hakama;lp.P=shade(lp.happi.hakama,-.2);}
   const run = pose === 'atk' || pose === 'follow' || pose === 'recover' || pose === 'runA' || pose === 'runB' || pose === 'run3' || pose === 'run4';
   // rider lean: forward on the charge, thrown forward on the strike and its follow-through, back on the wind-up
-  const lean = pose === 'hurt' ? -3 : pose === 'atk' ? (melee ? 3 : 1) : pose === 'follow' ? (melee ? 3 : 1) : run ? 1 : pose === 'wind' && melee ? -2 : 0;
+  const lean = mount?mount.riderLean||0:pose === 'hurt' ? -3 : pose === 'atk' ? (melee ? 3 : 1) : pose === 'follow' ? (melee ? 3 : 1) : run ? 1 : pose === 'wind' && melee ? -2 : 0;
   const rise = (pose === 'atk' || pose === 'follow') && melee ? -1 : 0, i3 = pose === 'idle3' ? 1 : 0; // standing in the stirrups for the blow
-  const sx = OX + 18 + lean, sy = (hr.tall ? H - 34 : OY) + 9 + hr.oy + rise + (rear ? -2 : 0); // torso top-left (rearing lifts the saddle)
+  let sx = OX + 18 + lean, sy = (hr.tall ? H - 34 : OY) + 9 + hr.oy + rise + (rear ? -2 : 0);
+  if(mount){const px=mount.pivot==='fore'?29:14,cs=Math.cos(rear),sn=Math.sin(rear);
+    sx=OX+px+(22-px)*cs+18*sn-4+lean;sy=H-34+33+(22-px)*sn-18*cs-6+rise;}
   const sh = [sx + 8, sy + 1], shB = [sx, sy + 1];
   const back = new ArtPB(W, H), front = new ArtPB(W, H);
   let hand, handB; const fists = []; let smear = null;
@@ -4688,7 +4690,7 @@ function riderFrame(L, pose, hero, wid, coat, tack) {
   if (spinI < 0) arm(pb, sh[0], sh[1], hand[0], hand[1], c, sk,{tetsu:tetsuEquipment(L),happi:happiEquipment(L)}); else artHand(pb, hand[0], hand[1], sk, true);
   // reins to the hand (the bit moves with the head when the horse rears: same pivot as horsePB's rotation)
   let bx = HX0 + 3, by = HY0 + 6;
-  if (rear) { const px = 14, py = 33, s = Math.sin(rear), cs = Math.cos(rear), x = hr.hx + 3, y = hr.hy + 6; bx = OX + Math.round(px + (x - px) * cs - (y - py) * s); by = H - 34 + Math.round(py + (x - px) * s + (y - py) * cs); }
+  if (rear) { const px = mount?.pivot==='fore'?29:14, py = 33, s = Math.sin(rear), cs = Math.cos(rear), x = hr.hx + 3, y = hr.hy + 6; bx = OX + Math.round(px + (x - px) * cs - (y - py) * s); by = H - 34 + Math.round(py + (x - px) * s + (y - py) * cs); }
   pb.line(hand[0] + 1, hand[1] + 1, bx, by, '#3a2418');
   artSode(pb, L, sh[0] + 1, sh[1]);
   pb.draw(front, 0, 0);
@@ -5029,9 +5031,9 @@ function artHorseHead(p,C,hx,hy){
  p.ellipse(hx+7,hy+5.5,.7,.9,'#2b201b');p.rect(hx+6.6,hy+4.9,.33,.33,'#f6dfb0');p.ellipse(hx+10.5,hy+8,.4,.5,'#4c3229');artStroke(p,[[hx+9,hy+9],[hx+11,hy+9]],.33,shade(C.mz,-.3));
  p.poly(P([[1,3],[2,2],[5,2.5],[6,4],[3.3,3.7],[3.7,5],[1.4,4.3]]),C.m);artStroke(p,[[hx+2,hy+2.8],[hx+4.4,hy+3.2]],.33,shade(C.m,.25));
 }
-function artHorseFinish(p,C,tack,oy,hx,hy,gait){
+function artHorseFinish(p,C,tack,oy,hx,hy,gait,planted=null){
  if(!tack)return;
- if(tack.barding==='nanban'){artNanbuHorse(p,C,tack,oy,hx,hy,gait);return;}
+ if(tack.barding==='nanban'){artNanbuHorse(p,C,tack,oy,hx,hy,gait,planted);return;}
  // Fine stitched saddlecloth, layered barding and brass fittings share the armour material.
  const c=tack.cloth||'#9a332b',trim=tack.trim||ART_MAT.gold;
  p.poly([[16,15+oy],[26.8,15+oy],[27.3,22.8+oy],[16,22.8+oy]],shade(c,-.25));p.rect(16.5,15.3+oy,9.8,7,c);artStroke(p,[[16.6,15.5+oy],[16.6,22.2+oy],[26.7,22.2+oy]],.5,trim);
@@ -5089,7 +5091,7 @@ function artIronPauldron(p,x,y,w,h,side=1){
   for(const u of [l+.5,r-.5]){const q=pt(u,v+h*.11);artIronRivet(p,q[0],q[1],Math.max(.14,w*.035));}
  }
 }
-function artNanbuHorse(p,C,tack,oy,hx,hy,gait=GAIT.stand){
+function artNanbuHorse(p,C,tack,oy,hx,hy,gait=GAIT.stand,planted=null){
  // Thick, curved crupper, flanchards and peytral overlap over almost the whole trunk.
  const panel=pts=>artSteelPlate(p,pts.map(([x,y])=>[x,y+oy]));
  panel([[9.2,13.7],[11.8,12],[15,11.7],[18.5,13.5],[18.7,21.5],[16.3,25.2],[12,26],[8.6,22.5],[8.2,17.7]]);
@@ -5111,7 +5113,7 @@ function artNanbuHorse(p,C,tack,oy,hx,hy,gait=GAIT.stand){
  artStroke(p,[[hx+6,hy+5.1],[hx+7.7,hy+5.4]],.65,'#23313a');p.rect(hx+6.7,hy+5.15,.33,.33,'#e9e9dc');
  artIronRivet(p,hx+4.5,hy+4.7,.22);artIronRivet(p,hx+9,hy+6.3,.22);
  // Visible articulated leg armor follows the actual knee and hoof sockets.
- for(const id of [3,2]){const [sx,sy,kx,ky,fx,fy]=gait[id],yy=ky+(ky<31?oy:0),upper=[sx,sy+oy],knee=[kx,yy],ankle=[fx,fy-2];
+ for(const id of [3,2]){if(planted&&(planted==='fore'?id===2:id===3))continue;const [sx,sy,kx,ky,fx,fy]=gait[id],yy=ky+(ky<31?oy:0),upper=[sx,sy+oy],knee=[kx,yy],ankle=[fx,fy-2];
   artStroke(p,[upper,knee,ankle],2.6,'#3b4a53');artStroke(p,[[sx-.3,sy+oy],[kx-.3,yy],[fx-.3,fy-2]],1.7,'#93a8b1');
   artStroke(p,[[sx-.55,sy+oy],[kx-.55,yy],[fx-.55,fy-2]],.4,'#dbe3df');
   p.ellipse(kx,yy,1.6,1.25,'#607581');p.ellipse(kx-.3,yy-.2,1.1,.7,'#bdcbce');artIronRivet(p,kx,yy,.18);
@@ -11276,11 +11278,13 @@ function updGuards(hr, dt, g, si) {
   if (!hr.guards) return;
   for (const q of hr.guards) {
     if(q.fate){updSprite(q,dt,g,si);continue;}
+    if(q.duelCover&&q.duelCover===BT.duelShot){updateDuelCover(q.duelCover);continue;}
     if (q.alive && !hr.alive) { killSprite(g, q, 'knock', -sideDir(si)); continue; }
     if (q.alive) { const duel = BT.cine && (BT.cine.all ? BT.cine.all.includes(hr) : BT.cine.a === hr || BT.cine.b === hr); if (duel) { if (!q._hold) q._hold = [q.x, q.y]; } else q._hold = null;
       const L = !duel && q.lunges && q.lunges.find(l => BT.t >= l.t0 && BT.t <= l.t1); if (q.lunges && q.lunges.length > 6) q.lunges = q.lunges.filter(l => l.t1 > BT.t);
       if (L && !L.on) { L.on = 1; setState(q, 'fight', L.t1 - .2); }
-      const tx = L ? L.x : duel ? q._hold[0] : hr.x + q.gx, ty = L ? L.y : duel ? q._hold[1] : hr.y + q.gy, d = Math.hypot(tx - q.x, ty - q.y);
+      const escort=duel&&BT.duelRun&&!BT.duelRun.ended&&hr.duelEscort===q;
+      const tx = L ? L.x : escort?hr.x-sideDir(si)*18:duel ? q._hold[0] : hr.x + q.gx, ty = L ? L.y : escort?hr.y+6:duel ? q._hold[1] : hr.y + q.gy, d = Math.hypot(tx - q.x, ty - q.y);
       if (L) { if (d > 1) { const sp = Math.max(90, d * 9); q.x += (tx - q.x) / d * Math.min(d, sp * dt); q.y += (ty - q.y) / d * Math.min(d, sp * dt); } q.face = sideDir(si); q.brandUntil = hr.brandUntil; if (q.flash > 0) q.flash -= dt; if (q.hop > 0) q.hop -= dt; continue; }
       if (d > 1.5) { const sp = Math.max(40, Math.min(160, d * 5)); q.x += (tx - q.x) / d * Math.min(d, sp * dt); q.y += (ty - q.y) / d * Math.min(d, sp * dt); setState(q, 'run'); q.face = tx > q.x + .5 ? 1 : tx < q.x - .5 ? -1 : q.face; }
       else { setState(q, hr.state === 'fight' ? 'fight' : 'idle', hr.fightAt + .08); q.face = hr.face; }
@@ -11305,10 +11309,10 @@ function heroSlots(g, face, mid, fh) {
     const dx = 5 - col * 12, dy = (r - (rows - 1) / 2) * step + 8 + (col ? step * .5 : 0); // captains lead from the front file, not a stride into no-man's-land
     const s = mkSprite(g, sideOf(g), g.front + face * dx, mid + dy, c.look); s.hero = c; s.hdx = dx; s.hdy = dy; if (c.pet) mkPet(g, sideOf(g), s, c.pet); return s; });
 }
-function mkSprite(g, si, x, y, look, kit, nv = ART_TROOP_VARIANTS, variant = null) {
-  const artVariant=look||g.solo&&g.solo.beast?0:variant!=null?variant%nv:(Math.random()*nv)|0; // faces/builds per rank-and-file set: more variety costs canvas memory
+function mkSprite(g, si, x, y, look, kit, nv = ART_TROOP_VARIANTS, variant = null, random=Math.random) {
+  const artVariant=look||g.solo&&g.solo.beast?0:variant!=null?variant%nv:(random()*nv)|0; // faces/builds per rank-and-file set: more variety costs canvas memory
   const sprs = g.solo && g.solo.beast && !look ? beastSet(g.solo.beast, si) : soldierSprites(g.type, si, look || null, artVariant, look ? null : kit);
-  return { artVariant, artKit:kit?Object.assign({},kit):null, si, x, y, sx: x, sy: y, tx: x, ty: y, spd: 40, state: 'idle', face: sideDir(si), alive: true, die: 0, ph: Math.random() * 6, look, sprs, q: [], fightUntil: 0, hurtUntil: 0, aimFrom: 0, aimUntil: 0, fireAt: 0, flash: 0, jab: 0, hop: 0, cheer: 0, runAt: -9, stopAt: -9, fightAt: 0, poseUntil: 0, kd: 0, wk: kit && kit.w || null };
+  return { artVariant, artKit:kit?Object.assign({},kit):null, si, x, y, sx: x, sy: y, tx: x, ty: y, spd: 40, state: 'idle', face: sideDir(si), alive: true, die: 0, ph: random() * 6, look, sprs, q: [], fightUntil: 0, hurtUntil: 0, aimFrom: 0, aimUntil: 0, fireAt: 0, flash: 0, jab: 0, hop: 0, cheer: 0, runAt: -9, stopAt: -9, fightAt: 0, poseUntil: 0, kd: 0, wk: kit && kit.w || null };
 }
 function flipSet(s) { if (!s.sprsF) { const k = s.sprs; s.sprsF = k._f || (k._f = mapSet(k, flipCanvas)); } return s.sprsF; }
 // kf: keep facing — the soldier backs or sidesteps without turning (a duel winner withdrawing, eyes on the enemy)
@@ -11829,8 +11833,21 @@ function preDuel() {
    its strike ledger; the finisher clock never stops BT.t or replays damage. */
 const DUEL_CINE_TIME=1.18,DUEL_IMPACT=[[],[.66],[.29,.67],[.22,.44,.69]];
 const DUEL_POSES=['guard','hurt','high','recover','thrust','sweep','cutUp','low','kneelGuard','kneelThrust','finish'];
-const DUEL_POSE_SET=new Set(DUEL_POSES.concat('reload'));
+const DUEL_MOUNTS={
+ horseStand:{pose:'idle',lean:0,gait:GAIT.stand},
+ horseRear:{pose:'wind',lean:-.66,riderLean:-1,gait:[[26,22,31,18,29,22],GAIT.stand[1],[29,22,35,18,34,23],GAIT.stand[3]]},
+ horseForeKick:{pose:'recover',lean:-.34,riderLean:1,gait:[[26,22,36,23,41,26],GAIT.stand[1],[29,22,39,22,44,27],GAIT.stand[3]]},
+ horseLand:{pose:'follow',lean:0,riderLean:1,gait:[[26,22,30,28,32,33],GAIT.stand[1],[29,22,34,28,35,33],GAIT.stand[3]]},
+ horseLoad:{pose:'wind',lean:.27,pivot:'fore',riderLean:2,gait:[GAIT.stand[0],[11,21,8,23,12,26],GAIT.stand[2],[14,21,11,23,16,27]]},
+ horseBackKick:{pose:'recover',lean:.30,pivot:'fore',riderLean:2,gait:[GAIT.stand[0],[11,21,4,17,1,19],GAIT.stand[2],[14,21,5,18,0,21]]},
+ horseRun:{pose:'runA',lean:0,gait:GAIT.g1}
+};
+const DUEL_CAV_POSES=Object.keys(DUEL_MOUNTS),DUEL_POSE_SET=new Set(DUEL_POSES.concat(DUEL_CAV_POSES,'reload')),
+ DUEL_CAV_TIME=1.42,DUEL_CAV_IMPACT=[[],[.82],[.42,.84],[.22,.46,.84]],DUEL_BACK_IMPACT=[[],[.82],[.30,.88],[.18,.36,.90]];
+for(const m of Object.values(DUEL_MOUNTS)){const h=m.gait[m.pivot==='fore'?3:2],px=m.pivot==='fore'?29:14;
+ m.hoofX=-23+px+(h[4]-px)*Math.cos(m.lean)-(h[5]-33)*Math.sin(m.lean);}
 const DUEL_Z=[[-17,-10,16,-9],[16,-9,-15,10],[-15,10,18,9]],DUEL_X=[[-15,-11,15,10],[-15,10,15,-11]];
+const DUEL_ENDINGS=['passing','slidingThrust','jump','risingCut','guardBreak','thrust'],DUEL_TWO_ENDINGS=['crossCut',...DUEL_ENDINGS,'crossCut'];
 // Presentation variation uses the resolved chain, never another combat RNG roll.
 function duelMoveVariant(e){return e.visualSeed??=(e.chain*11+e.r*7+(e.f.hr.artVariant||0)*5+artHash(e.f.weapon.id))>>>0;}
 function duelStrikePose(e){
@@ -11853,7 +11870,8 @@ function startDuel(spec){
   const mx=BT.cx,my=clamp(pairs.reduce((v,p)=>v+(p.a.y+p.b.y)/2,0)/n,BT.fy0+30+(n-1)*19,BT.fy1-8-(n-1)*19),
     step=n>1?Math.min(38,(BT.fy1-BT.fy0-40)/(n-1)):0,t0=BT.t+.25;
   D.F.forEach(f=>{f.spot={x:mx+sideDir(f.si)*-30,y:clamp(my+(f.k-(n-1)/2)*step,BT.fy0+30,BT.fy1-8)};
-    f.initialSpot={...f.spot};f.hr.q=[];f.hr.state='idle';delete f.hr.duelDown;delete f.hr.duelPose;f.hr.kd=0;});
+    f.initialSpot={...f.spot};f.hr.q=[];f.hr.state='idle';delete f.hr.duelDown;delete f.hr.duelPose;delete f.hr.duelRescued;f.hr.kd=0;
+    f.hr.duelEscort=(f.hr.guards||[]).find(q=>q.alive)||null;});
   const arr=t0+Math.max(...D.F.map(f=>Math.hypot(f.hr.x-f.spot.x,f.hr.y-f.spot.y)))/85;
   let cursor=arr+.45;const chains=[];for(const e of D.log){let a=chains.at(-1);if(!a||a[0].chain!==e.chain)chains.push(a=[]);a.push(e);}
   const helpers=new Map();
@@ -11861,9 +11879,10 @@ function startDuel(spec){
     if(first.reload){ev(cursor,'tdReload',{e:first,D,n,until:cursor+.34});cursor+=.3;continue;}
     if(first.help&&f.helpT!==t){f.helpT=t;const k=(helpers.get(t)||0)+1;helpers.set(t,k);
       f.spot={x:t.spot.x-dir*30,y:t.spot.y+(k%2?-10:10)};queueMove(f.hr,cursor,f.spot.x,f.spot.y,110,0,true);cursor+=.3;}
-    const heavy=['nodachi','zanbato'].includes(weapon.style),wind=heavy?.33:weapon.style==='claw'?.15:first.counter?.17:.23,gap=heavy?.27:weapon.style==='claw'||weapon.burst?.14:.2;
-    const end=last.ko?cursor+DUEL_CINE_TIME*BATTLE_PACE+.12:cursor+wind+(a.length-1)*gap+.2;
-    if(last.ko){ev(cursor,'tdFinish',{a,D,n});const beats=DUEL_IMPACT[a.length];
+    const heavy=['nodachi','zanbato'].includes(weapon.style),wind=heavy?.33:weapon.style==='claw'?.15:first.counter?.17:.23,gap=heavy?.27:weapon.style==='claw'||weapon.burst?.14:.2,
+      clip=last.ko?duelClip(a):null;
+    const end=clip?cursor+clip.duration*BATTLE_PACE+.12:cursor+wind+(a.length-1)*gap+.2;
+    if(clip){clip.returnX=f.spot.x;clip.returnY=f.spot.y;ev(cursor,'tdFinish',{a,D,n,clip});const beats=clip.beats;
       a.forEach((e,i)=>{e.playAt=cursor+beats[i]*BATTLE_PACE;ev(e.playAt,'tdHit',{e,D,n});});}
     else a.forEach((e,i)=>{const hit=cursor+wind+i*gap,tell=i?hit-.12:cursor;
       e.playAt=hit;ev(tell,'tdTell',{e,until:hit+.18});ev(hit,'tdHit',{e,D,n});});
@@ -11875,6 +11894,11 @@ function startDuel(spec){
   const tEnd=cursor+.25;
   D.F.forEach(f=>{queueMove(f.hr,t0,f.initialSpot.x,f.initialSpot.y,85);f.hr.busyUntil=tEnd+.2;});
   const warm=[];for(const pose of DUEL_POSES)for(const f of D.F)warm.push({f,pose});
+  const mountWarm=new Set();for(const e of S.ev)if(e.k==='tdFinish'&&e.clip.mounted){const f=e.a.at(-1).f,back=e.clip.kind==='cavBackKick',
+      poses=back?['horseStand','horseLoad','horseBackKick','horseLand']:['horseRear','horseForeKick','horseLand','horseRun'];
+    for(const pose of poses){const face=back?-sideDir(f.si):sideDir(f.si),key=f.si+'|'+f.k+'|'+pose+'|'+face;
+      if(!mountWarm.has(key)){mountWarm.add(key);warm.push({f,pose,face});}}
+    if(back)warm.push({f,pose:'horseStand',face:sideDir(f.si)});}
   BT.duels=(BT.duels||0)+1;BT.duelRun={D,n,end:tEnd,clock:0,shots:0,warm,warmIndex:0};BT.stop=0;BT.slow=0;
   BT.cine={a:pairs[0].a,b:pairs[0].b,all:D.F.map(f=>f.hr),F:D.F,x:mx,y:my,from:BT.t,until:tEnd+1.5,z:n===1?.65:n===2?.3:.12};
   ev(arr,'tdStart',{D,n,x:mx,y:my});ev(tEnd,'tdEnd',{D,n,x:mx,y:my});
@@ -11885,16 +11909,51 @@ function duelFinisher(a){
   const e=a.at(-1),w=e.f.weapon.style,v=(duelMoveVariant(e)+e.dmg*7)>>>0,mounted=!!e.f.hr.sprs.horse;
   if(w==='claw')return a.length===3?'tripleSlash':a.length===2?'crossCut':'passing';
   if(w==='bow'||w==='gun')return 'release';
-  if(a.length===3)return w==='yari'||e.f.weapon.kind==='sword'&&v%3===0?'tripleThrust':'tripleSlash';
-  if(w==='zanbato')return 'guardBreak';
-  if(a.length===2){if(w==='naginata')return 'reversal';if(w==='nodachi')return mounted?'guardBreak':'risingCut';
-    if(!mounted&&v%3===1)return 'slidingThrust';return w==='yari'?'doubleThrust':'crossCut';}
-  if(mounted)return w==='yari'||v%2?'passing':'guardBreak';
-  if(w==='nodachi')return v%2?'guardBreak':'risingCut';
-  if(w==='yari')return v%2?'slidingThrust':'passing';
+  if(mounted){if(v%4<2)return v%2?'cavBackKick':'cavTrample';
+    return a.length===3?(w==='yari'||v%3===0?'tripleThrust':'tripleSlash'):a.length===2?(w==='yari'?'doubleThrust':'crossCut'):v%2?'passing':'guardBreak';}
+  if(a.length===3){if(w==='yari')return ['tripleThrust','slidingThrust','passing'][v%3];if(w==='naginata')return v%3===0?'reversal':'tripleSlash';
+    if(v%4===0)return w==='yari'||e.f.weapon.kind==='sword'?'tripleThrust':'tripleSlash';
+    if(v%4===1)return 'tripleSlash';return w==='nodachi'||w==='zanbato'?(v%4===2?'risingCut':'guardBreak'):DUEL_ENDINGS[(v>>>2)%DUEL_ENDINGS.length];}
+  if(a.length===2){if(w==='naginata')return v%2?'reversal':'risingCut';if(w==='nodachi'||w==='zanbato')return v%2?'guardBreak':'risingCut';
+    return w==='yari'?['doubleThrust','slidingThrust','passing'][v%3]:DUEL_TWO_ENDINGS[v%DUEL_TWO_ENDINGS.length];}
+  if(w==='nodachi'||w==='zanbato')return v%2?'guardBreak':'risingCut';
+  if(w==='yari')return ['slidingThrust','passing','thrust'][v%3];
   if(w==='naginata')return v%2?'reversal':'risingCut';
-  return ['passing','slidingThrust','jump','risingCut'][v%4];
+  return DUEL_ENDINGS[v%DUEL_ENDINGS.length];
 }
+function duelClip(a){
+  const kind=duelFinisher(a),mounted=kind==='cavTrample'||kind==='cavBackKick',moves=a.map((e,i)=>{
+    if(kind==='tripleSlash'||kind==='crossCut')return i%2?'cutUp':'sweep';
+    if(kind==='tripleThrust'||kind==='doubleThrust')return 'thrust';
+    if(i===a.length-1)return kind;
+    if(kind==='cavTrample'&&i===a.length-2)return 'cavForeKick';
+    if(e.f.weapon.kind==='sword'||e.f.weapon.kind==='glaive')return a.length===3?(i?'thrust':'sweep'):(kind==='slidingThrust'||kind==='thrust'?'sweep':'thrust');
+    return duelStrikePose(e);
+  });return {kind,moves,mounted,duration:mounted?DUEL_CAV_TIME:DUEL_CINE_TIME,beats:(kind==='cavBackKick'?DUEL_BACK_IMPACT:mounted?DUEL_CAV_IMPACT:DUEL_IMPACT)[a.length]};
+}
+function duelBeat(c,j){return c.moves?.[j]||(c.kind==='tripleThrust'||c.kind==='doubleThrust'?'thrust':c.kind==='tripleSlash'||c.kind==='crossCut'?(j%2?'cutUp':'sweep'):j===c.a.length-1?c.kind:'thrust');}
+// Rescues arrive before the first strike, including a three-hit flurry. The sprite is the actual equipped retainer.
+function duelRetainer(f){
+  const hr=f.hr;hr.guards??=[];const alive=hr.guards.find(q=>q.alive);if(alive)return alive;
+  // The army draws at most four guards, but a commander can still have reserve retainers. Bring one real reserve
+  // into view without reviving a fallen sprite, adding a retainer, or changing combat randomness.
+  if(!(hr.hero.guard>0))return null;
+  const F=hr.hero.retF?retLive(hr.hero).find(r=>!hr.guards.some(q=>q.retRef===r&&!q.alive)):null;
+  if(hr.hero.retF&&!F)return null;
+  const R=F?.gear,dist=f.g.kitDist||{},best=cat=>dist[cat]?.[0]?.[0]||(cat==='w'?KIT.w[f.g.type][0]:'lamellar'),
+    kit=R?{w:R.w||KIT.w[f.g.type][0],a:R.a||null,h:R.h||null,horo:HORO_COL[(hr.hero.id||'').length%2]}:{w:best('w'),a:best('a'),h:'kabuto',horo:HORO_COL[f.si?1:0]},
+    random=seeded(artHash(BT.seed+':duel-guard:'+hr.artVariant+':'+hr.hero.guard+':'+BT.round)),
+    q=mkSprite(f.g,f.si,hr.x-sideDir(f.si)*18,hr.y+6,null,kit,ART_RET_VARIANTS,null,random);
+  q.guardOf=hr;q.retRef=F||null;q.gx=-sideDir(f.si)*18;q.gy=6;hr.guards.push(q);return q;
+}
+function updateDuelCover(c,force=false){
+  const q=c.guard;if(!q||q.fate)return;
+  if(force)c.coverReady=true;
+  const u=c.coverReady?1:easeIO(clamp((c.t-c.coverStart)/Math.max(.04,c.coverAt-c.coverStart),0,1));
+  q.x=lerp(c.guardX,c.L.x,u);q.y=lerp(c.guardY,c.L.y,u);q.face=-c.dir;
+  c.coverU=u;c.guardLift=Math.sin(u*Math.PI)*6;
+}
+function releaseDuelCover(c){if(c?.guard&&c.guard.duelCover===c){delete c.guard.duelCover;c.guard._hold=null;}}
 function duelEvent(e){
   const D=e.D;
   if(e.k==='tdStart'){
@@ -11912,16 +11971,24 @@ function duelEvent(e){
   if(e.k==='tdFinish'){
     const o=e.a.at(-1);if(!o.ko||o.f.loss||o.t.loss)return;
     const C=o.t.hr.hero,save=C.ward&&!C.wardUsed?'ward':C.guard>0?'guard':null;
-    BT.duelShot={a:e.a,e:o,D,n:e.n,t:0,duration:DUEL_CINE_TIME,kind:duelFinisher(e.a),save,
-      W:o.f.hr,L:o.t.hr,guard:save==='guard'?(o.t.hr.guards||[]).find(q=>q.alive):null,dir:sideDir(o.f.si),x:o.t.hr.x,y:o.t.hr.y,bg:null,hold:0};
+    const clip=e.clip||duelClip(e.a);
+    // Compensate once for an event caught between frames; the cinematic then advances on its own clock.
+    const late=Number.isFinite(e.t)?Math.max(0,(BT.t-e.t)/BATTLE_PACE):0;
+    BT.duelShot={...clip,a:e.a,e:o,D,n:e.n,t:late,save,
+      W:o.f.hr,L:o.t.hr,guard:save==='guard'?duelRetainer(o.t):null,dir:sideDir(o.f.si),x:o.t.hr.x,y:o.t.hr.y,bg:null,hold:0};
+    const shot=BT.duelShot;if(shot.guard){shot.guardX=shot.guard.x;shot.guardY=shot.guard.y;
+      shot.coverAt=Math.max(.06,clip.beats[0]-.14);shot.coverStart=Math.max(0,shot.coverAt-.24);shot.coverU=0;
+      shot.guard.duelCover=shot;updateDuelCover(shot);}
     BT.duelRun.shots++;BT.cine.x=(o.f.hr.x+o.t.hr.x)/2;BT.cine.y=o.t.hr.y;BT.cine.z=e.n===1?1.05:.8;
     o.f.hr.duelPose=o.t.hr.duelPose=null;return;
   }
   if(e.k==='tdHit'){
     const o=e.e;if(o.applied)return;o.applied=true;D.committed++;
-    const W=o.f.hr,L=o.t.hr,shot=BT.duelShot,inside=shot&&shot.a.includes(o);tacticalDuelShot(o);
+    const W=o.f.hr,L=o.t.hr,shot=BT.duelShot,inside=shot&&shot.a.includes(o);
+    if(inside&&shot.guard)updateDuelCover(shot,true);tacticalDuelShot(o);
     if(!o.hit){Sound.play('clash',{pitch:1.22,vol:.5});BT.pops.push({x:L.x,y:L.y-30,v:0,txt:o.defense==='dodge'?'Dodge':'Parry',t:0,side:o.t.si,duel:1});
       if(o.defense==='parry')duelSpark(L.x-sideDir(o.f.si)*6,L.y-12,4);return;}
+    if(inside&&shot.guard)shot.guardHit=shot.t;
     // The ledger is the single source of HP damage. Neither poses nor FX mutate
     // HP; repeated events and the finishing impact are explicitly idempotent.
     o.t.cur=o.hp;if(L.hero.hp!=null)L.hero.hp=o.hp;if(o.t.g.heroOnly)refreshIndependent(o.t.g);
@@ -11932,6 +11999,8 @@ function duelEvent(e){
       BT.fx.push({k:stab?'duelStab':'hslash',x:L.x,y:L.y-(pose==='kneelThrust'?6:12),a:0,t:.15,t0:.15,dir:sideDir(o.f.si)});}
     if(o.ko&&!o.t.loss){
       const R=o.t.loss=duelLoss(o.t,o.f,e.n);D.res.push(R);L.q=[];L.state='idle';L.kd=0;
+      if(inside&&R.save==='guard'&&shot.guard?.alive){const q=shot.guard;q.x=L.x;q.y=L.y;q.q=[];
+        killSprite(R.gL,q,shot.mounted?'cav':'inf',shot.dir);R.guardDeaths=1;R.intercepted=q;}
       if(inside){shot.result=R;shot.hold=.035;shot.contact=true;shot.impactAt=shot.t;}else L.duelDown={at:BT.t,dir:sideDir(o.f.si)};
       BT.shake=Math.max(BT.shake,.14);BT.punch=Math.max(BT.punch,.025);BT.hudDirty=true;
       Sound.play('hit',{pitch:.65,vol:.8});if(Sound.voice)Sound.voice('grunt',.7);
@@ -11944,41 +12013,59 @@ function duelEvent(e){
     // morale and commanders' strategy are committed once at the actual KO.
     for(const R of D.res){const L=R.L,fd=sideDir(sideOf(R.gL));
       if(R.hb&&!R.hbDone){R.hbDone=true;R.gL.troops=Math.max(0,R.gL.troops-R.hb.kills);syncSprites(R.gL,'knock');addNum(R.gL,R.hb.kills);}
-      delete L.duelPose;delete L.duelDown;L.kd=0;independentDuelExit(R.gL);
+      delete L.duelPose;delete L.duelDown;delete L.duelRescued;L.kd=0;independentDuelExit(R.gL);
       if(R.save==='ward'){L.out=false;L.glow=.7;const f=D.F.find(f=>f.hr===L);f.cur=L.hero.hp;queueMove(L,BT.t+.2,L.sx,L.sy,50);}
       else if(!L.out){L.out=true;L.q=[];L.state='idle';queueMove(L,BT.t+.18,L.x-fd*170,L.y,44,0,true);L.fadeAt=BT.t+3.6;
-        if(R.save==='guard')(L.guards||[]).filter(q=>q.alive).slice(0,R.lost).forEach(q=>killSprite(R.gL,q,'inf',-fd));}
+        if(R.save==='guard')(L.guards||[]).filter(q=>q.alive).slice(0,Math.max(0,R.lost-(R.guardDeaths||0))).forEach(q=>killSprite(R.gL,q,'inf',-fd));}
       const who=L.hero.name,fate=R.save==='ward'?`The talisman shatters — ${who} fights on!`:R.save==='guard'?`Retainers carry ${who} off (−${R.lost}) · back next round`:`${who} is out of the battle`;
       if(BT.log){BT.log.push((R.lord&&R.save!=='ward'?'The defeated lord’s strategy breaks':`${UNITS[R.gL.type].name} lose heart`)+' · '+fate);
         if(R.W)BT.log.push(`${R.W.hero.name} ${R.yield?'forced the surrender of':'beat'} ${who} in a duel`);}
     }
     D.F.filter(f=>!f.loss).forEach(f=>{delete f.hr.duelPose;f.hr.glow=.6;f.hr.poseUntil=BT.t+.5;queueMove(f.hr,BT.t+.55,f.hr.sx,f.hr.sy,42,0,true);});
+    for(const f of D.F)if(f.hr.duelEscort){const q=f.hr.duelEscort;q._hold=[q.x,q.y];delete f.hr.duelEscort;}
     const wn=D.F.filter(f=>f.si===D.win&&!f.loss);BT.labels.push({x:e.x,y:e.y-44,text:`勝 ${wn.length===1?wn[0].hr.hero.name:D.win?'The enemy':'Our champions'}`,t:0,side:D.win,big:1,duel:1});
     if(BT.cine){BT.cine.x=e.x;BT.cine.y=e.y;BT.cine.z=e.n>1?.2:.65;}Sound.play('taiko',{vol:.6});BT.duelRun.ended=true;BT.hudDirty=true;return;
   }
 }
 function duelSpark(x,y,n=5){for(let i=0;i<n;i++){const a=(i/n)*Math.PI*2;BT.fx.push({k:'spark',x,y,vx:Math.cos(a)*35,vy:Math.sin(a)*28-10,g:120,t:.2,t0:.2});}}
+function settleDuelWinner(c){
+  if(c.save)return;const W=c.W,dir=c.dir;
+  const dx=c.kind==='cavTrample'?dir*26:c.kind==='cavBackKick'?c.L.x-W.x+dir*DUEL_MOUNTS.horseBackKick.hoofX*spriteScale():
+    c.kind==='passing'?dir*(c.e.f.weapon.reach+12):c.kind==='slidingThrust'?dir*10:0;
+  if(!dx)return;W.x+=dx;if(c.mounted)W.y=c.L.y;W.tx=W.x;W.ty=W.y;W.state='idle';
+  // Start the return from the actual finishing position. Existing later movement orders still lead home or to a helper target.
+  if(Number.isFinite(c.returnX))queueMove(W,BT.t,c.returnX,c.returnY,180,0,true);
+}
 function updateDuelCinema(rdt){
   if(!BT.duelRun)return;const dt=rdt*BT.speed;BT.duelRun.clock+=dt;
   const run=BT.duelRun;
-  if(run.warmIndex<run.warm.length){const until=performance.now()+2;do{const {f,pose}=run.warm[run.warmIndex++];duelPoseFrame(f.hr,f.g,pose,sideDir(f.si));}while(run.warmIndex<run.warm.length&&performance.now()<until);}
+  if(run.warmIndex<run.warm.length){const until=performance.now()+2;do{const {f,pose,face}=run.warm[run.warmIndex++];duelPoseFrame(f.hr,f.g,pose,face??sideDir(f.si));}while(run.warmIndex<run.warm.length&&performance.now()<until);}
   const c=BT.duelShot;if(!c)return;
   let step=dt;if(c.hold>0){const stop=Math.min(c.hold,step);c.hold-=stop;step-=stop;}c.t+=step;
+  if(c.guard)updateDuelCover(c);
   if(c.t>=c.duration){
-    const R=c.result;if(R){if(R.save==='ward'){c.L.duelDown=null;c.L.glow=.8;c.e.t.cur=c.L.hero.hp;}
-      else c.L.duelDown={at:BT.t-.24,dir:c.dir};c.W.poseUntil=BT.t+.22;}
+    const R=c.result;if(R){settleDuelWinner(c);if(R.save==='ward'){c.L.duelDown=null;c.L.glow=.8;c.e.t.cur=c.L.hero.hp;}
+      else if(R.save==='guard'){c.L.duelDown=null;c.L.x+=c.dir*(c.L.sprs.horse?24:12);c.L.y-=c.L.sprs.horse?5:3;c.L.duelRescued=BT.t+2;}
+      else{const hx=c.L.x,hy=c.L.y;c.L.x+=c.dir*(c.kind==='cavBackKick'?32:4);
+        c.L.duelDown={at:BT.t-.24,dir:c.dir,horseX:hx,horseY:hy};}c.W.poseUntil=BT.t+.22;}
+    releaseDuelCover(c);
     releaseDuelBackdrop(c);BT.duelShot=null;
     if(BT.cine){BT.cine.x=BT.cx;BT.cine.y=BT.cine.F.reduce((n,f)=>n+f.spot.y,0)/BT.cine.F.length;BT.cine.z=BT.cine.F.length===2?.65:BT.cine.F.length===4?.3:.12;}
   }
 }
 function releaseDuelBackdrop(c){if(c?.bg){if(c.bg.detail)c.bg.detail.width=c.bg.detail.height=0;c.bg.width=c.bg.height=0;c.bg=null;}}
-function releaseDuelCinema(){if(!BT)return;releaseDuelBackdrop(BT.duelShot);BT.duelShot=null;BT.duelRun=null;BT.A?.forEach(A=>A.groups.forEach(g=>(g.heroes||[]).forEach(h=>{delete h.duelPose;delete h.duelDown;})));}
+function releaseDuelCinema(){if(!BT)return;releaseDuelCover(BT.duelShot);releaseDuelBackdrop(BT.duelShot);BT.duelShot=null;BT.duelRun=null;BT.A?.forEach(A=>A.groups.forEach(g=>(g.heroes||[]).forEach(h=>{delete h.duelPose;delete h.duelDown;delete h.duelRescued;delete h.duelEscort;})));}
 
 /* Finite modular duel poses, built from the same face, hat, sode and
    weapon helpers. Cached only for the (at most six) participating commanders. */
 function duelPoseFrame(s,g,pose,face){
   pose=DUEL_POSE_SET.has(pose)?pose:'guard';face=face<0?-1:1;
-  const r=reactionRecipe(s,g);if(!r||r.type==='cav'||r.type==='arc'||r.type==='gun'||['bow','gun'].includes(weaponKind(r.wid))){
+  const r=reactionRecipe(s,g);
+  if(DUEL_MOUNTS[pose]){if(r?.type==='cav'&&s.sprs.horse){r.duelFrames??=new Map();const key=pose+'|'+face;if(r.duelFrames.has(key))return r.duelFrames.get(key);
+      const m=DUEL_MOUNTS[pose],raw=riderFrame(reactionLook(r,false),m.pose,r.hero,r.wid,r.coat??0,r.tack,m);let cv=ownAftermathCanvas(finishSet([raw])(raw));
+      if(face<0)cv=ownAftermathCanvas(flipCanvas(cv));r.duelFrames.set(key,cv);aftermathState().recipes.add(r);return cv;}
+    pose='guard';}
+  if(!r||r.type==='cav'||r.type==='arc'||r.type==='gun'||['bow','gun'].includes(weaponKind(r.wid))){
     const set=face===sideDir(s.si??sideOf(g))?s.sprs:flipSet(s);return (pose==='finish'?set.idle[1]||set.idle[0]:pose==='reload'?set.reload:pose==='guard'||pose==='kneelGuard'?set.brace:pose==='high'?set.wind:pose==='recover'?set.recover:pose==='hurt'?set.hurt:pose==='cutUp'?set.follow:set.atk)||set.idle[0];}
   r.duelFrames??=new Map();const key=pose+'|'+face;if(r.duelFrames.has(key))return r.duelFrames.get(key);
   const L=reactionLook(r,false),p=new ArtPB(FOOT_W,FOOT_H),cx=FOOT_W/2-2,base=FOOT_H-1,
@@ -12006,35 +12093,49 @@ function duelPoseFrame(s,g,pose,face){
   if(face<0)cv=ownAftermathCanvas(flipCanvas(cv));r.duelFrames.set(key,cv);aftermathState().recipes.add(r);return cv;
 }
 function drawDuelActor(x,s,g,si,sc){
-  const c=BT.duelShot,isW=c?.W===s,isL=c?.L===s,p=s.duelPose,down=s.duelDown;
-  if(!isW&&!isL&&!down&&(!p||BT.t>p.until))return false;
-  let pose='guard',dx=0,dy=0,angle=0,flat=1,alpha=1,face=s.face||sideDir(si),fall=0;
-  if(down&&!isL){fall=easeIO(clamp((BT.t-down.at)/.3,0,1));angle=down.dir*fall*Math.PI/2;flat=1-.48*fall;pose='hurt';}
+  const c=BT.duelShot,isW=c?.W===s,isL=c?.L===s,p=s.duelPose,down=s.duelDown,rescued=s.duelRescued>BT.t;
+  if(!isW&&!isL&&!down&&!rescued&&(!p||BT.t>p.until))return false;
+  let pose='guard',dx=0,dy=0,angle=0,flat=1,alpha=1,face=s.face||sideDir(si),fall=0,turnScale=1,echo=false;
+  if(rescued&&!isL)pose='low';
+  else if(down&&!isL){fall=easeIO(clamp((BT.t-down.at)/.3,0,1));angle=down.dir*fall*Math.PI/2;flat=1-.48*fall;pose='hurt';}
   else if(isW||isL){
-    const t=c.t,beats=DUEL_IMPACT[c.a.length],impact=beats.at(-1),after=c.contact?t-impact:-1,dir=c.dir;
+    const t=c.t,beats=c.beats||DUEL_IMPACT[c.a.length],impact=beats.at(-1),after=c.contact?t-(c.impactAt??impact):-1,dir=c.dir;
     face=isW?dir:-dir;
     if(isW){
-      let j=0;while(j<beats.length-1&&t>beats[j]+.07)j++;const u=t-beats[j];
-      const thrust=c.kind==='tripleThrust'||c.kind==='doubleThrust',foot=!s.sprs.horse;
-      pose=u<-.12?'high':u<-.035?'guard':u<.09?(thrust?(foot&&j===2?'kneelThrust':'thrust'):j%2?'cutUp':'sweep'):t>.88?'recover':'guard';
-      dx=dir*(t<.15?-2:Math.min(5,(t-.15)*16));
-      if(thrust){pose=u<-.11?'guard':u<.1?(foot&&j===2?'kneelThrust':'thrust'):'recover';dx=dir*(2+Math.max(0,1-Math.abs(u)/.15)*5);dy=j===0?-1.5:0;}
-      if(c.kind==='jump'){dy=-Math.sin(clamp((t-.18)/.56,0,1)*Math.PI)*8;pose=t<.55?'high':t<.8?'sweep':'recover';}
-      if(c.kind==='passing'&&!c.save){dx=dir*easeIO(clamp((t-.42)/.4,0,1))*(c.e.f.weapon.reach+12);dy=Math.sin(clamp((t-.42)/.4,0,1)*Math.PI)*3;}
-      if(c.kind==='reversal'){pose=t<.33?'sweep':t<.56?'high':t<.8?'cutUp':'recover';dx=dir*(t<.42?3:-2);}
-      if(c.kind==='guardBreak')pose=c.a.length===2&&t>.23&&t<.37?'thrust':t<.5?'high':t<.8?(c.e.f.weapon.style==='yari'?'thrust':'sweep'):'recover';
-      if(c.kind==='crossCut'){pose=u<-.10?'guard':u<.1?(j?'cutUp':'sweep'):t>.88?'recover':'low';dx=dir*(2+Math.max(0,1-Math.abs(u)/.2)*4);}
-      if(c.kind==='risingCut'){pose=t<impact-.24?'low':t<impact+.1?'cutUp':'recover';dy=-Math.sin(clamp((t-impact+.18)/.4,0,1)*Math.PI)*3.5;dx=dir*4;}
-      if(c.kind==='slidingThrust'){const slide=easeOut(clamp((t-impact+.28)/.32,0,1));
-        pose=t<impact-.29?'kneelGuard':t<impact+.12?'kneelThrust':t<.94?'kneelGuard':c.contact&&!c.save?'finish':'recover';dx=dir*(-2+slide*12);dy=0;
-        if(c.a.length===2&&t<beats[0]+.12){pose=t<beats[0]-.05?'guard':'thrust';dx=dir*3;}}
-      if(c.contact&&!c.save&&t>impact+.22&&c.kind!=='slidingThrust')pose='finish';
-      if(c.save&&t>.65){pose='recover';dx=-dir*3;}
+      let j=0;while(j<beats.length-1&&t>beats[j]+.10)j++;const u=t-beats[j],m=duelBeat(c,j),foot=!s.sprs.horse;
+      pose=u<-.12?'high':u<-.035?'guard':u<.10?(m==='thrust'&&foot&&j===2?'kneelThrust':m==='cutUp'?'cutUp':m==='thrust'?'thrust':'sweep'):'recover';
+      dx=dir*(2+Math.max(0,1-Math.abs(u)/.18)*4);
+      if(m==='thrust'||m==='kneelThrust'){pose=u<-.11?'guard':u<.1?(foot&&(j===2||m==='kneelThrust')?'kneelThrust':'thrust'):'recover';dy=j===0?-1.5:0;}
+      if(m==='jump'){dy=-Math.sin(clamp((u+.22)/.38,0,1)*Math.PI)*8;pose=u<-.035?'high':u<.13?'sweep':'recover';}
+      if(m==='passing'&&!c.save){const q=easeIO(clamp((u+.20)/.40,0,1));dx=dir*q*(c.e.f.weapon.reach+12);dy=Math.sin(q*Math.PI)*3;echo=Math.abs(u)<.22;}
+      if(m==='reversal'){pose=u<-.13?'sweep':u<-.03?'high':u<.13?'cutUp':'recover';dx=dir*(u<-.1?3:-2);}
+      if(m==='guardBreak')pose=u<-.07?'high':u<.14?(c.e.f.weapon.style==='yari'?'thrust':'sweep'):'recover';
+      if(m==='risingCut'){pose=u<-.22?'low':u<.12?'cutUp':'recover';dy=-Math.sin(clamp((u+.18)/.36,0,1)*Math.PI)*3.5;}
+      if(m==='slidingThrust'){pose=u<-.22?'kneelGuard':u<.12?'kneelThrust':'kneelGuard';dx=dir*(-2+easeOut(clamp((u+.25)/.29,0,1))*12);echo=u>-.22&&u<.13;}
+      if(c.kind==='cavTrample'){
+        const hoof=beats[Math.max(0,beats.length-2)],start=beats.length===3?beats[0]+.045:0;
+        if(t>=start){pose=t<hoof-.11?'horseRear':t<hoof+.12?'horseForeKick':t<impact-.09?'horseRear':t<impact+.14?'horseLand':'horseRun';
+          const targetDx=c.L.x-s.x-dir*DUEL_MOUNTS[pose].hoofX*sc;
+          dx=pose==='horseRun'?dir*(12+easeOut(clamp((t-impact-.12)/.28,0,1))*14):lerp(dir*2,targetDx,easeOut(clamp((t-start)/.16,0,1)));
+          dy=c.L.y-s.y;}
+      }else if(c.kind==='cavBackKick'){
+        const start=beats.length>1?beats[beats.length-2]+.075:.13;
+        if(t>=start){const turn=easeIO(clamp((t-start)/.22,0,1)),back=t<1.14?turn:1-easeIO(clamp((t-1.14)/.22,0,1));
+          face=back>.5?-dir:dir;turnScale=Math.max(.28,Math.abs(Math.cos(back*Math.PI)));
+          pose=t<start+.22?'horseStand':t<impact-.11?'horseLoad':t<impact+.13?'horseBackKick':t<1.14?'horseLand':'horseStand';
+          const load=easeOut(clamp((t-start-.22)/Math.max(.08,impact-.11-start-.22),0,1));
+          dx=lerp(dir*2,c.L.x-s.x+dir*DUEL_MOUNTS.horseBackKick.hoofX*sc,load);dy=(c.L.y-s.y)*load-Math.sin(turn*Math.PI)*3;}
+      }
+      if(c.contact&&!c.save&&t>impact+.22&&!c.mounted)pose='finish';
+      if(c.save&&c.contact&&t>impact+.10){pose=s.sprs.horse?(c.kind==='cavBackKick'&&t<1.14?'horseLand':'horseStand'):'recover';
+        dx=lerp(dx,-dir*3,easeIO(clamp((after-.10)/.17,0,1)));if(c.kind!=='cavBackKick'){face=dir;turnScale=1;}echo=false;}
     }else{
       let struck=false;for(let i=0;i<c.a.length;i++)if(c.a[i].applied&&c.a[i].hit)struck=true;pose=struck?'hurt':'guard';
       if(c.save==='ward'){pose=t>.78?'guard':t>.53?'low':'guard';dx=dir*3*Math.sin(clamp(t/.9,0,1)*Math.PI);}
-      else if(c.save==='guard'){pose=t>.62?'low':'guard';dx=-dir*easeOut(clamp((t-.55)/.45,0,1))*4;}
-      else{fall=easeIO(clamp(after/.36,0,1));pose=fall>.15?'low':pose;angle=dir*fall*Math.PI/2;flat=1-.48*fall;dx=dir*4*fall;}
+      else if(c.save==='guard'){const q=c.guard?(c.coverReady?1:c.coverU||0):easeOut(clamp((t-.04)/.15,0,1));pose=q>.25?'low':'guard';dx=dir*q*(s.sprs.horse?24:12);dy=-q*(s.sprs.horse?5:3);}
+      else if(c.kind==='cavBackKick'&&c.contact){const q=easeOut(clamp(after/.44,0,1));fall=easeIO(clamp((after-.035)/.40,0,1));
+        dx=dir*32*q;dy=-Math.sin(clamp(after/.44,0,1)*Math.PI)*11;angle=dir*fall*Math.PI/2;flat=1-.48*fall;pose='hurt';}
+      else{if(c.kind==='cavTrample'&&!c.contact&&struck)pose='low';fall=easeIO(clamp(after/.36,0,1));pose=fall>.15?'low':pose;angle=dir*fall*Math.PI/2;flat=1-.48*fall;dx=dir*4*fall;}
     }
   }else{
     const e=p.e,u=BT.t-p.hit,dir=sideDir(e.f.si),before=clamp((BT.t-p.from)/Math.max(.01,p.hit-p.from),0,1);
@@ -12051,12 +12152,13 @@ function drawDuelActor(x,s,g,si,sc){
   }
   let img=duelPoseFrame(s,g,pose,face);const px=s.x+dx,py=s.y+dy;
   x.save();x.globalAlpha=alpha;x.fillStyle='rgba(18,15,20,.22)';x.fillRect(Math.round(px-8*sc),Math.round(s.y),16*sc,2);
-  if(isW&&!c.save&&(c.kind==='slidingThrust'||c.kind==='passing')&&c.t>.4&&c.t<.79){
+  if(isW&&!c.save&&echo){
     for(let i=2;i>0;i--){x.globalAlpha=.16/i;artDraw(x,img,Math.round(px-c.dir*i*4*sc-img.width*sc/2),Math.round(py-img.height*sc),img.width*sc,img.height*sc);}x.globalAlpha=1;}
   if(fall>0&&s.sprs.horse&&s.sprs.fall){const set=face===sideDir(si)?s.sprs:flipSet(s),horse=set.horse[0];
-    artDraw(x,horse,px-face*9-horse.width*sc/2,s.y-horse.height*sc,horse.width*sc,horse.height*sc);img=set.fall;}
-  if(fall>0){drawFallen(x,{img,x:px,y:s.y,angle,face:1,scale:sc,flat,flag:null});}
-  else{x.translate(Math.round(px),Math.round(py));x.rotate(angle);if(s.sashimono)drawSashimono(x,s,g,-img.width*sc/2,-img.height*sc,img.width*sc,sc,img,face);
+    const hx=down?.horseX??(isL&&c.kind==='cavBackKick'?s.x:px),hy=down?.horseY??s.y;
+    artDraw(x,horse,hx-face*9-horse.width*sc/2,hy-horse.height*sc,horse.width*sc,horse.height*sc);img=set.fall;}
+  if(fall>0){drawFallen(x,{img,x:px,y:py,angle,face:1,scale:sc,flat,flag:null});}
+  else{x.translate(Math.round(px),Math.round(py));x.rotate(angle);x.scale(turnScale,1);if(s.sashimono)drawSashimono(x,s,g,-img.width*sc/2,-img.height*sc,img.width*sc,sc,img,face);
     artDraw(x,img,-img.width*sc/2,-img.height*sc,img.width*sc,img.height*sc);}
   x.restore();if(s.hero&&!down&&!c)_tags.push({x:s.x,y:s.y-img.height*sc+10*sc,name:s.hero.name,si,show:true,pri:99,aux:s.hero.aux});return true;
 }
@@ -12072,11 +12174,18 @@ function drawDuelScene(x,idx,sc){
   _tags.length=0;x.save();x.globalAlpha=.78;artDraw(x,c.bg,0,0);x.restore();
   drawDuelFinishGround(x,c,sc);
   for(const i of idx)if(_draws[i+1]===c.W||_draws[i+1]===c.L)draw(x,i);
-  if(c.guard){const guard=c.guard;if(guard){const u=easeIO(clamp((c.t-.38)/.23,0,1)),img=u>0?(guard.sprs.brace||guard.sprs.atk):guard.sprs.idle[0];
-    const gx=lerp(guard.x,c.L.x-c.dir*9,u),gy=lerp(guard.y,c.L.y+3,u);artDraw(x,img,gx-img.width*sc/2,gy-img.height*sc,img.width*sc,img.height*sc);}}
+  drawDuelGuard(x,c,sc);
   drawDuelTrails(x,c,sc);return true;
 }
-const DUEL_THRUST=[[-24,-3,9,-3],[-23,1,11,1],[-22,6,13,6]],DUEL_ARCS={jump:[-15,-18,18,-7,14,13],risingCut:[-13,12,19,-2,5,-22],reversal:[-16,11,24,10,4,-19],guardBreak:[-3,-21,5,-2,4,14],passing:[-22,1,21,1]};
+function drawDuelGuard(x,c,sc){
+  const q=c.guard;if(!q||q.gone||q.stamped)return;
+  if(q.fate){drawLifeState(x,q,c.e.t.g);return;}
+  const hit=c.guardHit==null?1:clamp((c.t-c.guardHit)/.11,0,1),recoil=c.dir*Math.sin(hit*Math.PI)*1.5,
+    img=hit<1?q.sprs.hurt:(c.coverU||0)>.96?(q.sprs.brace||q.sprs.atk):q.sprs.run[(c.t*13|0)%q.sprs.run.length],lift=c.guardLift||0;
+  x.save();x.fillStyle='rgba(20,17,20,.22)';x.fillRect(Math.round(q.x-7*sc),Math.round(q.y),14*sc,sc);
+  artDraw(x,img,Math.round(q.x+recoil-img.width*sc/2),Math.round(q.y-img.height*sc-lift),img.width*sc,img.height*sc);x.restore();
+}
+const DUEL_THRUST=[[-24,-3,9,-3],[-23,1,11,1],[-22,6,13,6]],DUEL_ARCS={jump:[-15,-18,18,-7,14,13],risingCut:[-13,12,19,-2,5,-22],reversal:[-16,11,24,10,4,-19],guardBreak:[-3,-21,5,-2,4,14],passing:[-22,1,21,1],sweep:[-16,-9,21,-2,10,12],cutUp:[-14,11,17,-1,9,-15],cavForeKick:[-12,-8,1,-15,9,-7],cavBackKick:[-15,-10,5,-12,16,-6],cavTrample:[-13,10,1,5,14,12]};
 function duelFxStroke(x,c,sc,shape,alpha,ink=false,heavy=1){
   const px=c.L.x,py=c.L.y-12*sc,dir=c.dir;
   x.beginPath();x.moveTo(Math.round(px+dir*shape[0]*sc),Math.round(py+shape[1]*sc));
@@ -12087,29 +12196,32 @@ function duelFxStroke(x,c,sc,shape,alpha,ink=false,heavy=1){
   x.globalAlpha=alpha*(ink?.45:1);x.strokeStyle=c.save?'#ffe4a1':'#e1eeea';x.lineWidth=(ink?.32:.8)*sc;x.stroke();
 }
 function drawDuelFinishGround(x,c,sc){
-  if(!c.contact||c.save)return;const u=(c.t-(c.impactAt??DUEL_IMPACT[c.a.length].at(-1)))/.12;if(u<0||u>1)return;
-  const px=c.L.x,py=c.L.y-12*sc,r=(7+u*10)*sc;
+  if(!c.contact||c.save)return;const u=(c.t-(c.impactAt??(c.beats||DUEL_IMPACT[c.a.length]).at(-1)))/.12;if(u<0||u>1)return;
+  const px=c.L.x,py=c.L.y-(c.kind==='cavTrample'?3:c.kind==='cavBackKick'?19:12)*sc,r=(7+u*10)*sc;
   x.save();x.globalAlpha=(1-u)*.52;x.fillStyle='#17121d';
   x.beginPath();x.moveTo(px-r,py);x.lineTo(px-r*.25,py-r*.3);x.lineTo(px,py-r);x.lineTo(px+r*.3,py-r*.2);x.lineTo(px+r,py);x.lineTo(px+r*.2,py+r*.3);x.lineTo(px,py+r*.7);x.closePath();x.fill();x.restore();
 }
 function drawDuelTrails(x,c,sc){
-  const t=c.t,beats=DUEL_IMPACT[c.a.length],dir=c.dir,px=c.L.x,py=c.L.y-12*sc,kind=c.kind,fade=1-clamp((t-.9)/.24,0,1),
+  const t=c.t,beats=c.beats||DUEL_IMPACT[c.a.length],dir=c.dir,px=c.L.x,py=c.L.y-12*sc,kind=c.kind,fade=1-clamp((t-((c.duration||DUEL_CINE_TIME)-.28))/.24,0,1),
     finalFlash=c.contact?clamp(1-(t-(c.impactAt??beats.at(-1)))/.13,0,1):0;
   x.save();x.lineCap='square';x.lineJoin='bevel';
-  for(let j=0;j<beats.length;j++){const e=c.a[j],u=t-beats[j];if(!e.applied||u<0)continue;
+  for(let j=0;j<beats.length;j++){const e=c.a[j],u=t-beats[j],m=duelBeat(c,j);if(!e.applied||u<0)continue;
     const flash=Math.max(0,1-u/.16),alpha=(e.hit?Math.max(.30+.60*flash,finalFlash*.98):.12)*fade;
     if(alpha<=0)continue;
     if(kind==='tripleSlash')duelFxStroke(x,c,sc,DUEL_Z[j],alpha,true,1.9);
     else if(kind==='crossCut'||kind==='zSlash')duelFxStroke(x,c,sc,DUEL_X[j%2],alpha,true,1.35);
-    else if(kind==='tripleThrust'||kind==='doubleThrust'||kind==='slidingThrust'||kind==='release'){
-      duelFxStroke(x,c,sc,DUEL_THRUST[kind==='slidingThrust'?2:j],alpha,false,.65);
-      if(e.hit&&flash>0){x.globalAlpha=alpha;x.fillStyle=c.save?'#f4ce7d':'#dcefe8';x.fillRect(Math.round(px+dir*(10+j)*sc),Math.round(py+(kind==='slidingThrust'?6:j*4-3)*sc),3*sc,sc);}
-    }else duelFxStroke(x,c,sc,DUEL_ARCS[kind]||DUEL_ARCS.jump,alpha,true,kind==='guardBreak'?2.7:1.35);
+    else if(m==='thrust'||m==='kneelThrust'||m==='slidingThrust'||m==='release'){
+      duelFxStroke(x,c,sc,DUEL_THRUST[m==='slidingThrust'||m==='kneelThrust'?2:j],alpha,false,.65);
+      if(e.hit&&flash>0){x.globalAlpha=alpha;x.fillStyle=c.save?'#f4ce7d':'#dcefe8';x.fillRect(Math.round(px+dir*(10+j)*sc),Math.round(py+(m==='slidingThrust'?6:j*4-3)*sc),3*sc,sc);}
+    }else duelFxStroke(x,c,sc,DUEL_ARCS[m]||DUEL_ARCS.sweep,alpha,true,m==='guardBreak'?2.7:m==='cavTrample'||m==='cavBackKick'?2.2:1.35);
+    if(e.hit&&flash>0&&(m==='cavTrample'||m==='cavBackKick'||m==='cavForeKick')){
+      x.globalAlpha=flash*.7;x.strokeStyle=c.save?'#e4bd76':'#30272d';x.lineWidth=sc;x.beginPath();
+      x.ellipse(px,c.L.y+(m==='cavTrample'?0:-19*sc),(5+u*45)*sc,(m==='cavTrample'?2+u*10:5+u*30)*sc,0,0,Math.PI*2);x.stroke();}
     if(e.hit&&flash>0){x.globalAlpha=flash*.8;x.fillStyle=c.save?'#f3cb74':'#e9c082';
       for(let i=0;i<3;i++)x.fillRect(Math.round(px+dir*(3+u*(42+i*11))*sc),Math.round(py+(-6+i*6-u*(i%2?7:-7))*sc),sc,sc);}
   }
-  if((kind==='slidingThrust'||kind==='passing'||kind==='guardBreak'||kind==='jump')&&t>.42&&t<1.04){
-    x.globalAlpha=Math.sin((t-.42)/.62*Math.PI)*.42;x.fillStyle='#dac6a0';
+  if((kind==='slidingThrust'||kind==='passing'||kind==='guardBreak'||kind==='jump'||c.mounted)&&t>.42&&t<(c.duration||DUEL_CINE_TIME)-.14){
+    x.globalAlpha=Math.sin(clamp((t-.42)/((c.duration||DUEL_CINE_TIME)-.56),0,1)*Math.PI)*.42;x.fillStyle='#dac6a0';
     for(let i=0;i<5;i++)x.fillRect(Math.round(c.W.x-dir*(4+i*4)*sc),Math.round(c.W.y-(i%2)*sc),(3+i)*sc,sc);}
   if(c.save==='ward'&&t>.54&&t<.95){x.globalAlpha=Math.sin((t-.54)/.41*Math.PI)*.65;x.strokeStyle='#f6d177';x.lineWidth=1;x.beginPath();x.arc(px,py,13*sc,-2.8,.4);x.stroke();}
   x.restore();

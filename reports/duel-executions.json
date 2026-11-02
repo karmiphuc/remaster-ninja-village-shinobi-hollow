@@ -7,7 +7,7 @@
     "steadyCanvasAllocations": 0,
     "privateVisualChoice": true,
     "noDamageFromDrawing": true,
-    "poseLimit": 24,
+    "poseLimit": 38,
     "releasedOnClose": true
   },
   "runs": [

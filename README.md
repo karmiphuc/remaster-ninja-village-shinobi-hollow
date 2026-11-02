@@ -83,7 +83,7 @@ Army infantry has a **2.7-second clash window** after approach. Defeating a line
 
 **Auto Duel** is a separate saved choice under **Village → Options**, off by default. With it off, a challenge pauses Auto Battle so you can choose champions and Fight or Refuse. Turn it on to let Auto Battle accept and assign champions. Manual battles always show the picker; refusing retains its existing cohesion penalty.
 
-Duels now include a **black Z triple slash, sword triple thrusts and a kneeling sliding thrust**, alongside cross cuts, rising cuts and weapon-specific finishing trails. These procedural moves follow actual resolved hits and HP; rescues retain their own surviving reactions. See the [animated preview](docs/duel-executions-preview.gif) and [implementation notes](docs/duel-executions.md).
+Duels include a **black Z triple slash, sword triple thrusts and a kneeling sliding thrust**, with moves combined across real one-, two- and three-hit executions. Mounted champions can rear, kick and trample, or turn into a hind-leg kick. Retainers intercept before the hits and take the impact in their commander's place. All moves follow actual HP outcomes and reuse procedural equipment. See the [animated preview](docs/duel-sequences-preview.gif) and [implementation notes](docs/duel-executions.md).
 
 **Formation tactics.** Each formation (Infantry, Archers, Gunners, Cavalry) takes its own orders. How many orders it can take depends on the highest Strategy among its own active commanders. Formations never share Strategy.
 
