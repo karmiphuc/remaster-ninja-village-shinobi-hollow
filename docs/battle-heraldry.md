@@ -8,6 +8,16 @@ Friendly commanders retain a faint warm rim and a low, narrow wash beneath the n
 
 Enemy commanders receive neither the gray silhouette expansion nor the colored ground pool. Their native armor, face, clothing and equipment palettes remain intact. Name labels and transient combat effects still work.
 
+### Allied Leadership and cavalry dress
+
+Allied human heroes with a positive existing command rating (`stratOf(c)`) now carry the lord-equivalent gold fan and hanging clan pennon in their own clan colors. This uses the same ornate geometry as enemy lords, under the cosmetic `leader` rank. The rating includes the existing primary/secondary Strategy skill, command equipment and Jinbaori rules; the decoration grants no lord status or combat bonuses.
+
+Allied cavalry heroes wear the existing procedural balloon horo: blood red (`#982a36`) at Vanguard, indigo (`#343b78`) at Line, HQ or any other post. A cavalry leader carries both the lord standard and the horo; other cavalry heroes use the horo without an additional back flag. Other allied hero and ordinary troop flag policies remain unchanged.
+
+`commanderBattleLook()` clones only the battle sprite's equipped look. Front-line slots, HQ officers, independent hero formations and skirmish fighters all use it. The original village portrait, equipment, saved identity, post, stats, retainers and research remain untouched. The existing reaction recipe carries this look into duels, mounted executions and unhorsed collapse poses.
+
+`drawBattleHoro()` positions these commanders' balloons clear of broad shoulder plates and adds small visible ties. Ordinary retainer horo retain their original position and colors. The two finite color variants use the existing bounded soldier cache and battle recipe lifecycle; there is no new cache or per-frame canvas creation.
+
 ## Enemy back standards
 
 Every human enemy commander receives a separate heraldic standard, including small bands, Training Ground partners, auxiliaries, riders, commanders wearing horo, and HQ officers. Wild animals and companions do not wear commander flags.
@@ -38,4 +48,8 @@ New decoration descriptors are prepared once per prop. No extra per-frame search
 
 `tools/preview-command-heraldry.cjs` renders actual gear and decorations at matching scales, plus desktop/phone front and rear views. It accepts a standalone HTML path and a `COMMAND_PREVIEW_PREFIX` for before/after captures. Review PNGs are artifacts only; the game uses procedural drawing throughout. Local headless Chromium checks do not establish physical iPhone Safari frame rate.
 
+`tools/preview-allied-commanders.cjs` accepts the same standalone HTML path and renders four actual equipped sprites: a Leadership hero, red Vanguard cavalry, indigo Line cavalry, and a cavalry leader wearing both markers. It uses the real nanbu mount, armor, draw order and standard sockets.
+
 Recorded local result: eight related suites passed across the focused art checks and combat regressions (battle-heraldry, density, siege, tactics, battle-end, duel-executions, duel-cavalry and animal-duels). The final exported HTML also passed the art and both weapon/cavalry execution suites, including the existing 120 HP-ledger cases. Heraldry checks record 119 assertions plus all three viewport checks, zero warmed per-frame canvas allocations, no enemy rim draws, and a 28% friendly rim.
+
+Allied-dress follow-up: the updated exported HTML passes 148 heraldry assertions and the same three viewport checks. Added coverage checks red/indigo post selection, Leadership standards in army and skirmish layouts, simultaneous cavalry markers, secondary command skills, preserved original looks/save state, nanbu tack and horo in mounted executions and kneeling collapse. HQ and Line share cached indigo poses. Zero warmed canvas allocations and the existing cache budgets still hold. The source also passes duel-executions, duel-cavalry (including the unchanged 120 HP ledgers) and carry-duel; the economy code is byte-identical to the previous commit.

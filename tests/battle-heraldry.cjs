@@ -7,13 +7,33 @@ const root=path.resolve(__dirname,'..');
   try{const cases=[];for(const cfg of [{site:'camp'},{site:'dojo',small:true},{site:'clan'},{site:'camp',skirm:true}]){
     commandArtFixture(cfg);const enemy=BT.A[1],officers=enemy.groups.flatMap(g=>g.spr.concat(g.heroes||[]).filter(s=>s.hero)).concat(enemy.hqSpr||[]);
     ok(officers.length>0&&officers.every(s=>s.sashimono?.rank.startsWith('enemy')),'Enemy commander lacks special flag: '+JSON.stringify(cfg));
+    const allied=BT.A[0],cg=allied.groups.find(g=>g.type==='cav'),cs=cg.spr.concat(cg.heroes||[]).find(s=>s.hero);
+    ok(cs.look.horo===ALLIED_CAV_HORO.van&&!cs.sashimono,'Allied vanguard cavalry lacks red horo or retains an ordinary flag');
+    const lg=allied.groups.find(g=>g.type==='inf'),ls=lg.spr.concat(lg.heroes||[]).find(s=>s.hero);ok(ls.sashimono?.rank==='leader','Allied Leadership hero lacks a lord standard');
     ok(officers.some(s=>s.sashimono.rank==='enemyLord')&&officers.some(s=>s.sashimono.rank==='enemyVanguard'),'Rank silhouettes missing');
     if(cfg.skirm||cfg.small)ok(enemy.groups.every(g=>g.spr.filter(s=>!s.hero).every(s=>!s.sashimono)),'Flags added to all small-band troops');
     const g=enemy.groups[0],c=officers[0].hero,policy=sashimonoPolicy(enemy,BT.prov);
     ok(!officerSashimono(enemy,g,{...c,beast:'bear'},policy),'A wild animal wears a command flag');
     ok(officerSashimono(enemy,g,{...c,aux:true,look:{...c.look,horo:'#8f553e'}},policy),'Enemy auxiliary/horo hero lost identity');
     cases.push({mode:cfg.skirm?'skirmish':cfg.site,officers:officers.length,ranks:[...new Set(officers.map(s=>s.sashimono.rank))]});closeBattle();ok(!SASHIMONO_CACHE.size&&sashimonoBytes===0,'Heraldry canvases survived battle close');}
-   out.coverage=cases;commandArtFixture();const sc=spriteScale(),ownG=BT.A[0].groups[0],enemyG=BT.A[1].groups[1],own=ownG.heroes[0],enemy=enemyG.heroes[0],cv=gameCanvas();cv.width=200;cv.height=160;const ctx=cv.getContext('2d');
+   out.coverage=cases;commandArtFixture();const cav=BT.A[0].groups.find(g=>g.type==='cav'),base=cav.cmds[0],policy=sashimonoPolicy(BT.A[0],BT.prov),baseLook=JSON.stringify(base.look),dress=[];
+   for(const post of ['van','line','hq']){
+    const c={...base,post},L=commanderBattleLook(c,cav,0),color=post==='van'?ALLIED_CAV_HORO.van:ALLIED_CAV_HORO.line;
+    ok(L!==c.look&&L.horo===color&&JSON.stringify(c.look)===baseLook,'Post decoration mutates original look or has wrong color');
+    ok(commanderBattleLook(c,cav,1)===c.look&&commanderBattleLook(c,{type:'inf'},0)===c.look,'Decoration spills into enemy/infantry looks');
+    const sprite=mkSprite(cav,0,70,100,L);sprite.hero=c;const recipe=reactionRecipe(sprite,cav);ok(recipe.L.horo===color&&recipe.L.gear.m==='nanbu'&&recipe.tack.barding==='nanban','Cavalry cloak/actual mount lost from reaction recipe');
+    const poses=['horseRear','horseBackKick'],cold=poses.filter(p=>!recipe.duelFrames?.has(p+'|1')).length,paint=drawHoro,colors=[];drawHoro=function(p,x,y,col){colors.push(col);return paint(p,x,y,col);};
+    try{for(const pose of ['horseRear','horseBackKick'])duelPoseFrame(sprite,cav,pose,1);reactionHumanFrame(recipe,'kneel',false);}finally{drawHoro=paint;}
+    ok(colors.length===cold+1&&colors.every(col=>col===color),'Duel or collapse poses lost post-colored horo: '+JSON.stringify({post,color,colors,cold}));
+    const leader={...c,skill:'strategy',slv:2};ok(officerSashimono(BT.A[0],cav,leader,policy).rank==='leader','Cavalry Leadership hero cannot wear both markers');
+    ok(officerSashimono(BT.A[0],cav,c,policy)===null,'Ordinary cavalry keeps an extra back flag');dress.push({post,color,duelAndCollapse:true});
+   }
+   const normal=BT.A[0].groups.find(g=>g.type==='arc').cmds[0],arc=BT.A[0].groups.find(g=>g.type==='arc');ok(officerSashimono(BT.A[0],arc,normal,policy).rank==='captain','Unrelated allied hero decoration changed');
+   ok(officerSashimono(BT.A[0],arc,{...normal,sk:{strategy:1}},policy).rank==='leader','Second-skill command rating ignored');
+   const v=G.villagers[0];v.role='cav';v.post='van';v.eq.weapon='katana';v.eq.mount='nanbu';const actual=cmdFrom(v),raw=vLook(v),saved=JSON.stringify(G);commanderBattleLook(actual,{type:'cav'},0);
+   ok(actual.look===raw&&!raw.horo&&JSON.stringify(G)===saved,'Battle horo leaked into village gear or save state');
+   out.alliedDress=dress;
+   const sc=spriteScale(),ownG=BT.A[0].groups[0],enemyG=BT.A[1].groups[1],own=ownG.heroes[0],enemy=enemyG.heroes[0],cv=gameCanvas();cv.width=200;cv.height=160;const ctx=cv.getContext('2d');
    const snapshot=JSON.stringify(BT.A.map(A=>({power:armyPower(A),total:totalOf(A),cmds:A.groups.map(g=>g.cmds.map(c=>[c.hp,c.s,c.post]))}))),outline=outlineOf,draw=artDraw;let active=-1,rims=[0,0],maxAlpha=0,padding=0,lastRim=null,rimWidth=0;
    outlineOf=function(...args){if(active>=0)rims[active]++;const image=outline(...args);if(active===0){lastRim=image;rimWidth=args[0].width;}return image;};artDraw=function(x,img,px,py,w,h,...rest){if(active===0&&img===lastRim){maxAlpha=Math.max(maxAlpha,x.globalAlpha);padding=(w-rimWidth*sc)/2;}return draw(x,img,px,py,w,h,...rest);};
    try{for(const [si,s,g] of [[0,own,ownG],[1,enemy,enemyG]]){s.x=65;s.y=130;s.ph=0;BT.anim=0;active=si;drawSoldier(ctx,s,g,si,sc);active=-1;}}finally{outlineOf=outline;artDraw=draw;}

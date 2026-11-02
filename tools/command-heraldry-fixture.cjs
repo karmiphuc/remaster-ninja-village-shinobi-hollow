@@ -6,7 +6,8 @@ module.exports=async function install(page){await page.evaluate(()=>{
   try{const skirm=!!opts.skirm,groups=(si)=>['inf','arc','gun','cav'].map((type,i)=>{
     const weapon={inf:'katana',arc:'yumi',gun:'tanegashima',cav:'naginata'}[type],s={atk:22,def:18,hp:140,str:18,mrk:24,wrk:7,duel:3},
       look=artEquipmentLook(artTroopLook(type,si,i,{w:weapon,a:si?'kokuyo_gusoku':'gekko_gusoku',h:si?'kabuto':'eboshi_samurai',m:type==='cav'?'nanbu':null})),
-      c={id:(si?'rival_':'ally_')+type,name:(si?'Rival ':'Ally ')+type,look,s,hp:s.hp,hpMax:s.hp,skill:i===0?'strategy':'attackup',slv:i===0?4:2,post:type==='cav'?'van':'line',lord:si===1&&i===0,kills:0,guard:0};
+      c={id:(si?'rival_':'ally_')+type,name:(si?'Rival ':'Ally ')+type,look,s,hp:s.hp,hpMax:s.hp,skill:i===0?'strategy':'attackup',slv:i===0?4:2,post:type==='cav'?(si===0?(opts.allyCavPost||'van'):'van'):'line',lord:si===1&&i===0,kills:0,guard:0};
+    if(si===0&&type==='cav'&&opts.allyCavLeadership){c.skill='strategy';c.slv=3;}
     if(skirm)return fighterGroup(type,c);
     const cmds=[c];if(i===0){const h={...c,id:c.id+'_hq',name:(si?'Rival':'Ally')+' general',lord:false,post:'hq',look:{...look,horo:'#8f553e'}};cmds.push(h);}
     return {type,troops:(opts.small?25:[400,250,150,100][i])*(si?1.2:1),cmds,atkMul:2,defMul:2,guards:0,mods:modsOf(cmds)};

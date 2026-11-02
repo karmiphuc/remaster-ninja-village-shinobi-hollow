@@ -27,7 +27,7 @@ The whole game is one self-contained HTML file. It has no build step, no server 
   - Cavalry: wider ranks.
 - **Sizing:** rows, files, spacing and sprite size (0.85–1.25×) adapt to the screen. Only past the widest field do the files close up. On resize, the ranks refit to the new room; on a shorter screen they close up until the next battle.
 - **Commanders and banners:** commanders take places in the front file, and their guards stand just ahead of it rather than on the ranks. Back-flags are carried by whole ranks, so they line up.
-- **Commander visibility:** allies have a softer warm rim; enemy officers use distinctive clan back standards. Leadership banners have taller poles, and command curtains are larger. See [battle heraldry and validation](docs/battle-heraldry.md).
+- **Commander visibility:** allies have a softer warm rim; enemy officers use distinctive clan back standards. Allied Leadership heroes carry lord-style fan standards; cavalry heroes wear blood-red horo at Vanguard and indigo at other posts. Cavalry leaders wear both. Leadership banners have taller poles, and command curtains are larger. See [battle heraldry and validation](docs/battle-heraldry.md).
 - **Drawing:** each formation's rank and file share a few looks (3–5), so sprite art stays bounded at Epic: about 35–40 sprite sets per battle at any density.
 
 ## Animal finishers and Training Ground

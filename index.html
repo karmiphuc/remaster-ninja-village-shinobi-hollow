@@ -4198,12 +4198,12 @@ function paintCommandCurtain(D,phase){
 function paintSashimono(D,phase=0) {
   if(D.rank==='maku')return paintCommandCurtain(D,phase);
   const clan=CLANS[D.clan]?D.clan:'kage',C=CLANS[clan],rank=D.rank||'regular';
-  const enemy=rank==='enemyCaptain'||rank==='enemyVanguard'||rank==='enemyLord',command=rank==='command',
-    fan=rank==='lord'||rank==='honjin'||rank==='enemyLord',ivory=rank==='honor'||rank==='vanguard';
+  const ornate=rank==='enemyCaptain'||rank==='enemyVanguard'||rank==='enemyLord'||rank==='leader',command=rank==='command',
+    fan=rank==='lord'||rank==='honjin'||rank==='enemyLord'||rank==='leader',ivory=rank==='honor'||rank==='vanguard';
   const color=D.col||C.banner,cloth=ivory?'#e9dec2':shade(color,rank==='captain'?-.08:0);
   const rgb=hexRGB(color),bright=(rgb[0]*.2126+rgb[1]*.7152+rgb[2]*.0722)>145;
   const ink=ivory?shade(C.color,-.18):bright?shade(C.color,-.38):'#f1e7cb',gold='#c7a05a',wood='#60482e',woodL='#a17d47';
-  const p=new ArtPB(command?24:enemy?20:fan?20:14,command?62:enemy?44:fan?38:32),ax=command?20:enemy?16:fan?10:11.2,ay=command?60:enemy?42:fan?36:30.5;
+  const p=new ArtPB(command?24:ornate?20:fan?20:14,command?62:ornate?44:fan?38:32),ax=command?20:ornate?16:fan?10:11.2,ay=command?60:ornate?42:fan?36:30.5;
   artStroke(p,[[ax,1.2],[ax,ay]],.7,wood);p.rect(ax-.15,2,.3,ay-2,woodL);
   p.rect(ax-.75,ay-3.5,1.5,3.8,'#4a392b');p.rect(ax-.7,ay-2.6,1.4,.4,'#ac8d58');
   p.circle(ax,1,.58,rank==='regular'?'#b79451':'#e3bf74');
@@ -4214,10 +4214,10 @@ function paintSashimono(D,phase=0) {
     p.circle(10,5.6,3.1,'#e9d9a6');p.scaled(sashimonoCrest(clan,C.color),6.6,2.2,.45);
     artStroke(p,[[7.2,10],[7.2,13.2]],.5,color);artStroke(p,[[12.8,10],[12.8,13.2]],.5,color);
     p.poly([[6.6,12.8],[7.8,12.8],[8,15.3],[6.5,15.3]],color);p.poly([[12.2,12.8],[13.4,12.8],[13.6,15.3],[12.1,15.3]],color);
-    if(enemy){artStroke(p,[[10,10],[ax,12]],.65,wood);p.poly([[7,17],[14,17],[14.2,29],[10.5,26.7],[6.8,29]],shade(C.banner,-.12));
+    if(ornate){artStroke(p,[[10,10],[ax,12]],.65,wood);p.poly([[7,17],[14,17],[14.2,29],[10.5,26.7],[6.8,29]],shade(C.banner,-.12));
       p.rect(7.5,17.5,6,.4,gold);p.scaled(sashimonoCrest(clan,'#eddfb5'),7.3,18.7,.39);}
   }else{
-    const captain=rank==='captain'||rank==='vanguard'||enemy,field=rank==='field',x=1.8,y=2.2,w=command?16:enemy?12:captain||field?8.8:8,h=command?37:enemy?25:field?20:captain?18:16;
+    const captain=rank==='captain'||rank==='vanguard'||ornate,field=rank==='field',x=1.8,y=2.2,w=command?16:ornate?12:captain||field?8.8:8,h=command?37:ornate?25:field?20:captain?18:16;
     const wind=[0,.33,-.33][phase%3],bottom=y+h;
     artStroke(p,[[x-.3,1.8],[ax+.5,1.8]],.65,wood);p.rect(x-.3,1.45,ax-x+.8,.3,woodL);
     p.poly([[x,y],[x+w,y],[x+w+.15,bottom-1],[x+w-.2+wind,bottom],[x-.25+wind,bottom]],shade(cloth,-.25));
@@ -4229,11 +4229,11 @@ function paintSashimono(D,phase=0) {
     if(pattern===0&&!ivory)p.poly([[x+.5,bottom-4.5],[x+3,bottom-.65],[x+.5,bottom-.65]],shade(C.color,.18));
     if(pattern===1&&!ivory)p.rect(x+.55,y+.6,.45,h-1.7,'#d6caa7');
     if(pattern===2&&!ivory)p.rect(x+.5,bottom-4.5,w-1.2,3.8,shade(C.color,-.1));
-    p.scaled(sashimonoCrest(clan,ink),x+(command?1.6:enemy?.7:.45),y+(command?3:1.5),command?.83:enemy?.68:.47);
+    p.scaled(sashimonoCrest(clan,ink),x+(command?1.6:ornate?.7:.45),y+(command?3:1.5),command?.83:ornate?.68:.47);
     if(ivory)p.rect(x+.5,bottom-4.7,w-1.25,4,shade(C.color,-.18));
     if(command){p.poly([[x+4,bottom-7],[x+5,bottom-9],[x+8,bottom-10],[x+11,bottom-9],[x+12,bottom-7],[x+8,bottom-5]],gold);artStroke(p,[[x+8,bottom-5],[x+8,bottom-2]],.5,ink);}
     else sashimonoUnitMark(p,D.type||'inf',x+w/2,bottom-3.2,ivory?'#eee3c9':ink);
-    if(enemy){ // A gilt-framed, forked command pennon reads differently from rank-and-file cloth.
+    if(ornate){ // A gilt-framed, forked command pennon reads differently from rank-and-file cloth.
       p.poly([[x+.3,y+.4],[x+3.5,y+.4],[x+.3,y+4.1]],'#e9dec2');
       p.poly([[x+.1,bottom],[x+w/2,bottom-2.8],[x+w-.1,bottom],[x+w-.1,bottom+3],[x+w/2,bottom+.3],[x+.1,bottom+3]],shade(C.color,-.25));
       artStroke(p,[[x+.3,bottom+2.3],[x+w/2,bottom-.1],[x+w-.3,bottom+2.3]],.45,gold);
@@ -4280,6 +4280,8 @@ function officerSashimono(A,g,c,policy) {
   if(!c||c.beast||!c.look)return null;
   // Every human enemy commander has a heraldic identity, including small bands, sparring partners and HQ.
   if(A.side===1)return {clan:A.clan||'kage',type:g.type,rank:c.lord||c.post==='hq'?'enemyLord':c.post==='van'?'enemyVanguard':'enemyCaptain'};
+  if(stratOf(c)>0)return {clan:A.clan||'kage',type:g.type,rank:'leader'};
+  if(g.type==='cav')return null; // The horo is the cavalry marker; leaders also retain their fan standard.
   if(!policy.formal||!c||c.aux||c.beast||c.look&&c.look.horo)return null;
   return {clan:A.clan||'kage',type:g.type,rank:c.post==='hq'?'honjin':c.lord?'lord':c.post==='van'?'vanguard':'captain'};
 }
@@ -4331,6 +4333,12 @@ function drawHoro(pb, cx, cy, col) {
   pb.ellipse(cx, cy, 4.6, 5.4, d); pb.ellipse(cx - .3, cy - .4, 4, 4.8, col); pb.ellipse(cx - 1.2, cy - 1.6, 2, 2.2, l); pb.set(cx - 2, cy - 3, shade(col, .5));
   pb.hline(Math.round(cx - 3), Math.round(cy + 1), 7, d); // the cane hoop showing through
   pb.vline(Math.round(cx + 2), Math.round(cy - 9), 5, '#5a3a24'); pb.rect(Math.round(cx + 2), Math.round(cy - 10), 3, 2, '#f2efe2');
+}
+// Commander horo stand clear of broad sode, tied back to the rider; other cloaks keep their original placement.
+function drawBattleHoro(pb,L,cx,cy){
+  if(!L.horo)return;
+  if(L.battleHoro){artStroke(pb,[[cx-4,cy+2],[cx+2,cy+3]],.65,'#60482e');artStroke(pb,[[cx-4,cy+2],[cx+2,cy+3]],.28,'#c4a46b');cx-=7;cy-=1;}
+  drawHoro(pb,cx,cy,L.horo);
 }
 /* ----- pose library (facing right). Coordinates relative to body anchor (cx, base) where base = ground row. ----- */
 // legs: [hipX, kneeX, kneeY, footX] for back and front leg; y measured upward from ground
@@ -4511,7 +4519,7 @@ function footSoldierFrame(type, L, pose, hero, wid) {
   }
   // compose: sashimono, horo, back weapon, back arm, legs, torso, head, front arm, front weapon
   if (L.sashi && !hero) sashimonoPB(pb, tx - 1, ty + 4, L.sashi, bob + (spinI >= 0 ? 1 : 0));
-  if (L.horo) drawHoro(pb, tx - 1, ty + 1, L.horo);
+  drawBattleHoro(pb,L,tx-1,ty+1);
   pb.draw(back, 0, 0);
   arm(pb, shB[0], shB[1], handB[0], handB[1], C, shade(sk, -.1),{tetsu:tetsuEquipment(L),happi:happiEquipment(L)});
   drawLegs(pb, cx + lean, base, legPose, lp, low);
@@ -4724,7 +4732,7 @@ function riderFrame(L, pose, hero, wid, coat, tack, mount=null) {
   // horse, sashimono on the rider's back, then rider's far arm, torso, near leg along the horse's side, head, near arm, weapon
   pb.draw(hr.pb, OX, OY);
   if (L.sashi && !hero) sashimonoPB(pb, sx - 2, sy + 3, L.sashi, hr.oy || 0);
-  if (L.horo) drawHoro(pb, sx - 2, sy, L.horo);
+  drawBattleHoro(pb,L,sx-2,sy);
   pb.draw(back, 0, 0);
   arm(pb, shB[0], shB[1], handB[0], handB[1], C, shade(sk, -.1),{tetsu:tetsuEquipment(L),happi:happiEquipment(L)});
   pb.draw(torsoPB(L,hero||L.gear?null:'dou',{pose,mounted:true}),sx-2,sy);
@@ -7869,7 +7877,7 @@ function layoutIndependent(g,si,front,mid,fh){
   const face=sideDir(si),same=BT.A[si].groups.filter(o=>o.heroOnly&&o.type===g.type),i=same.indexOf(g),
     y=clamp(mid+(i-(same.length-1)/2)*Math.min(24,fh/Math.max(1,same.length)),BT.fy0+8,BT.fy1-5);
   g.front=g.post=g.home=g.hx=front;g.hy=y;g.halfW=0;g.colStep=23;g.heroes=[];
-  const s=mkSprite(g,si,front,y,g.solo.look);s.hero=g.solo;s.hdx=0;s.hdy=0;g.spr=[s];
+  const s=mkSprite(g,si,front,y,commanderBattleLook(g.solo,g,si));s.hero=g.solo;s.hdx=0;s.hdy=0;g.spr=[s];
   if(g.guards)mkGuards(g,si,s,g.guards);if(g.solo.pet)mkPet(g,si,s,g.solo.pet);
   if(g.troops<=0){s.alive=false;s.die=-1;}return front-face*28;
 }
@@ -11175,7 +11183,7 @@ function layoutSprites() {
         list.forEach((g, k) => {
           const r = two ? (k / 2) | 0 : k, sub = two ? k % 2 : 0;
           g.hx = BT.cx - face * (34 + col * 34 + sub * 14 + (r % 2) * 3); g.hy = mid + (r - (rows - 1) / 2) * step; g.halfW = 0; g.front = g.home = g.hx; g.heroes = [];
-          const sp = mkSprite(g, si, g.hx, g.hy, g.solo.look); sp.hero = g.solo; g.spr = [sp]; if (g.guards) mkGuards(g, si, sp, g.guards);
+          const sp = mkSprite(g, si, g.hx, g.hy, commanderBattleLook(g.solo,g,si)); sp.hero = g.solo; g.spr = [sp]; if (g.guards) mkGuards(g, si, sp, g.guards);
           if (g.troops <= 0) { sp.alive = false; sp.die = -1; }
         }); });
       return;
@@ -11212,7 +11220,7 @@ function layoutSprites() {
     // the Honjin: commanders posted at the command camp stand before the curtain, out of the fighting
     A.hqSpr = [];
     A.groups.filter(g=>!g.heroOnly).forEach(g => (g.cmds || []).filter(c => c.post === 'hq' && c.look).forEach(c => { const i = A.hqSpr.length, hx = si === 0 ? 30 + i * 15 : BT.WW - 30 - i * 15;
-      const s = mkSprite(g, si, hx, BT.fy0 + 5 + (i % 2) * 3, c.look); s.hero = c; s.hq = true; s.g = g; A.hqSpr.push(s); }));
+      const s = mkSprite(g, si, hx, BT.fy0 + 5 + (i % 2) * 3, commanderBattleLook(c,g,si)); s.hero = c; s.hq = true; s.g = g; A.hqSpr.push(s); }));
   });
   assignBattleSashimono();prepareCommandDecorations();prepareBattleReactions();
 }
@@ -11398,14 +11406,20 @@ function returnHeroes() {
       if (c.hp != null) c.hp = Math.max(c.hp, c.hpMax * .25); refreshGroup(g, .98);
       BT.labels.push({ x: g.front, y: g.hy - 30, text: `${c.name} ↩`, t: .3, side: si }); } })));
 }
+// Battle-only dress: clone the equipped look, preserving village portraits, equipment and combat stats.
+const ALLIED_CAV_HORO={van:'#982a36',line:'#343b78'};
+function commanderBattleLook(c,g,si){
+  if(si!==0||g.type!=='cav'||!c.look||c.beast)return c.look;
+  return {...c.look,horo:c.post==='van'?ALLIED_CAV_HORO.van:ALLIED_CAV_HORO.line,battleHoro:true};
+}
 function heroSlots(g, face, mid, fh) {
   const cs = (g.cmds || []).filter(c => c.look && c.post !== 'hq'), n = cs.length; if (!n) return [];
   if (g._hp && g._hp.length === n) return cs.map((c, i) => { const P = g._hp[i], dx = face * (P.x - g.front), dy = P.y - mid;
-    const s = mkSprite(g, sideOf(g), P.x, P.y, c.look); s.hero = c; s.hdx = dx; s.hdy = dy; const pet=c.pet||c.look?.gear?.m;if(PET_KINDS.includes(pet))mkPet(g,sideOf(g),s,pet); return s; });
+    const s = mkSprite(g, sideOf(g), P.x, P.y, commanderBattleLook(c,g,sideOf(g))); s.hero = c; s.hdx = dx; s.hdy = dy; const pet=c.pet||c.look?.gear?.m;if(PET_KINDS.includes(pet))mkPet(g,sideOf(g),s,pet); return s; });
   const cols = n > 4 ? 2 : 1, rows = Math.ceil(n / cols), step = Math.min((g.rowStep || BT.rowStep) * 1.25, (fh - 12) / Math.max(1, rows));
   return cs.map((c, i) => { const col = i % cols, r = (i / cols) | 0;
     const dx = 5 - col * 12, dy = (r - (rows - 1) / 2) * step + 8 + (col ? step * .5 : 0); // captains lead from the front file, not a stride into no-man's-land
-    const s = mkSprite(g, sideOf(g), g.front + face * dx, mid + dy, c.look); s.hero = c; s.hdx = dx; s.hdy = dy; const pet=c.pet||c.look?.gear?.m;if(PET_KINDS.includes(pet))mkPet(g,sideOf(g),s,pet); return s; });
+    const s = mkSprite(g, sideOf(g), g.front + face * dx, mid + dy, commanderBattleLook(c,g,sideOf(g))); s.hero = c; s.hdx = dx; s.hdy = dy; const pet=c.pet||c.look?.gear?.m;if(PET_KINDS.includes(pet))mkPet(g,sideOf(g),s,pet); return s; });
 }
 function mkSprite(g, si, x, y, look, kit, nv = ART_TROOP_VARIANTS, variant = null, random=Math.random) {
   const artVariant=look||g.solo&&g.solo.beast?0:variant!=null?variant%nv:(random()*nv)|0; // faces/builds per rank-and-file set: more variety costs canvas memory
@@ -11513,7 +11527,7 @@ function reactionHumanFrame(r,pose,hatLost=false){
   else if(pose==='panic'){near=[tx+12,ty-1];far=[tx-4,ty-2];}
   else if(pose==='scramble'){near=[tx+12,base-1];far=[tx-3,base-1];}
   else{const a=pose==='runA'?1:-1;near=[tx+9+a*3,ty+3-a*2];far=[tx-1-a*3,ty+3+a*2];}
-  if(L.horo)drawHoro(p,tx-1,ty+1,L.horo);
+  drawBattleHoro(p,L,tx-1,ty+1);
   if(weaponKind(r.wid)==='bow')quiver(p,tx,ty);
   if(weaponKind(r.wid)==='sword')scabbard(p,tx+1,ty+4,r.wid);
   arm(p,sb[0],sb[1],far[0],far[1],shade(cloth,-.25),shade(skin,-.1),{tetsu:tetsuEquipment(L),happi:happiEquipment(L)});
@@ -12214,7 +12228,7 @@ function duelPoseFrame(s,g,pose,face){
     far=!pole&&r.wid!=='ninja_claw'?[near[0]-Math.cos(angle)*2.8,near[1]-Math.sin(angle)*2.8]:far0;
   if(pole)gripSpear(weapon,far,near,SHAFT_FOOT,weaponKind(r.wid)==='glaive',r.wid);
   else{sword(weapon,back,near[0]+1,near[1],angle,12+(r.wid==='nodachi'?5:0),r.wid);scabbard(back,tx+1,ty+4,r.wid);if(r.wid==='ninja_claw')tacticalClaw(back,back,far[0],far[1],angle-.3);}
-  if(L.horo)drawHoro(p,tx-1,ty+1,L.horo);p.draw(back,0,0);
+  drawBattleHoro(p,L,tx-1,ty+1);p.draw(back,0,0);
   arm(p,tx,ty+1,far[0],far[1],shade(cloth,-.25),shade(sk,-.1),{tetsu:tetsuEquipment(L),happi:happiEquipment(L)});
   drawLegs(p,cx+lean,base,kneel?'kneel':low?'lunge':pose==='finish'?'stand':pose==='high'?'walkB':'walkA',lp,low);
   const parts=r.parts||(r.parts=new Map()),bodyKey='duelBody|'+low;

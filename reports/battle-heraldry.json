@@ -37,6 +37,23 @@
       ]
     }
   ],
+  "alliedDress": [
+    {
+      "post": "van",
+      "color": "#982a36",
+      "duelAndCollapse": true
+    },
+    {
+      "post": "line",
+      "color": "#343b78",
+      "duelAndCollapse": true
+    },
+    {
+      "post": "hq",
+      "color": "#343b78",
+      "duelAndCollapse": true
+    }
+  ],
   "render": {
     "friendlyRimAlpha": 0.28,
     "friendlyRimPadding": 0.4234153846153852,
@@ -48,7 +65,7 @@
     "cacheLimit": 48,
     "cacheMBLimit": 8
   },
-  "checks": 119,
+  "checks": 148,
   "viewports": [
     {
       "width": 430,
