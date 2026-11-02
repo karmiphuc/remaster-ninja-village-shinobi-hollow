@@ -1,0 +1,513 @@
+{
+  "species": [
+    {
+      "kind": "hound",
+      "finisher": "beastPounce",
+      "plans": [
+        {
+          "count": 1,
+          "seed": 2,
+          "moves": [
+            "beastPounce"
+          ]
+        },
+        {
+          "count": 2,
+          "seed": 8,
+          "moves": [
+            "thrust",
+            "beastPounce"
+          ]
+        },
+        {
+          "count": 3,
+          "seed": 41,
+          "moves": [
+            "sweep",
+            "thrust",
+            "beastPounce"
+          ]
+        }
+      ],
+      "positions": 26,
+      "poses": [
+        "idle",
+        "wind",
+        "run",
+        "atk"
+      ],
+      "steadyCanvasAllocations": 0
+    },
+    {
+      "kind": "fox",
+      "finisher": "beastFeint",
+      "plans": [
+        {
+          "count": 1,
+          "seed": 2,
+          "moves": [
+            "beastFeint"
+          ]
+        },
+        {
+          "count": 2,
+          "seed": 8,
+          "moves": [
+            "thrust",
+            "beastFeint"
+          ]
+        },
+        {
+          "count": 3,
+          "seed": 41,
+          "moves": [
+            "sweep",
+            "thrust",
+            "beastFeint"
+          ]
+        }
+      ],
+      "positions": 35,
+      "poses": [
+        "idle",
+        "run",
+        "wind"
+      ],
+      "steadyCanvasAllocations": 0
+    },
+    {
+      "kind": "tosa",
+      "finisher": "beastPounce",
+      "plans": [
+        {
+          "count": 1,
+          "seed": 2,
+          "moves": [
+            "beastPounce"
+          ]
+        },
+        {
+          "count": 2,
+          "seed": 8,
+          "moves": [
+            "thrust",
+            "beastPounce"
+          ]
+        },
+        {
+          "count": 3,
+          "seed": 41,
+          "moves": [
+            "sweep",
+            "thrust",
+            "beastPounce"
+          ]
+        }
+      ],
+      "positions": 24,
+      "poses": [
+        "idle",
+        "wind",
+        "run",
+        "atk"
+      ],
+      "steadyCanvasAllocations": 0
+    },
+    {
+      "kind": "tanuki",
+      "finisher": "beastFeint",
+      "plans": [
+        {
+          "count": 1,
+          "seed": 2,
+          "moves": [
+            "beastFeint"
+          ]
+        },
+        {
+          "count": 2,
+          "seed": 8,
+          "moves": [
+            "thrust",
+            "beastFeint"
+          ]
+        },
+        {
+          "count": 3,
+          "seed": 41,
+          "moves": [
+            "sweep",
+            "thrust",
+            "beastFeint"
+          ]
+        }
+      ],
+      "positions": 35,
+      "poses": [
+        "idle",
+        "run",
+        "wind"
+      ],
+      "steadyCanvasAllocations": 0
+    },
+    {
+      "kind": "boar",
+      "finisher": "boarToss",
+      "plans": [
+        {
+          "count": 1,
+          "seed": 2,
+          "moves": [
+            "boarToss"
+          ]
+        },
+        {
+          "count": 2,
+          "seed": 8,
+          "moves": [
+            "thrust",
+            "boarToss"
+          ]
+        },
+        {
+          "count": 3,
+          "seed": 41,
+          "moves": [
+            "sweep",
+            "thrust",
+            "boarToss"
+          ]
+        }
+      ],
+      "positions": 18,
+      "poses": [
+        "idle",
+        "wind",
+        "run",
+        "atk"
+      ],
+      "steadyCanvasAllocations": 0
+    },
+    {
+      "kind": "bear",
+      "finisher": "bearSlam",
+      "plans": [
+        {
+          "count": 1,
+          "seed": 2,
+          "moves": [
+            "bearSlam"
+          ]
+        },
+        {
+          "count": 2,
+          "seed": 8,
+          "moves": [
+            "thrust",
+            "bearSlam"
+          ]
+        },
+        {
+          "count": 3,
+          "seed": 41,
+          "moves": [
+            "sweep",
+            "thrust",
+            "bearSlam"
+          ]
+        }
+      ],
+      "positions": 28,
+      "poses": [
+        "idle",
+        "wind",
+        "run",
+        "atk"
+      ],
+      "steadyCanvasAllocations": 0
+    },
+    {
+      "kind": "monkey",
+      "finisher": "monkeyVault",
+      "plans": [
+        {
+          "count": 1,
+          "seed": 2,
+          "moves": [
+            "monkeyVault"
+          ]
+        },
+        {
+          "count": 2,
+          "seed": 8,
+          "moves": [
+            "thrust",
+            "monkeyVault"
+          ]
+        },
+        {
+          "count": 3,
+          "seed": 41,
+          "moves": [
+            "sweep",
+            "thrust",
+            "monkeyVault"
+          ]
+        }
+      ],
+      "positions": 31,
+      "poses": [
+        "idle",
+        "wind",
+        "run",
+        "spin",
+        "atk"
+      ],
+      "steadyCanvasAllocations": 0
+    },
+    {
+      "kind": "hawk",
+      "finisher": "birdDive",
+      "plans": [
+        {
+          "count": 1,
+          "seed": 2,
+          "moves": [
+            "birdDive"
+          ]
+        },
+        {
+          "count": 2,
+          "seed": 8,
+          "moves": [
+            "thrust",
+            "birdDive"
+          ]
+        },
+        {
+          "count": 3,
+          "seed": 41,
+          "moves": [
+            "sweep",
+            "thrust",
+            "birdDive"
+          ]
+        }
+      ],
+      "positions": 38,
+      "poses": [
+        "idle",
+        "wind",
+        "run",
+        "atk"
+      ],
+      "steadyCanvasAllocations": 0
+    },
+    {
+      "kind": "gyrfalcon",
+      "finisher": "birdDive",
+      "plans": [
+        {
+          "count": 1,
+          "seed": 2,
+          "moves": [
+            "birdDive"
+          ]
+        },
+        {
+          "count": 2,
+          "seed": 8,
+          "moves": [
+            "thrust",
+            "birdDive"
+          ]
+        },
+        {
+          "count": 3,
+          "seed": 41,
+          "moves": [
+            "sweep",
+            "thrust",
+            "birdDive"
+          ]
+        }
+      ],
+      "positions": 38,
+      "poses": [
+        "idle",
+        "wind",
+        "run",
+        "atk"
+      ],
+      "steadyCanvasAllocations": 0
+    },
+    {
+      "kind": "wolf",
+      "finisher": "beastPounce",
+      "plans": [
+        {
+          "count": 1,
+          "seed": 2,
+          "moves": [
+            "beastPounce"
+          ]
+        },
+        {
+          "count": 2,
+          "seed": 8,
+          "moves": [
+            "thrust",
+            "beastPounce"
+          ]
+        },
+        {
+          "count": 3,
+          "seed": 41,
+          "moves": [
+            "sweep",
+            "thrust",
+            "beastPounce"
+          ]
+        }
+      ],
+      "positions": 26,
+      "poses": [
+        "idle",
+        "wind",
+        "run",
+        "atk"
+      ],
+      "steadyCanvasAllocations": 0
+    }
+  ],
+  "runs": [
+    {
+      "pet": "bear",
+      "count": 1,
+      "shots": 1,
+      "guards": 0,
+      "hits": 7,
+      "frames": 61,
+      "fps": 30,
+      "speed": 4
+    },
+    {
+      "pet": "boar",
+      "count": 2,
+      "shots": 1,
+      "guards": 0,
+      "hits": 4,
+      "frames": 47,
+      "fps": 30,
+      "speed": 4
+    },
+    {
+      "pet": "wolf",
+      "count": 3,
+      "shots": 1,
+      "guards": 0,
+      "hits": 3,
+      "frames": 35,
+      "fps": 30,
+      "speed": 4
+    },
+    {
+      "pet": "fox",
+      "count": 3,
+      "shots": 1,
+      "guards": 0,
+      "hits": 3,
+      "frames": 37,
+      "fps": 30,
+      "speed": 4
+    },
+    {
+      "pet": "monkey",
+      "count": 2,
+      "shots": 1,
+      "guards": 0,
+      "hits": 4,
+      "frames": 45,
+      "fps": 30,
+      "speed": 4
+    },
+    {
+      "pet": "hawk",
+      "count": 1,
+      "shots": 1,
+      "guards": 0,
+      "hits": 7,
+      "frames": 60,
+      "fps": 30,
+      "speed": 4
+    },
+    {
+      "pet": "tosa",
+      "count": 3,
+      "save": "guard",
+      "guardCount": 6,
+      "shots": 1,
+      "guards": 1,
+      "hits": 3,
+      "frames": 36,
+      "fps": 30,
+      "speed": 4
+    },
+    {
+      "pet": "gyrfalcon",
+      "count": 3,
+      "save": "ward",
+      "shots": 1,
+      "guards": 0,
+      "hits": 3,
+      "frames": 37,
+      "fps": 30,
+      "speed": 4
+    },
+    {
+      "pet": "tanuki",
+      "count": 2,
+      "side": 1,
+      "shots": 1,
+      "guards": 0,
+      "hits": 5,
+      "frames": 51,
+      "fps": 30,
+      "speed": 4
+    },
+    {
+      "pet": "hound",
+      "n": 3,
+      "shots": 3,
+      "guards": 0,
+      "hits": 18,
+      "frames": 137,
+      "fps": 30,
+      "speed": 4
+    },
+    {
+      "pet": "fox",
+      "count": 2,
+      "save": "guard",
+      "shots": 1,
+      "guards": 1,
+      "hits": 4,
+      "frames": 45,
+      "fps": 30,
+      "speed": 4
+    },
+    {
+      "pet": "tanuki",
+      "count": 3,
+      "save": "ward",
+      "shots": 1,
+      "guards": 0,
+      "hits": 3,
+      "frames": 37,
+      "fps": 30,
+      "speed": 4
+    }
+  ],
+  "cacheKeys": 20,
+  "checks": 1136
+}

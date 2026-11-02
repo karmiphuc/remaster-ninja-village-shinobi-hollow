@@ -4,25 +4,25 @@
     "dojoExcluded": "Training Ground",
     "completes": "49/49"
   },
-  "dojoCard": "Gunners recruits",
+  "dojoCard": "Ginryū Gusoku",
   "dojo": {
     "rolls": {
-      "troops": 163,
-      "person": 91,
-      "horse": 61,
-      "armor": 85
+      "troops": 154,
+      "person": 101,
+      "horse": 58,
+      "armor": 87
     },
     "partnerPower": {
-      "troops": 744,
-      "armor": 833,
-      "person": 1018
+      "troops": 30,
+      "armor": 30,
+      "person": 30
     }
   },
   "dojoPayouts": {
     "troopsOnWin": 16,
     "armor": "Ginryū Gusoku",
     "horse": "Black Stallion",
-    "personOffered": "Hikaru",
+    "personOffered": "Shinpei",
     "lossConsolation": 5
   },
   "dojoRecruitCaps": {
@@ -41,26 +41,23 @@
   "rebels": {
     "lair": {
       "name": "Yamato",
-      "before": 64,
-      "after": 98,
-      "uprising": 81,
+      "before": 69,
+      "after": 72,
+      "uprising": 60,
       "spoils": {
         "items": [
-          "Riveted Hachigane",
-          "Riveted Hachigane"
+          "Wakizashi"
         ],
-        "recruits": [
-          "Mamezo"
-        ]
+        "recruits": []
       }
     },
     "castle": {
       "name": "Ise",
-      "before": 168,
-      "after": 168,
-      "uprising": 148,
+      "before": 178,
+      "after": 178,
+      "uprising": 186,
       "spoilsGranted": [
-        "Wakizashi"
+        "Lamellar Armor"
       ],
       "recruitOffered": "Shinpei"
     }

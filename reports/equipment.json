@@ -46,9 +46,9 @@
   "grenadeDamageOnce": true,
   "wolfStrategyAndFormation": true,
   "specialistOfficers": [
-    "zanbato",
     "rifle",
-    "repeater"
+    "repeater",
+    "zanbato"
   ],
   "saveLoad": true,
   "errors": []

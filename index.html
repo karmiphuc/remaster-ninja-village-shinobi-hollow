@@ -6555,7 +6555,7 @@ function newGame() {
   G = { v: 1, gold: 1200, year: 1, month: 1, week: 1, wt: 0, speed: 1, autoDuel: false, uid: 1, tiles: [], roads: [], bmap: [], buildings: [],
     endYear: rint(20, 30), land: { core: true }, unlocked: {}, units: { inf: true }, corpsV: 1, stock: { rice: 0, veg: 0, tea: 0, wood: 0, ore: 0, silk: 0 },
     villagers: [], wares: {}, logi: 1, troops: { inf: 30, arc: 0, gun: 0, cav: 0 }, items: { bokken: 4, hankyu: 2 }, researched: { bokken: 1, hankyu: 1 }, research: null,
-    prov: {}, campV: 2, camps: [], campUid: 1, allHands: true, wins: 0, combos: {}, stats: { sales: 0, trav: 0, lastSales: 0, lastTrav: 0, best: 0 }, log: [], recruitQueue: [], trainCD: 0, ended: false, tut: 0, wander: 0 };
+    prov: {}, campV: 2, camps: [], campUid: 1, allHands: true, wins: 0, combos: {}, stats: { sales: 0, trav: 0, lastSales: 0, lastTrav: 0, best: 0 }, log: [], recruitQueue: [], trainCD: 0, dojoLevel: 1, dojoMilestone: 0, ended: false, tut: 0, wander: 0 };
   createGoods(economyCentral('rice'),'rice',6,'new-village');
   genVillage(G.vseed = (Math.random() * 1e9) | 0);
   for (let y = 0; y < MAP_H; y++) for (let x = 0; x < MAP_W; x++) { G.tiles.push(baseTile(x, y)); G.roads.push(0); G.bmap.push(-1); }
@@ -10235,7 +10235,8 @@ function siteMode(P) { return P.type === 'land' || P.type === 'hunt' ? 'skirmish
 function enemyArmy(site) {
   const P0 = typeof site === 'string' ? siteById(site) : site, st = siteState(P0);
   const clan = P0.clan, skirm = siteMode(P0) === 'skirmish';
-  let P = P0.type === 'dojo' ? Math.max(60, armyPower(playerArmy()) * dojoPrize().mul) : (st.power || 60) * sitePowerScale(P0);
+  if(P0.type==='dojo')return trainingArmy(P0);
+  let P = (st.power || 60) * sitePowerScale(P0);
   const A = { side: 1, clan, name: P0.type === 'dojo' ? 'Sparring Partners' : CLANS[clan].name, groups: [], ki: P0.boss ? 2 : 0, strat: 0, mode: skirm ? 'skirmish' : 'army', boss: P0.boss };
   const tier = Math.log2(1 + P / 100);
   const names = ENEMY_NAMES[P0.type === 'dojo' ? 'dojo' : clan] || ENEMY_NAMES.bandit;
@@ -10252,7 +10253,6 @@ function enemyArmy(site) {
   } else {
     let mix = P0.boss ? { inf: .25, arc: .25, gun: .25, cav: .25 } : clanMix(clan) || CLAN_MIX.hebi;
     if (P0.capital && !P0.boss && P0.type === 'clan') { mix = Object.assign({}, mix); ['inf', 'arc', 'cav'].forEach(t => mix[t] = Math.max(mix[t] || 0, .22)); const s = Object.values(mix).reduce((a, b) => a + b, 0); Object.keys(mix).forEach(t => mix[t] /= s); } // a seat keeps all three arms
-    if (P0.type === 'dojo') { mix = {}; const tot = ['inf', 'arc', 'gun', 'cav'].reduce((n, t) => n + (unitOpen(t) ? G.troops[t] : 0), 0) || 1; ['inf', 'arc', 'gun', 'cav'].forEach(t => { if (unitOpen(t) && G.troops[t] > 0) mix[t] = G.troops[t] / tot; }); if (!Object.keys(mix).length) mix = { inf: 1 }; }
     const cm = 1 + tier * .28;
     Object.entries(mix).forEach(([t, w], i) => {
       const nC = clamp(Math.round(1 + tier * .6), 1, 4); const cmds = [];
@@ -10580,6 +10580,7 @@ function startBattle(provId, opt) {
   if (!pa.groups.length) { toast(skirm ? 'You need villagers to fight.' : 'You have no troops! Hire some in the Army panel.'); return false; }
   MAPV.open = false;
   BT = { prov: P0, A: [pa, ea], round: 0, phase: -1, state: 'prep', t: 0, speed: 1, tac: ['steady', 'steady'], jutsu: [null, null], ki: [pa.ki, ea.ki], fx: [], proj: [], nums: [], pops: [], labels: [], shake: 0, log: [], auto: true, sky: pick(['day', 'day', 'dusk', 'dawn', 'storm']), seed: rint(1, 9999), clouds: [], wind: rnd(4, 9) * pick([-1, 1]), cam: null, stop: 0, punch: 0, bodies: 0 };
+  if(P0.type==='dojo'){dojoPrize();BT.dojoLevel=trainingLevel();BT.dojoBonus=BT.dojoLevel%10===0?dojoMilestoneReward(BT.dojoLevel):null;}
   // clan seats and the Shogun's keep are sieges: walls, a gate to ram, archers and gunners on the ramparts, a fourth round
   BT.maxR = 3;
   if (!skirm && P0.type === 'clan' && (P0.capital || P0.boss)) { const hp = Math.round(totalOf(ea) * (P0.boss ? 1.8 : SIEGE_GATE)); BT.siege = { hp, max: hp, breached: false }; BT.maxR = 4; }
@@ -11260,6 +11261,7 @@ function mkPet(g, si, hr, kind) {
 }
 function updPet(hr, dt, g, si) {
   const q = hr.pet, face = sideDir(si); if (!q) return;
+  if(q.duelPet)return; // Independent cinematic clock owns the actual companion until the clip ends.
   if (!hr.alive && !q.out) { q.out = true; q.fadeAt = BT.t + 1.4; }
   if (hr.strikeAt && hr.strikeAt !== q._sa) { q._sa = hr.strikeAt; q.jab = .32; q.hop = q.bird ? 0 : .2; }
   const striking = q.jab > 0 || hr.state === 'fight';
@@ -11303,11 +11305,11 @@ function returnHeroes() {
 function heroSlots(g, face, mid, fh) {
   const cs = (g.cmds || []).filter(c => c.look && c.post !== 'hq'), n = cs.length; if (!n) return [];
   if (g._hp && g._hp.length === n) return cs.map((c, i) => { const P = g._hp[i], dx = face * (P.x - g.front), dy = P.y - mid;
-    const s = mkSprite(g, sideOf(g), P.x, P.y, c.look); s.hero = c; s.hdx = dx; s.hdy = dy; if (c.pet) mkPet(g, sideOf(g), s, c.pet); return s; });
+    const s = mkSprite(g, sideOf(g), P.x, P.y, c.look); s.hero = c; s.hdx = dx; s.hdy = dy; const pet=c.pet||c.look?.gear?.m;if(PET_KINDS.includes(pet))mkPet(g,sideOf(g),s,pet); return s; });
   const cols = n > 4 ? 2 : 1, rows = Math.ceil(n / cols), step = Math.min((g.rowStep || BT.rowStep) * 1.25, (fh - 12) / Math.max(1, rows));
   return cs.map((c, i) => { const col = i % cols, r = (i / cols) | 0;
     const dx = 5 - col * 12, dy = (r - (rows - 1) / 2) * step + 8 + (col ? step * .5 : 0); // captains lead from the front file, not a stride into no-man's-land
-    const s = mkSprite(g, sideOf(g), g.front + face * dx, mid + dy, c.look); s.hero = c; s.hdx = dx; s.hdy = dy; if (c.pet) mkPet(g, sideOf(g), s, c.pet); return s; });
+    const s = mkSprite(g, sideOf(g), g.front + face * dx, mid + dy, c.look); s.hero = c; s.hdx = dx; s.hdy = dy; const pet=c.pet||c.look?.gear?.m;if(PET_KINDS.includes(pet))mkPet(g,sideOf(g),s,pet); return s; });
 }
 function mkSprite(g, si, x, y, look, kit, nv = ART_TROOP_VARIANTS, variant = null, random=Math.random) {
   const artVariant=look||g.solo&&g.solo.beast?0:variant!=null?variant%nv:(random()*nv)|0; // faces/builds per rank-and-file set: more variety costs canvas memory
@@ -11846,6 +11848,9 @@ const DUEL_CAV_POSES=Object.keys(DUEL_MOUNTS),DUEL_POSE_SET=new Set(DUEL_POSES.c
  DUEL_CAV_TIME=1.42,DUEL_CAV_IMPACT=[[],[.82],[.42,.84],[.22,.46,.84]],DUEL_BACK_IMPACT=[[],[.82],[.30,.88],[.18,.36,.90]];
 for(const m of Object.values(DUEL_MOUNTS)){const h=m.gait[m.pivot==='fore'?3:2],px=m.pivot==='fore'?29:14;
  m.hoofX=-23+px+(h[4]-px)*Math.cos(m.lean)-(h[5]-33)*Math.sin(m.lean);}
+// These are companions in the existing art, not horse-shaped substitute mounts. Use their actual modular beast rigs.
+const DUEL_BEAST_MOVES={bear:'bearSlam',boar:'boarToss',hound:'beastPounce',wolf:'beastPounce',tosa:'beastPounce',fox:'beastFeint',tanuki:'beastFeint',monkey:'monkeyVault',hawk:'birdDive',gyrfalcon:'birdDive'},
+ DUEL_BEAST_IMPACT=[[],[.78],[.30,.78],[.20,.43,.80]],DUEL_BEAST_TIME=1.36;
 const DUEL_Z=[[-17,-10,16,-9],[16,-9,-15,10],[-15,10,18,9]],DUEL_X=[[-15,-11,15,10],[-15,10,15,-11]];
 const DUEL_ENDINGS=['passing','slidingThrust','jump','risingCut','guardBreak','thrust'],DUEL_TWO_ENDINGS=['crossCut',...DUEL_ENDINGS,'crossCut'];
 // Presentation variation uses the resolved chain, never another combat RNG roll.
@@ -11907,6 +11912,7 @@ function startDuel(spec){
 }
 function duelFinisher(a){
   const e=a.at(-1),w=e.f.weapon.style,v=(duelMoveVariant(e)+e.dmg*7)>>>0,mounted=!!e.f.hr.sprs.horse;
+  const pet=e.f.hr.pet;if(pet?.alive&&!pet.out&&DUEL_BEAST_MOVES[pet.kind]&&v%3!==2)return DUEL_BEAST_MOVES[pet.kind];
   if(w==='claw')return a.length===3?'tripleSlash':a.length===2?'crossCut':'passing';
   if(w==='bow'||w==='gun')return 'release';
   if(mounted){if(v%4<2)return v%2?'cavBackKick':'cavTrample';
@@ -11922,14 +11928,14 @@ function duelFinisher(a){
   return DUEL_ENDINGS[v%DUEL_ENDINGS.length];
 }
 function duelClip(a){
-  const kind=duelFinisher(a),mounted=kind==='cavTrample'||kind==='cavBackKick',moves=a.map((e,i)=>{
+  const kind=duelFinisher(a),mounted=kind==='cavTrample'||kind==='cavBackKick',animal=!!DUEL_BEAST_MOVES[a.at(-1).f.hr.pet?.kind]&&kind===DUEL_BEAST_MOVES[a.at(-1).f.hr.pet?.kind],moves=a.map((e,i)=>{
     if(kind==='tripleSlash'||kind==='crossCut')return i%2?'cutUp':'sweep';
     if(kind==='tripleThrust'||kind==='doubleThrust')return 'thrust';
     if(i===a.length-1)return kind;
     if(kind==='cavTrample'&&i===a.length-2)return 'cavForeKick';
     if(e.f.weapon.kind==='sword'||e.f.weapon.kind==='glaive')return a.length===3?(i?'thrust':'sweep'):(kind==='slidingThrust'||kind==='thrust'?'sweep':'thrust');
     return duelStrikePose(e);
-  });return {kind,moves,mounted,duration:mounted?DUEL_CAV_TIME:DUEL_CINE_TIME,beats:(kind==='cavBackKick'?DUEL_BACK_IMPACT:mounted?DUEL_CAV_IMPACT:DUEL_IMPACT)[a.length]};
+  });return {kind,moves,mounted,animal,duration:animal?DUEL_BEAST_TIME:mounted?DUEL_CAV_TIME:DUEL_CINE_TIME,beats:(animal?DUEL_BEAST_IMPACT:kind==='cavBackKick'?DUEL_BACK_IMPACT:mounted?DUEL_CAV_IMPACT:DUEL_IMPACT)[a.length]};
 }
 function duelBeat(c,j){return c.moves?.[j]||(c.kind==='tripleThrust'||c.kind==='doubleThrust'?'thrust':c.kind==='tripleSlash'||c.kind==='crossCut'?(j%2?'cutUp':'sweep'):j===c.a.length-1?c.kind:'thrust');}
 // Rescues arrive before the first strike, including a three-hit flurry. The sprite is the actual equipped retainer.
@@ -11979,6 +11985,8 @@ function duelEvent(e){
     const shot=BT.duelShot;if(shot.guard){shot.guardX=shot.guard.x;shot.guardY=shot.guard.y;
       shot.coverAt=Math.max(.06,clip.beats[0]-.14);shot.coverStart=Math.max(0,shot.coverAt-.24);shot.coverU=0;
       shot.guard.duelCover=shot;updateDuelCover(shot);}
+    if(clip.animal){const q=shot.pet=o.f.hr.pet;shot.petX=q.x;shot.petY=q.y;shot.petLift=q.lift||0;
+      shot.petSets=[beastSet(q.kind,0),beastSet(q.kind,1)];q.duelPet=shot;updateDuelPet(shot);}
     BT.duelRun.shots++;BT.cine.x=(o.f.hr.x+o.t.hr.x)/2;BT.cine.y=o.t.hr.y;BT.cine.z=e.n===1?1.05:.8;
     o.f.hr.duelPose=o.t.hr.duelPose=null;return;
   }
@@ -12031,7 +12039,7 @@ function duelSpark(x,y,n=5){for(let i=0;i<n;i++){const a=(i/n)*Math.PI*2;BT.fx.p
 function settleDuelWinner(c){
   if(c.save)return;const W=c.W,dir=c.dir;
   const dx=c.kind==='cavTrample'?dir*26:c.kind==='cavBackKick'?c.L.x-W.x+dir*DUEL_MOUNTS.horseBackKick.hoofX*spriteScale():
-    c.kind==='passing'?dir*(c.e.f.weapon.reach+12):c.kind==='slidingThrust'?dir*10:0;
+    (c.kind==='passing'||c.kind==='beastFeint')?dir*(c.e.f.weapon.reach+12):c.kind==='slidingThrust'?dir*10:0;
   if(!dx)return;W.x+=dx;if(c.mounted)W.y=c.L.y;W.tx=W.x;W.ty=W.y;W.state='idle';
   // Start the return from the actual finishing position. Existing later movement orders still lead home or to a helper target.
   if(Number.isFinite(c.returnX))queueMove(W,BT.t,c.returnX,c.returnY,180,0,true);
@@ -12042,19 +12050,48 @@ function updateDuelCinema(rdt){
   if(run.warmIndex<run.warm.length){const until=performance.now()+2;do{const {f,pose,face}=run.warm[run.warmIndex++];duelPoseFrame(f.hr,f.g,pose,face??sideDir(f.si));}while(run.warmIndex<run.warm.length&&performance.now()<until);}
   const c=BT.duelShot;if(!c)return;
   let step=dt;if(c.hold>0){const stop=Math.min(c.hold,step);c.hold-=stop;step-=stop;}c.t+=step;
-  if(c.guard)updateDuelCover(c);
+  if(c.guard)updateDuelCover(c);if(c.pet)updateDuelPet(c);
   if(c.t>=c.duration){
     const R=c.result;if(R){settleDuelWinner(c);if(R.save==='ward'){c.L.duelDown=null;c.L.glow=.8;c.e.t.cur=c.L.hero.hp;}
       else if(R.save==='guard'){c.L.duelDown=null;c.L.x+=c.dir*(c.L.sprs.horse?24:12);c.L.y-=c.L.sprs.horse?5:3;c.L.duelRescued=BT.t+2;}
-      else{const hx=c.L.x,hy=c.L.y;c.L.x+=c.dir*(c.kind==='cavBackKick'?32:4);
+      else{const hx=c.L.x,hy=c.L.y;c.L.x+=c.dir*(c.kind==='cavBackKick'?32:c.kind==='boarToss'?18:4);
         c.L.duelDown={at:BT.t-.24,dir:c.dir,horseX:hx,horseY:hy};}c.W.poseUntil=BT.t+.22;}
-    releaseDuelCover(c);
+    releaseDuelCover(c);releaseDuelPet(c);
     releaseDuelBackdrop(c);BT.duelShot=null;
     if(BT.cine){BT.cine.x=BT.cx;BT.cine.y=BT.cine.F.reduce((n,f)=>n+f.spot.y,0)/BT.cine.F.length;BT.cine.z=BT.cine.F.length===2?.65:BT.cine.F.length===4?.3:.12;}
   }
 }
 function releaseDuelBackdrop(c){if(c?.bg){if(c.bg.detail)c.bg.detail.width=c.bg.detail.height=0;c.bg.width=c.bg.height=0;c.bg=null;}}
-function releaseDuelCinema(){if(!BT)return;releaseDuelCover(BT.duelShot);releaseDuelBackdrop(BT.duelShot);BT.duelShot=null;BT.duelRun=null;BT.A?.forEach(A=>A.groups.forEach(g=>(g.heroes||[]).forEach(h=>{delete h.duelPose;delete h.duelDown;delete h.duelRescued;delete h.duelEscort;})));}
+function releaseDuelCinema(){if(!BT)return;releaseDuelPet(BT.duelShot);releaseDuelCover(BT.duelShot);releaseDuelBackdrop(BT.duelShot);BT.duelShot=null;BT.duelRun=null;BT.A?.forEach(A=>A.groups.forEach(g=>(g.heroes||[]).forEach(h=>{delete h.duelPose;delete h.duelDown;delete h.duelRescued;delete h.duelEscort;})));}
+
+// Companion motion is presentation only: one existing animal, bounded poses, no attacks or extra damage.
+function updateDuelPet(c){
+  const q=c.pet;if(!q)return;const t=c.t,impact=c.beats.at(-1),start=c.beats.length>1?c.beats[c.beats.length-2]+.08:.04,
+    load=clamp((t-start)/Math.max(.08,impact-start-.18),0,1),dash=easeIO(clamp((t-impact+.18)/.18,0,1)),
+    back=easeIO(clamp((t-impact-.13)/Math.max(.1,c.duration-impact-.13),0,1)),dir=c.dir,sc=spriteScale(),
+    targetX=c.L.x-dir*(q.kind==='bear'?4:q.bird?2:8)*sc,targetY=c.L.y+(q.bird?-3:3),
+    readyX=c.W.x+dir*(q.bird?2:7),readyY=c.W.y+q.gy;
+  q.face=dir;q.duelFrame='idle';q.duelFrameIndex=0;
+  if(t<start){q.x=lerp(c.petX,readyX,load);q.y=lerp(c.petY,readyY,load);q.lift=c.petLift;return;}
+  q.x=lerp(lerp(c.petX,readyX,load),targetX,dash);q.y=lerp(lerp(c.petY,readyY,load),targetY,dash);
+  q.lift=q.bird?lerp(lerp(c.petLift,22,load)+Math.sin(load*Math.PI)*9,4,dash):0;
+  if(dash===0){q.duelFrame='wind';if(c.kind==='bearSlam')q.lift=load*2;}
+  else{q.duelFrame=dash<.65?'run':'atk';q.duelFrameIndex=(t*20|0)%4;
+    if(!q.bird)q.lift=Math.sin(dash*Math.PI)*(c.kind==='monkeyVault'?12:c.kind==='beastPounce'?7:c.kind==='bearSlam'?3:0);}
+  if(c.kind==='beastFeint'){
+    const feint=Math.sin(clamp((t-start)/Math.max(.1,impact-start),0,1)*Math.PI);
+    q.y+=feint*9;q.lift=feint*3;q.duelFrame=t<impact?'run':'wind';}
+  if(c.kind==='monkeyVault'&&t>impact-.08&&t<impact+.12){q.duelFrame='spin';q.duelFrameIndex=1;}
+  if(t>impact+.13){q.x=lerp(targetX,c.W.x+dir*(c.kind==='beastFeint'&&!c.save?c.e.f.weapon.reach+12:0)+q.gx,back);q.y=lerp(targetY,c.W.y+q.gy,back);
+    q.lift=q.bird?lerp(4,16,back):Math.sin(back*Math.PI)*(c.kind==='monkeyVault'?5:1);
+    q.face=back<.8?-dir:dir;q.duelFrame=q.bird||back<.92?'run':'idle';q.duelFrameIndex=(t*16|0)%4;}
+}
+function releaseDuelPet(c){const q=c?.pet;if(q&&q.duelPet===c){delete q.duelPet;delete q.duelFrame;delete q.duelFrameIndex;q.jab=q.hop=0;q.state='idle';q.face=c.dir;}}
+function drawDuelPet(x,c,sc){
+  const q=c.pet;if(!q||!q.alive||q.gone)return;const set=c.petSets[q.face>0?0:1],frame=set[q.duelFrame||'idle'],img=Array.isArray(frame)?frame[(q.duelFrameIndex||0)%frame.length]:frame||set.idle[0];
+  x.save();x.fillStyle='rgba(23,22,18,.22)';x.fillRect(Math.round(q.x-8*sc),Math.round(q.y),16*sc,sc);
+  artDraw(x,img,Math.round(q.x-img.width*sc/2),Math.round(q.y-img.height*sc-(q.lift||0)),img.width*sc,img.height*sc);x.restore();
+}
 
 /* Finite modular duel poses, built from the same face, hat, sode and
    weapon helpers. Cached only for the (at most six) participating commanders. */
@@ -12111,6 +12148,9 @@ function drawDuelActor(x,s,g,si,sc){
       if(m==='reversal'){pose=u<-.13?'sweep':u<-.03?'high':u<.13?'cutUp':'recover';dx=dir*(u<-.1?3:-2);}
       if(m==='guardBreak')pose=u<-.07?'high':u<.14?(c.e.f.weapon.style==='yari'?'thrust':'sweep'):'recover';
       if(m==='risingCut'){pose=u<-.22?'low':u<.12?'cutUp':'recover';dy=-Math.sin(clamp((u+.18)/.36,0,1)*Math.PI)*3.5;}
+      if(c.animal&&j===beats.length-1){
+        pose=u<-.18?'guard':u<.12?(c.kind==='monkeyVault'?'kneelGuard':'low'):'recover';dx=-dir*2;
+        if(c.kind==='beastFeint'&&!c.save){pose=u<-.14?'guard':u<.13?'sweep':'recover';dx=dir*easeIO(clamp((u+.20)/.40,0,1))*(c.e.f.weapon.reach+12);echo=Math.abs(u)<.22;}}
       if(m==='slidingThrust'){pose=u<-.22?'kneelGuard':u<.12?'kneelThrust':'kneelGuard';dx=dir*(-2+easeOut(clamp((u+.25)/.29,0,1))*12);echo=u>-.22&&u<.13;}
       if(c.kind==='cavTrample'){
         const hoof=beats[Math.max(0,beats.length-2)],start=beats.length===3?beats[0]+.045:0;
@@ -12133,8 +12173,8 @@ function drawDuelActor(x,s,g,si,sc){
       let struck=false;for(let i=0;i<c.a.length;i++)if(c.a[i].applied&&c.a[i].hit)struck=true;pose=struck?'hurt':'guard';
       if(c.save==='ward'){pose=t>.78?'guard':t>.53?'low':'guard';dx=dir*3*Math.sin(clamp(t/.9,0,1)*Math.PI);}
       else if(c.save==='guard'){const q=c.guard?(c.coverReady?1:c.coverU||0):easeOut(clamp((t-.04)/.15,0,1));pose=q>.25?'low':'guard';dx=dir*q*(s.sprs.horse?24:12);dy=-q*(s.sprs.horse?5:3);}
-      else if(c.kind==='cavBackKick'&&c.contact){const q=easeOut(clamp(after/.44,0,1));fall=easeIO(clamp((after-.035)/.40,0,1));
-        dx=dir*32*q;dy=-Math.sin(clamp(after/.44,0,1)*Math.PI)*11;angle=dir*fall*Math.PI/2;flat=1-.48*fall;pose='hurt';}
+      else if((c.kind==='cavBackKick'||c.kind==='boarToss')&&c.contact){const q=easeOut(clamp(after/.44,0,1));fall=easeIO(clamp((after-.035)/.40,0,1));
+        dx=dir*(c.kind==='boarToss'?18:32)*q;dy=-Math.sin(clamp(after/.44,0,1)*Math.PI)*(c.kind==='boarToss'?7:11);angle=dir*fall*Math.PI/2;flat=1-.48*fall;pose='hurt';}
       else{if(c.kind==='cavTrample'&&!c.contact&&struck)pose='low';fall=easeIO(clamp(after/.36,0,1));pose=fall>.15?'low':pose;angle=dir*fall*Math.PI/2;flat=1-.48*fall;dx=dir*4*fall;}
     }
   }else{
@@ -12169,11 +12209,13 @@ function drawDuelScene(x,idx,sc){
   const draw=(ctx,i)=>{const s=_draws[i+1],g=_draws[i+2],si=_draws[i+3];if(si===-9)drawProp(ctx,s);else if(si===-7)drawLoose(ctx,s);else if(si===-8)drawDroppedGear(ctx,s);else if(si<0)drawBanner(ctx,s,g,-1-si);else drawSoldier(ctx,s,g,si,sc);};
   if(c.bg&&(c.bg.width!==BT.WW||c.bg.height!==BT.vh))releaseDuelBackdrop(c);
   if(!c.bg){const cv=cvs(BT.WW,BT.vh);cv.detail=cvs(BT.WW*ART_DENSITY,BT.vh*ART_DENSITY);const ctx=cv.detail.getContext('2d');ctx.scale(ART_DENSITY,ART_DENSITY);ctx.imageSmoothingEnabled=false;
-    for(const i of idx)if(_draws[i+1]!==c.W&&_draws[i+1]!==c.L&&_draws[i+1]!==c.guard)draw(ctx,i);
+    for(const i of idx)if(_draws[i+1]!==c.W&&_draws[i+1]!==c.L&&_draws[i+1]!==c.guard&&_draws[i+1]!==c.pet)draw(ctx,i);
     for(const f of BT.fx)drawFx(ctx,f);for(const p of BT.proj)drawProj(ctx,p,BT.t);c.bg=cv;}
   _tags.length=0;x.save();x.globalAlpha=.78;artDraw(x,c.bg,0,0);x.restore();
   drawDuelFinishGround(x,c,sc);
+  if(c.pet&&c.pet.y<=c.W.y)drawDuelPet(x,c,sc);
   for(const i of idx)if(_draws[i+1]===c.W||_draws[i+1]===c.L)draw(x,i);
+  if(c.pet&&c.pet.y>c.W.y)drawDuelPet(x,c,sc);
   drawDuelGuard(x,c,sc);
   drawDuelTrails(x,c,sc);return true;
 }
@@ -12185,7 +12227,7 @@ function drawDuelGuard(x,c,sc){
   x.save();x.fillStyle='rgba(20,17,20,.22)';x.fillRect(Math.round(q.x-7*sc),Math.round(q.y),14*sc,sc);
   artDraw(x,img,Math.round(q.x+recoil-img.width*sc/2),Math.round(q.y-img.height*sc-lift),img.width*sc,img.height*sc);x.restore();
 }
-const DUEL_THRUST=[[-24,-3,9,-3],[-23,1,11,1],[-22,6,13,6]],DUEL_ARCS={jump:[-15,-18,18,-7,14,13],risingCut:[-13,12,19,-2,5,-22],reversal:[-16,11,24,10,4,-19],guardBreak:[-3,-21,5,-2,4,14],passing:[-22,1,21,1],sweep:[-16,-9,21,-2,10,12],cutUp:[-14,11,17,-1,9,-15],cavForeKick:[-12,-8,1,-15,9,-7],cavBackKick:[-15,-10,5,-12,16,-6],cavTrample:[-13,10,1,5,14,12]};
+const DUEL_TALONS=[[-13,-24,2,0],[-8,-24,7,1],[-3,-23,12,2]],DUEL_THRUST=[[-24,-3,9,-3],[-23,1,11,1],[-22,6,13,6]],DUEL_ARCS={jump:[-15,-18,18,-7,14,13],risingCut:[-13,12,19,-2,5,-22],reversal:[-16,11,24,10,4,-19],guardBreak:[-3,-21,5,-2,4,14],passing:[-22,1,21,1],sweep:[-16,-9,21,-2,10,12],cutUp:[-14,11,17,-1,9,-15],cavForeKick:[-12,-8,1,-15,9,-7],cavBackKick:[-15,-10,5,-12,16,-6],cavTrample:[-13,10,1,5,14,12],bearSlam:[-13,-14,4,0,13,10],boarToss:[-16,9,3,-8,10,-14],beastPounce:[-15,-8,4,-4,12,7],beastFeint:[-20,8,20,0],monkeyVault:[-10,-17,13,-12,6,4],birdDive:[-13,-23,-3,-5,10,3]};
 function duelFxStroke(x,c,sc,shape,alpha,ink=false,heavy=1){
   const px=c.L.x,py=c.L.y-12*sc,dir=c.dir;
   x.beginPath();x.moveTo(Math.round(px+dir*shape[0]*sc),Math.round(py+shape[1]*sc));
@@ -12213,14 +12255,17 @@ function drawDuelTrails(x,c,sc){
     else if(m==='thrust'||m==='kneelThrust'||m==='slidingThrust'||m==='release'){
       duelFxStroke(x,c,sc,DUEL_THRUST[m==='slidingThrust'||m==='kneelThrust'?2:j],alpha,false,.65);
       if(e.hit&&flash>0){x.globalAlpha=alpha;x.fillStyle=c.save?'#f4ce7d':'#dcefe8';x.fillRect(Math.round(px+dir*(10+j)*sc),Math.round(py+(m==='slidingThrust'?6:j*4-3)*sc),3*sc,sc);}
+    }else if(m==='bearSlam'||m==='beastPounce'||m==='birdDive'){
+      for(let k=0;k<3;k++){const shape=m==='birdDive'?DUEL_TALONS[k]:k===0?DUEL_ARCS[m]:k===1?DUEL_ARCS.sweep:DUEL_ARCS.cutUp;
+        duelFxStroke(x,c,sc,shape,alpha*(k?.68:1),true,m==='bearSlam'?1.9:.9);}
     }else duelFxStroke(x,c,sc,DUEL_ARCS[m]||DUEL_ARCS.sweep,alpha,true,m==='guardBreak'?2.7:m==='cavTrample'||m==='cavBackKick'?2.2:1.35);
-    if(e.hit&&flash>0&&(m==='cavTrample'||m==='cavBackKick'||m==='cavForeKick')){
+    if(e.hit&&flash>0&&(m==='cavTrample'||m==='cavBackKick'||m==='cavForeKick'||m==='bearSlam'||m==='boarToss')){
       x.globalAlpha=flash*.7;x.strokeStyle=c.save?'#e4bd76':'#30272d';x.lineWidth=sc;x.beginPath();
       x.ellipse(px,c.L.y+(m==='cavTrample'?0:-19*sc),(5+u*45)*sc,(m==='cavTrample'?2+u*10:5+u*30)*sc,0,0,Math.PI*2);x.stroke();}
     if(e.hit&&flash>0){x.globalAlpha=flash*.8;x.fillStyle=c.save?'#f3cb74':'#e9c082';
       for(let i=0;i<3;i++)x.fillRect(Math.round(px+dir*(3+u*(42+i*11))*sc),Math.round(py+(-6+i*6-u*(i%2?7:-7))*sc),sc,sc);}
   }
-  if((kind==='slidingThrust'||kind==='passing'||kind==='guardBreak'||kind==='jump'||c.mounted)&&t>.42&&t<(c.duration||DUEL_CINE_TIME)-.14){
+  if((kind==='slidingThrust'||kind==='passing'||kind==='guardBreak'||kind==='jump'||c.mounted||c.animal)&&t>.42&&t<(c.duration||DUEL_CINE_TIME)-.14){
     x.globalAlpha=Math.sin(clamp((t-.42)/((c.duration||DUEL_CINE_TIME)-.56),0,1)*Math.PI)*.42;x.fillStyle='#dac6a0';
     for(let i=0;i<5;i++)x.fillRect(Math.round(c.W.x-dir*(4+i*4)*sc),Math.round(c.W.y-(i%2)*sc),(3+i)*sc,sc);}
   if(c.save==='ward'&&t>.54&&t<.95){x.globalAlpha=Math.sin((t-.54)/.41*Math.PI)*.65;x.strokeStyle='#f6d177';x.lineWidth=1;x.beginPath();x.arc(px,py,13*sc,-2.8,.4);x.stroke();}
@@ -13449,19 +13494,20 @@ function rewardChips(R) {
 }
 function showProvCard(p) {
   const st = siteState(p), own = st.owner === 'kage', C = CLANS[p.clan], att = provAttackable(p), mode = siteMode(p);
-  const kind = p.type === 'clan' ? (p.capital || p.boss ? 'Siege · walls & gate · no round limit' : 'Castle battle · full army') : p.type === 'dojo' ? 'Sparring · full army, no losses' : p.type === 'home' ? 'Your village' : p.type === 'camp' ? (p.mode === 'army' ? 'Field battle · full army' : 'Field battle · small band') + (p.rebel ? ` · ⚑ quell in ${Math.max(1, p.expires - monthIdx())} mo or lose ${esc(p.near)}` : ` · leaves in ${Math.max(1, p.expires - monthIdx())} mo`) : 'Field battle · small band';
+  const kind = p.type === 'clan' ? (p.capital || p.boss ? 'Siege · walls & gate · no round limit' : 'Castle battle · full army') : p.type === 'dojo' ? `Level ${trainingLevel()} · sparring, no losses` : p.type === 'home' ? 'Your village' : p.type === 'camp' ? (p.mode === 'army' ? 'Field battle · full army' : 'Field battle · small band') + (p.rebel ? ` · ⚑ quell in ${Math.max(1, p.expires - monthIdx())} mo or lose ${esc(p.near)}` : ` · leaves in ${Math.max(1, p.expires - monthIdx())} mo`) : 'Field battle · small band';
   let body = `<div class="row"><img class="px" src="${ICONS['mon_' + (own ? 'kage' : p.clan)]}" alt="" style="width:36px"><div style="flex:1;min-width:0"><h3>${esc(p.name)}</h3><div class="muted">${own && p.type !== 'dojo' ? 'Held by the Kage clan' : esc(C.name)} · ${kind}</div></div><button class="x" id="pc-x" aria-label="Close" style="width:34px;height:34px;border:2px solid var(--line);background:var(--verm);color:#fff4dc">✕</button></div>`;
   if (p.type === 'home') body += `<div class="row"><span class="sp"></span><button class="btn gold" id="pc-home">Go to village</button></div>`;
   else if (own && p.type !== 'dojo') { const rb = (G.camps || []).find(c => c.rebel === p.id); body += `<p class="note">${icon('gold')} +${fmt(provTribute(p))}G / month${p.capital ? ' · seat' : ''}${rb ? ` · <b style="color:#a02a1a">⚑ Uprising! ${Math.max(1, rb.expires - monthIdx())} mo to quell it</b>` : ''}</p>`; }
   else {
     const skirm = mode === 'skirmish'; const pa = skirm ? playerSkirmish() : playerArmy(); const ea = enemyArmy(p);
-    const pp = armyPower(pa), ep = armyPower(ea), odds = pp / (pp + ep);
+    const pp = armyPower(pa), ep = armyPower(ea), odds = pp / Math.max(1,pp + ep);
     const verdict = odds > .62 ? 'Favourable' : odds > .5 ? 'Even' : odds > .4 ? 'Risky' : 'Grim';
     body += `<div class="vs"><div><div class="lbl">Your ${skirm ? 'fighters' : 'army'}</div><div class="big">${fmt(pp)}</div></div><div class="lbl">${verdict}</div><div><div class="lbl">Enemy</div><div class="big">${fmt(ep)}</div></div></div>
       <div class="odds"><i style="width:${odds * 100}%;background:#3b4a7a"></i><i style="flex:1;background:#8a2b2b"></i></div>
       <div class="muted">Enemy: ${ea.groups.map(g => UNITS[g.type].short + ' ' + fmt(g.troops)).join(' · ')}${(() => { const cd = p.type === 'clan' && clanDoc(p.clan); return cd ? ` <span class="chip"${tipAttr('This campaign the ' + esc(C.name) + ' favour ' + UNITS[cd.fav].name.toLowerCase() + (cd.kit ? (cd.kit > 0 ? ', with better gear than most' : ', poorly equipped') : ''))}><img class="px" src="${ICONS['u_' + cd.fav]}" alt="">${FAV_LABEL[cd.fav]}${cd.kit ? (cd.kit > 0 ? ' ⚙↑' : ' ⚙↓') : ''}</span>` : ''; })()}</div>
       <div class="muted">Marching: ${pa.groups.reduce((n, g) => n + g.cmds.filter(c => c.vref).length, 0)} villagers${skirm ? '' : ` leading ${fmt(totalOf(pa))} troops`}</div>
       <div class="rewards">${(p.type === 'dojo' ? `<span class="chip">${dojoPrizeChip(dojoPrize())}</span><span class="chip">No troop losses</span><span class="chip">${icon('xp')} XP for all who march</span>` : G.prov[p.id] && G.prov[p.id].retake ? rewardChips({ items: G.prov[p.id].retake.items, recruits: G.prov[p.id].retake.recruits }) : rewardChips(p.reward || {}))}</div>`;
+    if(p.type==='dojo'){const next=Math.ceil(trainingLevel()/10)*10;body+=`<p class="note">Win → next level · +5% strength, capped by your army.</p><div class="rewards"><span class="chip"><b>Clear Lv ${next}:</b> ${dojoMilestoneChip(dojoMilestoneReward(next))}</span></div>`;}
     if (p.type === 'clan' && (p.capital || p.boss)) body += `<p class="note">🏯 Siege · 4 rounds ${ib('Walls and a gate: your troops fight at a heavy disadvantage until the gate falls.' + (G.researched.siegegun ? ' Bombards and Hwacha can be bought before the attack.' : ' Siege engines (research the Siege Battery in the Armory) help.'))}</p>`;
     if (!skirm && !pa.groups.length) body += `<p class="note" style="color:#a02a1a">⚠ No troops · Army panel</p>`;
     if (p.type === 'dojo' && G.trainCD > 0) body += `<p class="note">⏳ ${G.trainCD} mo</p>`;
@@ -13532,9 +13578,75 @@ function tateWear(g, killed, carry) { // returns { lost, carry }
 // provinces that can be held: everything but the training grounds (the dojo is sparred at, never taken)
 function conquerable(p) { return p.type !== 'dojo'; }
 function provinceTally() { const all = PROVINCES.filter(conquerable); return { owned: all.filter(p => G.prov[p.id] && G.prov[p.id].owner === 'kage').length, total: all.length }; }
-/* The dojo offers one prize per spar, shown before you fight; the bigger the prize, the stronger the sparring
- partners. A win takes it: recruits of a random unlocked arm, your latest armor or horse, or a free commander or
- worker. A loss still sends a few recruits home with you, and nobody is ever lost. */
+/* Training ladder: a level is an opponent, not the player's current army in disguise.
+   Only a cleared level advances. Save two bounded counters, retaining v1 saves and the normal rolled prizes. */
+function trainingLevel(){return clamp(Math.floor(Number(G.dojoLevel)||1),1,1000000);}
+function migrateTraining(){G.dojoLevel=trainingLevel();G.dojoMilestone=clamp(Math.floor(Number(G.dojoMilestone)||0),0,Math.floor((G.dojoLevel-1)/10));}
+function trainingArmy(site){
+  const level=trainingLevel(),cap=Math.max(0,armyPower(playerArmy())),base=30*UNITS.inf.atk,
+    growth=Math.exp(Math.min((level-1)*Math.log(1.05),Math.log(Math.max(1,cap/base)))),goal=Math.min(cap,Math.round(base*growth)),
+    A={side:1,clan:site.clan,name:`Sparring Partners · Lv ${level}`,mode:'army',groups:[],ki:0,strat:0,trainingLevel:level,trainingCap:cap};
+  if(!goal)return finishArmy(A);
+  const total=Math.max(1,Math.round(30*Math.min(growth,cap/base))),tier=Math.min(5,1+Math.floor((level-1)/20)),mix={inf:1};
+  if(level>=10&&troopsOpen('arc'))mix.arc=.16;
+  if(level>=20&&troopsOpen('gun'))mix.gun=.10;
+  if(level>=30&&troopsOpen('cav'))mix.cav=.08;
+  mix.inf=1-(mix.arc||0)-(mix.gun||0)-(mix.cav||0);
+  let left=total;
+  for(const type of ['cav','gun','arc','inf']){if(!mix[type])continue;const troops=type==='inf'?left:Math.min(left-1,Math.floor(total*mix[type]));if(troops<1)continue;left-=troops;
+    const cmds=[],ek=enemyKit(type,tier,false,site);
+    if(level>=10){const look=enemyLook(site.clan,UNIT_ORDER.indexOf(type),false,type,tier,site,tier*4),f=1+Math.min(4,(level-1)*.025),
+      stats=enemyGearStats({atk:8*f,def:6*f,hp:28*f,str:6*f,mrk:8*f,wrk:3,duel:Math.min(5,Math.floor(level/20))},look);
+      cmds.push({name:officerName(site.clan,UNIT_ORDER.indexOf(type)),look,s:stats,hpMax:stats.hp,hp:stats.hp,post:'line',skill:null,slv:0,kills:0});}
+    const m=groupMuls(type,cmds),g={type,troops,cmds,guards:0,mods:modsOf(cmds),ek,kitDist:ek.dist,
+      calA:1/(m.atk*ek.atk),calD:(1+Math.min(.8,(level-1)*.008))/(m.def*ek.def)};
+    A.groups.push(g);recalcGroup(g,A);
+  }
+  // Keep a rounded 30-recruit opening, and put all subsequent strength under the cap.
+  // Calibrate through the same factors recalcGroup uses after an officer KO; no temporary power-only override.
+  const bases=A.groups.map(g=>g.calA);let lo=.000001,hi=8;
+  for(let k=0;k<24;k++){const m=(lo+hi)/2;for(let i=0;i<A.groups.length;i++){A.groups[i].calA=bases[i]*m;recalcGroup(A.groups[i],A);}
+    if(armyPower(A)>Math.floor(goal))hi=m;else lo=m;}
+  for(let i=0;i<A.groups.length;i++){A.groups[i].calA=bases[i]*lo;recalcGroup(A.groups[i],A);}
+  return finishArmy(A);
+}
+// Milestones cycle, with progressively better tiers/quantities. Selection is deterministic and never rerolls on opening a card.
+function dojoMilestoneReward(level){
+  const step=Math.max(1,Math.floor(level/10)),kind=['worker','tech','armor','mount','crates','gold'][(step-1)%6],tier=Math.min(5,1+Math.ceil(step/2)),gold=500+step*250;
+  if(kind==='worker'){const grades=['C','B','A','S'],want=Math.min(3,Math.floor((step-1)/6)),pool=RECRUITS.filter(v=>vData(v.id).role==='work'&&!vById(v.id)&&!G.recruitQueue.includes(v.id)&&!onHire(v.id)&&G.dojoPrize?.id!==v.id&&G.boons?.pledge!==v.id).sort((a,b)=>Math.abs(Math.max(0,grades.indexOf(vData(a.id).pot))-want)-Math.abs(Math.max(0,grades.indexOf(vData(b.id).pot))-want)||a.id.localeCompare(b.id));
+    if(pool.length)return {kind,id:pool[0].id};}
+  if(kind==='tech'){const busy=new Set([G.research?.id,...(G.resQ||[]).map(q=>q.id)]),want=Math.min(5,Math.max(tier,homeTier()+1)),pool=RESEARCH.filter(r=>{
+      const I=ITEMS[r.item];return !G.researched[r.item]&&!busy.has(r.id)&&EQ_SLOTS.includes(I.slot)&&!I.rare&&resTier(r)<=want&&resState(r).why.every(w=>w.t==='pts'||w.t==='prev');
+    }).sort((a,b)=>resTier(b)-resTier(a)||ITEMS[b.item].cost-ITEMS[a.item].cost||a.item.localeCompare(b.item));
+    if(pool.length)return {kind,k:pool[0].item};}
+  if(kind==='armor'||kind==='mount'){const gearTier=Math.max(tier,homeTier()),pool=Object.keys(ITEMS).filter(k=>{const I=ITEMS[k];return I.slot===kind&&(!I.rare||kind==='mount'&&gearTier>=4)&&(!I.wild||kind==='mount')&&I.cost>0&&(I.tier||1)<=gearTier&&!sealedItem(k);})
+      .sort((a,b)=>(ITEMS[b].tier||1)-(ITEMS[a].tier||1)||ITEMS[b].cost-ITEMS[a].cost||a.localeCompare(b));
+    if(pool.length)return {kind,k:pool[0]};}
+  if(kind==='crates'){const type=['inf','arc','gun','cav'].filter(troopsOpen)[Math.floor(step/6)%['inf','arc','gun','cav'].filter(troopsOpen).length],
+      k=bestResearched('w',type)||KIT.w[type][0];return {kind,type,k,n:Math.min(150,25+step*5)};}
+  return {kind:'gold',n:gold};
+}
+function dojoMilestoneChip(P){
+  if(P.kind==='worker')return `${icon('folk')} Free worker · ${esc(vData(P.id).name)}`;
+  if(P.kind==='tech')return `${icon('research')} Free research · ${esc(ITEMS[P.k].name)}`;
+  if(P.kind==='crates')return `${icon('it_'+P.k)} ${P.n} ${esc(ITEMS[P.k].name)} army sets`;
+  if(P.kind==='gold')return `${icon('gold')} ${fmt(P.n)}G`;
+  return `${icon('it_'+P.k)} Free ${esc(ITEMS[P.k].name)}`;
+}
+function grantDojoMilestone(level,rewards,P){
+  const step=Math.floor(level/10);if(level%10||step<1||step<=(G.dojoMilestone||0))return;
+  G.dojoMilestone=step;P=P||dojoMilestoneReward(level);
+  // A reserved prize can become unavailable during a spar. Exchange it for its gold value instead of duplicating it.
+  if(P.kind==='worker'&&(vById(P.id)||G.recruitQueue.includes(P.id)||onHire(P.id))||P.kind==='tech'&&G.researched[P.k])P={kind:'gold',n:500+step*250};
+  if(P.kind==='worker')takeRecruit(P.id);
+  else if(P.kind==='tech')G.researched[P.k]=1;
+  else if(P.kind==='crates')kitAdd(P.type,P.k,P.n);
+  else if(P.kind==='gold')G.gold+=P.n;
+  else G.items[P.k]=(G.items[P.k]||0)+1;
+  rewards.push(`<b>Lv ${level} milestone</b> · ${dojoMilestoneChip(P)}`);
+}
+/* A rolled spar prize is independent of difficulty. A loss keeps its existing small recruit consolation,
+   never advances the ladder, and nobody is permanently lost. */
 function freeRecruitsNow() {
   const reserved = new Set(PROVINCES.filter(p => G.prov[p.id] && G.prov[p.id].owner !== 'kage' && p.reward && p.reward.recruit).map(p => p.reward.recruit));
   return RECRUITS.filter(v => !vById(v.id) && !G.recruitQueue.includes(v.id) && !onHire(v.id) && !reserved.has(v.id) && !(G.boons && G.boons.pledge === v.id)
@@ -13568,13 +13680,16 @@ function dojoPrizeChip(P) {
   return `${icon('it_' + P.k)} ${esc(ITEMS[P.k].name)}`;
 }
 function dojoPayout(res, rewards) {
-  const P = dojoPrize(), tot = Object.values(G.troops).reduce((a, b) => a + b, 0); G.dojoPrize = null;
+  const battle=BT?.prov?.type==='dojo'?BT:null;if(battle?.dojoPaid)return;if(battle)battle.dojoPaid=true;
+  const level=battle?.dojoLevel||trainingLevel(),P=dojoPrize(),bonus=level%10===0?(battle?.dojoBonus||dojoMilestoneReward(level)):null;
+  const tot = Object.values(G.troops).reduce((a, b) => a + b, 0); G.dojoPrize = null;
   if (res !== 'win') { // consolation: a few recruits, spread over the arms you field
     const gain = Math.max(5, Math.round(tot * .025)), types = ['inf', 'arc', 'gun', 'cav'].filter(t => unitOpen(t) && G.troops[t] > 0);
     let received = 0;
     if (!types.length) { received = Math.min(DOJO_RECRUIT_CAP.inf, gain); G.troops.inf = (G.troops.inf || 0) + received; }
     else types.forEach(t => { const n = Math.min(DOJO_RECRUIT_CAP[t], Math.max(1, Math.round(gain * G.troops[t] / Math.max(1, tot)))); G.troops[t] += n; received += n; });
     rewards.push(`${icon('u_inf')} +${received} recruits`); return; }
+  G.dojoLevel=Math.max(trainingLevel(),level+1);grantDojoMilestone(level,rewards,bonus);
   G.gold += 120; rewards.push(`${icon('gold')} +120`);
   if (P.kind === 'troops') { const n = dojoRecruitReward(P.t, tot); G.troops[P.t] = (G.troops[P.t] || 0) + n; rewards.push(`${icon('u_' + P.t)} +${n} ${UNITS[P.t].name}`); }
   else if (P.kind === 'person') { rewards.push(`${icon('folk')} ${esc(vData(P.id).name)} joins`); releaseRecruit(P.id); setTimeout(() => offerHire(P.id, 'rebel', 'A sparring partner asks to stay'), 60); }
@@ -13688,7 +13803,7 @@ function afterLoad() {
   PROVINCES.forEach(p => { if (!G.prov[p.id]) G.prov[p.id] = { owner: p.clan, power: p.power || 0 }; });
   if ((G.campV || 1) < 2) { G.campV = 2; G.camps = []; G.campSeeded = 0; }
   if (!G.camps) G.camps = []; if (G.allHands === undefined) G.allHands = true; if (!G.campSeeded) { G.campSeeded = 1; if (!G.camps.length) spawnCamp(true); }
-  migrateRebellions();
+  migrateRebellions(); migrateTraining();
   RT.ready = false; RT.agents = []; ensureVillagerAgents(); refreshBoosts(); RT.ready = true;
   updateVillageWeather(0);perfPrewarm();centerOnHall(); updateHUD(); Sound.music('village');
   if (!G.tut) { G.tut = 1; const k = vData('kaede');
