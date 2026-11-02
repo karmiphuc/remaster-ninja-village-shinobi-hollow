@@ -48,7 +48,7 @@ The milestone is awarded on **clearing** level 10, 20, 30 and so on, in addition
 
 Then the six-prize cycle repeats. Selection is deterministic for the current eligibility state, so reopening the card does not reroll it. Research never duplicates an active/queued paid project, respects required equipment and formation/building/doctrine restrictions, and waives only rank/previous-tier count gates for the free reward. Research candidates are equipment rather than Corps, so no separate formation-unlock path is needed.
 
-Workers join for free through `takeRecruit()`, or wait in the existing housing queue. A worker reserved by a castle may join early; `releaseRecruit()` removes their old one-time castle reservation. Already hired, queued, owned or pledged workers and the ordinary spar's recruit are excluded. Exhausted recruit/research pools and a prize that becomes unavailable fall back to useful gold. No new villager identities, duplicate ownership or unbounded prize history is introduced.
+Workers join for free through `takeRecruit()`, or wait in the existing housing queue. A worker reserved by a castle may join early; `releaseRecruit()` removes their old one-time castle reservation. Already hired, queued, owned or pledged workers and the ordinary spar's recruit are excluded. Exhausted recruit/research pools and a prize that becomes unavailable fall back to useful gold. The [expanded recruit pool](recruit-rotation.md) adds procedural workers and fighters with bounded rotation history and no duplicate ownership.
 
 Ordinary recruit rewards retain the limits **100 infantry / 50 archers / 30 gunners / 20 cavalry**, including consolation rewards. Crates add equipment sets, not troops, using `kitAdd()`.
 
@@ -64,6 +64,6 @@ The two additional suites are `animal-duels` and `training-ladder`. Animal check
 
 `tools/preview-animal-sequences.cjs` renders review frames from actual KO ledgers; `tools/preview-training-card.cjs` captures the real mobile campaign card. These are local developer tools and are not imported by the standalone game. A headless Chromium run cannot establish physical iPhone Safari frame rate or memory behavior.
 
-### Recorded result
+### Initial release validation
 
 All 28 local browser suites passed across the full regression run and targeted reruns after updating the grenade fixture for the intentionally weaker level-1 opponent. The exported HTML was used for the affected six-suite combat/campaign check; subsequent focused reruns covered the rare-mount reward and rescued-feint adjustments. The final animal suite records 1,136 checks across ten species and twelve scheduled encounters; the ladder suite records 153 checks. The existing 120 seeded HP ledgers are unchanged. Warmed companion drawing created zero canvases, and the saved ladder counters add 34 JSON characters in the tested save.

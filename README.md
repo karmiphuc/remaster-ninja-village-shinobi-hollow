@@ -31,7 +31,7 @@ The whole game is one self-contained HTML file. It has no build step, no server 
 
 ## Animal finishers and Training Ground
 
-Equipped animal companions now have species-specific duel finishers, from bear slams and boar tosses to canine pounces and bird dives. Training starts at level 1 with 30 infantry, grows 5% per victory up to your current army power, and grants an extra reward for every tenth cleared level. See [progression, rewards and validation](docs/animal-duels-training.md).
+Equipped animal companions now have species-specific duel finishers, from bear slams and boar tosses to canine pounces and bird dives. Training starts at level 1 with 30 infantry, grows 5% per victory up to your current army power, and grants an extra reward for every tenth cleared level. See [progression, rewards and validation](docs/animal-duels-training.md). The recruit pool also adds **32 procedural workers and 16 fighters**, with rotating offers and saved identities; see [recruit rotation](docs/recruit-rotation.md).
 
 ## Castle sieges
 

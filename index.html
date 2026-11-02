@@ -2555,7 +2555,7 @@ const SHEATH = { bokken: '#8a5a2a', katana: '#5a5470', nodachi: '#2a2430', muram
 const _vl = new Map();
 function vLook(v) {
   const d = vData(v.id), e = v.eq || {};
-  const sig = [e.weapon, e.armor, e.head, e.special, e.special2, e.mount, JSON.stringify(e.parts || null)].join('|');
+  const sig = [d.faceSeed??'',e.weapon, e.armor, e.head, e.special, e.special2, e.mount, JSON.stringify(e.parts || null)].join('|');
   const old = _vl.get(v.id); if (old && old._sig === sig) return old;
   const L = Object.assign({}, d); L.baseBand=d.band; L.baseCloth=d.cloth; L.baseMask=!!d.mask; delete L._k;
   L.parts = e.parts || null;
@@ -6535,7 +6535,7 @@ let G = null;           // saved game state
 const RT = { agents: [], floaters: [], particles: [], groundDirty: true, ground: null, t: 0, sel: null, mode: 'normal', ghost: null, buildId: null, moveUid: null, waterTiles: [], spawnAcc: 0, lastWeekSpawns: 0, monthSales: 0, monthTrav: 0, uidAgent: 1 };
 
 function vById(id) { return G.villagers.find(v => v.id === id); }
-function vBase(id){return VILLAGER_POOL.find(v=>v.id===id)||RECRUITS.find(v=>v.id===id)||G?.rebelWorkers?.[id];}
+function vBase(id){return VILLAGER_POOL.find(v=>v.id===id)||RECRUITS.find(v=>v.id===id)||roamingRecruit(id)||G?.rebelWorkers?.[id];}
 // this campaign's roll of a villager (stats, calling, skills, potential); looks and identity stay the base data's
 const _VD = new Map(); let _vdRoll = null;
 function vData(id) {
@@ -7366,7 +7366,7 @@ function monthTick() {
   // wandering recruit
   G.wander++;
   if (G.recruitQueue.length && housingCap() > G.villagers.length) { const id = G.recruitQueue.shift(); joinVillager(id); }
-  else if (G.wander >= 5 && housingCap() > G.villagers.length && Math.random() < .5) { const pool = RECRUITS.filter(r => !vById(r.id) && !G.recruitQueue.includes(r.id) && !onHire(r.id) && !(G.boons && G.boons.pledge === r.id) && !PROVINCES.some(p => p.reward && p.reward.recruit === r.id && G.prov[p.id] && G.prov[p.id].owner !== 'kage') && ['botan', 'mamezo', 'shinpei', 'komachi', 'hikaru', 'chiyo'].includes(r.id)); if (pool.length) { G.wander = 0; offerHire(pick(pool).id, 'wander', 'A wanderer seeks work'); } }
+  else if (G.wander >= 5 && housingCap() > G.villagers.length && Math.random() < .5) { const recruit=wanderingRecruit();if(recruit){G.wander=0;offerHire(recruit.id,'wander','A wanderer seeks work');} }
   if (G.month % 3 === 1) saveGame();
 }
 /* ---------- hiring: from the mid game on, talent asks for a signing fee ---------- */
@@ -7378,6 +7378,7 @@ function hireFee(id, src) {
 }
 function offerHire(id, src, title) {
   if (vById(id) || G.recruitQueue.includes(id)) return;
+  if(!onHire(id))rememberRecruit(id);
   const fee = hireFee(id, src);
   if (!fee) { if (housingCap() > G.villagers.length) joinVillager(id, title); else { G.recruitQueue.push(id); toast(`${esc(vData(id).name)} waits for a free bed.`); } return; }
   G.hire = (G.hire || []).filter(x => x.id !== id); G.hire.push({ id, fee, src, until: src === 'wander' ? monthIdx() + 6 : 0 });
@@ -7907,10 +7908,10 @@ function ensureRebelWorker(reward){
   const present=reward.recruits.find(id=>available(id)&&vData(id)?.role==='work');
   if(present){reward.workerCaptive=present;return present;}
   const elsewhere=new Set((G.camps||[]).filter(c=>c.reward!==reward).flatMap(c=>[c.reward?.recruit,...(c.reward?.recruits||[])]).filter(Boolean)),
-    candidates=RECRUITS.filter(v=>available(v.id)&&!elsewhere.has(v.id)&&vData(v.id).role==='work'),
+    candidates=recruitRoster().filter(v=>available(v.id)&&recruitEligible(v.id,true,reward)&&!elsewhere.has(v.id)&&vData(v.id).role==='work'),
     reserved=new Set(PROVINCES.filter(p=>G.prov[p.id]?.owner!=='kage').map(p=>p.reward?.recruit).filter(Boolean)),
     free=candidates.filter(v=>!reserved.has(v.id)),pool=free.length?free:candidates,
-    id=pool.length?pick(pool).id:newRebelWorker();
+    id=pool.length?rotatingRecruit(pool,'rebel:'+G.campUid).id:newRebelWorker();
   reward.recruits.unshift(id);reward.workerCaptive=id;return id;
 }
 
@@ -9827,6 +9828,56 @@ function wpick(rng, list, w) { const tot = w.reduce((a, b) => a + b, 0); let r =
 function rshuffle(rng, a) { for (let i = a.length - 1; i > 0; i--) { const j = (rng() * (i + 1)) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function absMonth() { return (G.year - 1) * 12 + G.month; }
 
+/* A finite extra cast: generated once per campaign seed, never stored as 48 full character records.
+   The canonical cast and its campaign RNG remain unchanged. Render only people who are actually encountered. */
+const ROAMING_WORKERS=32,ROAMING_HEROES=16;
+let _roamingRoster=null;
+function recruitPoolState(){return G.recruitPool||(G.recruitPool={v:1,seed:(G.roll?.seed??G.vseed??0)>>>0,turn:0,recent:[]});}
+function migrateRecruitPool(){
+  if(!G.recruitPool||typeof G.recruitPool!=='object'||Array.isArray(G.recruitPool))delete G.recruitPool;
+  const S=recruitPoolState();S.v=1;S.seed=Number.isFinite(S.seed)?S.seed>>>0:(G.roll?.seed??G.vseed??0)>>>0;
+  S.turn=clamp(Math.floor(Number(S.turn)||0),0,1000000000);
+  S.recent=Array.isArray(S.recent)?S.recent.filter((id,i,a)=>typeof id==='string'&&(RECRUITS.some(r=>r.id===id)||G.rebelWorkers?.[id]||/^roam_\d{2}$/.test(id)&&Number(id.slice(5))<ROAMING_WORKERS+ROAMING_HEROES)&&a.lastIndexOf(id)===i).slice(-12):[];
+}
+function roamingRoster(){
+  const seed=recruitPoolState().seed;if(_roamingRoster?.seed===seed)return _roamingRoster;
+  const rng=seeded(seed^0x41b67d),families=['Fujita','Kawano','Ishikawa','Mori','Sakurai','Okada','Nakamura','Aoki','Ueda','Kanda','Hayashi','Inoue','Sugita','Miyata','Asano','Tsuda'],
+    given=[['Kichitarō','Sōta','Hachibei','Kansuke','Yasaburō','Tōkichi','Tatsunosuke','Seikichi','Jūzō','Sōemon','Kumakichi','Kōhei','Gisuke','Sanzō','Chōbei','Shinnosuke'],['Oharu','Oume','Orin','Osayo','Otsuru','Okiku','Otama','Okinu','Oito','Ochiyo','Ofuku','Omatsu','Oshizu','Onatsu','Oren','Otake']],
+    names=rshuffle(rng,families.flatMap(f=>given.flatMap((list,sex)=>list.map(n=>({name:f+' '+n,sex:sex?'f':'m'}))))),
+    trades=[['Rice grower','greenthumb','tireless',[5,5,25,5,5,12]],['Craftsperson','artisan','strongback',[5,5,25,5,7,11]],['Porter','strongback','swift',[5,6,30,10,3,10]],['Woodcutter','tireless','strongback',[7,5,30,8,3,11]],['Peddler','haggler','swift',[4,4,24,5,8,10]],['Carpenter','strongback','artisan',[6,6,28,8,4,11]]],
+    homes=['the Kiso valley','the Mikawa coast','the Iga foothills','the Yamashiro hills','the Echigo snow country','the Owari plain','the Mino forests','the Settsu riverside'],
+    clothes=['#394e67','#4e6353','#67523e','#8a4b44','#6e5a7a','#5b7776','#3b4a7a','#8a6a3a'],list=[],byId=new Map(),
+    jobs=rshuffle(rng,Array.from({length:ROAMING_WORKERS},(_,i)=>i%trades.length));
+  for(let i=0;i<ROAMING_WORKERS+ROAMING_HEROES;i++){
+    const worker=i<ROAMING_WORKERS,role=worker?'work':['inf','arc','gun','cav'][(i-ROAMING_WORKERS)%4],trade=worker?trades[jobs[i]]:null,
+      base=trade?trade[3]:role==='inf'?[10,8,32,8,5,4]:role==='arc'?[6,5,26,5,12,5]:role==='gun'?[7,5,27,5,12,4]:[11,7,34,9,5,4],
+      pot=wpick(rng,POTENTIAL,POTENTIAL.map(p=>p[2])),id='roam_'+String(i).padStart(2,'0'),skill=trade?trade[1]:pick2(rng,ROLE_SK[role]),skill2=trade?trade[2]:pick2(rng,ROLE_SK2[role]),
+      d={id,...names[i],role,base:base.map(x=>Math.round(x*(.85+rng()*.3)*10)/10),skill,skill2,sk:[[1,1],[5+(rng()*3|0),2],[11+(rng()*3|0),3],[18+(rng()*4|0),4]],
+        growth:pot[0],pot:pot[1],profession:trade?trade[0]:ROLE_NAME[role]+' specialist',
+        bio:(trade?trade[0]:'A wandering '+ROLE_NAME[role].toLowerCase()+' specialist')+' from '+pick2(rng,homes)+'. '+(worker?'Seeks a village where skilled hands are welcome.':'Offers service after years on the road.'),
+        hair:pick2(rng,ART_HAIR_STYLES),hc:pick2(rng,['#241e1b','#3c2a22','#25262a','#574537','#9a8b73']),skin:pick2(rng,SKIN),cloth:pick2(rng,clothes),band:pick2(rng,['#c8452c','#e0b54a','#f2efe2','#5f9e3e']),mask:!worker&&rng()<.22,faceSeed:artHash(seed+':'+id)};
+    list.push(d);byId.set(id,d);
+  }
+  return _roamingRoster={seed,list,byId,all:RECRUITS.concat(list)};
+}
+function roamingRecruit(id){return G&&typeof id==='string'&&/^roam_\d{2}$/.test(id)?roamingRoster().byId.get(id):null;}
+function recruitRoster(){return roamingRoster().all;}
+function recruitEligible(id,allowCastle=false,exceptReward=null){
+  if(!vBase(id)||vById(id)||G.recruitQueue.includes(id)||onHire(id)||G.boons?.pledge===id||G.dojoPrize?.id===id)return false;
+  if((G.camps||[]).some(c=>c.reward!==exceptReward&&(c.reward?.recruit===id||(c.reward?.recruits||[]).includes(id))))return false;
+  if(Object.values(G.prov||{}).some(st=>(st.retake?.recruits||[]).includes(id)))return false;
+  return allowCastle||!PROVINCES.some(p=>G.prov[p.id]?.owner!=='kage'&&p.reward?.recruit===id);
+}
+function recruitRotationRank(id,salt){const S=recruitPoolState();return (S.recent.includes(id)?4294967296:0)+artHash(S.seed+':'+S.turn+':'+salt+':'+id);}
+function rotatingRecruit(pool,salt){let best=null,rank=Infinity;for(const r of pool){const n=recruitRotationRank(r.id,salt);if(n<rank){rank=n;best=r;}}return best;}
+function rememberRecruit(id){
+  const S=recruitPoolState(),i=S.recent.indexOf(id);if(i>=0)S.recent.splice(i,1);S.recent.push(id);if(S.recent.length>12)S.recent.shift();S.turn=(S.turn+1)%1000000000;
+}
+function wanderingRecruit(){
+  const pool=freeRecruitsNow().filter(r=>r.id.startsWith('roam_')||['botan','mamezo','shinpei','komachi','hikaru','chiyo'].includes(r.id));
+  return rotatingRecruit(pool,'wander:'+monthIdx());
+}
+
 /* ----- villagers ----- */
 function rollOne(rng, b, pChange) {
   const base = b.base.map(x => x * (0.8 + rng() * 0.4));
@@ -10008,7 +10059,7 @@ function offerDoctrine() {
 // instead (and that castle no longer holds them). Early in the campaign the humbler ones come; later, the famous.
 function freeRecruits(n, strong) {
   const holder = id => PROVINCES.find(p => G.prov[p.id] && G.prov[p.id].owner !== 'kage' && p.reward && p.reward.recruit === id);
-  const avail = RECRUITS.filter(r => !vById(r.id) && !G.recruitQueue.includes(r.id) && !onHire(r.id) && G.boons.pledge !== r.id && !(G.camps || []).some(c => c.reward && c.reward.recruit === r.id));
+  let avail=recruitRoster().filter(r=>recruitEligible(r.id,true));const fresh=avail.filter(r=>!recruitPoolState().recent.includes(r.id));if(fresh.length>=n)avail=fresh;
   const sc = r => vData(r.id).base.reduce((a, b) => a + b, 0) * (vData(r.id).growth || 1);
   const free = avail.filter(r => !holder(r.id)), held = avail.filter(r => holder(r.id)).sort((a, b) => (holder(b.id).power || 0) - (holder(a.id).power || 0));
   let l = shuffle(free.slice()); if (l.length < n) l = l.concat(held.slice(0, n - l.length + 2));
@@ -10022,7 +10073,7 @@ function releaseRecruit(id) { // a recruit taken early leaves the castle reward 
   applyCampaign();
 }
 function recruitCard(r, extra) { const d = vData(r.id); return { look: vLook({ id: r.id, eq: {} }), name: d.name, txt: `${ROLE_NAME[d.role]} · ${SKILLS[d.skill].name} · 潜${d.pot || 'B'}${extra ? ' · ' + extra : ''}`, tip: esc(d.bio) }; }
-function takeRecruit(id) { releaseRecruit(id); if (housingCap() > G.villagers.length) joinVillager(id); else { G.recruitQueue.push(id); toast(`${vData(id).name} waits for a free home.`); } }
+function takeRecruit(id) { if(!vData(id)||vById(id)||G.recruitQueue.includes(id)||onHire(id))return;rememberRecruit(id);releaseRecruit(id); if (housingCap() > G.villagers.length) joinVillager(id); else { G.recruitQueue.push(id); toast(`${vData(id).name} waits for a free home.`); } }
 const DILEMMAS = {
   recruit: () => { const rs = freeRecruits(2); if (rs.length < 2) return null;
     return { title: '浪人 Two wanderers', opts: rs.map(r => Object.assign(recruitCard(r), { apply() { takeRecruit(r.id); boonLog(`${vData(r.id).name} chosen`); } })) }; },
@@ -13613,7 +13664,7 @@ function trainingArmy(site){
 // Milestones cycle, with progressively better tiers/quantities. Selection is deterministic and never rerolls on opening a card.
 function dojoMilestoneReward(level){
   const step=Math.max(1,Math.floor(level/10)),kind=['worker','tech','armor','mount','crates','gold'][(step-1)%6],tier=Math.min(5,1+Math.ceil(step/2)),gold=500+step*250;
-  if(kind==='worker'){const grades=['C','B','A','S'],want=Math.min(3,Math.floor((step-1)/6)),pool=RECRUITS.filter(v=>vData(v.id).role==='work'&&!vById(v.id)&&!G.recruitQueue.includes(v.id)&&!onHire(v.id)&&G.dojoPrize?.id!==v.id&&G.boons?.pledge!==v.id).sort((a,b)=>Math.abs(Math.max(0,grades.indexOf(vData(a.id).pot))-want)-Math.abs(Math.max(0,grades.indexOf(vData(b.id).pot))-want)||a.id.localeCompare(b.id));
+  if(kind==='worker'){const grades=['C','B','A','S'],want=Math.min(3,Math.floor((step-1)/6)),S=recruitPoolState(),pool=recruitRoster().filter(v=>vData(v.id).role==='work'&&recruitEligible(v.id,true)).sort((a,b)=>Number(S.recent.includes(a.id))-Number(S.recent.includes(b.id))||Math.abs(Math.max(0,grades.indexOf(vData(a.id).pot))-want)-Math.abs(Math.max(0,grades.indexOf(vData(b.id).pot))-want)||recruitRotationRank(a.id,'milestone:'+step)-recruitRotationRank(b.id,'milestone:'+step));
     if(pool.length)return {kind,id:pool[0].id};}
   if(kind==='tech'){const busy=new Set([G.research?.id,...(G.resQ||[]).map(q=>q.id)]),want=Math.min(5,Math.max(tier,homeTier()+1)),pool=RESEARCH.filter(r=>{
       const I=ITEMS[r.item];return !G.researched[r.item]&&!busy.has(r.id)&&EQ_SLOTS.includes(I.slot)&&!I.rare&&resTier(r)<=want&&resState(r).why.every(w=>w.t==='pts'||w.t==='prev');
@@ -13647,12 +13698,7 @@ function grantDojoMilestone(level,rewards,P){
 }
 /* A rolled spar prize is independent of difficulty. A loss keeps its existing small recruit consolation,
    never advances the ladder, and nobody is permanently lost. */
-function freeRecruitsNow() {
-  const reserved = new Set(PROVINCES.filter(p => G.prov[p.id] && G.prov[p.id].owner !== 'kage' && p.reward && p.reward.recruit).map(p => p.reward.recruit));
-  return RECRUITS.filter(v => !vById(v.id) && !G.recruitQueue.includes(v.id) && !onHire(v.id) && !reserved.has(v.id) && !(G.boons && G.boons.pledge === v.id)
-    && !(G.camps || []).some(c => c.reward && (c.reward.recruit === v.id || (c.reward.recruits || []).includes(v.id)))
-    && !Object.values(G.prov || {}).some(st => st && st.retake && (st.retake.recruits || []).includes(v.id)) && !(G.dojoPrize && G.dojoPrize.id === v.id));
-}
+function freeRecruitsNow() { return recruitRoster().filter(v=>recruitEligible(v.id)); }
 function latestGear(test) { const l = Object.keys(ITEMS).filter(k => G.researched[k] && !ITEMS[k].rare && ITEMS[k].cost > 0 && test(ITEMS[k], k)); l.sort((a, b) => (ITEMS[b].tier || 0) - (ITEMS[a].tier || 0) || ITEMS[b].cost - ITEMS[a].cost); return l[0] || null; }
 const DOJO_PRIZE = { troops: { w: 40, mul: .75 }, armor: { w: 20, mul: .9 }, horse: { w: 15, mul: .9 }, person: { w: 25, mul: 1.05 } };
 const DOJO_RECRUIT_CAP = { inf: 100, arc: 50, gun: 30, cav: 20 };
@@ -13668,11 +13714,11 @@ function dojoPrizeValid(P) {
 function dojoPrize() {
   if (dojoPrizeValid(G.dojoPrize)) return G.dojoPrize;
   const types = ['inf', 'arc', 'gun', 'cav'].filter(troopsOpen), armor = latestGear(I => I.slot === 'armor'), horse = latestGear((I, k) => I.slot === 'mount' && isHorse(k));
-  const free = (() => { const f = freeRecruitsNow(); return f.length ? pick(f).id : null; })();
+  const free = (() => { const f = freeRecruitsNow(); return f.length ? rotatingRecruit(f,'dojo:'+trainingLevel()).id : null; })();
   const opts = [['troops', { t: pick(types.length ? types : ['inf']) }]];
   if (armor) opts.push(['armor', { k: armor }]); if (horse) opts.push(['horse', { k: horse }]); if (free) opts.push(['person', { id: free }]);
   const [kind, o] = wpick(Math.random, opts, opts.map(([k]) => DOJO_PRIZE[k].w));
-  return G.dojoPrize = Object.assign({ kind, mul: DOJO_PRIZE[kind].mul }, o);
+  G.dojoPrize=Object.assign({kind,mul:DOJO_PRIZE[kind].mul},o);if(kind==='person')rememberRecruit(o.id);return G.dojoPrize;
 }
 function dojoPrizeChip(P) {
   if (P.kind === 'troops') return `${icon('u_' + P.t)} ${UNITS[P.t].name} recruits ×${dojoRecruitReward(P.t)}`;
@@ -13794,6 +13840,7 @@ function afterLoad() {
   if (!G.endYear) G.endYear = rint(20, 30);
   if (G.speed === 3) G.speed = 4; // fast-forward is now 4x
   applyCampaign(); // per-campaign clans, recruits and doctrine prices (old saves: the classic map)
+  migrateRecruitPool();
   if (!G.tateOn && G.prov && G.prov.yamashiro && G.prov.yamashiro.owner === 'kage') G.tateOn = true; // saves from before Wooden Tate
   if (G.boons && G.boons.pending && !window.__noIntro) setTimeout(() => G && G.boons.pending && !MQ.some(m => m.opts.must) && reofferDilemma(), 600);
   if (G.roll && G.roll.v && !G.boons.doc && !window.__noIntro) setTimeout(() => G && G.roll && G.roll.v && !G.boons.doc && !MQ.some(m => m.opts.must) && offerDoctrine(), 400);
