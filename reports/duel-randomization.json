@@ -1,0 +1,491 @@
+{
+  "checks": 25009,
+  "profiles": [
+    {
+      "weapon": "katana",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 1,
+      "choices": {
+        "slidingThrust": 24,
+        "risingCut": 15,
+        "passing": 16,
+        "guardBreak": 29,
+        "thrust": 25,
+        "jump": 19
+      }
+    },
+    {
+      "weapon": "katana",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 2,
+      "choices": {
+        "jump": 20,
+        "slidingThrust": 24,
+        "thrust": 21,
+        "crossCut": 15,
+        "risingCut": 20,
+        "passing": 12,
+        "guardBreak": 16
+      }
+    },
+    {
+      "weapon": "katana",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 3,
+      "choices": {
+        "guardBreak": 17,
+        "tripleSlash": 17,
+        "thrust": 18,
+        "passing": 18,
+        "risingCut": 11,
+        "jump": 20,
+        "tripleThrust": 12,
+        "slidingThrust": 15
+      }
+    },
+    {
+      "weapon": "ninjato",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 1,
+      "choices": {
+        "slidingThrust": 24,
+        "risingCut": 15,
+        "passing": 16,
+        "guardBreak": 29,
+        "thrust": 25,
+        "jump": 19
+      }
+    },
+    {
+      "weapon": "ninjato",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 2,
+      "choices": {
+        "jump": 20,
+        "slidingThrust": 24,
+        "thrust": 21,
+        "crossCut": 15,
+        "risingCut": 20,
+        "passing": 12,
+        "guardBreak": 16
+      }
+    },
+    {
+      "weapon": "ninjato",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 3,
+      "choices": {
+        "guardBreak": 17,
+        "tripleSlash": 17,
+        "thrust": 18,
+        "passing": 18,
+        "risingCut": 11,
+        "jump": 20,
+        "tripleThrust": 12,
+        "slidingThrust": 15
+      }
+    },
+    {
+      "weapon": "ninja_claw",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 1,
+      "choices": {
+        "passing": 40,
+        "jump": 34,
+        "risingCut": 54
+      }
+    },
+    {
+      "weapon": "ninja_claw",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 2,
+      "choices": {
+        "passing": 51,
+        "crossCut": 30,
+        "jump": 47
+      }
+    },
+    {
+      "weapon": "ninja_claw",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 3,
+      "choices": {
+        "risingCut": 35,
+        "tripleSlash": 29,
+        "passing": 33,
+        "jump": 31
+      }
+    },
+    {
+      "weapon": "naginata",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 1,
+      "choices": {
+        "risingCut": 40,
+        "reversal": 34,
+        "passing": 54
+      }
+    },
+    {
+      "weapon": "naginata",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 2,
+      "choices": {
+        "reversal": 35,
+        "risingCut": 39,
+        "passing": 30,
+        "crossCut": 24
+      }
+    },
+    {
+      "weapon": "naginata",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 3,
+      "choices": {
+        "passing": 35,
+        "tripleSlash": 29,
+        "risingCut": 33,
+        "reversal": 31
+      }
+    },
+    {
+      "weapon": "nodachi",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 1,
+      "choices": {
+        "guardBreak": 40,
+        "risingCut": 34,
+        "passing": 54
+      }
+    },
+    {
+      "weapon": "nodachi",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 2,
+      "choices": {
+        "risingCut": 35,
+        "guardBreak": 39,
+        "passing": 30,
+        "crossCut": 24
+      }
+    },
+    {
+      "weapon": "nodachi",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 3,
+      "choices": {
+        "risingCut": 22,
+        "tripleSlash": 27,
+        "passing": 26,
+        "tripleThrust": 24,
+        "guardBreak": 29
+      }
+    },
+    {
+      "weapon": "zanbato",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 1,
+      "choices": {
+        "guardBreak": 40,
+        "risingCut": 34,
+        "passing": 54
+      }
+    },
+    {
+      "weapon": "zanbato",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 2,
+      "choices": {
+        "risingCut": 35,
+        "guardBreak": 39,
+        "passing": 30,
+        "crossCut": 24
+      }
+    },
+    {
+      "weapon": "zanbato",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 3,
+      "choices": {
+        "risingCut": 22,
+        "tripleSlash": 27,
+        "passing": 26,
+        "tripleThrust": 24,
+        "guardBreak": 29
+      }
+    },
+    {
+      "weapon": "steel_yari",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 1,
+      "choices": {
+        "slidingThrust": 30,
+        "thrust": 29,
+        "passing": 27,
+        "yariCast": 42
+      }
+    },
+    {
+      "weapon": "steel_yari",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 2,
+      "choices": {
+        "passing": 35,
+        "slidingThrust": 39,
+        "yariCast": 30,
+        "doubleThrust": 24
+      }
+    },
+    {
+      "weapon": "steel_yari",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 3,
+      "choices": {
+        "yariCast": 35,
+        "tripleThrust": 29,
+        "slidingThrust": 33,
+        "passing": 31
+      }
+    },
+    {
+      "weapon": "katana",
+      "mounted": false,
+      "targetMounted": true,
+      "count": 1,
+      "choices": {
+        "jump": 19,
+        "slidingThrust": 17,
+        "guardBreak": 19,
+        "passing": 15,
+        "thrust": 23,
+        "riderDrag": 22,
+        "risingCut": 13
+      }
+    },
+    {
+      "weapon": "katana",
+      "mounted": false,
+      "targetMounted": true,
+      "count": 2,
+      "choices": {
+        "risingCut": 13,
+        "jump": 27,
+        "slidingThrust": 12,
+        "riderDrag": 18,
+        "crossCut": 15,
+        "guardBreak": 22,
+        "passing": 9,
+        "thrust": 12
+      }
+    },
+    {
+      "weapon": "katana",
+      "mounted": false,
+      "targetMounted": true,
+      "count": 3,
+      "choices": {
+        "thrust": 17,
+        "tripleSlash": 15,
+        "riderDrag": 14,
+        "slidingThrust": 13,
+        "risingCut": 10,
+        "jump": 22,
+        "tripleThrust": 13,
+        "guardBreak": 11,
+        "passing": 13
+      }
+    },
+    {
+      "weapon": "steel_yari",
+      "mounted": false,
+      "targetMounted": true,
+      "count": 1,
+      "choices": {
+        "slidingThrust": 30,
+        "thrust": 29,
+        "passing": 27,
+        "spearBrace": 42
+      }
+    },
+    {
+      "weapon": "steel_yari",
+      "mounted": false,
+      "targetMounted": true,
+      "count": 2,
+      "choices": {
+        "passing": 35,
+        "slidingThrust": 39,
+        "spearBrace": 30,
+        "doubleThrust": 24
+      }
+    },
+    {
+      "weapon": "steel_yari",
+      "mounted": false,
+      "targetMounted": true,
+      "count": 3,
+      "choices": {
+        "spearBrace": 35,
+        "tripleThrust": 29,
+        "slidingThrust": 33,
+        "passing": 31
+      }
+    },
+    {
+      "weapon": "katana",
+      "mounted": true,
+      "targetMounted": false,
+      "count": 1,
+      "choices": {
+        "guardBreak": 30,
+        "passing": 29,
+        "cavTrample": 27,
+        "cavBackKick": 42
+      }
+    },
+    {
+      "weapon": "katana",
+      "mounted": true,
+      "targetMounted": false,
+      "count": 2,
+      "choices": {
+        "cavTrample": 27,
+        "guardBreak": 27,
+        "crossCut": 26,
+        "passing": 20,
+        "cavBackKick": 28
+      }
+    },
+    {
+      "weapon": "katana",
+      "mounted": true,
+      "targetMounted": false,
+      "count": 3,
+      "choices": {
+        "tripleThrust": 20,
+        "passing": 22,
+        "tripleSlash": 22,
+        "cavTrample": 21,
+        "cavBackKick": 24,
+        "guardBreak": 19
+      }
+    },
+    {
+      "weapon": "steel_yari",
+      "mounted": true,
+      "targetMounted": false,
+      "count": 1,
+      "choices": {
+        "guardBreak": 30,
+        "passing": 29,
+        "cavTrample": 27,
+        "cavBackKick": 42
+      }
+    },
+    {
+      "weapon": "steel_yari",
+      "mounted": true,
+      "targetMounted": false,
+      "count": 2,
+      "choices": {
+        "cavTrample": 27,
+        "guardBreak": 27,
+        "doubleThrust": 26,
+        "passing": 20,
+        "cavBackKick": 28
+      }
+    },
+    {
+      "weapon": "steel_yari",
+      "mounted": true,
+      "targetMounted": false,
+      "count": 3,
+      "choices": {
+        "cavBackKick": 22,
+        "passing": 27,
+        "tripleThrust": 26,
+        "guardBreak": 24,
+        "cavTrample": 29
+      }
+    },
+    {
+      "weapon": "yumi",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 1,
+      "choices": {
+        "release": 128
+      }
+    },
+    {
+      "weapon": "yumi",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 2,
+      "choices": {
+        "release": 128
+      }
+    },
+    {
+      "weapon": "yumi",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 3,
+      "choices": {
+        "release": 128
+      }
+    },
+    {
+      "weapon": "rifle",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 1,
+      "choices": {
+        "release": 128
+      }
+    },
+    {
+      "weapon": "rifle",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 2,
+      "choices": {
+        "release": 128
+      }
+    },
+    {
+      "weapon": "rifle",
+      "mounted": false,
+      "targetMounted": false,
+      "count": 3,
+      "choices": {
+        "release": 128
+      }
+    }
+  ],
+  "draws": 4992,
+  "combatRandomCalls": 0,
+  "stablePerKO": true,
+  "saveUnchanged": true
+}

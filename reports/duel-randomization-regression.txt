@@ -1,0 +1,8 @@
+Running 5 suite(s), 2 at a time…
+PASS  duel-randomization    9.6s
+PASS  duel-executions   32.2s
+PASS  duel-cavalry   42.6s
+PASS  infantry-executions   44.0s
+PASS  animal-duels   45.5s
+
+5/5 passed in 97.7s wall time (173.9s if run one after another).

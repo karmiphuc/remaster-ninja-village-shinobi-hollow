@@ -11,7 +11,7 @@ module.exports=async function install(page){await page.evaluate(()=>{
      g={type,troops:120,atkMul:2,defMul:2,guards:c.guard,cmds:[c],mods:modsOf([c])};groups.push(g);
    }return finishArmy({side:si,clan:si?'kurogane':'kage',name:si?'Rivals':'Kage Clan',mode:'army',groups,ki:0,strat:0});}
   const pa=army(0),ea=army(1);startBattle('duel_art',{site:{id:'duel_art',type:opts.site||'dojo',clan:'kurogane',power:300,x:1,y:1,reward:{}},pa,ea});
-  BT.autoKi.on=false;BT.state='run';BT.round=1;BT.phase=-1;BT.speed=1;$('#btac').innerHTML='';
+  BT.seed=73117;BT.autoKi.on=false;BT.state='run';BT.round=1;BT.phase=-1;BT.speed=1;$('#btac').innerHTML='';
   const own=pa.groups.map(g=>g.heroes[0]||g.spr.find(s=>s.hero)),other=ea.groups.map(g=>g.heroes[0]||g.spr.find(s=>s.hero));
   own.forEach((s,i)=>s._g=pa.groups[i]);other.forEach((s,i)=>s._g=ea.groups[i]);
   return {pa,ea,pairs:own.map((a,i)=>({a,b:other[i]}))};

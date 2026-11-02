@@ -6,7 +6,7 @@
         "slidingThrust"
       ],
       "damage": [
-        36
+        48
       ]
     },
     {
@@ -16,8 +16,8 @@
         "slidingThrust"
       ],
       "damage": [
-        47,
-        26
+        43,
+        21
       ]
     },
     {
@@ -28,9 +28,9 @@
         "slidingThrust"
       ],
       "damage": [
-        62,
-        22,
-        33
+        36,
+        31,
+        27
       ]
     }
   ],
@@ -49,7 +49,7 @@
         "kind": "cavTrample",
         "count": 1,
         "duration": 1.42,
-        "seed": 3
+        "seed": 2
       },
       {
         "kind": "cavTrample",
@@ -61,25 +61,25 @@
         "kind": "cavTrample",
         "count": 3,
         "duration": 1.42,
-        "seed": 41
+        "seed": 28
       },
       {
         "kind": "cavBackKick",
         "count": 1,
         "duration": 1.42,
-        "seed": 2
+        "seed": 7
       },
       {
         "kind": "cavBackKick",
         "count": 2,
         "duration": 1.42,
-        "seed": 9
+        "seed": 58
       },
       {
         "kind": "cavBackKick",
         "count": 3,
         "duration": 1.42,
-        "seed": 28
+        "seed": 91
       }
     ],
     "poses": 7,
@@ -97,8 +97,8 @@
       "speed": 1,
       "fps": 60,
       "shots": 1,
-      "hits": 4,
-      "earlyGuardFrames": 11,
+      "hits": 5,
+      "earlyGuardFrames": 10,
       "helpers": 0
     },
     {
@@ -109,8 +109,8 @@
       "speed": 1,
       "fps": 60,
       "shots": 1,
-      "hits": 4,
-      "earlyGuardFrames": 10,
+      "hits": 2,
+      "earlyGuardFrames": 9,
       "helpers": 0
     },
     {
@@ -145,7 +145,7 @@
       "speed": 4,
       "fps": 30,
       "shots": 1,
-      "hits": 7,
+      "hits": 5,
       "earlyGuardFrames": 0,
       "helpers": 0
     },
@@ -157,7 +157,7 @@
       "speed": 4,
       "fps": 30,
       "shots": 1,
-      "hits": 6,
+      "hits": 7,
       "earlyGuardFrames": 0,
       "helpers": 0
     },
@@ -170,7 +170,7 @@
       "fps": 30,
       "shots": 1,
       "hits": 5,
-      "earlyGuardFrames": 1,
+      "earlyGuardFrames": 2,
       "helpers": 0
     },
     {
@@ -193,7 +193,7 @@
       "speed": 1,
       "fps": 60,
       "shots": 1,
-      "hits": 7,
+      "hits": 5,
       "earlyGuardFrames": 0,
       "helpers": 0
     },

@@ -92,6 +92,8 @@ Duels include a **black Z triple slash, sword triple thrusts and a kneeling slid
 
 Foot spearmen can also throw their equipped yari and retrieve it after the KO. Against cavalry, infantry can brace a spear to bring down horse and rider, or leap with a sword, pull the rider from the saddle and finish on the ground. These 1.46-second endings preserve real hits, early retainer/talisman rescues and battlefield remains.
 
+Execution families roll randomly from weapon-, target- and hit-count-compatible pools on each KO. The chosen move stays stable through playback, while later duels receive fresh visual rolls without consuming combat randomness.
+
 **Formation tactics.** Each formation (Infantry, Archers, Gunners, Cavalry) takes its own orders. How many orders it can take depends on the highest Strategy among its own active commanders. Formations never share Strategy.
 
 | Strategy | Orders |

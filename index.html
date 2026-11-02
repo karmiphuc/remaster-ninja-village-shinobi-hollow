@@ -11951,7 +11951,15 @@ for(const m of Object.values(DUEL_MOUNTS)){const h=m.gait[m.pivot==='fore'?3:2],
 const DUEL_BEAST_MOVES={bear:'bearSlam',boar:'boarToss',hound:'beastPounce',wolf:'beastPounce',tosa:'beastPounce',fox:'beastFeint',tanuki:'beastFeint',monkey:'monkeyVault',hawk:'birdDive',gyrfalcon:'birdDive'},
  DUEL_BEAST_IMPACT=[[],[.78],[.30,.78],[.20,.43,.80]],DUEL_BEAST_TIME=1.36;
 const DUEL_Z=[[-17,-10,16,-9],[16,-9,-15,10],[-15,10,18,9]],DUEL_X=[[-15,-11,15,10],[-15,10,15,-11]];
-const DUEL_ENDINGS=['passing','slidingThrust','jump','risingCut','guardBreak','thrust'],DUEL_TWO_ENDINGS=['crossCut',...DUEL_ENDINGS,'crossCut'];
+const DUEL_ENDINGS=['passing','slidingThrust','jump','risingCut','guardBreak','thrust'];
+const DUEL_FINISH_POOLS={
+ sword:[[],DUEL_ENDINGS,['crossCut',...DUEL_ENDINGS],['tripleSlash','tripleThrust',...DUEL_ENDINGS]],
+ heavy:[[],['guardBreak','risingCut','passing'],['crossCut','guardBreak','risingCut','passing'],['tripleSlash','tripleThrust','guardBreak','risingCut','passing']],
+ yari:[[],['thrust','slidingThrust','passing'],['doubleThrust','slidingThrust','passing'],['tripleThrust','slidingThrust','passing']],
+ naginata:[[],['risingCut','reversal','passing'],['crossCut','risingCut','reversal','passing'],['tripleSlash','risingCut','reversal','passing']],
+ claw:[[],['passing','jump','risingCut'],['crossCut','passing','jump'],['tripleSlash','passing','jump','risingCut']],
+ mounted:[[],['passing','guardBreak'],['passing','guardBreak'],['passing','guardBreak']]
+},DUEL_FINISHERS=new WeakMap(),DUEL_RELEASE=['release'];
 // Presentation variation uses the resolved chain, never another combat RNG roll.
 function duelMoveVariant(e){return e.visualSeed??=(e.chain*11+e.r*7+(e.f.hr.artVariant||0)*5+artHash(e.f.weapon.id))>>>0;}
 function duelStrikePose(e){
@@ -12013,25 +12021,24 @@ function startDuel(spec){
   S.ev.sort((a,b)=>a.t-b.t);S.dur=tEnd-BT.t;BT.script=S;BT.next=tEnd+1.4-BT.t;BT.phaseDur=BT.next;
   Sound.play('horn',{vol:.6});
 }
+function duelFinisherPool(a){
+  const e=a.at(-1),w=e.f.weapon.style,n=a.length,mounted=!!e.f.hr.sprs.horse;
+  if(w==='bow'||w==='gun')return DUEL_RELEASE;
+  const family=mounted?'mounted':w==='nodachi'||w==='zanbato'?'heavy':DUEL_FINISH_POOLS[w]?w:'sword',pool=DUEL_FINISH_POOLS[family][n].slice();
+  if(mounted){pool.push('cavTrample','cavBackKick');if(n===2)pool.push(w==='yari'?'doubleThrust':'crossCut');
+    if(n===3){pool.push('tripleThrust');if(w!=='yari')pool.push('tripleSlash');}}
+  else{if(e.f.g?.type==='inf'&&e.t.hr.sprs.horse){if(w==='yari')pool.push('spearBrace');else if(e.f.weapon.kind==='sword'&&w!=='claw')pool.push('riderDrag');}
+    if(w==='yari'&&!e.t.hr.sprs.horse)pool.push('yariCast');}
+  return pool;
+}
 function duelFinisher(a){
-  const e=a.at(-1),w=e.f.weapon.style,v=(duelMoveVariant(e)+e.dmg*7)>>>0,mounted=!!e.f.hr.sprs.horse;
-  const pet=e.f.hr.pet;if(pet?.alive&&!pet.out&&DUEL_BEAST_MOVES[pet.kind]&&v%3!==2)return DUEL_BEAST_MOVES[pet.kind];
-  if(w==='claw')return a.length===3?'tripleSlash':a.length===2?'crossCut':'passing';
-  if(w==='bow'||w==='gun')return 'release';
-  if(mounted){if(v%4<2)return v%2?'cavBackKick':'cavTrample';
-    return a.length===3?(w==='yari'||v%3===0?'tripleThrust':'tripleSlash'):a.length===2?(w==='yari'?'doubleThrust':'crossCut'):v%2?'passing':'guardBreak';}
-  if(e.f.g.type==='inf'&&e.t.hr.sprs.horse&&v%3!==2){
-    if(w==='yari')return 'spearBrace';if(e.f.weapon.kind==='sword')return 'riderDrag';}
-  if(w==='yari'&&!e.t.hr.sprs.horse&&v%4===0)return 'yariCast';
-  if(a.length===3){if(w==='yari')return ['tripleThrust','slidingThrust','passing'][v%3];if(w==='naginata')return v%3===0?'reversal':'tripleSlash';
-    if(v%4===0)return w==='yari'||e.f.weapon.kind==='sword'?'tripleThrust':'tripleSlash';
-    if(v%4===1)return 'tripleSlash';return w==='nodachi'||w==='zanbato'?(v%4===2?'risingCut':'guardBreak'):DUEL_ENDINGS[(v>>>2)%DUEL_ENDINGS.length];}
-  if(a.length===2){if(w==='naginata')return v%2?'reversal':'risingCut';if(w==='nodachi'||w==='zanbato')return v%2?'guardBreak':'risingCut';
-    return w==='yari'?['doubleThrust','slidingThrust','passing'][v%3]:DUEL_TWO_ENDINGS[v%DUEL_TWO_ENDINGS.length];}
-  if(w==='nodachi'||w==='zanbato')return v%2?'guardBreak':'risingCut';
-  if(w==='yari')return ['slidingThrust','passing','thrust'][v%3];
-  if(w==='naginata')return v%2?'reversal':'risingCut';
-  return DUEL_ENDINGS[v%DUEL_ENDINGS.length];
+  const e=a.at(-1),cached=DUEL_FINISHERS.get(e);if(cached)return cached;
+  // Private visual roll: fresh across battles/duels, stable for this resolved KO.
+  // Weak keys expire with the strike ledger; rendering cannot reroll or consume combat RNG.
+  const R=seeded(artHash([BT?.seed||0,BT?.round||0,BT?.duels||0,e.chain,e.f.si,e.f.k,e.dmg,e.hpBefore,a.length,duelMoveVariant(e),'execution'].join(':'))),
+    pool=duelFinisherPool(a),pet=e.f.hr.pet,animal=pet?.alive&&!pet.out&&DUEL_BEAST_MOVES[pet.kind],
+    kind=animal&&R()<2/3?animal:pool[Math.floor(R()*pool.length)];
+  DUEL_FINISHERS.set(e,kind);return kind;
 }
 function duelClip(a){
   const kind=duelFinisher(a),mounted=kind==='cavTrample'||kind==='cavBackKick',animal=!!DUEL_BEAST_MOVES[a.at(-1).f.hr.pet?.kind]&&kind===DUEL_BEAST_MOVES[a.at(-1).f.hr.pet?.kind],moves=a.map((e,i)=>{
