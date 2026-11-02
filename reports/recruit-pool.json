@@ -1,0 +1,48 @@
+{
+  "cast": {
+    "extra": 48,
+    "workers": 32,
+    "heroes": 16,
+    "workSpecialties": 6,
+    "hairStyles": 10,
+    "faceShapes": 6,
+    "canvasesForUnseenPool": 0
+  },
+  "rotation": {
+    "wanderersSeen": [
+      "shinpei",
+      "roam_09",
+      "roam_24",
+      "roam_18",
+      "roam_31",
+      "roam_08",
+      "hikaru",
+      "roam_10",
+      "roam_40",
+      "roam_01",
+      "roam_07",
+      "roam_46",
+      "roam_30",
+      "roam_04",
+      "roam_03",
+      "roam_42"
+    ],
+    "unique": 16,
+    "recentLimit": 12,
+    "stablePrize": true,
+    "noDoubleBooking": true
+  },
+  "save": {
+    "version": 1,
+    "extraStateBytes": 160,
+    "legacyMigration": true,
+    "gearAndStatsStable": true
+  },
+  "checks": 388,
+  "mobileHire": {
+    "name": "Ishikawa Kichitarō",
+    "dialogFits": true,
+    "hiredFromButton": true,
+    "residentCardFits": true
+  }
+}

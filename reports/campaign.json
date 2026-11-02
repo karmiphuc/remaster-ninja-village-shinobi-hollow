@@ -4,18 +4,18 @@
     "dojoExcluded": "Training Ground",
     "completes": "49/49"
   },
-  "dojoCard": "Gunners recruits",
+  "dojoCard": "Black Stallion",
   "dojo": {
     "rolls": {
-      "troops": 163,
-      "person": 91,
-      "horse": 61,
-      "armor": 85
+      "troops": 160,
+      "horse": 58,
+      "person": 95,
+      "armor": 87
     },
     "partnerPower": {
-      "troops": 744,
-      "armor": 833,
-      "person": 1018
+      "troops": 30,
+      "armor": 30,
+      "person": 30
     }
   },
   "dojoPayouts": {
@@ -41,26 +41,25 @@
   "rebels": {
     "lair": {
       "name": "Yamato",
-      "before": 64,
-      "after": 98,
-      "uprising": 81,
+      "before": 78,
+      "after": 78,
+      "uprising": 65,
       "spoils": {
         "items": [
-          "Riveted Hachigane",
-          "Riveted Hachigane"
+          "Yumi Longbow"
         ],
         "recruits": [
-          "Mamezo"
+          "Ishikawa Oume"
         ]
       }
     },
     "castle": {
       "name": "Ise",
-      "before": 168,
-      "after": 168,
-      "uprising": 148,
+      "before": 163,
+      "after": 176,
+      "uprising": 217,
       "spoilsGranted": [
-        "Wakizashi"
+        "Lamellar Armor"
       ],
       "recruitOffered": "Shinpei"
     }

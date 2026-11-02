@@ -1,0 +1,210 @@
+{
+  "ladder": [
+    {
+      "level": 1,
+      "troops": 30,
+      "power": 30,
+      "formations": [
+        "inf"
+      ]
+    },
+    {
+      "level": 2,
+      "troops": 32,
+      "power": 32,
+      "formations": [
+        "inf"
+      ]
+    },
+    {
+      "level": 3,
+      "troops": 33,
+      "power": 33,
+      "formations": [
+        "inf"
+      ]
+    },
+    {
+      "level": 9,
+      "troops": 44,
+      "power": 44,
+      "formations": [
+        "inf"
+      ]
+    },
+    {
+      "level": 10,
+      "troops": 47,
+      "power": 47,
+      "formations": [
+        "arc",
+        "inf"
+      ]
+    },
+    {
+      "level": 11,
+      "troops": 49,
+      "power": 49,
+      "formations": [
+        "arc",
+        "inf"
+      ]
+    },
+    {
+      "level": 19,
+      "troops": 72,
+      "power": 72,
+      "formations": [
+        "arc",
+        "inf"
+      ]
+    },
+    {
+      "level": 20,
+      "troops": 76,
+      "power": 76,
+      "formations": [
+        "gun",
+        "arc",
+        "inf"
+      ]
+    },
+    {
+      "level": 29,
+      "troops": 118,
+      "power": 118,
+      "formations": [
+        "gun",
+        "arc",
+        "inf"
+      ]
+    },
+    {
+      "level": 30,
+      "troops": 123,
+      "power": 123,
+      "formations": [
+        "cav",
+        "gun",
+        "arc",
+        "inf"
+      ]
+    },
+    {
+      "level": 50,
+      "troops": 328,
+      "power": 328,
+      "formations": [
+        "cav",
+        "gun",
+        "arc",
+        "inf"
+      ]
+    },
+    {
+      "level": 80,
+      "troops": 1416,
+      "power": 1416,
+      "formations": [
+        "cav",
+        "gun",
+        "arc",
+        "inf"
+      ]
+    },
+    {
+      "level": 600,
+      "troops": 87729,
+      "power": 87729,
+      "formations": [
+        "cav",
+        "gun",
+        "arc",
+        "inf"
+      ]
+    },
+    {
+      "level": 1000000,
+      "troops": 87729,
+      "power": 87729,
+      "formations": [
+        "cav",
+        "gun",
+        "arc",
+        "inf"
+      ]
+    }
+  ],
+  "milestones": [
+    {
+      "level": 10,
+      "kind": "worker",
+      "id": "botan"
+    },
+    {
+      "level": 20,
+      "kind": "tech",
+      "k": "lamellar"
+    },
+    {
+      "level": 30,
+      "kind": "armor",
+      "k": "ninja_mail"
+    },
+    {
+      "level": 40,
+      "kind": "mount",
+      "k": "fox"
+    },
+    {
+      "level": 50,
+      "kind": "crates",
+      "type": "inf",
+      "k": "yari",
+      "n": 50
+    },
+    {
+      "level": 60,
+      "kind": "gold",
+      "n": 2000
+    },
+    {
+      "level": 70,
+      "kind": "worker",
+      "id": "roam_08"
+    },
+    {
+      "level": 80,
+      "kind": "tech",
+      "k": "okegawa"
+    },
+    {
+      "level": 90,
+      "kind": "armor",
+      "k": "ginryu_gusoku"
+    },
+    {
+      "level": 100,
+      "kind": "mount",
+      "k": "akayoroi"
+    },
+    {
+      "level": 110,
+      "kind": "crates",
+      "type": "inf",
+      "k": "yari",
+      "n": 80
+    },
+    {
+      "level": 120,
+      "kind": "gold",
+      "n": 3500
+    }
+  ],
+  "save": {
+    "v": 1,
+    "oldSaveStartsAt": 1,
+    "newFields": 34
+  },
+  "checks": 153
+}

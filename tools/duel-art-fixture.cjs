@@ -6,8 +6,8 @@ module.exports=async function install(page){await page.evaluate(()=>{
   function army(si){const groups=[];
    for(let i=0;i<n;i++){const id=(si?foes:weapons)[i%(si?foes:weapons).length],kind=weaponKind(id),type=opts.mounted&&si===(opts.mountedSide??0)?'cav':kind==='gun'?'gun':kind==='bow'?'arc':'inf',
      s={atk:opts.strong&&!si?34:23+i*2,def:12+i,hp:opts.hp||140,str:18,mrk:29,wrk:6,duel:3},
-     look=artEquipmentLook(artTroopLook(type,si,i,{w:id,a:si?'kokuyo_gusoku':'gekko_gusoku',h:si?'kabuto':'eboshi_samurai',m:type==='cav'?(opts.mountId||'nanbu'):null})),
-     c={name:(si?'Rival ':'Champion ')+(i+1),s,look,hpMax:s.hp,hp:s.hp,post:'line',skill:'duelist',slv:3,kills:0,guard:opts.save==='guard'?(opts.guardCount||3):0,ward:opts.save==='ward',wardUsed:false},
+     look=artEquipmentLook(artTroopLook(type,si,i,{w:id,a:si?'kokuyo_gusoku':'gekko_gusoku',h:si?'kabuto':'eboshi_samurai',m:type==='cav'?(opts.mountId||'nanbu'):si===(opts.petSide??0)?(opts.pet||null):null})),
+     c={name:(si?'Rival ':'Champion ')+(i+1),s,look,hpMax:s.hp,hp:s.hp,post:'line',skill:'duelist',slv:3,kills:0,pet:si===(opts.petSide??0)?(opts.pet||null):null,guard:opts.save==='guard'?(opts.guardCount||3):0,ward:opts.save==='ward',wardUsed:false},
      g={type,troops:120,atkMul:2,defMul:2,guards:c.guard,cmds:[c],mods:modsOf([c])};groups.push(g);
    }return finishArmy({side:si,clan:si?'kurogane':'kage',name:si?'Rivals':'Kage Clan',mode:'army',groups,ki:0,strat:0});}
   const pa=army(0),ea=army(1);startBattle('duel_art',{site:{id:'duel_art',type:'dojo',clan:'kurogane',power:300,x:1,y:1,reward:{}},pa,ea});

@@ -1,6 +1,6 @@
 // Campaign fixes: the province count excludes the training grounds (49 holdable, so the map can reach 49/49); the dojo
 // puts up a rolled prize (recruits of an unlocked arm, latest armor or horse, or a free commander or worker) with
-// stronger partners for bigger prizes; and a province lost to rebels keeps its old budget or the uprising's strength
+// an independently leveled training ladder; and a province lost to rebels keeps its old budget or the uprising's strength
 // with freshly rolled spoils instead of its one-time rewards. Writes reports/campaign.json.
 const fs = require('fs'), http = require('http'), assert = require('assert'), path = require('path'), { chromium } = require('playwright');
 const dir = path.resolve(__dirname, '..');
@@ -42,11 +42,11 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
       const first = dojoPrize(); check(dojoPrize() === first, 'Prize rerolls before the spar');
       // a locked arm is never offered
       fresh(); for (let i = 0; i < 100; i++) { G.dojoPrize = null; const P = dojoPrize(); if (P.kind === 'troops') check(P.t === 'inf', 'Offered a locked arm: ' + P.t); }
-      // bigger prizes, stronger partners
+      // Rolled prizes no longer make the same ladder level harder.
       fresh(); for (const k in ITEMS) if (!ITEMS[k].rare && k.indexOf('rcp_') !== 0) G.researched[k] = 1; G.troops = { inf: 200, arc: 0, gun: 0, cav: 0 };
       const pw = kind => { G.dojoPrize = Object.assign({ kind, mul: DOJO_PRIZE[kind].mul }, kind === 'troops' ? { t: 'inf' } : kind === 'person' ? { id: freeRecruitsNow()[0].id } : { k: latestGear(I => I.slot === 'armor') });
         const R = Math.random; Math.random = () => .5; try { return armyPower(enemyArmy(dojo)); } finally { Math.random = R; } };
-      const pt = pw('troops'), pp = pw('person'); check(pp > pt * 1.25, `Person prize not harder: ${pt} vs ${pp}`);
+      const pt = pw('troops'), pp = pw('person'); check(pp === pt, `A prize changed training difficulty: ${pt} vs ${pp}`);
       { G.dojoPrize = null; const P = dojoPrize(); openMap(); showProvCard(dojo); const txt = $('#prov-card').textContent, want = P.kind === 'troops' ? UNITS[P.t].name + ' recruits' : P.kind === 'person' ? vData(P.id).name : ITEMS[P.k].name;
         check(txt.includes(want) && /No troop losses/.test(txt), 'Dojo card lacks the prize: ' + want); $('#prov-card').hidden = true; closeMap(); out.dojoCard = want; }
       out.dojo = { rolls: seen, partnerPower: { troops: Math.round(pt), armor: Math.round(pw('armor')), person: Math.round(pp) } };

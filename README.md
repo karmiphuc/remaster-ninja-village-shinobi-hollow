@@ -29,6 +29,10 @@ The whole game is one self-contained HTML file. It has no build step, no server 
 - **Commanders and banners:** commanders take places in the front file, and their guards stand just ahead of it rather than on the ranks. Back-flags are carried by whole ranks, so they line up.
 - **Drawing:** each formation's rank and file share a few looks (3–5), so sprite art stays bounded at Epic: about 35–40 sprite sets per battle at any density.
 
+## Animal finishers and Training Ground
+
+Equipped animal companions now have species-specific duel finishers, from bear slams and boar tosses to canine pounces and bird dives. Training starts at level 1 with 30 infantry, grows 5% per victory up to your current army power, and grants an extra reward for every tenth cleared level. See [progression, rewards and validation](docs/animal-duels-training.md). The recruit pool also adds **32 procedural workers and 16 fighters**, with rotating offers and saved identities; see [recruit rotation](docs/recruit-rotation.md).
+
 ## Castle sieges
 
 - **While the gate stands:**
