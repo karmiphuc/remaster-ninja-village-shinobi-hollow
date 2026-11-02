@@ -27,7 +27,7 @@ The whole game is one self-contained HTML file. It has no build step, no server 
   - Cavalry: wider ranks.
 - **Sizing:** rows, files, spacing and sprite size (0.85–1.25×) adapt to the screen. Only past the widest field do the files close up. On resize, the ranks refit to the new room; on a shorter screen they close up until the next battle.
 - **Commanders and banners:** commanders take places in the front file, and their guards stand just ahead of it rather than on the ranks. Back-flags are carried by whole ranks, so they line up.
-- **Commander visibility:** allies have a softer warm rim; enemy officers use distinctive clan back standards. Allied Leadership heroes carry lord-style fan standards; cavalry heroes wear blood-red horo at Vanguard and indigo at other posts. Cavalry leaders wear both. Leadership banners have taller poles, and command curtains are larger. See [battle heraldry and validation](docs/battle-heraldry.md).
+- **Commander visibility:** allies have a softer warm rim; enemy officers use distinctive clan back standards. Allied Leadership heroes carry lord-style fan standards. Cavalry heroes use their original equipped looks and standard policies. Leadership banners have taller poles, and command curtains are larger. See [battle heraldry and validation](docs/battle-heraldry.md).
 - **Drawing:** each formation's rank and file share a few looks (3–5), so sprite art stays bounded at Epic: about 35–40 sprite sets per battle at any density.
 
 ## Animal finishers and Training Ground
@@ -89,6 +89,8 @@ Army infantry has a **2.7-second clash window** after approach. Defeating a line
 **Auto Duel** is a separate saved choice under **Village → Options**, off by default. With it off, a challenge pauses Auto Battle so you can choose champions and Fight or Refuse. Turn it on to let Auto Battle accept and assign champions. Manual battles always show the picker; refusing retains its existing cohesion penalty.
 
 Duels include a **black Z triple slash, sword triple thrusts and a kneeling sliding thrust**, with moves combined across real one-, two- and three-hit executions. Mounted champions can rear, kick and trample, or turn into a hind-leg kick. Retainers intercept before the hits and take the impact in their commander's place. All moves follow actual HP outcomes and reuse procedural equipment. See the [animated preview](docs/duel-sequences-preview.gif) and [implementation notes](docs/duel-executions.md).
+
+Foot spearmen can also throw their equipped yari and retrieve it after the KO. Against cavalry, infantry can brace a spear to bring down horse and rider, or leap with a sword, pull the rider from the saddle and finish on the ground. These 1.46-second endings preserve real hits, early retainer/talisman rescues and battlefield remains.
 
 **Formation tactics.** Each formation (Infantry, Archers, Gunners, Cavalry) takes its own orders. How many orders it can take depends on the highest Strategy among its own active commanders. Formations never share Strategy.
 
