@@ -4281,7 +4281,6 @@ function officerSashimono(A,g,c,policy) {
   // Every human enemy commander has a heraldic identity, including small bands, sparring partners and HQ.
   if(A.side===1)return {clan:A.clan||'kage',type:g.type,rank:c.lord||c.post==='hq'?'enemyLord':c.post==='van'?'enemyVanguard':'enemyCaptain'};
   if(stratOf(c)>0)return {clan:A.clan||'kage',type:g.type,rank:'leader'};
-  if(g.type==='cav')return null; // The horo is the cavalry marker; leaders also retain their fan standard.
   if(!policy.formal||!c||c.aux||c.beast||c.look&&c.look.horo)return null;
   return {clan:A.clan||'kage',type:g.type,rank:c.post==='hq'?'honjin':c.lord?'lord':c.post==='van'?'vanguard':'captain'};
 }
@@ -4333,12 +4332,6 @@ function drawHoro(pb, cx, cy, col) {
   pb.ellipse(cx, cy, 4.6, 5.4, d); pb.ellipse(cx - .3, cy - .4, 4, 4.8, col); pb.ellipse(cx - 1.2, cy - 1.6, 2, 2.2, l); pb.set(cx - 2, cy - 3, shade(col, .5));
   pb.hline(Math.round(cx - 3), Math.round(cy + 1), 7, d); // the cane hoop showing through
   pb.vline(Math.round(cx + 2), Math.round(cy - 9), 5, '#5a3a24'); pb.rect(Math.round(cx + 2), Math.round(cy - 10), 3, 2, '#f2efe2');
-}
-// Commander horo stand clear of broad sode, tied back to the rider; other cloaks keep their original placement.
-function drawBattleHoro(pb,L,cx,cy){
-  if(!L.horo)return;
-  if(L.battleHoro){artStroke(pb,[[cx-4,cy+2],[cx+2,cy+3]],.65,'#60482e');artStroke(pb,[[cx-4,cy+2],[cx+2,cy+3]],.28,'#c4a46b');cx-=7;cy-=1;}
-  drawHoro(pb,cx,cy,L.horo);
 }
 /* ----- pose library (facing right). Coordinates relative to body anchor (cx, base) where base = ground row. ----- */
 // legs: [hipX, kneeX, kneeY, footX] for back and front leg; y measured upward from ground
@@ -4519,7 +4512,7 @@ function footSoldierFrame(type, L, pose, hero, wid) {
   }
   // compose: sashimono, horo, back weapon, back arm, legs, torso, head, front arm, front weapon
   if (L.sashi && !hero) sashimonoPB(pb, tx - 1, ty + 4, L.sashi, bob + (spinI >= 0 ? 1 : 0));
-  drawBattleHoro(pb,L,tx-1,ty+1);
+  if(L.horo)drawHoro(pb,tx-1,ty+1,L.horo);
   pb.draw(back, 0, 0);
   arm(pb, shB[0], shB[1], handB[0], handB[1], C, shade(sk, -.1),{tetsu:tetsuEquipment(L),happi:happiEquipment(L)});
   drawLegs(pb, cx + lean, base, legPose, lp, low);
@@ -4732,7 +4725,7 @@ function riderFrame(L, pose, hero, wid, coat, tack, mount=null) {
   // horse, sashimono on the rider's back, then rider's far arm, torso, near leg along the horse's side, head, near arm, weapon
   pb.draw(hr.pb, OX, OY);
   if (L.sashi && !hero) sashimonoPB(pb, sx - 2, sy + 3, L.sashi, hr.oy || 0);
-  drawBattleHoro(pb,L,sx-2,sy);
+  if(L.horo)drawHoro(pb,sx-2,sy,L.horo);
   pb.draw(back, 0, 0);
   arm(pb, shB[0], shB[1], handB[0], handB[1], C, shade(sk, -.1),{tetsu:tetsuEquipment(L),happi:happiEquipment(L)});
   pb.draw(torsoPB(L,hero||L.gear?null:'dou',{pose,mounted:true}),sx-2,sy);
@@ -7877,7 +7870,7 @@ function layoutIndependent(g,si,front,mid,fh){
   const face=sideDir(si),same=BT.A[si].groups.filter(o=>o.heroOnly&&o.type===g.type),i=same.indexOf(g),
     y=clamp(mid+(i-(same.length-1)/2)*Math.min(24,fh/Math.max(1,same.length)),BT.fy0+8,BT.fy1-5);
   g.front=g.post=g.home=g.hx=front;g.hy=y;g.halfW=0;g.colStep=23;g.heroes=[];
-  const s=mkSprite(g,si,front,y,commanderBattleLook(g.solo,g,si));s.hero=g.solo;s.hdx=0;s.hdy=0;g.spr=[s];
+  const s=mkSprite(g,si,front,y,g.solo.look);s.hero=g.solo;s.hdx=0;s.hdy=0;g.spr=[s];
   if(g.guards)mkGuards(g,si,s,g.guards);if(g.solo.pet)mkPet(g,si,s,g.solo.pet);
   if(g.troops<=0){s.alive=false;s.die=-1;}return front-face*28;
 }
@@ -11183,7 +11176,7 @@ function layoutSprites() {
         list.forEach((g, k) => {
           const r = two ? (k / 2) | 0 : k, sub = two ? k % 2 : 0;
           g.hx = BT.cx - face * (34 + col * 34 + sub * 14 + (r % 2) * 3); g.hy = mid + (r - (rows - 1) / 2) * step; g.halfW = 0; g.front = g.home = g.hx; g.heroes = [];
-          const sp = mkSprite(g, si, g.hx, g.hy, commanderBattleLook(g.solo,g,si)); sp.hero = g.solo; g.spr = [sp]; if (g.guards) mkGuards(g, si, sp, g.guards);
+          const sp = mkSprite(g, si, g.hx, g.hy, g.solo.look); sp.hero = g.solo; g.spr = [sp]; if (g.guards) mkGuards(g, si, sp, g.guards);
           if (g.troops <= 0) { sp.alive = false; sp.die = -1; }
         }); });
       return;
@@ -11220,7 +11213,7 @@ function layoutSprites() {
     // the Honjin: commanders posted at the command camp stand before the curtain, out of the fighting
     A.hqSpr = [];
     A.groups.filter(g=>!g.heroOnly).forEach(g => (g.cmds || []).filter(c => c.post === 'hq' && c.look).forEach(c => { const i = A.hqSpr.length, hx = si === 0 ? 30 + i * 15 : BT.WW - 30 - i * 15;
-      const s = mkSprite(g, si, hx, BT.fy0 + 5 + (i % 2) * 3, commanderBattleLook(c,g,si)); s.hero = c; s.hq = true; s.g = g; A.hqSpr.push(s); }));
+      const s = mkSprite(g, si, hx, BT.fy0 + 5 + (i % 2) * 3, c.look); s.hero = c; s.hq = true; s.g = g; A.hqSpr.push(s); }));
   });
   assignBattleSashimono();prepareCommandDecorations();prepareBattleReactions();
 }
@@ -11406,20 +11399,14 @@ function returnHeroes() {
       if (c.hp != null) c.hp = Math.max(c.hp, c.hpMax * .25); refreshGroup(g, .98);
       BT.labels.push({ x: g.front, y: g.hy - 30, text: `${c.name} ↩`, t: .3, side: si }); } })));
 }
-// Battle-only dress: clone the equipped look, preserving village portraits, equipment and combat stats.
-const ALLIED_CAV_HORO={van:'#982a36',line:'#343b78'};
-function commanderBattleLook(c,g,si){
-  if(si!==0||g.type!=='cav'||!c.look||c.beast)return c.look;
-  return {...c.look,horo:c.post==='van'?ALLIED_CAV_HORO.van:ALLIED_CAV_HORO.line,battleHoro:true};
-}
 function heroSlots(g, face, mid, fh) {
   const cs = (g.cmds || []).filter(c => c.look && c.post !== 'hq'), n = cs.length; if (!n) return [];
   if (g._hp && g._hp.length === n) return cs.map((c, i) => { const P = g._hp[i], dx = face * (P.x - g.front), dy = P.y - mid;
-    const s = mkSprite(g, sideOf(g), P.x, P.y, commanderBattleLook(c,g,sideOf(g))); s.hero = c; s.hdx = dx; s.hdy = dy; const pet=c.pet||c.look?.gear?.m;if(PET_KINDS.includes(pet))mkPet(g,sideOf(g),s,pet); return s; });
+    const s = mkSprite(g, sideOf(g), P.x, P.y, c.look); s.hero = c; s.hdx = dx; s.hdy = dy; const pet=c.pet||c.look?.gear?.m;if(PET_KINDS.includes(pet))mkPet(g,sideOf(g),s,pet); return s; });
   const cols = n > 4 ? 2 : 1, rows = Math.ceil(n / cols), step = Math.min((g.rowStep || BT.rowStep) * 1.25, (fh - 12) / Math.max(1, rows));
   return cs.map((c, i) => { const col = i % cols, r = (i / cols) | 0;
     const dx = 5 - col * 12, dy = (r - (rows - 1) / 2) * step + 8 + (col ? step * .5 : 0); // captains lead from the front file, not a stride into no-man's-land
-    const s = mkSprite(g, sideOf(g), g.front + face * dx, mid + dy, commanderBattleLook(c,g,sideOf(g))); s.hero = c; s.hdx = dx; s.hdy = dy; const pet=c.pet||c.look?.gear?.m;if(PET_KINDS.includes(pet))mkPet(g,sideOf(g),s,pet); return s; });
+    const s = mkSprite(g, sideOf(g), g.front + face * dx, mid + dy, c.look); s.hero = c; s.hdx = dx; s.hdy = dy; const pet=c.pet||c.look?.gear?.m;if(PET_KINDS.includes(pet))mkPet(g,sideOf(g),s,pet); return s; });
 }
 function mkSprite(g, si, x, y, look, kit, nv = ART_TROOP_VARIANTS, variant = null, random=Math.random) {
   const artVariant=look||g.solo&&g.solo.beast?0:variant!=null?variant%nv:(random()*nv)|0; // faces/builds per rank-and-file set: more variety costs canvas memory
@@ -11527,7 +11514,7 @@ function reactionHumanFrame(r,pose,hatLost=false){
   else if(pose==='panic'){near=[tx+12,ty-1];far=[tx-4,ty-2];}
   else if(pose==='scramble'){near=[tx+12,base-1];far=[tx-3,base-1];}
   else{const a=pose==='runA'?1:-1;near=[tx+9+a*3,ty+3-a*2];far=[tx-1-a*3,ty+3+a*2];}
-  drawBattleHoro(p,L,tx-1,ty+1);
+  if(L.horo)drawHoro(p,tx-1,ty+1,L.horo);
   if(weaponKind(r.wid)==='bow')quiver(p,tx,ty);
   if(weaponKind(r.wid)==='sword')scabbard(p,tx+1,ty+4,r.wid);
   arm(p,sb[0],sb[1],far[0],far[1],shade(cloth,-.25),shade(skin,-.1),{tetsu:tetsuEquipment(L),happi:happiEquipment(L)});
@@ -11740,7 +11727,7 @@ function stampBody(s,si){
 }
 function recoverVisual(s){
   const A=BT.aftermathState;if(A){const bodies=A.records.filter(r=>r.owner===s&&r.kind==='body').length;BT.bodies=Math.max(0,BT.bodies-bodies);A.records=A.records.filter(r=>r.owner!==s);A.flying=A.flying.filter(p=>p.owner!==s);rebuildRemains();}
-  s.fate=null;s.lifeState='active';s.routedAlive=false;s.routPending=false;s.stamped=false;s.gone=false;s.unhorsed=false;s.droppedWeapon=false;s.droppedHat=false;s.ox=s.oy=s.rot=0;s.flash=0;s.kd=0;s.face=sideDir(s.si||0);
+  delete s.duelCorpse;s.fate=null;s.lifeState='active';s.routedAlive=false;s.routPending=false;s.stamped=false;s.gone=false;s.unhorsed=false;s.droppedWeapon=false;s.droppedHat=false;s.ox=s.oy=s.rot=0;s.flash=0;s.kd=0;s.face=sideDir(s.si||0);
 }
 function releaseAftermath(){
   if(!BT?.aftermathState)return;const A=BT.aftermathState;
@@ -11945,6 +11932,8 @@ function preDuel() {
    its strike ledger; the finisher clock never stops BT.t or replays damage. */
 const DUEL_CINE_TIME=1.18,DUEL_IMPACT=[[],[.66],[.29,.67],[.22,.44,.69]];
 const DUEL_POSES=['guard','hurt','high','recover','thrust','sweep','cutUp','low','kneelGuard','kneelThrust','finish'];
+const DUEL_FOOT_FINISH_POSES={yariCast:['castWind','castEmpty'],spearBrace:['spearBrace'],riderDrag:['grapple','groundFinish']},
+ DUEL_FOOT_FINISH_TIME=1.46,DUEL_FOOT_FINISH_IMPACT=[[],[.90],[.27,.92],[.18,.38,.94]];
 const DUEL_MOUNTS={
  horseStand:{pose:'idle',lean:0,gait:GAIT.stand},
  horseRear:{pose:'wind',lean:-.66,riderLean:-1,gait:[[26,22,31,18,29,22],GAIT.stand[1],[29,22,35,18,34,23],GAIT.stand[3]]},
@@ -11954,7 +11943,7 @@ const DUEL_MOUNTS={
  horseBackKick:{pose:'recover',lean:.30,pivot:'fore',riderLean:2,gait:[GAIT.stand[0],[11,21,4,17,1,19],GAIT.stand[2],[14,21,5,18,0,21]]},
  horseRun:{pose:'runA',lean:0,gait:GAIT.g1}
 };
-const DUEL_CAV_POSES=Object.keys(DUEL_MOUNTS),DUEL_POSE_SET=new Set(DUEL_POSES.concat(DUEL_CAV_POSES,'reload')),
+const DUEL_CAV_POSES=Object.keys(DUEL_MOUNTS),DUEL_POSE_SET=new Set(DUEL_POSES.concat(DUEL_CAV_POSES,Object.values(DUEL_FOOT_FINISH_POSES).flat(),'unhorseHurt','reload')),
  DUEL_CAV_TIME=1.42,DUEL_CAV_IMPACT=[[],[.82],[.42,.84],[.22,.46,.84]],DUEL_BACK_IMPACT=[[],[.82],[.30,.88],[.18,.36,.90]];
 for(const m of Object.values(DUEL_MOUNTS)){const h=m.gait[m.pivot==='fore'?3:2],px=m.pivot==='fore'?29:14;
  m.hoofX=-23+px+(h[4]-px)*Math.cos(m.lean)-(h[5]-33)*Math.sin(m.lean);}
@@ -11962,7 +11951,15 @@ for(const m of Object.values(DUEL_MOUNTS)){const h=m.gait[m.pivot==='fore'?3:2],
 const DUEL_BEAST_MOVES={bear:'bearSlam',boar:'boarToss',hound:'beastPounce',wolf:'beastPounce',tosa:'beastPounce',fox:'beastFeint',tanuki:'beastFeint',monkey:'monkeyVault',hawk:'birdDive',gyrfalcon:'birdDive'},
  DUEL_BEAST_IMPACT=[[],[.78],[.30,.78],[.20,.43,.80]],DUEL_BEAST_TIME=1.36;
 const DUEL_Z=[[-17,-10,16,-9],[16,-9,-15,10],[-15,10,18,9]],DUEL_X=[[-15,-11,15,10],[-15,10,15,-11]];
-const DUEL_ENDINGS=['passing','slidingThrust','jump','risingCut','guardBreak','thrust'],DUEL_TWO_ENDINGS=['crossCut',...DUEL_ENDINGS,'crossCut'];
+const DUEL_ENDINGS=['passing','slidingThrust','jump','risingCut','guardBreak','thrust'];
+const DUEL_FINISH_POOLS={
+ sword:[[],DUEL_ENDINGS,['crossCut',...DUEL_ENDINGS],['tripleSlash','tripleThrust',...DUEL_ENDINGS]],
+ heavy:[[],['guardBreak','risingCut','passing'],['crossCut','guardBreak','risingCut','passing'],['tripleSlash','tripleThrust','guardBreak','risingCut','passing']],
+ yari:[[],['thrust','slidingThrust','passing'],['doubleThrust','slidingThrust','passing'],['tripleThrust','slidingThrust','passing']],
+ naginata:[[],['risingCut','reversal','passing'],['crossCut','risingCut','reversal','passing'],['tripleSlash','risingCut','reversal','passing']],
+ claw:[[],['passing','jump','risingCut'],['crossCut','passing','jump'],['tripleSlash','passing','jump','risingCut']],
+ mounted:[[],['passing','guardBreak'],['passing','guardBreak'],['passing','guardBreak']]
+},DUEL_FINISHERS=new WeakMap(),DUEL_RELEASE=['release'];
 // Presentation variation uses the resolved chain, never another combat RNG roll.
 function duelMoveVariant(e){return e.visualSeed??=(e.chain*11+e.r*7+(e.f.hr.artVariant||0)*5+artHash(e.f.weapon.id))>>>0;}
 function duelStrikePose(e){
@@ -11985,7 +11982,7 @@ function startDuel(spec){
   const mx=BT.cx,my=clamp(pairs.reduce((v,p)=>v+(p.a.y+p.b.y)/2,0)/n,BT.fy0+30+(n-1)*19,BT.fy1-8-(n-1)*19),
     step=n>1?Math.min(38,(BT.fy1-BT.fy0-40)/(n-1)):0,t0=BT.t+.25;
   D.F.forEach(f=>{f.spot={x:mx+sideDir(f.si)*-30,y:clamp(my+(f.k-(n-1)/2)*step,BT.fy0+30,BT.fy1-8)};
-    f.initialSpot={...f.spot};f.hr.q=[];f.hr.state='idle';delete f.hr.duelDown;delete f.hr.duelPose;delete f.hr.duelRescued;f.hr.kd=0;
+    f.initialSpot={...f.spot};if(f.hr.duelCorpse)recoverVisual(f.hr);f.hr.q=[];f.hr.state='idle';delete f.hr.duelDown;delete f.hr.duelPose;delete f.hr.duelRescued;f.hr.kd=0;
     f.hr.duelEscort=(f.hr.guards||[]).find(q=>q.alive)||null;});
   const arr=t0+Math.max(...D.F.map(f=>Math.hypot(f.hr.x-f.spot.x,f.hr.y-f.spot.y)))/85;
   let cursor=arr+.45;const chains=[];for(const e of D.log){let a=chains.at(-1);if(!a||a[0].chain!==e.chain)chains.push(a=[]);a.push(e);}
@@ -12003,7 +12000,7 @@ function startDuel(spec){
       e.playAt=hit;ev(tell,'tdTell',{e,until:hit+.18});ev(hit,'tdHit',{e,D,n});});
     // Approach to weapon reach, then recover on the same facing. No teleporting
     // helpers, and no pending attack from a champion already resolved as KO.
-    queueMove(f.hr,cursor-.08,t.spot.x-dir*weapon.reach,first.help?f.spot.y:t.spot.y,180,0,true);
+    queueMove(f.hr,cursor-.08,t.spot.x-dir*(weapon.reach+(clip?.kind==='yariCast'?20:0)),first.help?f.spot.y:t.spot.y,180,0,true);
     queueMove(f.hr,end,f.spot.x,f.spot.y,75,0,true);cursor=end+.035;
   }
   const tEnd=cursor+.25;
@@ -12014,28 +12011,34 @@ function startDuel(spec){
     for(const pose of poses){const face=back?-sideDir(f.si):sideDir(f.si),key=f.si+'|'+f.k+'|'+pose+'|'+face;
       if(!mountWarm.has(key)){mountWarm.add(key);warm.push({f,pose,face});}}
     if(back)warm.push({f,pose:'horseStand',face:sideDir(f.si)});}
+  // Only selected new finishers warm their extra poses, on the existing 2 ms budget.
+  for(const e of S.ev)if(e.k==='tdFinish'&&e.clip.footFinish){const last=e.a.at(-1),f=last.f,t=last.t;
+    for(const pose of DUEL_FOOT_FINISH_POSES[e.clip.kind])warm.push({f,pose,face:sideDir(f.si)});
+    if(t.hr.sprs.horse)warm.push({f:t,pose:'unhorseHurt',face:-sideDir(f.si)});}
   BT.duels=(BT.duels||0)+1;BT.duelRun={D,n,end:tEnd,clock:0,shots:0,warm,warmIndex:0};BT.stop=0;BT.slow=0;
   BT.cine={a:pairs[0].a,b:pairs[0].b,all:D.F.map(f=>f.hr),F:D.F,x:mx,y:my,from:BT.t,until:tEnd+1.5,z:n===1?.65:n===2?.3:.12};
   ev(arr,'tdStart',{D,n,x:mx,y:my});ev(tEnd,'tdEnd',{D,n,x:mx,y:my});
   S.ev.sort((a,b)=>a.t-b.t);S.dur=tEnd-BT.t;BT.script=S;BT.next=tEnd+1.4-BT.t;BT.phaseDur=BT.next;
   Sound.play('horn',{vol:.6});
 }
+function duelFinisherPool(a){
+  const e=a.at(-1),w=e.f.weapon.style,n=a.length,mounted=!!e.f.hr.sprs.horse;
+  if(w==='bow'||w==='gun')return DUEL_RELEASE;
+  const family=mounted?'mounted':w==='nodachi'||w==='zanbato'?'heavy':DUEL_FINISH_POOLS[w]?w:'sword',pool=DUEL_FINISH_POOLS[family][n].slice();
+  if(mounted){pool.push('cavTrample','cavBackKick');if(n===2)pool.push(w==='yari'?'doubleThrust':'crossCut');
+    if(n===3){pool.push('tripleThrust');if(w!=='yari')pool.push('tripleSlash');}}
+  else{if(e.f.g?.type==='inf'&&e.t.hr.sprs.horse){if(w==='yari')pool.push('spearBrace');else if(e.f.weapon.kind==='sword'&&w!=='claw')pool.push('riderDrag');}
+    if(w==='yari'&&!e.t.hr.sprs.horse)pool.push('yariCast');}
+  return pool;
+}
 function duelFinisher(a){
-  const e=a.at(-1),w=e.f.weapon.style,v=(duelMoveVariant(e)+e.dmg*7)>>>0,mounted=!!e.f.hr.sprs.horse;
-  const pet=e.f.hr.pet;if(pet?.alive&&!pet.out&&DUEL_BEAST_MOVES[pet.kind]&&v%3!==2)return DUEL_BEAST_MOVES[pet.kind];
-  if(w==='claw')return a.length===3?'tripleSlash':a.length===2?'crossCut':'passing';
-  if(w==='bow'||w==='gun')return 'release';
-  if(mounted){if(v%4<2)return v%2?'cavBackKick':'cavTrample';
-    return a.length===3?(w==='yari'||v%3===0?'tripleThrust':'tripleSlash'):a.length===2?(w==='yari'?'doubleThrust':'crossCut'):v%2?'passing':'guardBreak';}
-  if(a.length===3){if(w==='yari')return ['tripleThrust','slidingThrust','passing'][v%3];if(w==='naginata')return v%3===0?'reversal':'tripleSlash';
-    if(v%4===0)return w==='yari'||e.f.weapon.kind==='sword'?'tripleThrust':'tripleSlash';
-    if(v%4===1)return 'tripleSlash';return w==='nodachi'||w==='zanbato'?(v%4===2?'risingCut':'guardBreak'):DUEL_ENDINGS[(v>>>2)%DUEL_ENDINGS.length];}
-  if(a.length===2){if(w==='naginata')return v%2?'reversal':'risingCut';if(w==='nodachi'||w==='zanbato')return v%2?'guardBreak':'risingCut';
-    return w==='yari'?['doubleThrust','slidingThrust','passing'][v%3]:DUEL_TWO_ENDINGS[v%DUEL_TWO_ENDINGS.length];}
-  if(w==='nodachi'||w==='zanbato')return v%2?'guardBreak':'risingCut';
-  if(w==='yari')return ['slidingThrust','passing','thrust'][v%3];
-  if(w==='naginata')return v%2?'reversal':'risingCut';
-  return DUEL_ENDINGS[v%DUEL_ENDINGS.length];
+  const e=a.at(-1),cached=DUEL_FINISHERS.get(e);if(cached)return cached;
+  // Private visual roll: fresh across battles/duels, stable for this resolved KO.
+  // Weak keys expire with the strike ledger; rendering cannot reroll or consume combat RNG.
+  const R=seeded(artHash([BT?.seed||0,BT?.round||0,BT?.duels||0,e.chain,e.f.si,e.f.k,e.dmg,e.hpBefore,a.length,duelMoveVariant(e),'execution'].join(':'))),
+    pool=duelFinisherPool(a),pet=e.f.hr.pet,animal=pet?.alive&&!pet.out&&DUEL_BEAST_MOVES[pet.kind],
+    kind=animal&&R()<2/3?animal:pool[Math.floor(R()*pool.length)];
+  DUEL_FINISHERS.set(e,kind);return kind;
 }
 function duelClip(a){
   const kind=duelFinisher(a),mounted=kind==='cavTrample'||kind==='cavBackKick',animal=!!DUEL_BEAST_MOVES[a.at(-1).f.hr.pet?.kind]&&kind===DUEL_BEAST_MOVES[a.at(-1).f.hr.pet?.kind],moves=a.map((e,i)=>{
@@ -12045,7 +12048,7 @@ function duelClip(a){
     if(kind==='cavTrample'&&i===a.length-2)return 'cavForeKick';
     if(e.f.weapon.kind==='sword'||e.f.weapon.kind==='glaive')return a.length===3?(i?'thrust':'sweep'):(kind==='slidingThrust'||kind==='thrust'?'sweep':'thrust');
     return duelStrikePose(e);
-  });return {kind,moves,mounted,animal,duration:animal?DUEL_BEAST_TIME:mounted?DUEL_CAV_TIME:DUEL_CINE_TIME,beats:(animal?DUEL_BEAST_IMPACT:kind==='cavBackKick'?DUEL_BACK_IMPACT:mounted?DUEL_CAV_IMPACT:DUEL_IMPACT)[a.length]};
+  });const footFinish=!!DUEL_FOOT_FINISH_POSES[kind];return {kind,moves,mounted,animal,footFinish,duration:footFinish?DUEL_FOOT_FINISH_TIME:animal?DUEL_BEAST_TIME:mounted?DUEL_CAV_TIME:DUEL_CINE_TIME,beats:(footFinish?DUEL_FOOT_FINISH_IMPACT:animal?DUEL_BEAST_IMPACT:kind==='cavBackKick'?DUEL_BACK_IMPACT:mounted?DUEL_CAV_IMPACT:DUEL_IMPACT)[a.length]};
 }
 function duelBeat(c,j){return c.moves?.[j]||(c.kind==='tripleThrust'||c.kind==='doubleThrust'?'thrust':c.kind==='tripleSlash'||c.kind==='crossCut'?(j%2?'cutUp':'sweep'):j===c.a.length-1?c.kind:'thrust');}
 // Rescues arrive before the first strike, including a three-hit flurry. The sprite is the actual equipped retainer.
@@ -12087,7 +12090,10 @@ function duelEvent(e){
   if(e.k==='tdFinish'){
     const o=e.a.at(-1);if(!o.ko||o.f.loss||o.t.loss)return;
     const C=o.t.hr.hero,save=C.ward&&!C.wardUsed?'ward':C.guard>0?'guard':null;
-    const clip=e.clip||duelClip(e.a);
+    let clip=e.clip||duelClip(e.a);
+    // A rescue intercepts the weapon, never sacrifices the protected commander's mount.
+    if(save&&clip.footFinish){const sourceKind=clip.kind,kind=sourceKind==='riderDrag'?'guardBreak':'thrust';
+      clip={...clip,sourceKind,kind,footFinish:false,moves:clip.moves.slice()};clip.moves[clip.moves.length-1]=kind;}
     // Compensate once for an event caught between frames; the cinematic then advances on its own clock.
     const late=Number.isFinite(e.t)?Math.max(0,(BT.t-e.t)/BATTLE_PACE):0;
     BT.duelShot={...clip,a:e.a,e:o,D,n:e.n,t:late,save,
@@ -12095,6 +12101,10 @@ function duelEvent(e){
     const shot=BT.duelShot;if(shot.guard){shot.guardX=shot.guard.x;shot.guardY=shot.guard.y;
       shot.coverAt=Math.max(.06,clip.beats[0]-.14);shot.coverStart=Math.max(0,shot.coverAt-.24);shot.coverU=0;
       shot.guard.duelCover=shot;updateDuelCover(shot);}
+    if(shot.footFinish){shot.footMotion={};shot.blood=BT.prov?.type==='dojo'?null:{variant:duelMoveVariant(o)%8};
+      if(shot.blood)bloodPoolAsset(shot.blood.variant);
+      if(shot.kind==='yariCast'){shot.castAsset=reactionProp(reactionRecipe(shot.W,o.f.g),'weapon');const p=shot.castAsset;
+        shot.castAxis=p?.point?Math.atan2(p.point.y-p.cv.height/2,p.point.x-p.cv.width/2):p?.axis||0;}}
     if(clip.animal){const q=shot.pet=o.f.hr.pet;shot.petX=q.x;shot.petY=q.y;shot.petLift=q.lift||0;
       shot.petSets=[beastSet(q.kind,0),beastSet(q.kind,1)];q.duelPet=shot;updateDuelPet(shot);}
     BT.duelRun.shots++;BT.cine.x=(o.f.hr.x+o.t.hr.x)/2;BT.cine.y=o.t.hr.y;BT.cine.z=e.n===1?1.05:.8;
@@ -12148,6 +12158,8 @@ function duelEvent(e){
 function duelSpark(x,y,n=5){for(let i=0;i<n;i++){const a=(i/n)*Math.PI*2;BT.fx.push({k:'spark',x,y,vx:Math.cos(a)*35,vy:Math.sin(a)*28-10,g:120,t:.2,t0:.2});}}
 function settleDuelWinner(c){
   if(c.save)return;const W=c.W,dir=c.dir;
+  if(c.footFinish){const q=duelFootMotion(c,spriteScale());W.x=q.wx;W.y=q.wy;W.tx=W.x;W.ty=W.y;W.state='idle';
+    if(Number.isFinite(c.returnX))queueMove(W,BT.t,c.returnX,c.returnY,180,0,true);return;}
   const dx=c.kind==='cavTrample'?dir*26:c.kind==='cavBackKick'?c.L.x-W.x+dir*DUEL_MOUNTS.horseBackKick.hoofX*spriteScale():
     (c.kind==='passing'||c.kind==='beastFeint')?dir*(c.e.f.weapon.reach+12):c.kind==='slidingThrust'?dir*10:0;
   if(!dx)return;W.x+=dx;if(c.mounted)W.y=c.L.y;W.tx=W.x;W.ty=W.y;W.state='idle';
@@ -12162,7 +12174,7 @@ function updateDuelCinema(rdt){
   let step=dt;if(c.hold>0){const stop=Math.min(c.hold,step);c.hold-=stop;step-=stop;}c.t+=step;
   if(c.guard)updateDuelCover(c);if(c.pet)updateDuelPet(c);
   if(c.t>=c.duration){
-    const R=c.result;if(R){settleDuelWinner(c);if(R.save==='ward'){c.L.duelDown=null;c.L.glow=.8;c.e.t.cur=c.L.hero.hp;}
+    const R=c.result;if(R){if(c.footFinish&&!R.save)settleDuelFootFinish(c);settleDuelWinner(c);if(R.save==='ward'){c.L.duelDown=null;c.L.glow=.8;c.e.t.cur=c.L.hero.hp;}
       else if(R.save==='guard'){c.L.duelDown=null;c.L.x+=c.dir*(c.L.sprs.horse?24:12);c.L.y-=c.L.sprs.horse?5:3;c.L.duelRescued=BT.t+2;}
       else{const hx=c.L.x,hy=c.L.y;c.L.x+=c.dir*(c.kind==='cavBackKick'?32:c.kind==='boarToss'?18:4);
         c.L.duelDown={at:BT.t-.24,dir:c.dir,horseX:hx,horseY:hy};}c.W.poseUntil=BT.t+.22;}
@@ -12208,6 +12220,10 @@ function drawDuelPet(x,c,sc){
 function duelPoseFrame(s,g,pose,face){
   pose=DUEL_POSE_SET.has(pose)?pose:'guard';face=face<0?-1:1;
   const r=reactionRecipe(s,g);
+  if(pose==='unhorseHurt'&&r){r.duelFrames??=new Map();const key=pose+'|'+face;if(r.duelFrames.has(key))return r.duelFrames.get(key);
+    const kind=weaponKind(r.wid),raw=footSoldierFrame(kind==='bow'?'arc':kind==='gun'?'gun':'inf',reactionLook(r,false),'hurt',r.hero,r.wid);
+    let cv=ownAftermathCanvas(finishSet([raw])(raw));if(face<0)cv=ownAftermathCanvas(flipCanvas(cv));
+    r.duelFrames.set(key,cv);aftermathState().recipes.add(r);return cv;}
   if(DUEL_MOUNTS[pose]){if(r?.type==='cav'&&s.sprs.horse){r.duelFrames??=new Map();const key=pose+'|'+face;if(r.duelFrames.has(key))return r.duelFrames.get(key);
       const m=DUEL_MOUNTS[pose],raw=riderFrame(reactionLook(r,false),m.pose,r.hero,r.wid,r.coat??0,r.tack,m);let cv=ownAftermathCanvas(finishSet([raw])(raw));
       if(face<0)cv=ownAftermathCanvas(flipCanvas(cv));r.duelFrames.set(key,cv);aftermathState().recipes.add(r);return cv;}
@@ -12216,19 +12232,24 @@ function duelPoseFrame(s,g,pose,face){
     const set=face===sideDir(s.si??sideOf(g))?s.sprs:flipSet(s);return (pose==='finish'?set.idle[1]||set.idle[0]:pose==='reload'?set.reload:pose==='guard'||pose==='kneelGuard'?set.brace:pose==='high'?set.wind:pose==='recover'?set.recover:pose==='hurt'?set.hurt:pose==='cutUp'?set.follow:set.atk)||set.idle[0];}
   r.duelFrames??=new Map();const key=pose+'|'+face;if(r.duelFrames.has(key))return r.duelFrames.get(key);
   const L=reactionLook(r,false),p=new ArtPB(FOOT_W,FOOT_H),cx=FOOT_W/2-2,base=FOOT_H-1,
-    sk=L.skin||SKIN[1],cloth=L.cloth||'#3b4a7a',kneel=pose==='kneelGuard'||pose==='kneelThrust',low=kneel?3:pose==='low'?2:pose==='thrust'||pose==='sweep'?1:0,
+    sk=L.skin||SKIN[1],cloth=L.cloth||'#3b4a7a',kneel=pose==='kneelGuard'||pose==='kneelThrust'||pose==='spearBrace'||pose==='groundFinish',low=kneel?3:pose==='low'?2:pose==='thrust'||pose==='sweep'?1:0,
     lean=pose==='kneelThrust'?3:pose==='thrust'?2:pose==='high'?-1:0,tx=cx-4+lean,ty=base-10+low,lp=legPal(L,false),
     pole=['spear','glaive'].includes(weaponKind(r.wid)||'spear'),weapon=new ArtPB(FOOT_W,FOOT_H),back=new ArtPB(FOOT_W,FOOT_H);
   if(happiEquipment(L)){lp.happi=happiOptions(L);lp.p=lp.happi.hakama;lp.P=shade(lp.happi.hakama,-.2);}
   const hands={guard:[[tx+10,ty-2],[tx+6,ty+1]],high:[[tx+6,ty-7],[tx+4,ty-5]],
     cutUp:[[tx+12,ty-2],[tx+9,ty]],sweep:[[tx+13,ty+6],[tx+2,ty+4]],
     thrust:[[tx+14,ty+3],[tx+2,ty+4]],kneelGuard:[[tx+8,ty+2],[tx+3,ty+3]],kneelThrust:[[tx+15,ty+3],[tx+3,ty+4]],
-    finish:[[tx+7,ty+1],[tx+4,ty+3]],low:[[tx+11,ty+4],[tx+5,ty+5]],recover:[[tx+9,ty+4],[tx+5,ty+5]],hurt:[[tx+7,ty+3],[tx-2,ty+4]]},[near,far0]=hands[pose]||hands.guard,
-    angle={guard:-1.13,high:-1.95,cutUp:-.85,sweep:.45,thrust:-.03,kneelGuard:-.22,kneelThrust:-.04,finish:-1.32,low:.24,recover:-.3,hurt:-.2}[pose]??-.6,
-    far=!pole&&r.wid!=='ninja_claw'?[near[0]-Math.cos(angle)*2.8,near[1]-Math.sin(angle)*2.8]:far0;
-  if(pole)gripSpear(weapon,far,near,SHAFT_FOOT,weaponKind(r.wid)==='glaive',r.wid);
+    finish:[[tx+7,ty+1],[tx+4,ty+3]],low:[[tx+11,ty+4],[tx+5,ty+5]],recover:[[tx+9,ty+4],[tx+5,ty+5]],hurt:[[tx+7,ty+3],[tx-2,ty+4]],
+    castWind:[[tx+4,ty-6],[tx+9,ty+1]],castEmpty:[[tx+14,ty-3],[tx+1,ty+3]],spearBrace:[[tx+13,ty-1],[tx+2,ty+5]],
+    grapple:[[tx+15,ty-6],[tx+1,ty+2]],groundFinish:[[tx+10,ty],[tx+7,ty-2]]},[near,far0]=hands[pose]||hands.guard,
+    angle={guard:-1.13,high:-1.95,cutUp:-.85,sweep:.45,thrust:-.03,kneelGuard:-.22,kneelThrust:-.04,finish:-1.32,low:.24,recover:-.3,hurt:-.2,grapple:1.9,groundFinish:.9}[pose]??-.6,
+    far=!pole&&r.wid!=='ninja_claw'&&pose!=='grapple'?[near[0]-Math.cos(angle)*2.8,near[1]-Math.sin(angle)*2.8]:far0;
+  if(pose==='castWind')gripSpearDir(weapon,near[0],near[1],.99,-.12,SHAFT_FOOT,.54,false,r.wid);
+  else if(pose==='castEmpty'){} // The actual equipped spear is in flight, never duplicated in the fist.
+  else if(pole)gripSpear(weapon,far,near,SHAFT_FOOT,weaponKind(r.wid)==='glaive',r.wid);
+  else if(pose==='grapple'){sword(back,back,far[0],far[1],angle,12+(r.wid==='nodachi'?5:0),r.wid);scabbard(back,tx+1,ty+4,r.wid);}
   else{sword(weapon,back,near[0]+1,near[1],angle,12+(r.wid==='nodachi'?5:0),r.wid);scabbard(back,tx+1,ty+4,r.wid);if(r.wid==='ninja_claw')tacticalClaw(back,back,far[0],far[1],angle-.3);}
-  drawBattleHoro(p,L,tx-1,ty+1);p.draw(back,0,0);
+  if(L.horo)drawHoro(p,tx-1,ty+1,L.horo);p.draw(back,0,0);
   arm(p,tx,ty+1,far[0],far[1],shade(cloth,-.25),shade(sk,-.1),{tetsu:tetsuEquipment(L),happi:happiEquipment(L)});
   drawLegs(p,cx+lean,base,kneel?'kneel':low?'lunge':pose==='finish'?'stand':pose==='high'?'walkB':'walkA',lp,low);
   const parts=r.parts||(r.parts=new Map()),bodyKey='duelBody|'+low;
@@ -12239,10 +12260,50 @@ function duelPoseFrame(s,g,pose,face){
   const raw={pb:p,ax:cx,minW:48,minH:38,rig:{sashimono:{x:tx-1,y:ty+4}}};let cv=ownAftermathCanvas(finishSet([raw])(raw));
   if(face<0)cv=ownAftermathCanvas(flipCanvas(cv));r.duelFrames.set(key,cv);aftermathState().recipes.add(r);return cv;
 }
+// Short deterministic motion tracks, reusing one object per clip and the real equipment rigs.
+function duelFootMotion(c,sc){
+  const q=c.footMotion,t=c.t,impact=c.beats.at(-1),u=t-impact,dir=c.dir,W=c.W,L=c.L,
+    start=c.beats.length>1?c.beats[c.beats.length-2]+.05:.06,after=c.contact?Math.max(0,t-(c.impactAt??impact)):0;
+  q.wx=W.x;q.wy=W.y;q.wpose='guard';q.lx=L.x;q.ly=L.y;q.lfall=0;q.langle=0;q.lflat=1;q.detached=false;q.horseFall=0;q.horseX=L.x;q.horseY=L.y;
+  if(t<start)return q;
+  if(c.kind==='yariCast'){
+    const retrieve=easeIO(clamp((u-.09)/.23,0,1));q.wx=lerp(W.x-dir*2*sc,L.x-dir*26*sc,retrieve);
+    q.wpose=u<-.30?'castWind':u<.30?'castEmpty':u<.40?'thrust':'finish';
+  }else if(c.kind==='spearBrace'){
+    q.wx=lerp(W.x,L.x-dir*34*sc,easeOut(clamp((t-start)/.16,0,1)));q.wpose='spearBrace';
+    const charge=easeIO(clamp((t-start)/Math.max(.1,impact-start),0,1));q.lx=L.x+dir*(20-28*charge)*sc;
+    if(c.contact){q.detached=true;q.lfall=easeIO(clamp(after/.36,0,1));q.lx=L.x-dir*(8-6*q.lfall)*sc;q.ly=L.y-12*sc*(1-q.lfall);
+      q.langle=dir*q.lfall*Math.PI/2;q.lflat=1-.50*q.lfall;q.horseFall=easeIO(clamp(after/.36,0,1));q.horseX=L.x-dir*8*sc;}
+  }else if(c.kind==='riderDrag'){
+    const grab=impact-.28,leap=easeIO(clamp((t-Math.max(start,impact-.62))/Math.max(.1,grab-Math.max(start,impact-.62)),0,1)),pull=easeIO(clamp((t-grab)/.24,0,1));
+    q.wx=lerp(lerp(W.x,L.x-dir*6*sc,leap),L.x-dir*22*sc,pull);q.wy=W.y-18*sc*leap*(1-pull);
+    q.wpose=t<grab?'grapple':pull<.74?'grapple':!c.contact?'high':after<.24?'groundFinish':'finish';
+    if(t>=grab){q.detached=true;q.lx=L.x-dir*9*sc*pull;q.ly=L.y-13*sc*(1-pull);
+      q.lfall=c.contact?lerp(.60,1,easeIO(clamp(after/.30,0,1))):.02+.58*pull;
+      q.langle=dir*q.lfall*Math.PI/2;q.lflat=1-.50*q.lfall;q.horseX=L.x+dir*38*sc*easeOut(clamp((t-grab)/.65,0,1));}
+  }
+  return q;
+}
+function drawDuelLooseMount(x,c,sc,q){
+  const s=c.L,si=c.e.t.si,face=c.kind==='riderDrag'?c.dir:-c.dir,set=face===sideDir(si)?s.sprs:flipSet(s),
+    img=set.horse[c.kind==='riderDrag'?(c.t*12|0)%set.horse.length:2];
+  if(c.kind==='spearBrace')drawFallen(x,{img,x:q.horseX,y:q.horseY,angle:-c.dir*.24*q.horseFall,face:1,scale:sc,flat:1-.50*q.horseFall});
+  else artDraw(x,img,Math.round(q.horseX-img.width*sc/2),Math.round(q.horseY-img.height*sc-Math.abs(Math.sin(c.t*12))*2*sc),img.width*sc,img.height*sc);
+}
+function settleDuelFootFinish(c){
+  if(!c.contact||c.save||c.L.duelCorpse)return;const sc=spriteScale(),q=duelFootMotion(c,sc),L=c.L,si=c.e.t.si,
+    img=duelPoseFrame(L,c.e.t.g,'unhorseHurt',-c.dir),cast=c.kind==='yariCast';
+  if(c.kind==='spearBrace'){const set=-c.dir===sideDir(si)?L.sprs:flipSet(L);BT.bodies++;
+    addRemain({kind:'body',owner:L,img:set.horse[2],x:q.horseX,y:q.horseY,angle:-c.dir*.24,flat:.50,face:1,scale:sc});}
+  else if(c.kind==='riderDrag'){
+    (BT.loose||(BT.loose=[])).push({x:q.horseX,y:q.horseY,vx:c.dir*70,frames:L.sprs.horse,setFace:sideDir(si),t:0,ph:L.ph,scale:sc,random:seeded(duelMoveVariant(c.e))});}
+  BT.bodies++;addRemain({kind:'body',owner:L,img,x:cast?L.x+c.dir*4:q.lx,y:cast?L.y:q.ly,angle:c.dir*Math.PI/2,flat:.50,face:1,scale:sc,blood:c.blood,flag:L.sashimono||null});
+  L.duelCorpse=true; // Cosmetic remains only; duelLoss/tdEnd still own the commander's combat outcome.
+}
 function drawDuelActor(x,s,g,si,sc){
   const c=BT.duelShot,isW=c?.W===s,isL=c?.L===s,p=s.duelPose,down=s.duelDown,rescued=s.duelRescued>BT.t;
   if(!isW&&!isL&&!down&&!rescued&&(!p||BT.t>p.until))return false;
-  let pose='guard',dx=0,dy=0,angle=0,flat=1,alpha=1,face=s.face||sideDir(si),fall=0,turnScale=1,echo=false;
+  let pose='guard',dx=0,dy=0,angle=0,flat=1,alpha=1,face=s.face||sideDir(si),fall=0,turnScale=1,echo=false,separateMount=false;
   if(rescued&&!isL)pose='low';
   else if(down&&!isL){fall=easeIO(clamp((BT.t-down.at)/.3,0,1));angle=down.dir*fall*Math.PI/2;flat=1-.48*fall;pose='hurt';}
   else if(isW||isL){
@@ -12300,14 +12361,23 @@ function drawDuelActor(x,s,g,si,sc){
       dy=!e.hit&&e.defense==='dodge'?Math.sin(before*Math.PI)*3:0;
     }
   }
+  if((isW||isL)&&c.footFinish&&!c.save&&c.t>=(c.beats.length>1?c.beats[c.beats.length-2]+.05:.06)){
+    const q=duelFootMotion(c,sc);
+    if(isW){pose=q.wpose;dx=q.wx-s.x;dy=q.wy-s.y;angle=0;echo=c.kind==='riderDrag'&&c.t<c.beats.at(-1)-.24;}
+    else if(c.kind!=='yariCast'){
+      dx=q.lx-s.x;dy=q.ly-s.y;separateMount=q.detached;pose=q.detached?'unhorseHurt':c.kind==='spearBrace'?'horseRun':'hurt';
+      fall=q.lfall;angle=q.langle;flat=q.lflat;if(separateMount)drawDuelLooseMount(x,c,sc,q);
+    }
+  }
   let img=duelPoseFrame(s,g,pose,face);const px=s.x+dx,py=s.y+dy;
   x.save();x.globalAlpha=alpha;x.fillStyle='rgba(18,15,20,.22)';x.fillRect(Math.round(px-8*sc),Math.round(s.y),16*sc,2);
   if(isW&&!c.save&&echo){
     for(let i=2;i>0;i--){x.globalAlpha=.16/i;artDraw(x,img,Math.round(px-c.dir*i*4*sc-img.width*sc/2),Math.round(py-img.height*sc),img.width*sc,img.height*sc);}x.globalAlpha=1;}
-  if(fall>0&&s.sprs.horse&&s.sprs.fall){const set=face===sideDir(si)?s.sprs:flipSet(s),horse=set.horse[0];
+  if(fall>0&&s.sprs.horse&&s.sprs.fall&&!separateMount){const set=face===sideDir(si)?s.sprs:flipSet(s),horse=set.horse[0];
     const hx=down?.horseX??(isL&&c.kind==='cavBackKick'?s.x:px),hy=down?.horseY??s.y;
     artDraw(x,horse,hx-face*9-horse.width*sc/2,hy-horse.height*sc,horse.width*sc,horse.height*sc);img=set.fall;}
-  if(fall>0){drawFallen(x,{img,x:px,y:py,angle,face:1,scale:sc,flat,flag:s.sashimono||null});}
+  if(fall>0){if(isL&&c.footFinish&&c.contact&&c.blood)drawBloodPool(x,{img,x:px,y:py,angle,face:1,scale:sc},c.blood,clamp((c.t-c.impactAt)/.4,0,1));
+    drawFallen(x,{img,x:px,y:py,angle,face:1,scale:sc,flat,flag:s.sashimono||null});}
   else{x.translate(Math.round(px),Math.round(py));x.rotate(angle);x.scale(turnScale,1);if(s.sashimono)drawSashimono(x,s,g,-img.width*sc/2,-img.height*sc,img.width*sc,sc,img,face);
     artDraw(x,img,-img.width*sc/2,-img.height*sc,img.width*sc,img.height*sc);}
   x.restore();if(s.hero&&!down&&!c)_tags.push({x:s.x,y:s.y-img.height*sc+10*sc,name:s.hero.name,si,show:true,pri:99,aux:s.hero.aux});return true;
@@ -12357,6 +12427,7 @@ function drawDuelTrails(x,c,sc){
   const t=c.t,beats=c.beats||DUEL_IMPACT[c.a.length],dir=c.dir,px=c.L.x,py=c.L.y-12*sc,kind=c.kind,fade=1-clamp((t-((c.duration||DUEL_CINE_TIME)-.28))/.24,0,1),
     finalFlash=c.contact?clamp(1-(t-(c.impactAt??beats.at(-1)))/.13,0,1):0;
   x.save();x.lineCap='square';x.lineJoin='bevel';
+  if(kind==='yariCast')drawDuelCast(x,c,sc);
   for(let j=0;j<beats.length;j++){const e=c.a[j],u=t-beats[j],m=duelBeat(c,j);if(!e.applied||u<0)continue;
     const flash=Math.max(0,1-u/.16),alpha=(e.hit?Math.max(.30+.60*flash,finalFlash*.98):.12)*fade;
     if(alpha<=0)continue;
@@ -12365,6 +12436,11 @@ function drawDuelTrails(x,c,sc){
     else if(m==='thrust'||m==='kneelThrust'||m==='slidingThrust'||m==='release'){
       duelFxStroke(x,c,sc,DUEL_THRUST[m==='slidingThrust'||m==='kneelThrust'?2:j],alpha,false,.65);
       if(e.hit&&flash>0){x.globalAlpha=alpha;x.fillStyle=c.save?'#f4ce7d':'#dcefe8';x.fillRect(Math.round(px+dir*(10+j)*sc),Math.round(py+(m==='slidingThrust'?6:j*4-3)*sc),3*sc,sc);}
+    }else if(m==='yariCast'||m==='spearBrace'){
+      duelFxStroke(x,c,sc,m==='spearBrace'?DUEL_BRACE_TRAIL:DUEL_THRUST[0],alpha,false,1.2);
+      if(m==='spearBrace'&&c.contact)duelFxStroke(x,c,sc,DUEL_BRACE_RIDER,alpha*.75,false,.7);
+    }else if(m==='riderDrag'){
+      duelFxStroke(x,c,sc,DUEL_DRAG_TRAIL,alpha,true,1.8);
     }else if(m==='bearSlam'||m==='beastPounce'||m==='birdDive'){
       for(let k=0;k<3;k++){const shape=m==='birdDive'?DUEL_TALONS[k]:k===0?DUEL_ARCS[m]:k===1?DUEL_ARCS.sweep:DUEL_ARCS.cutUp;
         duelFxStroke(x,c,sc,shape,alpha*(k?.68:1),true,m==='bearSlam'?1.9:.9);}
@@ -12375,11 +12451,22 @@ function drawDuelTrails(x,c,sc){
     if(e.hit&&flash>0){x.globalAlpha=flash*.8;x.fillStyle=c.save?'#f3cb74':'#e9c082';
       for(let i=0;i<3;i++)x.fillRect(Math.round(px+dir*(3+u*(42+i*11))*sc),Math.round(py+(-6+i*6-u*(i%2?7:-7))*sc),sc,sc);}
   }
-  if((kind==='slidingThrust'||kind==='passing'||kind==='guardBreak'||kind==='jump'||c.mounted||c.animal)&&t>.42&&t<(c.duration||DUEL_CINE_TIME)-.14){
+  if((kind==='slidingThrust'||kind==='passing'||kind==='guardBreak'||kind==='jump'||c.mounted||c.animal||c.footFinish)&&t>.42&&t<(c.duration||DUEL_CINE_TIME)-.14){
     x.globalAlpha=Math.sin(clamp((t-.42)/((c.duration||DUEL_CINE_TIME)-.56),0,1)*Math.PI)*.42;x.fillStyle='#dac6a0';
     for(let i=0;i<5;i++)x.fillRect(Math.round(c.W.x-dir*(4+i*4)*sc),Math.round(c.W.y-(i%2)*sc),(3+i)*sc,sc);}
   if(c.save==='ward'&&t>.54&&t<.95){x.globalAlpha=Math.sin((t-.54)/.41*Math.PI)*.65;x.strokeStyle='#f6d177';x.lineWidth=1;x.beginPath();x.arc(px,py,13*sc,-2.8,.4);x.stroke();}
   x.restore();
+}
+const DUEL_BRACE_TRAIL=[-30,16,7,-16],DUEL_BRACE_RIDER=[-6,-7,7,-26],DUEL_DRAG_TRAIL=[-11,-9,2,14];
+function drawDuelCast(x,c,sc){
+  const p=c.castAsset;if(!p)return;const u=c.t-c.beats.at(-1);if(u<-.30||u>=.30)return;
+  const dir=c.dir,f=clamp((u+.30)/.30,0,1),sx=c.W.x+dir*12*sc,sy=c.W.y-19*sc,
+    tx=c.L.x+dir*4*sc,ty=c.L.y-15*sc+Math.max(0,u)*30*sc,
+    px=lerp(sx,tx,f),py=lerp(sy,ty,f)-Math.sin(f*Math.PI)*3*sc,
+    angle=Math.atan2((ty-sy)-Math.cos(f*Math.PI)*3*Math.PI*sc,Math.abs(tx-sx));
+  x.save();x.globalAlpha=1;x.translate(px,py);x.scale(dir*sc,sc);x.rotate(angle-c.castAxis);
+  const tip=p.point||{x:p.cv.width,y:p.cv.height/2};artDraw(x,p.cv,-tip.x,-tip.y);x.restore();
+  if(f<1){x.globalAlpha=.35;x.strokeStyle='#e4dfc8';x.lineWidth=sc;x.beginPath();x.moveTo(px-dir*12*sc,py+2*sc);x.lineTo(px-dir*4*sc,py+sc);x.stroke();}
 }
 
 // a beaten champion: talisman, retainers carrying him off, or out of the battle — and his unit pays for it
@@ -12929,7 +13016,7 @@ function updateBattle(rdt) {
   BT.A.forEach((A, si) => A.groups.forEach(g => { g.spr.forEach(s => { updSprite(s, dt, g, si); if (s.guards) updGuards(s, dt, g, si); }); if (g.heroes) for (const hr of g.heroes) { updSprite(hr, dt, g, si); if (hr.glow > 0) hr.glow -= dt; updGuards(hr, dt, g, si); } if (g.bannerFall) g.bannerFall.t += dt; }));
   BT.A.forEach((A, si) => (A.hqSpr || []).forEach(s => { updSprite(s, dt, s.g, si); if (s.glow > 0) s.glow -= dt; }));
   if(dt>0){separateSprites(dt);updateDroppedGear(dt);}
-  if (BT.loose) { for (const h of BT.loose) { h.t += dt; h.x += h.vx * dt; if (Math.random() < dt * 6) BT.fx.push({ k: 'dust', x: h.x - Math.sign(h.vx) * 8, y: h.y, vx: -Math.sign(h.vx) * rnd(6, 14), vy: -rnd(3, 9), t: .7, t0: .7, r: 3 }); } BT.loose=BT.loose.filter(h=>h.t<12&&h.x>-60&&h.x<BT.WW+60); }
+  if (BT.loose) { for (const h of BT.loose) { const R=h.random||Math.random;h.t += dt; h.x += h.vx * dt; if (R() < dt * 6) BT.fx.push({ k: 'dust', x: h.x - Math.sign(h.vx) * 8, y: h.y, vx: -Math.sign(h.vx) * (6+R()*8), vy: -(3+R()*6), t: .7, t0: .7, r: 3 }); } BT.loose=BT.loose.filter(h=>h.t<12&&h.x>-60&&h.x<BT.WW+60); }
   // projectiles land
   BT.proj = BT.proj.filter(p => { if ((BT.t - p.t0) / p.dur < 1) return true;
     if (!p.lethal) { if (p.k === 'arrow') stampArrow(p); else { BT.fx.push({ k: 'dust', x: p.x1, y: p.y1 + 6, vx: 0, vy: -12, t: .45, t0: .45, r: 2 }); } flinchNear(p.x1, p.y1 + 7); }
@@ -13176,7 +13263,7 @@ function drawLoose(x, h) {
   artDraw(x,img,Math.round(h.x-img.width*sc/2),Math.round(h.y-img.height*sc+1-Math.abs(Math.sin(h.t*11))*2*sc),img.width*sc,img.height*sc); x.globalAlpha = 1;
 }
 function drawSoldier(x,s,g,si,sc){
-  if(s.gone||s.stamped)return;if(s.fate){drawLifeState(x,s,g);return;}
+  if(s.gone||s.stamped||s.duelCorpse)return;if(s.fate){drawLifeState(x,s,g);return;}
   if(drawDuelActor(x,s,g,si,sc))return;
   const t=BT.t;
   let tf = s.face, tsx = 1; // mid-turn: the old facing narrows to a sliver, then the new one opens out

@@ -1,0 +1,203 @@
+{
+  "plans": [
+    {
+      "kind": "yariCast",
+      "count": 1,
+      "seed": 5,
+      "damage": [
+        48
+      ]
+    },
+    {
+      "kind": "yariCast",
+      "count": 2,
+      "seed": 9,
+      "damage": [
+        74,
+        50
+      ]
+    },
+    {
+      "kind": "yariCast",
+      "count": 3,
+      "seed": 106,
+      "damage": [
+        30,
+        29,
+        21
+      ]
+    },
+    {
+      "kind": "spearBrace",
+      "count": 1,
+      "seed": 5,
+      "damage": [
+        48
+      ]
+    },
+    {
+      "kind": "spearBrace",
+      "count": 2,
+      "seed": 9,
+      "damage": [
+        74,
+        50
+      ]
+    },
+    {
+      "kind": "spearBrace",
+      "count": 3,
+      "seed": 106,
+      "damage": [
+        30,
+        29,
+        21
+      ]
+    },
+    {
+      "kind": "riderDrag",
+      "count": 1,
+      "seed": 7,
+      "damage": [
+        49
+      ]
+    },
+    {
+      "kind": "riderDrag",
+      "count": 2,
+      "seed": 4,
+      "damage": [
+        34,
+        33
+      ]
+    },
+    {
+      "kind": "riderDrag",
+      "count": 3,
+      "seed": 41,
+      "damage": [
+        44,
+        28,
+        39
+      ]
+    }
+  ],
+  "render": {
+    "steadyCanvasAllocations": 0,
+    "actualNanbuPreserved": true,
+    "noDuplicateSpears": true,
+    "aftermathIdempotent": true
+  },
+  "runs": [
+    {
+      "kind": "yariCast",
+      "save": null,
+      "hits": 7,
+      "shots": 1,
+      "covered": 0,
+      "fps": 30,
+      "speed": 4
+    },
+    {
+      "kind": "yariCast",
+      "save": "guard",
+      "hits": 3,
+      "shots": 1,
+      "covered": 1,
+      "fps": 30,
+      "speed": 4
+    },
+    {
+      "kind": "yariCast",
+      "save": "ward",
+      "hits": 6,
+      "shots": 1,
+      "covered": 0,
+      "fps": 30,
+      "speed": 4
+    },
+    {
+      "kind": "spearBrace",
+      "save": null,
+      "hits": 7,
+      "shots": 1,
+      "covered": 0,
+      "fps": 30,
+      "speed": 4
+    },
+    {
+      "kind": "spearBrace",
+      "save": "guard",
+      "hits": 7,
+      "shots": 1,
+      "covered": 1,
+      "fps": 30,
+      "speed": 4
+    },
+    {
+      "kind": "spearBrace",
+      "save": "ward",
+      "hits": 6,
+      "shots": 1,
+      "covered": 0,
+      "fps": 30,
+      "speed": 4
+    },
+    {
+      "kind": "riderDrag",
+      "save": null,
+      "hits": 3,
+      "shots": 1,
+      "covered": 0,
+      "fps": 30,
+      "speed": 4
+    },
+    {
+      "kind": "riderDrag",
+      "save": "guard",
+      "hits": 7,
+      "shots": 1,
+      "covered": 1,
+      "fps": 30,
+      "speed": 4
+    },
+    {
+      "kind": "riderDrag",
+      "save": "ward",
+      "hits": 5,
+      "shots": 1,
+      "covered": 0,
+      "fps": 30,
+      "speed": 4
+    },
+    {
+      "kind": "yariCast",
+      "side": 1,
+      "champions": 1,
+      "hits": 8,
+      "helpers": 0
+    },
+    {
+      "kind": "spearBrace",
+      "side": 1,
+      "champions": 1,
+      "hits": 8,
+      "helpers": 0
+    },
+    {
+      "kind": "riderDrag",
+      "side": 1,
+      "champions": 1,
+      "hits": 8,
+      "helpers": 0
+    },
+    {
+      "kind": "riderDrag",
+      "side": 1,
+      "champions": 3,
+      "hits": 22,
+      "helpers": 2
+    }
+  ],
+  "checks": 255
+}

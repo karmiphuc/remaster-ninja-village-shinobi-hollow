@@ -6,7 +6,7 @@
       "plans": [
         {
           "count": 1,
-          "seed": 2,
+          "seed": 3,
           "moves": [
             "beastPounce"
           ]
@@ -21,7 +21,7 @@
         },
         {
           "count": 3,
-          "seed": 41,
+          "seed": 28,
           "moves": [
             "sweep",
             "thrust",
@@ -44,7 +44,7 @@
       "plans": [
         {
           "count": 1,
-          "seed": 2,
+          "seed": 3,
           "moves": [
             "beastFeint"
           ]
@@ -59,7 +59,7 @@
         },
         {
           "count": 3,
-          "seed": 41,
+          "seed": 28,
           "moves": [
             "sweep",
             "thrust",
@@ -81,7 +81,7 @@
       "plans": [
         {
           "count": 1,
-          "seed": 2,
+          "seed": 3,
           "moves": [
             "beastPounce"
           ]
@@ -96,7 +96,7 @@
         },
         {
           "count": 3,
-          "seed": 41,
+          "seed": 28,
           "moves": [
             "sweep",
             "thrust",
@@ -119,7 +119,7 @@
       "plans": [
         {
           "count": 1,
-          "seed": 2,
+          "seed": 3,
           "moves": [
             "beastFeint"
           ]
@@ -134,7 +134,7 @@
         },
         {
           "count": 3,
-          "seed": 41,
+          "seed": 28,
           "moves": [
             "sweep",
             "thrust",
@@ -156,7 +156,7 @@
       "plans": [
         {
           "count": 1,
-          "seed": 2,
+          "seed": 3,
           "moves": [
             "boarToss"
           ]
@@ -171,7 +171,7 @@
         },
         {
           "count": 3,
-          "seed": 41,
+          "seed": 28,
           "moves": [
             "sweep",
             "thrust",
@@ -194,7 +194,7 @@
       "plans": [
         {
           "count": 1,
-          "seed": 2,
+          "seed": 3,
           "moves": [
             "bearSlam"
           ]
@@ -209,7 +209,7 @@
         },
         {
           "count": 3,
-          "seed": 41,
+          "seed": 28,
           "moves": [
             "sweep",
             "thrust",
@@ -232,7 +232,7 @@
       "plans": [
         {
           "count": 1,
-          "seed": 2,
+          "seed": 3,
           "moves": [
             "monkeyVault"
           ]
@@ -247,7 +247,7 @@
         },
         {
           "count": 3,
-          "seed": 41,
+          "seed": 28,
           "moves": [
             "sweep",
             "thrust",
@@ -271,7 +271,7 @@
       "plans": [
         {
           "count": 1,
-          "seed": 2,
+          "seed": 3,
           "moves": [
             "birdDive"
           ]
@@ -286,7 +286,7 @@
         },
         {
           "count": 3,
-          "seed": 41,
+          "seed": 28,
           "moves": [
             "sweep",
             "thrust",
@@ -309,7 +309,7 @@
       "plans": [
         {
           "count": 1,
-          "seed": 2,
+          "seed": 3,
           "moves": [
             "birdDive"
           ]
@@ -324,7 +324,7 @@
         },
         {
           "count": 3,
-          "seed": 41,
+          "seed": 28,
           "moves": [
             "sweep",
             "thrust",
@@ -347,7 +347,7 @@
       "plans": [
         {
           "count": 1,
-          "seed": 2,
+          "seed": 3,
           "moves": [
             "beastPounce"
           ]
@@ -362,7 +362,7 @@
         },
         {
           "count": 3,
-          "seed": 41,
+          "seed": 28,
           "moves": [
             "sweep",
             "thrust",
@@ -386,8 +386,8 @@
       "count": 1,
       "shots": 1,
       "guards": 0,
-      "hits": 7,
-      "frames": 61,
+      "hits": 5,
+      "frames": 50,
       "fps": 30,
       "speed": 4
     },
@@ -397,7 +397,7 @@
       "shots": 1,
       "guards": 0,
       "hits": 4,
-      "frames": 47,
+      "frames": 45,
       "fps": 30,
       "speed": 4
     },
@@ -406,8 +406,8 @@
       "count": 3,
       "shots": 1,
       "guards": 0,
-      "hits": 3,
-      "frames": 35,
+      "hits": 6,
+      "frames": 49,
       "fps": 30,
       "speed": 4
     },
@@ -416,8 +416,8 @@
       "count": 3,
       "shots": 1,
       "guards": 0,
-      "hits": 3,
-      "frames": 37,
+      "hits": 6,
+      "frames": 48,
       "fps": 30,
       "speed": 4
     },
@@ -427,7 +427,7 @@
       "shots": 1,
       "guards": 0,
       "hits": 4,
-      "frames": 45,
+      "frames": 47,
       "fps": 30,
       "speed": 4
     },
@@ -436,8 +436,8 @@
       "count": 1,
       "shots": 1,
       "guards": 0,
-      "hits": 7,
-      "frames": 60,
+      "hits": 5,
+      "frames": 50,
       "fps": 30,
       "speed": 4
     },
@@ -459,8 +459,8 @@
       "save": "ward",
       "shots": 1,
       "guards": 0,
-      "hits": 3,
-      "frames": 37,
+      "hits": 6,
+      "frames": 48,
       "fps": 30,
       "speed": 4
     },
@@ -471,17 +471,17 @@
       "shots": 1,
       "guards": 0,
       "hits": 5,
-      "frames": 51,
+      "frames": 50,
       "fps": 30,
       "speed": 4
     },
     {
       "pet": "hound",
       "n": 3,
-      "shots": 3,
+      "shots": 1,
       "guards": 0,
       "hits": 18,
-      "frames": 137,
+      "frames": 134,
       "fps": 30,
       "speed": 4
     },
@@ -492,7 +492,7 @@
       "shots": 1,
       "guards": 1,
       "hits": 4,
-      "frames": 45,
+      "frames": 47,
       "fps": 30,
       "speed": 4
     },
@@ -502,12 +502,12 @@
       "save": "ward",
       "shots": 1,
       "guards": 0,
-      "hits": 3,
-      "frames": 37,
+      "hits": 6,
+      "frames": 49,
       "fps": 30,
       "speed": 4
     }
   ],
   "cacheKeys": 20,
-  "checks": 1136
+  "checks": 1142
 }

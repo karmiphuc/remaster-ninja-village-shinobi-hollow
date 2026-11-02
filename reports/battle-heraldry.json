@@ -40,18 +40,18 @@
   "alliedDress": [
     {
       "post": "van",
-      "color": "#982a36",
-      "duelAndCollapse": true
+      "horo": false,
+      "leadershipStandard": true
     },
     {
       "post": "line",
-      "color": "#343b78",
-      "duelAndCollapse": true
+      "horo": false,
+      "leadershipStandard": true
     },
     {
       "post": "hq",
-      "color": "#343b78",
-      "duelAndCollapse": true
+      "horo": false,
+      "leadershipStandard": true
     }
   ],
   "render": {
@@ -65,7 +65,7 @@
     "cacheLimit": 48,
     "cacheMBLimit": 8
   },
-  "checks": 148,
+  "checks": 139,
   "viewports": [
     {
       "width": 430,
