@@ -1,0 +1,214 @@
+{
+  "mixed": [
+    {
+      "count": 1,
+      "moves": [
+        "slidingThrust"
+      ],
+      "damage": [
+        36
+      ]
+    },
+    {
+      "count": 2,
+      "moves": [
+        "sweep",
+        "slidingThrust"
+      ],
+      "damage": [
+        47,
+        26
+      ]
+    },
+    {
+      "count": 3,
+      "moves": [
+        "sweep",
+        "thrust",
+        "slidingThrust"
+      ],
+      "damage": [
+        62,
+        22,
+        33
+      ]
+    }
+  ],
+  "sharedEndings": {
+    "families": 6,
+    "hitCounts": [
+      1,
+      2,
+      3
+    ],
+    "realKOCombinations": 18
+  },
+  "mounts": {
+    "plans": [
+      {
+        "kind": "cavTrample",
+        "count": 1,
+        "duration": 1.42,
+        "seed": 3
+      },
+      {
+        "kind": "cavTrample",
+        "count": 2,
+        "duration": 1.42,
+        "seed": 8
+      },
+      {
+        "kind": "cavTrample",
+        "count": 3,
+        "duration": 1.42,
+        "seed": 41
+      },
+      {
+        "kind": "cavBackKick",
+        "count": 1,
+        "duration": 1.42,
+        "seed": 2
+      },
+      {
+        "kind": "cavBackKick",
+        "count": 2,
+        "duration": 1.42,
+        "seed": 9
+      },
+      {
+        "kind": "cavBackKick",
+        "count": 3,
+        "duration": 1.42,
+        "seed": 28
+      }
+    ],
+    "poses": 7,
+    "steadyCanvasAllocations": 0,
+    "equippedNanbuPreserved": true,
+    "weaponOpenersVisible": true,
+    "releasedOnClose": true
+  },
+  "runs": [
+    {
+      "kind": "slidingThrust",
+      "count": 1,
+      "save": "guard",
+      "side": 0,
+      "speed": 1,
+      "fps": 60,
+      "shots": 1,
+      "hits": 4,
+      "earlyGuardFrames": 11,
+      "helpers": 0
+    },
+    {
+      "kind": "crossCut",
+      "count": 2,
+      "save": "guard",
+      "side": 0,
+      "speed": 1,
+      "fps": 60,
+      "shots": 1,
+      "hits": 4,
+      "earlyGuardFrames": 10,
+      "helpers": 0
+    },
+    {
+      "kind": "tripleSlash",
+      "count": 3,
+      "save": "guard",
+      "side": 0,
+      "speed": 4,
+      "fps": 30,
+      "shots": 1,
+      "hits": 3,
+      "earlyGuardFrames": 1,
+      "helpers": 0
+    },
+    {
+      "kind": "cavTrample",
+      "count": 2,
+      "save": null,
+      "side": 0,
+      "speed": 4,
+      "fps": 30,
+      "shots": 1,
+      "hits": 4,
+      "earlyGuardFrames": 0,
+      "helpers": 0
+    },
+    {
+      "kind": "cavBackKick",
+      "count": 1,
+      "save": null,
+      "side": 0,
+      "speed": 4,
+      "fps": 30,
+      "shots": 1,
+      "hits": 7,
+      "earlyGuardFrames": 0,
+      "helpers": 0
+    },
+    {
+      "kind": "cavBackKick",
+      "count": 1,
+      "save": null,
+      "side": 1,
+      "speed": 4,
+      "fps": 30,
+      "shots": 1,
+      "hits": 6,
+      "earlyGuardFrames": 0,
+      "helpers": 0
+    },
+    {
+      "kind": "cavTrample",
+      "count": 2,
+      "save": "guard",
+      "side": 0,
+      "speed": 4,
+      "fps": 30,
+      "shots": 1,
+      "hits": 5,
+      "earlyGuardFrames": 1,
+      "helpers": 0
+    },
+    {
+      "kind": "tripleSlash",
+      "count": 3,
+      "save": "guard",
+      "side": 0,
+      "speed": 1,
+      "fps": 60,
+      "shots": 1,
+      "hits": 3,
+      "earlyGuardFrames": 9,
+      "helpers": 0
+    },
+    {
+      "kind": "cavBackKick",
+      "count": 1,
+      "save": "ward",
+      "side": 0,
+      "speed": 1,
+      "fps": 60,
+      "shots": 1,
+      "hits": 7,
+      "earlyGuardFrames": 0,
+      "helpers": 0
+    },
+    {
+      "kind": "3v3 mixed",
+      "count": null,
+      "save": null,
+      "side": 0,
+      "speed": 4,
+      "fps": 30,
+      "shots": 3,
+      "hits": 18,
+      "earlyGuardFrames": 0,
+      "helpers": 2
+    }
+  ],
+  "checks": 224
+}

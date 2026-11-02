@@ -14,6 +14,8 @@ Stats, equipment, tactics, cohesion, retainers, opening countershots and overtim
 
 These are battle-clock seconds, scaled by the existing playback speed and 0.7 pacing factor. The logical schedule is independent of viewport, sprite count and density; it adds no per-frame pathfinding or collision simulation. The first front-line exchange retains the game's simultaneous phase resolution rather than introducing a new physical combat simulator.
 
+The separate [ranged targeting refinement](ranged-spill.md) restores front-to-back gunner spill and limits field arrow spill to neighboring ranks. Neither ranged phase uses the infantry clock.
+
 ## Province-based uprisings
 
 `rebellionBase()` uses the province's **original** power with its normal world growth and site/capital modifiers. A new uprising rolls **75–105%** of that local budget, with a small minimum for early sites. Recruiting more troops or equipping a powerful commander no longer inflates a peasant uprising. Repeated revolts do not compound their previous power. Later provinces still support stronger uprisings.

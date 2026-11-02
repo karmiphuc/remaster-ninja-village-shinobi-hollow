@@ -1,0 +1,31 @@
+
+> shinobi-hollow@19.1.0 test
+> node tests/run-all.cjs
+
+Running 24 suite(s), 4 at a time…
+PASS  siege          75.2s
+PASS  tate           91.7s
+PASS  tactics        58.0s
+PASS  battle-end    140.9s
+PASS  economy-flow    8.8s
+PASS  equipment      18.0s
+PASS  campaign       37.6s
+PASS  integration    14.7s
+PASS  porter-menu    13.0s
+PASS  market-collectors   12.3s
+PASS  building-move   11.4s
+PASS  dialogs       112.2s
+PASS  density       212.8s
+PASS  resident-recall    9.2s
+PASS  roads           6.7s
+PASS  seasonal-landscape    8.6s
+PASS  carry-duel     29.3s
+PASS  stock-caps      5.9s
+PASS  tonya-merchant    8.9s
+PASS  melee-rebels   12.3s
+PASS  omens          10.8s
+PASS  logistics       9.4s
+PASS  forge           5.4s
+PASS  duel-executions   47.7s
+
+24/24 passed in 243.0s wall time (960.9s if run one after another).

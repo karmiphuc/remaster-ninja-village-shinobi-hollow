@@ -1,0 +1,41 @@
+Full local game regression:
+
+> shinobi-hollow@19.1.0 test
+> node tests/run-all.cjs
+
+Running 26 suite(s), 4 at a time…
+PASS  siege         122.5s
+PASS  tate          180.7s
+PASS  tactics       121.1s
+PASS  battle-end    272.5s
+PASS  economy-flow   13.0s
+PASS  campaign       64.8s
+PASS  equipment      23.5s
+PASS  integration    13.2s
+PASS  porter-menu    13.2s
+PASS  density       327.6s
+PASS  market-collectors   10.9s
+PASS  building-move   12.3s
+PASS  dialogs       161.1s
+PASS  resident-recall   11.7s
+PASS  carry-duel     33.3s
+PASS  seasonal-landscape    7.8s
+PASS  stock-caps      4.8s
+PASS  roads           6.0s
+PASS  tonya-merchant    8.6s
+PASS  melee-rebels    9.5s
+PASS  omens          16.2s
+PASS  duel-executions   60.2s
+PASS  ranged-spill   22.1s
+PASS  logistics       9.1s
+PASS  forge           8.9s
+PASS  duel-cavalry   71.6s
+
+26/26 passed in 406.1s wall time (1606.1s if run one after another).
+
+Final standalone export, after move-pool and cinematic transition adjustments:
+Running 2 suite(s), 2 at a time…
+PASS  duel-executions   36.8s
+PASS  duel-cavalry   46.2s
+
+2/2 passed in 46.2s wall time (83.0s if run one after another).

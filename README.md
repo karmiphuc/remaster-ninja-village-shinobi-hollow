@@ -79,7 +79,11 @@ Battles are prepared, not micromanaged. Everything is set in the **Army** screen
 
 Army infantry has a **2.7-second clash window** after approach. Defeating a line uses fighting time; reaching the next line costs **1.25 seconds** with no melee attacks. Surviving infantry protects the ranks behind it. Strong forces can still break through and attack the rear with their remaining time. See [infantry and uprising balance notes](docs/melee-rebellion-balance.md).
 
+**Ranged spill has no infantry timer.** Guns carry remaining volley damage through **Infantry → Gunners → Archers → Cavalry**. Archers prioritize the ranged lines and spill only beside their original target: Gunners → Infantry/Archers; Archers → Gunners/Cavalry. The existing damage budget and 25% attenuation between targets remain. See [ranged targeting and validation](docs/ranged-spill.md).
+
 **Auto Duel** is a separate saved choice under **Village → Options**, off by default. With it off, a challenge pauses Auto Battle so you can choose champions and Fight or Refuse. Turn it on to let Auto Battle accept and assign champions. Manual battles always show the picker; refusing retains its existing cohesion penalty.
+
+Duels include a **black Z triple slash, sword triple thrusts and a kneeling sliding thrust**, with moves combined across real one-, two- and three-hit executions. Mounted champions can rear, kick and trample, or turn into a hind-leg kick. Retainers intercept before the hits and take the impact in their commander's place. All moves follow actual HP outcomes and reuse procedural equipment. See the [animated preview](docs/duel-sequences-preview.gif) and [implementation notes](docs/duel-executions.md).
 
 **Formation tactics.** Each formation (Infantry, Archers, Gunners, Cavalry) takes its own orders. How many orders it can take depends on the highest Strategy among its own active commanders. Formations never share Strategy.
 

@@ -1,0 +1,108 @@
+{
+  "gun": [
+    {
+      "target": "inf",
+      "kills": 8,
+      "depth": 0,
+      "stray": false
+    },
+    {
+      "target": "gun",
+      "kills": 8,
+      "depth": 1,
+      "stray": false
+    },
+    {
+      "target": "arc",
+      "kills": 8,
+      "depth": 2,
+      "stray": false
+    },
+    {
+      "target": "cav",
+      "kills": 8,
+      "depth": 3,
+      "stray": false
+    }
+  ],
+  "arrowsAtGunners": [
+    {
+      "target": "gun",
+      "kills": 8,
+      "depth": 0,
+      "stray": false
+    },
+    {
+      "target": "arc",
+      "kills": 8,
+      "depth": 1,
+      "stray": false
+    },
+    {
+      "target": "inf",
+      "kills": 8,
+      "depth": 2,
+      "stray": false
+    }
+  ],
+  "arrowsAtArchers": [
+    {
+      "target": "arc",
+      "kills": 8,
+      "depth": 0,
+      "stray": false
+    },
+    {
+      "target": "cav",
+      "kills": 8,
+      "depth": 1,
+      "stray": false
+    }
+  ],
+  "matrix": {
+    "cases": 1440,
+    "bothSides": true,
+    "missingFormations": true,
+    "adjacentScatter": [
+      "arc",
+      "inf"
+    ],
+    "boundedDamageBudget": true,
+    "finiteCasualties": true
+  },
+  "infantryClockIndependent": true,
+  "countershotsPreserved": true,
+  "siegeArcheryPreserved": true,
+  "playback": [
+    {
+      "phase": "gun",
+      "targets": [
+        "inf",
+        "gun",
+        "arc",
+        "cav",
+        "gun"
+      ],
+      "frames": 54,
+      "fps": 30,
+      "speed": 2,
+      "damageOnce": true,
+      "noInfantryTravel": true
+    },
+    {
+      "phase": "arc",
+      "targets": [
+        "gun",
+        "arc",
+        "inf",
+        "arc"
+      ],
+      "frames": 64,
+      "fps": 30,
+      "speed": 2,
+      "damageOnce": true,
+      "noInfantryTravel": true
+    }
+  ],
+  "checks": 9988
+}
