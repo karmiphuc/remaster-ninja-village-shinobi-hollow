@@ -1,62 +1,73 @@
-# Grand Battlefield study
+# Grand Battlefield — real-time study
 
-Open [`prototypes/Shinobi Hollow - Grand Battlefield.html`](../prototypes/Shinobi%20Hollow%20-%20Grand%20Battlefield.html) as a separate, standalone HTML. It includes all its code and procedural assets; no server, library download or campaign save is required. The main game's `index.html` is unchanged from `8ee4c7e` (merged PR #38).
+Open [`prototypes/Shinobi Hollow - Grand Battlefield.html`](../prototypes/Shinobi%20Hollow%20-%20Grand%20Battlefield.html) as a separate, standalone HTML. All code and procedural assets are embedded. The main game's `index.html` remains unchanged from `8ee4c7e` (merged PR #38); campaign saves are never accessed.
 
-The study answers one question: can a continuous battlefield with depth, sweeping cavalry and a freely moving camera make the existing art feel larger? It is an interactive battle prototype, not a replacement campaign battle engine.
+The armies begin with 2,480 and 2,260 combatants represented by 300 figures. Each figure carries an actual share of its formation's HP. Both armies deploy **infantry → gunners → archers → cavalry**, from front to back. All four arms act continuously; there is no shared firing/melee phase clock.
 
 ## What to try
 
-- Start with **Overview**. Watch the infantry meet across the centre and the two cavalry wings ride around the outside toward the opposing matchlocks.
-- **Drag** to pan; **pinch / scroll** to zoom. Try both portrait and landscape. **Follow** moves closer to the selected formation or the infantry front.
-- Tap a **blue formation label**. **Hold** stops its march while allowing attacks against enemies in contact. **Advance** resumes movement. Cavalry also has **Sweep wing**.
-- Switch **2.5D / Isometric** during combat: positions, targets and casualties stay the same. The second view tests projection, not a new battle roll.
-- Pause, change speed (1× / 2× / 0.5×), or replay. Space pauses; F follows; O opens the overview; Escape closes help/orders.
-- Let a battle finish. Bodies, blood pools, dropped weapons and fallen standards persist; surviving troops celebrate. Replay clears the field.
+- Watch infantry slowly close, then fight enemies within personal weapon reach. Reserve ranks move up as soldiers fall. Holding a formation stops its march while allowing nearby defence.
+- Watch matchlocks find clear shots through gaps and around the edges of friendly ranks. They hold fire when a friendly soldier or a terrain rise blocks their sight line. Bullets travel straight, and their swept path resolves the first living body encountered. A friendly crossing after release harmlessly intercepts the bullet; it never takes friendly-fire damage.
+- Archers fire overhead. Each arrow has a sampled landing point and a flight time. Only an enemy body inside its landing footprint takes damage. Scatter, movement and the spacing of ranks therefore determine actual projectile hit counts; a fired arrow does not guarantee damage. Archers prefer ranged targets when they are in range.
+- **MRK** sets each ranged soldier's firing interval. Select a blue ranged label to see the formation's MRK and seconds per shot. The current equipment-derived values are 38 MRK / 3.39 seconds for matchlocks and 20 MRK / 2.53 seconds for bows.
+- Cavalry approaches the **closest formation**, beginning with the infantry, charges into nearby opponents, then withdraws to the rear and regroups before charging again. It uses the edge of the friendly line for its approach/return, rather than bypassing infantry to attack the enemy's rear. Riders turn to face their actual movement or opponent.
+- Drag to pan; pinch/scroll to zoom. **Overview** shows the whole army; **Follow** focuses the selected formation or infantry front. Both **2.5D / Isometric** projections show the same ongoing battle.
+- Tap a blue formation label for **Hold**, **Advance**, or cavalry **Charge cycle**. Pause, change speed (1× / 2× / 0.5×), or replay. Space pauses; F follows; O opens Overview; Escape closes help/orders.
+- After victory, bodies, pools of blood, dropped weapons and fallen standards remain. Replay clears the field.
 
-The armies begin with 2,480 and 2,260 combatants, represented by 300 figures. Figures represent shares of formations, rather than one figure per soldier. Terrain and siege engines are scenery in this study.
+## Combat model
 
-## Reuse and boundaries
+`combat.js` is independent of rendering, DOM, camera and frame rate. It owns the actors' HP, formation motion, individual attack/fire timers, projectile pools and cavalry state machine. Movement and combat run at a fixed 60 Hz; target acquisition runs every 0.18 seconds. A reusable 64-unit spatial grid supports local melee queries and swept bullet intersections. The gunner target search considers a bounded set of nearby candidates; it does not run an expensive global shot planner. A gunner keeps a small lane offset after finding a clear view, avoiding repeated side-to-side resets.
 
-`asset-bridge.js` calls the actual `footSoldierFrame`, `riderFrame`, `artTroopLook`, `reactionHumanFrame`, `sashimonoFrames`, `buildingSprite` and `propImg` painters. Ten shared kit/face rigs retain the existing shaded, modular chibi characters. Ground projection changes; characters remain upright and preserve their native detail canvases.
+Ranges are 650 world units for matchlocks and 840 for bows. The firing interval is `base / (1 + 0.85 × MRK / (MRK + 40))`, using a 4.8-second matchlock base and a 3.25-second bow base. The bonus is bounded. MRK also tightens arrow dispersion. Bows clear intervening friendly ranks; they do not inflict friendly damage at landing.
 
-The private battle adapter reuses `finishArmy`, `resolvePhase`, `guardInfantryBreakthrough`, cohesion and offensive-pressure formulas. Resolved damage budgets are divided into individually applied impacts; damage is clamped to remaining combatants and is never multiplied for extra animation. Melee impacts require physical formation contact. Casualty routs depict already-accounted losses, including the 18% chance after 55% losses. No extra headcount is deducted for fleeing. Battles end through combat attrition.
+The private adapter reuses the game's unit attack/defence, equipment MRK, cohesion, resistance, damage and bounded overtime pressure formulas. Per-strike coefficients tune the continuous encounter, rather than repeatedly spending the campaign's old phase damage budgets. Melee damage requires contact at impact, and a telegraphed attack can miss if its target leaves reach. Simultaneously committed melee can produce mutual hits. Projectile power is captured at release; a later wound, buff or death cannot change an arrow/bullet already in flight. In-flight attacks settle before the final result.
 
-Movement and targeting are **experimental**: cavalry deliberately attacks rear formations, and contact can cancel hits that the campaign's abstract resolution would allow. Results are not claimed to match the campaign. Commanders, duels, retainers, jutsu, siege combat, terrain bonuses and campaign orders are not integrated here. There are no individual collision queues or pathfinding searches. Full isometric staging would also need more character facing directions; this study deliberately reuses the existing two-direction rigs.
+Only actual landed damage subtracts HP and formation strength. Casualty routs depict already-accounted losses, retaining the 18% baseline chance after 55% losses. They never deduct additional troops. There are no round-limit, casualty-ratio or morale victories: combat-capable HP must reach zero.
 
-## Implementation and performance
+## Art and scope
 
-- `shell.html`: responsive canvas shell and controls, with safe-area padding.
-- `preview.js`: projection, cached terrain, camera, group movement, fixed-step simulation, effects and presentation. World state is independent of camera projection.
-- `asset-bridge.js`: small adapter inside an isolated copy of the game's library. The build removes the game boot hook and the global audio setup, so save handlers and audio gesture handlers are never installed. The preview never reads or writes player storage.
-- `tools/build-battlefield-prototype.py`: bundles the three sources and the current procedural library into the downloadable HTML. The game source itself is read-only.
+`asset-bridge.js` calls the real `footSoldierFrame`, `riderFrame`, `artTroopLook`, `reactionHumanFrame`, `sashimonoFrames`, `buildingSprite` and `propImg` painters. Ten shared modular kit/face rigs retain the existing detailed chibi art. Ground projection changes; characters stay upright with their original detail canvases.
 
-The renderer uses one display canvas, one replaceable terrain canvas, ten finite shared rigs, 300 figures, 220 effect slots and 160 projectile slots. Corpses and discarded weapons reuse each casualty's procedural kit. There is no per-frame canvas creation. Replay reuses the rig set; switching projection releases the old terrain backing before replacing it. The display backing is capped at DPR 2 and 2.3 million pixels. Optional `?perf=1` shows frame timing and owned canvas memory; `?test=1` leaves time under test control.
+This remains a presentation/combat prototype. Its real-time cadence, physical targeting and individual HP distribution intentionally differ from the campaign, so campaign results are not reproduced. Full commanders/duels, retainers, jutsu, siege mechanics, terrain bonuses and campaign orders are not integrated. Static tree/building props are scenery; gun sight checks cover living soldiers and terrain rises. Character facings are still left/right, not a full set of isometric directions. Formation motion is lightweight, without an individual collision/avoidance simulation.
+
+## Build and performance
+
+- `shell.html`: responsive controls, safe areas, elapsed battle timer and selected formation details.
+- `preview.js`: projection, cached terrain, camera and drawing; it delegates gameplay to `combat.js`.
+- `combat.js`: continuous model, reusable spatial grid, timers and actual impact accounting.
+- `asset-bridge.js`: private adapter to the game's art and combat primitives.
+- `tools/build-battlefield-prototype.py`: embeds the sources into one HTML; strips the game's boot hook and global audio setup. Source `index.html` is read-only.
+
+The renderer retains one display canvas, one replaceable terrain canvas, ten shared rigs, at most 300 figures, 220 effect slots and 160 projectile slots. Corpses and discarded gear reuse each casualty's kit. Rendering creates no canvases. Replay reuses the art set, and projection changes release the old terrain backing. The display backing is capped at DPR 2 and 2.3 million pixels. `?perf=1` enables the frame/canvas HUD; `?test=1` leaves time under test control.
 
 ## Validation
 
-Build and run the focused browser checks:
-
 ```sh
 python3 tools/build-battlefield-prototype.py
-node tests/battlefield-prototype.cjs
+npm run test:prototype
 ```
 
-The test covers 30/60 Hz determinism, identical combat across both projections, real damage accounting, hold/advance/flank orders, pan/zoom/pinch, pause/speed/replay, victory through attrition, persistent casualty states, warmed rendering without canvas allocations, repeated perspective switches, portrait/landscape controls and offline execution without storage or audio access. Generated screenshots and measurements live in [`reports/battlefield-prototype`](../reports/battlefield-prototype).
-
-The managed Chromium environment blocks direct `file://` navigation by browser policy. Offline standalone execution is tested by loading the complete HTML document into an offline browser context. Actual iPhone Safari, Files/Quick Look handling, sustained device frame rate and thermal behaviour still need a physical-device check; desktop emulation does not establish those results.
-
-Measured in the focused Chromium run (41 checks passed, zero page errors):
+The focused Chromium run passed **155 checks**, with zero page errors. Full output and screenshots are in [`reports/battlefield-prototype`](../reports/battlefield-prototype).
 
 | Check | Result |
 |---|---|
-| Angled view, 1440 × 900 | 31.6 MiB owned canvas backing |
-| Isometric view, 1440 × 900 | 33.8 MiB owned canvas backing |
-| Phone viewport, 430 × 932, emulated DPR 3 | 32.8 MiB; capped to an 860 × 1864 backing |
-| Warmed playback / eight replays | Zero new render canvases; rig memory unchanged |
-| Eight projection switches | Only eight replacement terrain canvases; backing memory returns to its starting value |
-| Same seed at 30 / 60 Hz and either projection | Identical formation state and casualties |
-| Complete seeded battle | Kage 884.604 remaining, Kurogane 0; 231 fallen figures and 18 casualty routs |
-| Damage accounting | Initial 4,740 − remaining 884.604 = applied 3,855.396; no negative troop counts |
-| Standalone file | 1.34 MiB; zero external assets, storage accesses or audio contexts |
+| Friendly blocking / clearing | No shots through the blocker; firing resumes after it moves |
+| Ally crossing a bullet after release | Harmless interception; no friendly or downstream target damage |
+| MRK 0 → 80, same 30-second fixture | 185 → 291 shots; 4.80 → 3.06 seconds per firing interval |
+| Overhead arrow fixture | 294 released = 52 hits + 228 misses + 14 still airborne |
+| Target moves after arrow release | Endpoint unchanged; missed target takes zero damage |
+| Shooter buff after projectile release | Landed damage unchanged |
+| Cavalry fixture, both sides | Two charge/withdraw/regroup cycles; initial target is infantry |
+| Default battle at 12 seconds | Guns, arrows and melee all active concurrently |
+| 30 / 60 Hz; either projection | Identical formation state and casualties |
+| Five seeded full battles | All finish through actual elimination; actor HP and formation strength agree |
+| Seed 7711, normal landscape | Kage 914.369, Kurogane 0; 196 fallen figures, 32 casualty routs |
+| Damage conservation | Initial 4,740 = remaining 914.369 + applied 3,825.631; no negative HP |
+| Angled / isometric canvas backing | 31.6 / 33.8 MiB at 1440 × 900 |
+| Phone viewport, 430 × 932, emulated DPR 3 | 32.8 MiB; backing capped to 860 × 1864 |
+| Warm rendering / eight replays | Zero new render canvases; rig memory unchanged |
+| Eight projection switches | Only terrain replaced; backing memory returns to its starting value |
+| Offline standalone document | No external assets, storage accesses or audio contexts |
 
-The short automated autoplay sample reported 47 fps / 66.7 ms frame p95 in software-rendered headless Chromium, including startup. It is a smoke measurement, not an iPhone performance result. The remaining presentation work before campaign integration is directional character art, formation avoidance, richer contact choreography and real-device profiling.
+The short automated autoplay smoke sample reported 54 fps / 33.4 ms frame p95 in headless Chromium, including startup. It is not a physical iPhone performance measurement. The managed test browser blocks direct `file://` navigation; offline execution is tested by loading the complete HTML into an offline context. Physical Safari, Files/Quick Look handling and sustained device frame rate still need a device check.

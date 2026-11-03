@@ -1,18 +1,118 @@
 {
+  "realtime": {
+    "firingLane": {
+      "blockedAttempts": 39,
+      "shotsAfterClearing": 3,
+      "hits": 3
+    },
+    "mrk": [
+      {
+        "mrk": 0,
+        "cadence": 4.8,
+        "shots": 185,
+        "hits": 181
+      },
+      {
+        "mrk": 80,
+        "cadence": 3.0638297872340425,
+        "shots": 291,
+        "hits": 288
+      }
+    ],
+    "arrows": {
+      "fired": 294,
+      "hits": 52,
+      "misses": 228,
+      "active": 14
+    },
+    "releaseDamage": 73.8851636092771,
+    "cavalry": [
+      {
+        "side": 0,
+        "charges": 2,
+        "withdrawals": 2,
+        "regroups": 2,
+        "firstTarget": "inf",
+        "strikes": 27
+      },
+      {
+        "side": 1,
+        "charges": 2,
+        "withdrawals": 2,
+        "regroups": 2,
+        "firstTarget": "inf",
+        "strikes": 27
+      }
+    ],
+    "concurrent": {
+      "gun": 61,
+      "arrows": 138,
+      "melee": 109
+    },
+    "seeds": [
+      {
+        "seed": 11,
+        "totals": [
+          796.9435433027404,
+          0
+        ],
+        "fallen": 208,
+        "routed": 31
+      },
+      {
+        "seed": 79,
+        "totals": [
+          884.7071525213908,
+          0
+        ],
+        "fallen": 204,
+        "routed": 28
+      },
+      {
+        "seed": 7711,
+        "totals": [
+          914.3689187496414,
+          0
+        ],
+        "fallen": 196,
+        "routed": 32
+      },
+      {
+        "seed": 9441,
+        "totals": [
+          918.0177557898068,
+          0
+        ],
+        "fallen": 203,
+        "routed": 28
+      },
+      {
+        "seed": 18937,
+        "totals": [
+          773.6725207134982,
+          0
+        ],
+        "fallen": 218,
+        "routed": 22
+      }
+    ],
+    "checks": 113,
+    "failures": []
+  },
   "desktop": {
     "canvasMB": 31.582664489746094,
     "canvases": 468,
     "renderCanvasAllocations": 0,
     "at40Seconds": [
-      1334.8713413151888,
-      800.6021423609695
+      985.9563198685555,
+      538.5762338625867
     ],
     "final": [
-      884.6041879410402,
+      914.3689187496414,
       0
     ],
-    "fallen": 231,
-    "routed": 18,
+    "fallen": 196,
+    "routed": 32,
     "deterministic30and60": true
   },
   "mobile": {
@@ -34,9 +134,9 @@
     "fileProtocol": "Managed browser policy blocks file:// navigation; physical Safari not tested"
   },
   "live": {
-    "advancedSeconds": 4.049999999999991,
-    "hud": "47 fps · p95 66.7 ms\n300 figures · 30.2 canvas MB\n10 shared rigs"
+    "advancedSeconds": 4.016666666666658,
+    "hud": "54 fps · p95 33.4 ms\n300 figures · 30.2 canvas MB\n10 shared rigs"
   },
-  "checks": 41,
+  "checks": 155,
   "errors": []
 }

@@ -17,7 +17,7 @@ The whole game is one self-contained HTML file. It has no build step, no server 
 
 ## Battlefield prototype
 
-Try the separate [Grand Battlefield HTML](prototypes/Shinobi%20Hollow%20-%20Grand%20Battlefield.html): 300 procedural figures on a continuous angled battlefield, cavalry wings, pan/pinch/zoom, formation orders and a second isometric perspective. It does not load or change your village. See [controls, scope and validation](docs/battlefield-prototype.md).
+Try the separate [Grand Battlefield HTML](prototypes/Shinobi%20Hollow%20-%20Grand%20Battlefield.html): 300 procedural figures in the original formation order, continuous MRK-paced ranged fire, physical projectile impacts, infantry contact and cavalry charge/regroup cycles, plus pan/pinch/zoom and a second isometric perspective. It does not load or change your village. See [controls, scope and validation](docs/battlefield-prototype.md).
 
 ## Battlefield density and formations
 

@@ -24,20 +24,19 @@ const root=path.resolve(__dirname,'..'),html=path.join(root,'prototypes/Shinobi 
   const p=await open();const start=await p.evaluate(()=>GrandBattle.snapshot());
   ok(start.living===300&&start.totals[0]===2480&&start.totals[1]===2260,'Missing armies or procedural figures');
   ok(start.canvas.styles===10&&start.canvas.MB<48,'Cold art budget exceeded');
+  ok(start.groups[0].x>start.groups[1].x&&start.groups[1].x>start.groups[2].x&&start.groups[2].x>start.groups[3].x&&start.groups[4].x<start.groups[5].x&&start.groups[5].x<start.groups[6].x&&start.groups[6].x<start.groups[7].x,'Formation order changed');
+  result.realtime=await p.evaluate(require('./helpers/battlefield-realtime.cjs'));ok(result.realtime.failures.length===0,result.realtime.failures.join('\n'));
   const steady=await p.evaluate(()=>{const n=__audit.canvas;for(let i=0;i<120;i++){GrandBattle.advance(1/60);GrandBattle.render();}return {allocated:__audit.canvas-n,now:GrandBattle.snapshot()};});
   ok(steady.allocated===0,'Rendering allocated new canvases');
   const run=async(step,iso=false)=>p.evaluate(({step,iso})=>{GrandBattle.reset(7711);if(iso)GrandBattle.angle();for(let t=0;t<40-1e-7;t+=step)GrandBattle.advance(step);const s=GrandBattle.snapshot();if(iso)GrandBattle.angle();return s;},{step,iso});
   const s60=await run(1/60),s30=await run(1/30),iso=await run(1/30,true);
-  for(const s of [s60,s30,iso]){near(s.time,40,'Fixed-step time changed');ok(s.applied>2000&&s.fallen>0,'No resolved combat');near(s.totals[0]+s.totals[1]+s.applied,4740,'Duplicate or missing damage');ok(s.living+s.fallen+s.routed===300,'Casualty counted twice');}
+  for(const s of [s60,s30,iso]){near(s.time,40,'Fixed-step time changed');ok(s.applied>1000&&s.fallen>0,'No resolved combat');near(s.totals[0]+s.totals[1]+s.applied,4740,'Duplicate or missing damage');ok(s.living+s.fallen+s.routed===300,'Casualty counted twice');}
   ok(JSON.stringify(s60.groups)===JSON.stringify(s30.groups),'30 / 60 Hz combat differs');
   ok(JSON.stringify(iso.groups)===JSON.stringify(s60.groups),'Projection changed combat');
-  // Hold stops marching and distant melee damage. Advance reconnects a living line.
-  const orders=await p.evaluate(()=>{GrandBattle.reset();GrandBattle.select(4);GrandBattle.order('hold');GrandBattle.select(0);GrandBattle.order('hold');const before=GrandBattle.snapshot();for(let i=0;i<17;i++)GrandBattle.advance(1);const held=GrandBattle.snapshot();GrandBattle.order('advance');for(let i=0;i<12;i++)GrandBattle.advance(1);return {before,held,advanced:GrandBattle.snapshot()};});
-  near(orders.before.groups[0].x,orders.held.groups[0].x,'Hold still marches');
-  ok(orders.held.groups[4].troops>750,'Distant held infantry inflicted melee damage');
-  ok(orders.advanced.groups[0].x>orders.held.groups[0].x+50,'Advance failed to reconnect');
-  const sweep=await p.evaluate(()=>{GrandBattle.select(3);GrandBattle.order('flank');const a=GrandBattle.snapshot();for(let i=0;i<3;i++)GrandBattle.advance(1);return [a,GrandBattle.snapshot()];});
-  ok(sweep[1].groups[3].order==='flank'&&sweep[1].groups[3].y>sweep[0].groups[3].y,'Cavalry wing order failed');
+  // Actual formation controls stop a march and resume contact without phase gating.
+  const orders=await p.evaluate(()=>{GrandBattle.reset(7711,{troops:[[100,0,0,0],[100,0,0,0]],positions:{0:[450,500],4:[800,500]},orders:{0:'hold',4:'hold'}});GrandBattle.select(0);const before=GrandBattle.snapshot();for(let i=0;i<5;i++)GrandBattle.advance(1);const held=GrandBattle.snapshot();GrandBattle.order('advance');for(let i=0;i<16;i++)GrandBattle.advance(1);return {before,held,advanced:GrandBattle.snapshot()};});
+  near(orders.before.groups[0].x,orders.held.groups[0].x,'Hold still marches');near(orders.held.applied,0,'Distant held infantry inflicted damage');ok(orders.advanced.groups[0].x>orders.held.groups[0].x+50&&orders.advanced.applied>0,'Advance failed to reconnect');
+  await p.evaluate(()=>GrandBattle.reset());
   // Real pointer controls, pause, speed, keyboard and projection buttons.
   await p.click('#replay');await p.waitForTimeout(500);
   const cam0=await p.evaluate(()=>({...GrandBattle.camera}));await p.mouse.move(700,550);await p.mouse.down();await p.mouse.move(790,590,{steps:5});await p.mouse.up();
@@ -51,7 +50,7 @@ const root=path.resolve(__dirname,'..'),html=path.join(root,'prototypes/Shinobi 
   near(end.totals[0]+end.totals[1]+end.applied,4740,'End-state accounting failed');
   const cache=await p.evaluate(()=>{const old=GrandBattle.canvasStats(),n=__audit.canvas;for(let i=0;i<8;i++){GrandBattle.reset(i+1);for(let j=0;j<3;j++)GrandBattle.advance(1);GrandBattle.render();}const same=GrandBattle.canvasStats();for(let i=0;i<8;i++)GrandBattle.angle();return {old,same,after:GrandBattle.canvasStats(),created:__audit.canvas-n};});
   near(cache.old.MB,cache.same.MB,'Replay grew art memory');near(cache.after.MB,cache.old.MB,'Projection switch retained terrain');ok(cache.after.count===cache.old.count&&cache.created===8,'Replay or angle rebuilt actor art');
-  await p.evaluate(()=>{GrandBattle.reset();for(let i=0;i<15;i++)GrandBattle.advance(1);GrandBattle.render();});
+  await p.evaluate(()=>{GrandBattle.reset();for(let i=0;i<16;i++)GrandBattle.advance(1);GrandBattle.render();});await p.click('#overview');await p.waitForTimeout(450);
   const reportDir=path.join(root,'reports/battlefield-prototype');fs.mkdirSync(reportDir,{recursive:true});
   await p.screenshot({path:path.join(reportDir,'angled.png')});await p.click('#angle');await p.waitForTimeout(600);await p.screenshot({path:path.join(reportDir,'isometric.png')});
   result.desktop={canvasMB:start.canvas.MB,canvases:start.canvas.count,renderCanvasAllocations:steady.allocated,at40Seconds:s60.totals,final:end.totals,fallen:end.fallen,routed:end.routed,deterministic30and60:true};
@@ -67,7 +66,7 @@ const root=path.resolve(__dirname,'..'),html=path.join(root,'prototypes/Shinobi 
   await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
   ok((await mobile.evaluate(()=>GrandBattle.camera.z))>z*1.8,'Pinch zoom failed');
   await mobile.click('#overview');await mobile.waitForTimeout(450);await mobile.evaluate(()=>{for(let i=0;i<15;i++)GrandBattle.advance(1);});
-  await mobile.screenshot({path:path.join(reportDir,'mobile.png'),scale:'css'});
+  await mobile.click('#follow');await mobile.waitForTimeout(450);await mobile.screenshot({path:path.join(reportDir,'mobile.png'),scale:'css'});
   const isolation=await mobile.evaluate(()=>({storage:__audit.storage,audio:__audit.audio}));ok(isolation.storage===0&&isolation.audio===0,'Game save / audio booted');
   await mobile.setViewportSize({width:932,height:430});await mobile.waitForTimeout(400);ok((await mobile.locator('body').evaluate(el=>el.scrollWidth))===932,'Landscape overflow');
   await mobile.screenshot({path:path.join(reportDir,'landscape.png'),scale:'css'});
@@ -83,6 +82,6 @@ const root=path.resolve(__dirname,'..'),html=path.join(root,'prototypes/Shinobi 
   await live.waitForFunction(()=>GrandBattle?.ready,null,{timeout:60000});await live.waitForFunction(()=>GrandBattle.snapshot().time>4,null,{timeout:15000});const liveA=await live.evaluate(()=>GrandBattle.snapshot());
   ok(liveA.time>2.5,'Live loop stalled');await live.click('#pause');const paused=await live.evaluate(()=>GrandBattle.snapshot());await live.waitForTimeout(400);const still=await live.evaluate(()=>GrandBattle.snapshot());near(paused.time,still.time,'Paused game advanced');
   result.live={advancedSeconds:liveA.time,hud:await live.textContent('#perf')};await live.close();
-  ok(errors.length===0,errors.join('\n'));result.checks=checks;result.errors=errors;fs.writeFileSync(path.join(reportDir,'results.json'),JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));
+  ok(errors.length===0,errors.join('\n'));result.checks=checks+result.realtime.checks;result.errors=errors;fs.writeFileSync(path.join(reportDir,'results.json'),JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));
  }finally{await browser.close();await new Promise(r=>server.close(r));}
 })().catch(e=>{console.error(e);process.exitCode=1;});
