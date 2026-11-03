@@ -17,7 +17,7 @@ function cadence(type,mrk){const training=Math.max(0,mrk)/(Math.max(0,mrk)+40);r
 function create(art,seed=7711,options={},ground=()=>0){
  const sim=art.battle(seed,options.troops),groups=[],models=[],bins=Array.from({length:COLS*ROWS},()=>[]);
  const effects=Array.from({length:220},()=>({on:false,t:0,dur:0,kind:'',x:0,y:0,size:1,face:1}));
- const shots=Array.from({length:160},()=>({on:false,start:0,dur:1,x0:0,y0:0,x1:0,y1:0,height:0,kind:'',side:0,from:null,force:0,power:0,lastU:0}));
+ const shots=Array.from({length:160},()=>({on:false,start:0,dur:1,x0:0,y0:0,x1:0,y1:0,height:0,kind:'',side:0,from:null,force:0,power:0,lastU:0,counterFamily:null,counterPower:1}));
  const impacts=Array.from({length:600},()=>({from:null,to:null,amount:0,kind:''}));
  let time=0,acc=0,applied=0,outcome=null,nextThink=0,joined=false,externalLoss=0,externalRecovery=0;
  const initial=sim.A.reduce((n,a)=>n+a.groups.reduce((v,g)=>v+g.troops,0),0);
@@ -161,7 +161,7 @@ function create(art,seed=7711,options={},ground=()=>0){
   let ax=lx,ay=ly;if(type==='arc'){const mrk=f.g.mrk,spread=(14+d*.035)*(1-.65*mrk/(mrk+40))*(stance(f).accuracy||1),angle=sim.random()*Math.PI*2,r=Math.sqrt(sim.random())*spread;ax+=Math.cos(angle)*r;ay+=Math.sin(angle)*r;}
   if(type==='gun'){const spread=gunSpread(d,f.g.mrk,stance(f).accuracy||1),angle=sim.random()*Math.PI*2,r=Math.sqrt(sim.random())*spread;ax+=Math.cos(angle)*r;ay+=Math.sin(angle)*r;aimPoint.x=ax;aimPoint.y=ay;if(!terrainClear(m,aimPoint)||rayHit(m.x,m.y,ax,ay,m,true)){f.blocked++;m.blocked=true;return false;}}
   const len=Math.hypot(ax-m.x,ay-m.y)||1,ux=(ax-m.x)/len,uy=(ay-m.y)/len;
-  p.on=true;p.start=time;p.lastU=0;p.from=m;p.force=Math.max(1,m.hp);p.kind=type;p.side=f.side;p.power=sim.power(f.g,p.force,type,.17*stance(f).attack);p.x0=m.x+ux*12;p.y0=m.y+uy*12;
+  p.on=true;p.start=time;p.lastU=0;p.from=m;p.force=Math.max(1,m.hp);p.kind=type;p.side=f.side;p.power=sim.power(f.g,p.force,type,.17*stance(f).attack*(m.style.shotPower??1));if(sim.prepareShot)sim.prepareShot(p,f.g);p.x0=m.x+ux*12;p.y0=m.y+uy*12;
   p.x1=type==='gun'?m.x+ux*max:ax;p.y1=type==='gun'?m.y+uy*max:ay;p.dur=type==='gun'?(max-12)/1400:flight;p.height=type==='arc'?Math.min(125,d*.17):0;
   m.face=dx>=0?1:-1;m.shotAt=time;m.actionAt=time;if(!extra){const reload=m.style.reload||1;m.nextFire=time+cadence(type,f.g.mrk)*reload;m.reloadUntil=time+cadence(type,f.g.mrk)*reload*.68;m.burstLeft=Math.max(0,(m.style.burst||1)-1);m.burstAt=time+.14;}m.blocked=false;f.fired++;f.lastShotAt=time;
   if(type==='gun'){emit('flash',p.x0,p.y0,1,m.face);emit('smoke',p.x0,p.y0,1,m.face);}return true;
@@ -189,10 +189,10 @@ function create(art,seed=7711,options={},ground=()=>0){
   for(const p of shots)if(p.on){const u=clamp((time-p.start)/p.dur,0,1),f=p.from.f;
    if(p.kind==='gun'){
     const x0=p.x0+(p.x1-p.x0)*p.lastU,y0=p.y0+(p.y1-p.y0)*p.lastU,x1=p.x0+(p.x1-p.x0)*u,y1=p.y0+(p.y1-p.y0)*u,target=rayHit(x0,y0,x1,y1,p.from);
-    if(target){p.on=false;if(target.f.side===p.side){f.intercepted++;f.missed++;}else{f.landed++;hit(p.from,target,sim.impact(p.power,target.f.g,p.force,'gun',p.from.f.g),'gun');}}
+    if(target){p.on=false;if(target.f.side===p.side){f.intercepted++;f.missed++;}else{f.landed++;hit(p.from,target,sim.impact(p.power,target.f.g,p.force,'gun',p.from.f.g,p),'gun');}}
     else if(u>=1){p.on=false;f.missed++;}
    }else if(u>=1){p.on=false;const point=impactPoint;point.x=p.x1;point.y=p.y1;const target=nearest(point,13,1-p.side,true);
-    if(target){f.landed++;hit(p.from,target,sim.impact(p.power,target.f.g,p.force,'arc',p.from.f.g),'arc');}else{f.missed++;emit('dust',p.x1,p.y1,.5);}
+    if(target){f.landed++;hit(p.from,target,sim.impact(p.power,target.f.g,p.force,'arc',p.from.f.g,p),'arc');}else{f.missed++;emit('dust',p.x1,p.y1,.5);}
    }
    p.lastU=u;if(p.on)active++;
   }return active;

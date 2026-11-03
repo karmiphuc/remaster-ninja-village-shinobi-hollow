@@ -1,0 +1,169 @@
+{
+  "skills": [
+    {
+      "type": "gun",
+      "level": 0,
+      "power": 17.279195394873618,
+      "damage": 31.2232452431592
+    },
+    {
+      "type": "gun",
+      "level": 3,
+      "power": 21.42620228964329,
+      "damage": 38.71682410151742
+    },
+    {
+      "type": "cav",
+      "level": 0,
+      "power": 16.19924568269402,
+      "damage": 12.196580173109064
+    },
+    {
+      "type": "cav",
+      "level": 3,
+      "power": 21.059019387502225,
+      "damage": 15.855554225041786
+    }
+  ],
+  "counters": {
+    "baseline": 109.09090909090908,
+    "hit": 129.81818181818178,
+    "frozen": 129.81818181818178,
+    "after": 109.09090909090908
+  },
+  "guns": [
+    {
+      "weapon": "tanegashima",
+      "burst": 1,
+      "reload": 1,
+      "shotPower": 1,
+      "cadence": 4.295942720763723,
+      "impacts": [
+        90.9090909090909,
+        90.9090909090909,
+        90.9090909090909,
+        90.9090909090909
+      ],
+      "first": {
+        "at": 1.4,
+        "next": 5.695942720763723,
+        "power": 499.6411603578453
+      },
+      "fired": 1,
+      "damage": 454.2192366889502,
+      "residual": -2.8990143619012088e-11
+    },
+    {
+      "weapon": "repeater",
+      "burst": 2,
+      "reload": 2,
+      "shotPower": 0.68,
+      "cadence": 4.295942720763723,
+      "impacts": [
+        90.9090909090909,
+        90.9090909090909,
+        90.9090909090909,
+        90.9090909090909
+      ],
+      "first": {
+        "at": 1.4,
+        "next": 9.991885441527446,
+        "power": 339.7559890433348
+      },
+      "fired": 2,
+      "damage": 629.8228322630355,
+      "residual": 3.9335645851679146e-11
+    },
+    {
+      "weapon": "rifle",
+      "burst": 3,
+      "reload": 3,
+      "shotPower": 0.6,
+      "cadence": 4.295942720763723,
+      "impacts": [
+        90.9090909090909,
+        90.9090909090909,
+        90.9090909090909,
+        90.9090909090909
+      ],
+      "first": {
+        "at": 1.4,
+        "next": 14.287828162291168,
+        "power": 299.7846962147072
+      },
+      "fired": 3,
+      "damage": 839.2104776196395,
+      "residual": 2.523847797419876e-11
+    }
+  ],
+  "credit": [
+    {
+      "skirmish": false,
+      "damage": 27.77777777777778,
+      "kills": 27.77777777777778,
+      "personal": 27.77777777777778,
+      "residual": 2.1316282072803006e-14
+    },
+    {
+      "skirmish": true,
+      "damage": 16.02668850042184,
+      "kills": 16.02668850042184,
+      "personal": 0,
+      "residual": 4.263256414560601e-14
+    }
+  ],
+  "resize": {
+    "before": {
+      "canvases": 2949,
+      "mb": 46.391197204589844
+    },
+    "steps": [
+      {
+        "hiddenVillage": true,
+        "sky": 433,
+        "view": 433,
+        "aftermath": 200,
+        "height": 200,
+        "positions": true,
+        "buffer": 0
+      },
+      {
+        "hiddenVillage": true,
+        "sky": 198,
+        "view": 198,
+        "aftermath": 414,
+        "height": 414,
+        "positions": true,
+        "buffer": 0
+      },
+      {
+        "hiddenVillage": true,
+        "sky": 198,
+        "view": 198,
+        "aftermath": 429,
+        "height": 429,
+        "positions": true,
+        "buffer": 0
+      }
+    ],
+    "after": {
+      "memory": {
+        "canvases": 2949,
+        "mb": 46.391197204589844
+      },
+      "released": true
+    }
+  },
+  "duel": {
+    "painted": 9,
+    "ended": true,
+    "committed": 12,
+    "expected": 12,
+    "sky": 433,
+    "view": 433,
+    "modelPaused": true,
+    "villageRestored": true
+  },
+  "checks": 41,
+  "errors": []
+}
