@@ -94,6 +94,8 @@ Foot spearmen can also throw their equipped yari and retrieve it after the KO. A
 
 Execution families roll randomly from weapon-, target- and hit-count-compatible pools on each KO. The chosen move stays stable through playback, while later duels receive fresh visual rolls without consuming combat randomness.
 
+Infantry phases now provide twice as much time to watch the fighting, with occasional nearby battlefield finishes using existing equipment frames. Two can play at once while the battle continues. Gun/archer impact holds gain 0.5 seconds; casualty death and rout playback is 33% faster. See [field combat timing and validation](docs/field-combat.md).
+
 **Formation tactics.** Each formation (Infantry, Archers, Gunners, Cavalry) takes its own orders. How many orders it can take depends on the highest Strategy among its own active commanders. Formations never share Strategy.
 
 | Strategy | Orders |

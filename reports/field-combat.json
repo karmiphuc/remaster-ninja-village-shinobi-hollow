@@ -1,0 +1,131 @@
+{
+  "timing": {
+    "inf": {
+      "before": 6.886492503061891,
+      "after": 13.772985006123783,
+      "firstContact": 3.85,
+      "kills": [
+        240,
+        240
+      ],
+      "candidates": 7
+    },
+    "gun": {
+      "before": 3.471428571428571,
+      "after": 3.9714285714285715,
+      "firstContact": null,
+      "kills": [
+        240,
+        240
+      ],
+      "candidates": 0
+    },
+    "arc": {
+      "before": 4.642857142857143,
+      "after": 5.142857142857143,
+      "firstContact": null,
+      "kills": [
+        240,
+        240
+      ],
+      "candidates": 0
+    },
+    "cav": {
+      "before": 3.928939679015561,
+      "after": 3.928939679015561,
+      "firstContact": null,
+      "kills": [
+        240,
+        240
+      ],
+      "candidates": 0
+    }
+  },
+  "reactions": {
+    "death": {
+      "before": 2.7023809523809956,
+      "after": 2.033333333333361,
+      "speed": 1.33
+    },
+    "rout": {
+      "before": 13.745238095239083,
+      "after": 10.33571428571474,
+      "speed": 1.33
+    }
+  },
+  "render": [
+    {
+      "weapon": "katana",
+      "side": 0,
+      "style": "passing",
+      "canvases": 0
+    },
+    {
+      "weapon": "katana",
+      "side": 1,
+      "style": "passing",
+      "canvases": 0
+    },
+    {
+      "weapon": "steel_yari",
+      "side": 0,
+      "style": "thrust",
+      "canvases": 0
+    },
+    {
+      "weapon": "steel_yari",
+      "side": 1,
+      "style": "thrust",
+      "canvases": 0
+    },
+    {
+      "weapon": "nodachi",
+      "side": 0,
+      "style": "heavy",
+      "canvases": 0
+    },
+    {
+      "weapon": "nodachi",
+      "side": 1,
+      "style": "heavy",
+      "canvases": 0
+    },
+    {
+      "weapon": "naginata",
+      "side": 0,
+      "style": "sweep",
+      "canvases": 0
+    },
+    {
+      "weapon": "naginata",
+      "side": 1,
+      "style": "sweep",
+      "canvases": 0
+    }
+  ],
+  "runs": [
+    {
+      "fps": 30,
+      "speed": 4,
+      "frames": 108,
+      "started": 5,
+      "maxActive": 2,
+      "remaining": [
+        160,
+        160
+      ]
+    },
+    {
+      "fps": 60,
+      "speed": 4,
+      "frames": 215,
+      "started": 5,
+      "maxActive": 2,
+      "remaining": [
+        160,
+        160
+      ]
+    }
+  ],
+  "checks": 113
+}

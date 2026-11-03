@@ -1,0 +1,12 @@
+Running 9 suite(s), 3 at a time…
+PASS  field-combat   87.9s
+PASS  siege         119.4s
+PASS  tactics        84.3s
+PASS  duel-executions   80.8s
+PASS  battle-end    235.3s
+PASS  melee-rebels   14.0s
+PASS  ranged-spill   18.6s
+PASS  duel-cavalry  114.3s
+PASS  animal-duels  125.7s
+
+9/9 passed in 325.9s wall time (880.4s if run one after another).

@@ -1,0 +1,47 @@
+{
+  "source": "abc90411b0c7903eda95c89eb201982b2ce498c4",
+  "viewport": [
+    430,
+    932
+  ],
+  "inf": {
+    "duration": 5.070544752143324,
+    "firstHit": 1.9700000000000002,
+    "lastDeath": 4.520544752143324,
+    "hits": [
+      240,
+      240
+    ],
+    "events": 43
+  },
+  "gun": {
+    "duration": 2.6799999999999997,
+    "firstHit": 1.6517342099803503,
+    "lastDeath": 1.8067147946590558,
+    "hits": [
+      240,
+      240
+    ],
+    "events": 114
+  },
+  "arc": {
+    "duration": 3.5,
+    "firstHit": 2.1961831239843743,
+    "lastDeath": 2.6367147946590563,
+    "hits": [
+      240,
+      240
+    ],
+    "events": 118
+  },
+  "death": {
+    "reactionClock": 1.8910257684998215,
+    "elapsed": 1.8916666666666968,
+    "escapeAt": null
+  },
+  "rout": {
+    "reactionClock": 21.097917322690478,
+    "elapsed": 9.621666666667357,
+    "escapeAt": 1.2313006237288937
+  }
+}
