@@ -1,0 +1,26 @@
+// Runs in the in-browser standalone fixture; tests physical effects rather than just config flags.
+module.exports=function tactics(){const out={},failures=[];let checks=0;const ok=(v,m)=>{checks++;if(!v)failures.push(m);},near=(a,b,m)=>ok(Math.abs(a-b)<1e-7,m),hold={0:'hold',1:'hold',2:'hold',3:'hold',4:'hold',5:'hold',6:'hold',7:'hold'};
+ const make=(o,seed=551)=>GrandCombat.create(GrandArt,seed,o),wait=(c,t)=>{for(let n=0;n<t*60-1e-8;n++)c.advance(1/60);return c.snapshot();};
+ near(GrandCombat.cadence('gun',0),6,'Gun rate is not exactly 20% slower');near(GrandCombat.cadence('arc',0),3.25,'Bow cadence changed');
+ // A tight infantry screen closes the tiny visual gaps that previously let rear muskets dominate.
+ let c=make({troops:[[72,1,0,0],[10000,0,0,0]],count:g=>g.type==='gun'?1:Math.min(72,g.troops),positions:{0:[500,500],1:[300,500],4:[900,500]},orders:hold});let s=wait(c,8);ok(s.groups[1].fired===0&&s.groups[1].blocked>0,'Gun fired through tight infantry screen');
+ c.order(1,'advance');s=wait(c,20);ok(s.groups[1].fired>0&&c.groups[1].members[0].fireLane,'Blocked musketeer did not seek an exposed lane');out.flank={shots:s.groups[1].fired,position:[c.groups[1].members[0].x,c.groups[1].members[0].y]};
+ // Geometry, not an automatic damage roll, lowers long-range bullet hit counts.
+ out.accuracy=[];for(const d of [200,350,630]){let fired=0,hits=0;for(const seed of [31,73,159,577,991]){c=make({troops:[[0,1000,0,0],[200000,0,0,0]],count:g=>g.troops?1:0,positions:{1:[300,500],4:[300+d,500]},orders:hold,mrk:{1:0}},seed);s=wait(c,60);fired+=s.groups[1].fired;hits+=s.groups[1].landed;}out.accuracy.push({distance:d,fired,hits,accuracy:hits/fired});}
+ ok(out.accuracy[0].accuracy>.95&&out.accuracy[1].accuracy>.95&&out.accuracy[2].accuracy<.75,'Gun accuracy falloff does not preserve low/mid-range accuracy');
+ // Stance affects both incoming damage and real formation movement.
+ out.infantry=[];for(const shape of ['line','loose','pikewall']){c=make({troops:[[10000,0,0,0],[10000,0,0,0]],count:g=>g.troops?1:0,positions:{0:[650,500],4:[688,500]},orders:hold,stances:{0:shape}});s=wait(c,1.1);out.infantry.push({stance:shape,lost:10000-s.groups[0].troops});}
+ ok(out.infantry[2].lost<out.infantry[0].lost*.8&&out.infantry[0].lost<out.infantry[1].lost,'Infantry melee stance protections ineffective');
+ c=make({troops:[[500,0,0,0],[500,0,0,0]],stances:{0:'pikewall'},orders:{4:'advance'}});const x=c.groups[0].x;s=wait(c,6);near(s.groups[0].x,x,'Pikewall advanced');ok(!c.models.filter(m=>m.f.id===0).some(m=>m.moving),'Pikewall soldiers moved');
+ const incoming=[];for(const shape of ['line','loose']){c=make({troops:[[0,1000,0,0],[200000,0,0,0]],count:g=>g.troops?1:0,positions:{1:[300,500],4:[500,500]},orders:hold,stances:{4:shape}});s=wait(c,12);incoming.push(s.applied);}ok(incoming[1]<incoming[0]*.95,'Loose infantry not protected from ranged fire');
+ const ranged=[];for(const shape of ['line','loose']){c=make({troops:[[0,1000,0,0],[200000,0,0,0]],count:g=>g.troops?1:0,positions:{1:[300,500],4:[500,500]},orders:hold,stances:{1:shape}});s=wait(c,12);ranged.push(s.applied);}ok(ranged[0]>ranged[1]*1.1,'Ranged line stance has no offensive benefit');
+ out.cavalry=[];for(const charged of [false,true]){const values=[];for(const shape of ['line','skein']){c=make({troops:[[0,0,0,1000],[20000,0,0,0]],count:g=>g.troops?1:0,positions:{3:[650,500],4:[688,500]},orders:hold,stances:{3:shape}});if(charged){c.groups[3].order='cycle';c.groups[3].state='impact';}s=wait(c,1.1);values.push(s.groups[3].damage);}ok(charged?values[1]>values[0]:values[1]<values[0],charged?'Skein impact bonus missing':'Skein wrongly boosts ordinary melee');out.cavalry.push({charged,line:values[0],skein:values[1]});}
+ // Preferred backline is a real routing preference; no one is teleported or guaranteed a hit.
+ c=make({troops:[[2000,0,0,2000],[2000,500,500,0]],positions:{4:[920,160]},orders:{4:'hold',5:'hold',6:'hold'}});ok(c.target(3,6),'Cavalry target command refused');s=wait(c,4);ok(s.groups[3].firstChargeTarget==='arc'&&s.groups[3].priorityTarget===6,'Cavalry ignored chosen backline');ok(!c.target(3,0),'Cavalry accepted friendly target');
+ let tied=false,slowed=false;for(let i=0;i<3600;i++){c.advance(1/60);const f=c.groups[3];if(f.state==='withdraw'&&f.pinned>0){tied=true;const x=f.x,y=f.y;c.advance(1/60);const speed=Math.hypot(f.x-x,f.y-y)*60;if(speed<f.speed*.9)slowed=true;}}
+ // A separate forced-contact journey exercises the withdrawal penalty even when the chosen backline route was clear.
+ if(!tied){c=make({troops:[[8000,0,0,4000],[8000,0,0,4000]]});for(let i=0;i<3600;i++){c.advance(1/60);const f=c.groups[3];if(f.state==='withdraw'&&f.pinned>0){tied=true;const x=f.x,y=f.y;c.advance(1/60);if(Math.hypot(f.x-x,f.y-y)*60<f.speed*.9)slowed=true;}}}
+ ok(tied&&slowed,'Infantry contact did not slow cavalry disengagement');out.disengagement={tied,slowed};
+ // Shape swaps have a brief settling period; repeated clicks cannot reset a charging cycle or skip regroup.
+ c=make({});ok(c.setStance(0,'loose'),'Valid stance rejected');ok(!c.setStance(0,'pikewall'),'Stance cooldown missing');wait(c,1.6);ok(c.setStance(0,'pikewall'),'Stance never unlocked');c.order(3,'cycle');const at=c.groups[3].stateAt;c.target(3,6);near(c.groups[3].stateAt,at,'Target command bypassed regroup');
+ out.checks=checks;out.failures=failures;return out;};

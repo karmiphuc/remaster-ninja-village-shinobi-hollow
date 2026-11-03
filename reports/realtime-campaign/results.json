@@ -1,0 +1,155 @@
+{
+  "migration": {
+    "mode": "classic",
+    "stances": {
+      "inf": "line",
+      "gun": "line",
+      "arc": "line",
+      "cav": "line"
+    },
+    "gold": true,
+    "v": true
+  },
+  "save": {
+    "mode": "realtime",
+    "stance": "pikewall",
+    "v": 1,
+    "kb": 42.462890625,
+    "ms": 0.10000000149011612
+  },
+  "pikewall": {
+    "x0": 480,
+    "x1": 480,
+    "y0": 500,
+    "y1": 500,
+    "stance": "pikewall",
+    "mode": "realtime"
+  },
+  "full": {
+    "state": "done",
+    "round": 6,
+    "result": "win",
+    "steps": 6086,
+    "actual": {
+      "inf": 68,
+      "gun": 41,
+      "arc": 119,
+      "cav": 72
+    },
+    "expected": {
+      "inf": 68,
+      "gun": 41,
+      "arc": 119,
+      "cav": 72
+    },
+    "residual": 1.0231815394945443e-12,
+    "hp": 210.9399637013753,
+    "total": 210.93996370137512,
+    "goldBefore": 1200,
+    "goldAfter": 1217,
+    "paidOnce": true,
+    "body": 130
+  },
+  "retreat": {
+    "done": true,
+    "result": "lose",
+    "requested": true,
+    "both": true
+  },
+  "classic": {
+    "mode": "classic",
+    "rt": false,
+    "phase": "arc",
+    "script": true
+  },
+  "density": [
+    {
+      "setting": "standard",
+      "n": 158,
+      "totals": [
+        443.26520425747213,
+        391.9700047262661
+      ]
+    },
+    {
+      "setting": "dense",
+      "n": 158,
+      "totals": [
+        443.26520425747213,
+        391.9700047262661
+      ]
+    },
+    {
+      "setting": "epic",
+      "n": 158,
+      "totals": [
+        443.26520425747213,
+        391.9700047262661
+      ]
+    }
+  ],
+  "siege": {
+    "held": true,
+    "stayed": true,
+    "breached": true,
+    "state": "realtime",
+    "restarts": 1,
+    "rt": true,
+    "residual": 0
+  },
+  "duels": [
+    {
+      "save": null,
+      "state": "realtime",
+      "frozen": true,
+      "residual": 0,
+      "ended": 1,
+      "HP": [
+        [
+          0,
+          18
+        ]
+      ],
+      "ward": false,
+      "guards": 0
+    },
+    {
+      "save": "guard",
+      "state": "realtime",
+      "frozen": true,
+      "residual": 0,
+      "ended": 1,
+      "HP": [
+        [
+          0,
+          55
+        ]
+      ],
+      "ward": false,
+      "guards": 1
+    },
+    {
+      "save": "ward",
+      "state": "realtime",
+      "frozen": true,
+      "residual": 0,
+      "ended": 1,
+      "HP": [
+        [
+          18,
+          27
+        ]
+      ],
+      "ward": true,
+      "guards": 0
+    }
+  ],
+  "cleanup": {
+    "before": 206,
+    "after": 212,
+    "hidden": true,
+    "children": 0
+  },
+  "checks": 25,
+  "errors": []
+}

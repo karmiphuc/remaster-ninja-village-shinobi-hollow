@@ -35,13 +35,13 @@ module.exports=function mechanics(){
  // Hold is a positional order, not a ban on defending against nearby attackers.
  c=fixture([[40,0,0,0],[40,0,0,0]],{0:[650,500],4:[688,500]});s=wait(c,3);ok(s.groups[0].strikes>0&&s.groups[4].strikes>0,'Held nearby infantry did not fight');near(s.groups[0].x,650,'Held formation centre moved');audit(c,'held defence');
  // Observe distinct charge / withdrawal / regroup transitions and a second cycle.
- c=make({troops:[[8000,0,0,400],[8000,0,0,400]]});let withdrawing=null,regrouped=false;
- for(let i=0;i<1800;i++){c.advance(1/60);if(c.groups[3].state==='withdraw'&&!withdrawing){withdrawing={strikes:c.groups[3].strikes,time:c.time};const d=wait(c,.3);ok(d.groups[3].state==='withdraw'&&d.groups[3].strikes===withdrawing.strikes,'Cavalry attacked while withdrawing');}if(c.groups[3].regroups)regrouped=true;}
- s=c.snapshot();ok(s.groups[3].firstChargeTarget==='inf'&&s.groups[7].firstChargeTarget==='inf','Cavalry bypassed closest infantry');ok(s.groups[3].charges>=2&&s.groups[3].withdrawals>=1&&regrouped,'Cavalry failed to repeat charge/regroup cycle');ok(s.groups[3].strikes<=18*s.groups[3].charges,'Cavalry applied repeated impacts in one charge');audit(c,'cavalry cycles');
- out.cavalry=s.groups.filter(g=>g.type==='cav').map(g=>({side:g.side,charges:g.charges,withdrawals:g.withdrawals,regroups:g.regroups,firstTarget:g.firstChargeTarget,strikes:g.strikes}));
+ c=make({troops:[[8000,0,0,4000],[8000,0,0,4000]]});let withdrawing=null,regrouped=false;
+ for(let i=0;i<3000;i++){c.advance(1/60);if(c.groups[3].state==='withdraw'&&!withdrawing){withdrawing={impacts:c.groups[3].impacts,time:c.time};const d=wait(c,.3);ok(d.groups[3].state==='withdraw'&&d.groups[3].impacts===withdrawing.impacts,'Cavalry applied charge damage while withdrawing');}if(c.groups[3].regroups)regrouped=true;}
+ s=c.snapshot();ok(s.groups[3].firstChargeTarget==='inf'&&s.groups[7].firstChargeTarget==='inf','Cavalry bypassed closest infantry');ok(s.groups[3].charges>=2&&s.groups[3].withdrawals>=1&&regrouped,'Cavalry failed to repeat charge/regroup cycle');ok(s.groups[3].impacts<=18*s.groups[3].charges,'Cavalry applied repeated impacts in one charge');audit(c,'cavalry cycles');
+ out.cavalry=s.groups.filter(g=>g.type==='cav').map(g=>({side:g.side,charges:g.charges,withdrawals:g.withdrawals,regroups:g.regroups,firstTarget:g.firstChargeTarget,strikes:g.strikes,impacts:g.impacts}));
  // Both arms are active together; no shared gun/arrow/melee phase remains.
  c=make({});s=wait(c,12);ok(s.groups[1].fired>0&&s.groups[2].fired>0&&s.groups[0].strikes>0,'Combat is still gated by formation phases');out.concurrent={gun:s.groups[1].fired,arrows:s.groups[2].fired,melee:s.groups[0].strikes};audit(c,'concurrent battle');
  // Seeded full battles: bounded state, HP conservation and actual elimination, with different victims/misses.
- out.seeds=[];for(const seed of [11,79,7711,9441,18937]){c=GrandCombat.create(GrandArt,seed);s=wait(c,200);ok(!!s.winner&&s.totals.includes(0),'Default real-time battle stalled for seed '+seed);audit(c,'seed '+seed);out.seeds.push({seed,totals:s.totals,fallen:s.fallen,routed:s.routed});}
+ out.seeds=[];for(const seed of [11,79,7711,9441,18937]){c=GrandCombat.create(GrandArt,seed);s=wait(c,400);ok(!!s.winner&&s.totals.includes(0),'Default real-time battle stalled for seed '+seed);audit(c,'seed '+seed);out.seeds.push({seed,totals:s.totals,fallen:s.fallen,routed:s.routed});}
  out.checks=checks;out.failures=failures;return out;
 };

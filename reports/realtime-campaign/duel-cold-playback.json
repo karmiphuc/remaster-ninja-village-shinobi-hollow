@@ -1,0 +1,543 @@
+{
+  "checks": 485,
+  "cases": 24,
+  "rows": [
+    {
+      "kind": "tripleSlash",
+      "pet": null,
+      "n": 1,
+      "save": null,
+      "fps": 30,
+      "speed": 4,
+      "hits": 5,
+      "clips": [
+        {
+          "kind": "tripleSlash",
+          "frames": 9,
+          "before": 5,
+          "after": 4,
+          "bgMB": 4.385833740234375,
+          "warmDone": true
+        }
+      ],
+      "maxUpdateMs": 125.2,
+      "maxDrawMs": 45.3
+    },
+    {
+      "kind": "tripleThrust",
+      "pet": null,
+      "n": 1,
+      "save": null,
+      "fps": 30,
+      "speed": 4,
+      "hits": 5,
+      "clips": [
+        {
+          "kind": "tripleThrust",
+          "frames": 10,
+          "before": 5,
+          "after": 5,
+          "bgMB": 4.5494842529296875,
+          "warmDone": true
+        }
+      ],
+      "maxUpdateMs": 96.2,
+      "maxDrawMs": 37.4
+    },
+    {
+      "kind": "slidingThrust",
+      "pet": null,
+      "n": 1,
+      "save": null,
+      "fps": 30,
+      "speed": 4,
+      "hits": 5,
+      "clips": [
+        {
+          "kind": "slidingThrust",
+          "frames": 9,
+          "before": 5,
+          "after": 4,
+          "bgMB": 4.434928894042969,
+          "warmDone": true
+        }
+      ],
+      "maxUpdateMs": 21.8,
+      "maxDrawMs": 38.5
+    },
+    {
+      "kind": "jump",
+      "pet": null,
+      "n": 1,
+      "save": null,
+      "fps": 30,
+      "speed": 4,
+      "hits": 5,
+      "clips": [
+        {
+          "kind": "jump",
+          "frames": 10,
+          "before": 5,
+          "after": 5,
+          "bgMB": 4.5494842529296875,
+          "warmDone": true
+        }
+      ],
+      "maxUpdateMs": 23.7,
+      "maxDrawMs": 96.2
+    },
+    {
+      "kind": "guardBreak",
+      "pet": null,
+      "n": 1,
+      "save": null,
+      "fps": 30,
+      "speed": 4,
+      "hits": 5,
+      "clips": [
+        {
+          "kind": "guardBreak",
+          "frames": 9,
+          "before": 5,
+          "after": 4,
+          "bgMB": 4.385833740234375,
+          "warmDone": true
+        }
+      ],
+      "maxUpdateMs": 22.1,
+      "maxDrawMs": 24.5
+    },
+    {
+      "kind": "yariCast",
+      "pet": null,
+      "n": 1,
+      "save": null,
+      "fps": 30,
+      "speed": 4,
+      "hits": 5,
+      "clips": [
+        {
+          "kind": "yariCast",
+          "frames": 11,
+          "before": 6,
+          "after": 5,
+          "bgMB": 4.385833740234375,
+          "warmDone": true
+        }
+      ],
+      "maxUpdateMs": 22.6,
+      "maxDrawMs": 37.8
+    },
+    {
+      "kind": "spearBrace",
+      "pet": null,
+      "n": 1,
+      "save": null,
+      "fps": 30,
+      "speed": 4,
+      "hits": 5,
+      "clips": [
+        {
+          "kind": "spearBrace",
+          "frames": 11,
+          "before": 6,
+          "after": 5,
+          "bgMB": 4.369468688964844,
+          "warmDone": true
+        }
+      ],
+      "maxUpdateMs": 18.8,
+      "maxDrawMs": 34.3
+    },
+    {
+      "kind": "riderDrag",
+      "pet": null,
+      "n": 1,
+      "save": null,
+      "fps": 30,
+      "speed": 4,
+      "hits": 5,
+      "clips": [
+        {
+          "kind": "riderDrag",
+          "frames": 12,
+          "before": 7,
+          "after": 5,
+          "bgMB": 4.533119201660156,
+          "warmDone": true
+        }
+      ],
+      "maxUpdateMs": 12.9,
+      "maxDrawMs": 32.9
+    },
+    {
+      "kind": "cavBackKick",
+      "pet": null,
+      "n": 1,
+      "save": null,
+      "fps": 30,
+      "speed": 4,
+      "hits": 5,
+      "clips": [
+        {
+          "kind": "cavBackKick",
+          "frames": 11,
+          "before": 6,
+          "after": 5,
+          "bgMB": 4.434928894042969,
+          "warmDone": true
+        }
+      ],
+      "maxUpdateMs": 40.5,
+      "maxDrawMs": 30.2
+    },
+    {
+      "kind": "cavTrample",
+      "pet": null,
+      "n": 1,
+      "save": null,
+      "fps": 30,
+      "speed": 4,
+      "hits": 5,
+      "clips": [
+        {
+          "kind": "cavTrample",
+          "frames": 10,
+          "before": 6,
+          "after": 4,
+          "bgMB": 4.385833740234375,
+          "warmDone": true
+        }
+      ],
+      "maxUpdateMs": 45.1,
+      "maxDrawMs": 30.9
+    },
+    {
+      "kind": "beastPounce",
+      "pet": "hound",
+      "n": 1,
+      "save": null,
+      "fps": 30,
+      "speed": 4,
+      "hits": 5,
+      "clips": [
+        {
+          "kind": "beastPounce",
+          "frames": 11,
+          "before": 6,
+          "after": 5,
+          "bgMB": 4.5494842529296875,
+          "warmDone": true
+        }
+      ],
+      "maxUpdateMs": 28.5,
+      "maxDrawMs": 35.2
+    },
+    {
+      "kind": "beastFeint",
+      "pet": "fox",
+      "n": 1,
+      "save": null,
+      "fps": 30,
+      "speed": 4,
+      "hits": 5,
+      "clips": [
+        {
+          "kind": "beastFeint",
+          "frames": 11,
+          "before": 6,
+          "after": 5,
+          "bgMB": 4.5494842529296875,
+          "warmDone": true
+        }
+      ],
+      "maxUpdateMs": 10.5,
+      "maxDrawMs": 57
+    },
+    {
+      "kind": "beastPounce",
+      "pet": "tosa",
+      "n": 1,
+      "save": null,
+      "fps": 30,
+      "speed": 4,
+      "hits": 5,
+      "clips": [
+        {
+          "kind": "beastPounce",
+          "frames": 10,
+          "before": 6,
+          "after": 4,
+          "bgMB": 4.385833740234375,
+          "warmDone": true
+        }
+      ],
+      "maxUpdateMs": 29.2,
+      "maxDrawMs": 22.3
+    },
+    {
+      "kind": "beastFeint",
+      "pet": "tanuki",
+      "n": 1,
+      "save": null,
+      "fps": 30,
+      "speed": 4,
+      "hits": 5,
+      "clips": [
+        {
+          "kind": "beastFeint",
+          "frames": 11,
+          "before": 6,
+          "after": 5,
+          "bgMB": 4.434928894042969,
+          "warmDone": true
+        }
+      ],
+      "maxUpdateMs": 27.7,
+      "maxDrawMs": 49.6
+    },
+    {
+      "kind": "boarToss",
+      "pet": "boar",
+      "n": 1,
+      "save": null,
+      "fps": 30,
+      "speed": 4,
+      "hits": 5,
+      "clips": [
+        {
+          "kind": "boarToss",
+          "frames": 11,
+          "before": 6,
+          "after": 5,
+          "bgMB": 4.434928894042969,
+          "warmDone": true
+        }
+      ],
+      "maxUpdateMs": 103.5,
+      "maxDrawMs": 56.4
+    },
+    {
+      "kind": "bearSlam",
+      "pet": "bear",
+      "n": 1,
+      "save": null,
+      "fps": 30,
+      "speed": 4,
+      "hits": 5,
+      "clips": [
+        {
+          "kind": "bearSlam",
+          "frames": 10,
+          "before": 5,
+          "after": 5,
+          "bgMB": 4.385833740234375,
+          "warmDone": true
+        }
+      ],
+      "maxUpdateMs": 47.2,
+      "maxDrawMs": 27.7
+    },
+    {
+      "kind": "monkeyVault",
+      "pet": "monkey",
+      "n": 1,
+      "save": null,
+      "fps": 30,
+      "speed": 4,
+      "hits": 5,
+      "clips": [
+        {
+          "kind": "monkeyVault",
+          "frames": 11,
+          "before": 6,
+          "after": 5,
+          "bgMB": 4.5494842529296875,
+          "warmDone": true
+        }
+      ],
+      "maxUpdateMs": 27.5,
+      "maxDrawMs": 47.3
+    },
+    {
+      "kind": "birdDive",
+      "pet": "hawk",
+      "n": 1,
+      "save": null,
+      "fps": 30,
+      "speed": 4,
+      "hits": 5,
+      "clips": [
+        {
+          "kind": "birdDive",
+          "frames": 10,
+          "before": 6,
+          "after": 4,
+          "bgMB": 4.385833740234375,
+          "warmDone": true
+        }
+      ],
+      "maxUpdateMs": 30.9,
+      "maxDrawMs": 29.6
+    },
+    {
+      "kind": "birdDive",
+      "pet": "gyrfalcon",
+      "n": 1,
+      "save": null,
+      "fps": 30,
+      "speed": 4,
+      "hits": 5,
+      "clips": [
+        {
+          "kind": "birdDive",
+          "frames": 10,
+          "before": 5,
+          "after": 5,
+          "bgMB": 4.385833740234375,
+          "warmDone": true
+        }
+      ],
+      "maxUpdateMs": 10.4,
+      "maxDrawMs": 40.1
+    },
+    {
+      "kind": "beastPounce",
+      "pet": "wolf",
+      "n": 1,
+      "save": null,
+      "fps": 30,
+      "speed": 4,
+      "hits": 5,
+      "clips": [
+        {
+          "kind": "beastPounce",
+          "frames": 11,
+          "before": 6,
+          "after": 5,
+          "bgMB": 4.434928894042969,
+          "warmDone": true
+        }
+      ],
+      "maxUpdateMs": 43.4,
+      "maxDrawMs": 34.1
+    },
+    {
+      "kind": "spearBrace",
+      "pet": null,
+      "n": 1,
+      "save": "guard",
+      "fps": 30,
+      "speed": 4,
+      "hits": 5,
+      "clips": [
+        {
+          "kind": "thrust",
+          "frames": 11,
+          "before": 7,
+          "after": 4,
+          "bgMB": 4.369468688964844,
+          "warmDone": true
+        }
+      ],
+      "maxUpdateMs": 10.8,
+      "maxDrawMs": 24.9
+    },
+    {
+      "kind": "riderDrag",
+      "pet": null,
+      "n": 1,
+      "save": "ward",
+      "fps": 30,
+      "speed": 4,
+      "hits": 5,
+      "clips": [
+        {
+          "kind": "guardBreak",
+          "frames": 12,
+          "before": 7,
+          "after": 5,
+          "bgMB": 4.4185638427734375,
+          "warmDone": true
+        }
+      ],
+      "maxUpdateMs": 19.2,
+      "maxDrawMs": 31.8
+    },
+    {
+      "kind": "tripleThrust",
+      "pet": null,
+      "n": 3,
+      "save": null,
+      "fps": 30,
+      "speed": 4,
+      "hits": 11,
+      "clips": [
+        {
+          "kind": "tripleThrust",
+          "frames": 9,
+          "before": 5,
+          "after": 4,
+          "bgMB": 4.4185638427734375,
+          "warmDone": false
+        },
+        {
+          "kind": "tripleThrust",
+          "frames": 9,
+          "before": 5,
+          "after": 4,
+          "bgMB": 4.4185638427734375,
+          "warmDone": true
+        },
+        {
+          "kind": "tripleThrust",
+          "frames": 9,
+          "before": 5,
+          "after": 4,
+          "bgMB": 4.4185638427734375,
+          "warmDone": true
+        }
+      ],
+      "maxUpdateMs": 22.6,
+      "maxDrawMs": 23.6
+    },
+    {
+      "kind": "beastPounce",
+      "pet": "wolf",
+      "n": 3,
+      "save": "guard",
+      "fps": 30,
+      "speed": 4,
+      "hits": 7,
+      "clips": [
+        {
+          "kind": "beastPounce",
+          "frames": 11,
+          "before": 6,
+          "after": 5,
+          "bgMB": 4.2876434326171875,
+          "warmDone": false
+        },
+        {
+          "kind": "beastPounce",
+          "frames": 11,
+          "before": 6,
+          "after": 5,
+          "bgMB": 4.4185638427734375,
+          "warmDone": false
+        },
+        {
+          "kind": "beastPounce",
+          "frames": 11,
+          "before": 6,
+          "after": 5,
+          "bgMB": 4.467658996582031,
+          "warmDone": true
+        }
+      ],
+      "maxUpdateMs": 27.6,
+      "maxDrawMs": 30.5
+    }
+  ],
+  "errors": []
+}

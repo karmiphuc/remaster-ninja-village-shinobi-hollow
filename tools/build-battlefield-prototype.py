@@ -4,8 +4,11 @@ import re
 root=Path(__file__).resolve().parents[1]
 src=(root/'index.html').read_text()
 lib=src.split('<script>',1)[1].rsplit('</script>',1)[0]
+# Standalone study supplies its own adapter and UI; do not install campaign modules twice.
+lib=re.sub(r'/\*SH_REALTIME_(MODEL|VIEW|CAMPAIGN)_START\*/[\s\S]*?/\*SH_REALTIME_\1_END\*/','',lib)
 lib,n=re.subn(r'^if \(window\.claude && window\.claude\.hot && window\.claude\.hot\.ready\).*?else boot\(\);\s*$', '',lib,flags=re.M)
 assert n==1, 'The game boot hook must be removed exactly once.'
+lib+='\nfunction rtBattleChosen(){return false;}\n'
 # This silent visual study must not install the game's global audio gesture handlers.
 start=lib.index('/* Shinobi Hollow - procedural sound & music (Web Audio only, no assets). */')
 end=lib.index('/* ================= VILLAGE: state, simulation, rendering ================= */',start)
