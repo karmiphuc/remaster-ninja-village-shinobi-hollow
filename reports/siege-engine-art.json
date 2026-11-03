@@ -13,8 +13,8 @@
   },
   "distinctDeploymentIcons": true,
   "warmCanvasAllocations": 0,
-  "propCacheBefore": 7,
-  "propCacheAfter": 7,
+  "propCacheBefore": 8,
+  "propCacheAfter": 8,
   "drawn": 2,
   "maxBattery": {
     "count": 6,

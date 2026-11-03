@@ -4,9 +4,9 @@ const fs=require('fs'),http=require('http'),path=require('path'),assert=require(
 const root=path.resolve(__dirname,'..'),source=process.env.SIEGE_SOURCE||path.join(root,'index.html'),before=process.env.SIEGE_BEFORE;
 (async()=>{const server=http.createServer((q,r)=>{r.setHeader('content-type','text/html');r.end(fs.readFileSync(q.url==='/before'&&before?before:source));});await new Promise(r=>server.listen(0,'127.0.0.1',r));
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',args:['--no-sandbox']});try{
-  const p=await browser.newPage({viewport:{width:430,height:932}}),errors=[];p.on('pageerror',e=>errors.push(e.message));await p.addInitScript(()=>{window.__noIntro=window.__noQuick=true;});
-  let old=[];if(before){await p.goto('http://127.0.0.1:'+server.address().port+'/before');old=await p.evaluate(()=>['mortar','hwacha'].map(k=>propImg(k,0).toDataURL()));}
-  await p.goto('http://127.0.0.1:'+server.address().port);
+  const p=await browser.newPage({viewport:{width:430,height:932}}),errors=[];p.on('pageerror',e=>errors.push(e.message));await p.addInitScript(()=>{window.__noIntro=window.__noQuick=true;});await p.route('https://**/*',r=>r.abort());
+  let old=[];if(before){await p.goto('http://127.0.0.1:'+server.address().port+'/before',{waitUntil:'domcontentloaded'});old=await p.evaluate(()=>['mortar','hwacha'].map(k=>propImg(k,0).toDataURL()));}
+  await p.goto('http://127.0.0.1:'+server.address().port,{waitUntil:'domcontentloaded'});
   const sheet=await p.evaluate(async old=>{const legacy=await Promise.all(old.map(url=>new Promise(r=>{const im=new Image();im.onload=()=>r(im);im.src=url;}))),cv=gameCanvas();cv.width=1000;cv.height=860;const x=cv.getContext('2d');x.imageSmoothingEnabled=false;
    x.fillStyle='#e8d8b0';x.fillRect(0,0,1000,860);x.fillStyle='#342a2a';x.font='bold 23px monospace';x.fillText('SHINOBI HOLLOW / SIEGE BATTERY',34,42);x.font='14px monospace';x.fillText('Actual procedural pixels. Warm timber, bronze and ink outlines.',34,70);
    for(const [i,k]of ['mortar','hwacha'].entries()){const c=propImg(k,0),cx=250+i*500;x.fillStyle='#342a2a';x.font='bold 22px monospace';x.fillText(i?'HWACHA / FIRE-ARROW CART':'BOMBARD / OZUTSU',cx-191,112);
