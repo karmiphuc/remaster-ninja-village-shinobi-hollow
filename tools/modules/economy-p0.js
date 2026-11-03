@@ -1,5 +1,5 @@
 /* Runtime mirror of the standalone game. Navigation, shared storage-capacity
-   helpers and agent lifecycle code in index.html are also required;
+   helpers (including per-level capacities) and agent lifecycle code in index.html are also required;
    historical builder scripts are not a current build system. */
 function wantsGood(w,g) {
  if(inboxRoom(w,g)<=0)return false;
@@ -38,7 +38,7 @@ function craftMarketState(site,w){
  const R=WARES[w];let room=0,supply=0;view.urgent=false;
  for(const k in WARES)view.accepted[k]=false;
  for(const b of E.shops)if(component>0&&R.shops.includes(b.id)&&economyBuildingComponent(b,component)){
-  const stock=shopTotal(b,true);room+=Math.max(0,SHOP_CAP-stock);if(stock<3)view.urgent=true;
+  const stock=shopTotal(b,true);room+=Math.max(0,shopCapacity(b)-stock);if(stock<3)view.urgent=true;
   for(const k in WARES)if(WARES[k].shops.includes(b.id))view.accepted[k]=true;
  }
  for(const k in WARES)if(view.accepted[k])supply+=Math.max(0,entry.counts[k]-tradeHold(k)*2);
@@ -443,8 +443,8 @@ function shopRoom(b,good,exclude){
  if(ware?!WARES[good].shops.includes(b.id):!shopRawSalesAllowed(b)||!B.sells.includes(good))return 0;
  const stock=shopStock(b,ware);let incoming=0;const E=RT.eco;
  if(E){const p=economyPoint(b,'shelf');for(const c of E.claims.values())if(c.agent!==exclude){if(c.to===p&&!!WARES[c.good]===ware)incoming+=c.n;if(c.extra)for(const l of c.extra)if(l.to===p&&!!WARES[l.good]===ware)incoming+=l.n;}}
- const perKind=ware?SHOP_CAP:Math.max(1,Math.floor(SHOP_CAP/Math.max(1,B.sells.length)));
- return Math.max(0,Math.floor(Math.min(SHOP_CAP-shopTotal(b,ware)-incoming,perKind-(stock[good]||0)-shopIncoming(b,good,exclude))));
+ const cap=shopCapacity(b),perKind=ware?cap:Math.max(1,Math.floor(cap/Math.max(1,B.sells.length)));
+ return Math.max(0,Math.floor(Math.min(cap-shopTotal(b,ware)-incoming,perKind-(stock[good]||0)-shopIncoming(b,good,exclude))));
 }
 function releaseShopStock(b){
  if(!shopIs(b))return;const p=economyPoint(b,'shelf');
@@ -574,7 +574,7 @@ function workerPlan(a,v,J){
   J.inbox=J.inbox||{};J.outs=J.outs||{};
   const c=chooseCraft(J),outs=economyPoint(J,'outs'),reach=porterReach(J),full=outTotal(J)>=OUT_CAP;
   let ready=null,readyTo=null,n=0;for(const g in J.outs){const k=economyAvailable(outs,g);if(k>n){const to=dropFor(g,J,a);if(to&&to!==J){ready=g;readyTo=to;n=k;}}}
-  if(ready&&(full||(reach?n>=WS_HAUL:n>=3||!c||c.mode!=='craft'))){
+  if(ready&&(full||(!(v.role==='work'&&v.job===J.uid&&c&&c.mode==='craft')&&(reach?n>=WS_HAUL:n>=3||!c||c.mode!=='craft')))){
    const plan=economyStart(a,v,outs,economyDestination(readyTo,ready),ready,capacity,J,readyTo);if(plan)return plan;}
   if(full&&Object.keys(J.outs).some(g=>economyReserved(outs,g,false)>0))return economyWait(a,J);
   if(c&&c.mode==='craft'&&!full&&craftReserve(a,v,J,c.w,c.n)){a.mission='craft';return J;}

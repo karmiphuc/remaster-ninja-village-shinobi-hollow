@@ -24,12 +24,12 @@ Only existing, finite beast poses are used. Both facings are warmed at the clip 
 ## Training Ground progression
 
 - New games and old saves without a ladder start at **level 1: 30 infantry**, without a sparring commander.
-- Nominal strength is `30 × 1.05^(level − 1)`, rounded to the nearest strength point. The player's current army power is an **upper ceiling**, not a target. Reinforcements or new research cannot jump an uncapped low-level opponent to the player's strength.
+- Nominal troops start at 30 and grow by `max(25, ceil(previous count × 0.10))` per level. The nominal power budget follows those recruits. The player's current army power is an **upper ceiling**, not a target. Reinforcements or new research cannot jump an uncapped low-level opponent to the player's strength.
 - Defeating the current level advances it once. Losing or explicitly withdrawing does not advance it. The existing two-month cooldown, XP, no-permanent-troop-loss rules, normal rolled prizes and loss consolation remain.
-- The nominal troop count grows by the same 5%, within the power ceiling. Archers enter from level 10, gunners from 20 and cavalry from 30, only after their Corps is unlocked. Infantry retains the majority. Small capped armies omit groups too small to field anyone.
+- Infantry takes each ordinary-level increase; at ten-level milestones, one other unlocked arm can take up to 40% of that milestone’s increment. Archers enter from level 10, gunners from 20 and cavalry from 30, only after their Corps is unlocked. Infantry retains the majority. Small capped armies omit groups too small to field anyone.
 - Officers enter from level 10. Their stats and gear follow the ladder's level, independently of player equipment. Army strength is calibrated through persistent `calA`/`calD` factors so recounting after an officer KO does not restore uncapped strength.
-- A player army weaker than the opening 30-infantry budget gets fewer trainees to respect the ceiling. An army with zero power has no opposing trainees. Exponent evaluation is bounded by the power ceiling, so extreme saved levels cannot overflow.
-- The campaign card displays the level, 5% growth rule, and the next milestone prize. The prize multiplier in an old saved `dojoPrize` is still readable, but no longer controls difficulty.
+- A player army weaker than the opening 30-infantry budget gets fewer trainees to respect the ceiling. An army with zero power has no opposing trainees. Progression evaluation stops at the power ceiling, so extreme saved levels cannot overflow or require iterating through the entire saved level.
+- The campaign card displays the level, 10% / minimum-25 rule, and the next milestone prize. The prize multiplier in an old saved `dojoPrize` is still readable, but no longer controls difficulty.
 
 Two small saved counters, `dojoLevel` and `dojoMilestone`, preserve `G.v === 1`. `migrateTraining()` initializes and sanitizes them in `afterLoad()`; it is idempotent. The active battle snapshots its level and milestone reward and has a transient payout guard. Repeated battle-end calls cannot advance or reward it twice.
 

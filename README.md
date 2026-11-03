@@ -32,22 +32,27 @@ The whole game is one self-contained HTML file. It has no build step, no server 
 
 ## Animal finishers and Training Ground
 
-Equipped animal companions now have species-specific duel finishers, from bear slams and boar tosses to canine pounces and bird dives. Training starts at level 1 with 30 infantry, grows 5% per victory up to your current army power, and grants an extra reward for every tenth cleared level. See [progression, rewards and validation](docs/animal-duels-training.md). The recruit pool also adds **32 procedural workers and 16 fighters**, with rotating offers and saved identities; see [recruit rotation](docs/recruit-rotation.md).
+Equipped animal companions now have species-specific duel finishers, from bear slams and boar tosses to canine pounces and bird dives. Training starts at level 1 with 30 infantry, grows 10% or at least 25 troops per victory up to your current army power, and grants an extra reward for every tenth cleared level. See [progression, rewards and validation](docs/animal-duels-training.md). The recruit pool also adds **32 procedural workers and 16 fighters**, with rotating offers and saved identities; see [recruit rotation](docs/recruit-rotation.md).
+
+Workshop assignment now appears before recipes, with green Fine Craft and blue crafting-equipment badges. Assigned artisans continue useful batches while ingredients, output space and energy allow. Workshop Lv2/Lv3 inputs rise to 60/90 with 15G/20G monthly upkeep (Lv1 stays free); Lv3 shops hold 60 materials and 60 wares. Renovating the Clan Hall to the Kage Residence unlocks two permanent 5,000G policy choices. See [costs, policies and validation](docs/clan-crafting-progression.md).
 
 ## Castle sieges
 
+- Yamashiro’s gunners are reduced by 50% and archers by 70%; its infantry/cavalry and other castles keep their existing numbers. The infantry Ram also uses a larger procedural sprite.
 - **While the gate stands:**
   - Your infantry ram it and your cavalry hack at it; they never strike the troops sheltered behind it.
   - The defenders' infantry and cavalry remain sheltered behind the gate and don't attack.
   - Your archers and gunners can hit only the exposed wall archers and gunners. Once those defenders are cleared, the next volley targets the gate. Wall defenders also fire on charging infantry and cavalry.
   - Commanders can still be called out to duel.
 - **When the gate falls:** the breach plays out, the rest of that round is skipped, and open combat starts again at **Round 1** with the survivors. Casualties, commanders' wounds and KOs, and Ki carry over.
-- **Siege engines** (research the *Siege Battery* in the Armory) are bought one at a time in the pre-battle deployment panel, for that siege only:
+- **Siege engines** (research the Tier-4 *Siege Battery* in the Armory) are bought one at a time in the pre-battle deployment panel, for that siege only:
 
   | Engine | Max | Each purchase | Role |
   |---|---|---|---|
   | Bombard (大筒) | 2 | 4,000G, then 5,000G | Batters the gate only: each takes 20% of its strength off every round. |
   | Hwacha (火車) | 4 | 2,000 / 2,500 / 3,000 / 3,500G | Sweeps defenders exposed on the ramparts (their gunners and archers) only, never the gate. Each extra cart adds less: ×1, ×0.6, ×0.4, ×0.25. |
+
+  Bombards and Hwacha use larger procedural bronze/timber sprites with distinct deployment thumbnails. See the [art comparison](docs/siege-engines-preview.png) and [battlefield view](docs/siege-engines-battle.png).
 
   Any engine can be sent back for a full refund until you order the attack (withdrawing refunds them all). Engines fire once a round while the gate stands and fall silent after the breach; a ball still in flight when the gate falls strikes nothing. Defenders never field engines.
 

@@ -102,6 +102,26 @@ The winter `pine` and sakura deliberately become bare, as requested by the playe
 
 Summer clouds are pale, translucent pixel masses with no heavy outline. Rain comes in brief showers with dry intervals; neither effect should hide villagers or the established building silhouettes. Pre-render finite variants once, reuse bounded particle/cloud pools, and keep weather randomness separate from gameplay randomness. Seasonal thumbnails and move previews should agree with the map. See [seasonal implementation notes and previews](seasonal-landscape.md).
 
+## Battle siege battery
+
+The Bombard and Hwacha use the same native `PB` pixels, one-pixel dark outline, upper-left lighting and warm timber as the existing battlefield props. Their larger silhouettes contain new geometry rather than enlarging a tiny source image or switching to smooth/vector art. A roof is unnecessary.
+
+- **Bombard:** 44×34 native drawing, 46×36 including outline. Use a heavy bronze barrel with visible bands, a dark flared bore, a steel trunnion, oak carriage cheeks, iron-tyred spoked wheels and a small covered powder box. Keep the upper barrel highlight broad and readable. Bronze is warm ochre/gold; its bore remains dark.
+- **Hwacha:** 42×44 native drawing, 44×46 including outline. A tall tilted tube matrix, iron binding strips, diagonal oak braces and large spoked wheels define its silhouette. Pale tube rims/dark bores and the indigo side panel distinguish it from a wagon, cupboard or modern launcher. Spare fire arrows are decoration, not inventory.
+- `SIEGE_ENGINE_ART` records each painter's dimensions and native muzzle position. `batteryEvent()` must use those coordinates and `drawProp()`'s centre/ground anchor so shells, fire arrows and smoke emerge from the art. Keep the outline padding accounted for. Larger props also need their half-width included in viewport culling.
+- Place the battery along the far edge of the field with 48-pixel centre spacing. The full two-Bombard/four-Hwacha battery must remain inside the battlefield and west of the wall, with at least two clear pixels between sprites. The camera opens on the Bombards, follows the rocket carts, then returns to the wall impact; projectile/damage timing remains unchanged.
+- `propImg()` owns the finite cached canvases; deployment thumbnails use those same sprites through two cached data URLs. No canvas is created in a warmed engine draw. Keep costs, caps, refunds, gate damage, Hwacha diminishing returns, target rules and saves unchanged for art-only revisions.
+
+The [comparison sheet](siege-engines-preview.png) shows previous/current assets at the same 6× scale and the new battery beside existing battlefield props at 2×. The [battlefield view](siege-engines-battle.png) captures actual mobile-sized deployment. Regenerate with `node tools/preview-siege-engines.cjs`; optional `SIEGE_BEFORE` points to a historical standalone HTML for the before images. PNGs are review artefacts and are never loaded by the game.
+
+## Kage Residence and the larger Ram
+
+The Hall’s Lv2 Kage Residence retains its original native-PB walls, blue slate roofs and footprint. Two taller indigo nobori rise above the roof with ivory crests, gold finials and restrained gold ridge fittings. Increase drawing headroom from 28 to 44 pixels while keeping the ground anchor fixed. The flags are inside the existing width and do not change collisions or entrances. Workshop Lv2/Lv3 keep their open work bay, product banner and worker tag; small iron-bound timber input chests mark completed storage upgrades. Do not replace either with an unrelated generic mansion sprite.
+
+The infantry Ram now has a 48×28 native drawing (50×30 outlined), a low hide/board canopy, braced oak frame, bound log, three spoked wheels and an iron striking cap. Its timber, cool iron accents and one-pixel outline match the Bombard/Hwacha family. Adjust the visual stop position for the longer iron head, retaining the existing attack timing and damage. Ram size is decoration, not a new purchasable army or collision footprint.
+
+Building levels are normalized before sprite cache lookup. The Hall has two visual levels and the Workshop three; existing finite variants remain finite. No extra canvases are created per map frame. Compare the [native art sheet](clan-crafting-preview.png) at a common 4× scale; generate it with `node tools/preview-clan-progression.cjs`.
+
 ## Review before handing off
 
 1. Compare the new asset with the reference family at the same zoom, checking pixel density, outline weight, warmth, contrast and light direction.
