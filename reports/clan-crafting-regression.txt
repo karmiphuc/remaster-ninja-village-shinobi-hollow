@@ -1,0 +1,18 @@
+Local Chromium regression; no physical Safari FPS claim.
+PASS  clan-crafting  69 assertions; source + standalone export; goods residual 0.
+PASS  stock-caps     19.6s
+PASS  tonya-merchant   23.2s
+PASS  economy-flow    5.5s
+PASS  training-ladder    9.5s
+PASS  equipment      12.1s
+PASS  integration    19.5s
+PASS  market-collectors   12.5s
+PASS  building-move   13.4s
+PASS  resident-recall   10.3s
+PASS  logistics      22.4s
+PASS  siege         164.9s
+PASS  density       314.6s
+
+13/13 related suites passed. The focused standalone check includes actual monthly upkeep collection.
+Runtime mirror matches craftMarketState, shopRoom and workerPlan in index.html.
+Exported Shinobi Hollow.html byte-matches index.html; save version remains 1.

@@ -10,32 +10,32 @@
     },
     {
       "level": 2,
-      "troops": 32,
-      "power": 32,
+      "troops": 55,
+      "power": 55,
       "formations": [
         "inf"
       ]
     },
     {
       "level": 3,
-      "troops": 33,
-      "power": 33,
+      "troops": 80,
+      "power": 80,
       "formations": [
         "inf"
       ]
     },
     {
       "level": 9,
-      "troops": 44,
-      "power": 44,
+      "troops": 230,
+      "power": 230,
       "formations": [
         "inf"
       ]
     },
     {
       "level": 10,
-      "troops": 47,
-      "power": 47,
+      "troops": 255,
+      "power": 255,
       "formations": [
         "arc",
         "inf"
@@ -43,8 +43,8 @@
     },
     {
       "level": 11,
-      "troops": 49,
-      "power": 49,
+      "troops": 281,
+      "power": 281,
       "formations": [
         "arc",
         "inf"
@@ -52,8 +52,8 @@
     },
     {
       "level": 19,
-      "troops": 72,
-      "power": 72,
+      "troops": 609,
+      "power": 609,
       "formations": [
         "arc",
         "inf"
@@ -61,8 +61,8 @@
     },
     {
       "level": 20,
-      "troops": 76,
-      "power": 76,
+      "troops": 670,
+      "power": 670,
       "formations": [
         "gun",
         "arc",
@@ -71,8 +71,8 @@
     },
     {
       "level": 29,
-      "troops": 118,
-      "power": 118,
+      "troops": 1588,
+      "power": 1588,
       "formations": [
         "gun",
         "arc",
@@ -81,8 +81,8 @@
     },
     {
       "level": 30,
-      "troops": 123,
-      "power": 123,
+      "troops": 1747,
+      "power": 1747,
       "formations": [
         "cav",
         "gun",
@@ -92,8 +92,8 @@
     },
     {
       "level": 50,
-      "troops": 328,
-      "power": 328,
+      "troops": 11778,
+      "power": 11778,
       "formations": [
         "cav",
         "gun",
@@ -103,8 +103,8 @@
     },
     {
       "level": 80,
-      "troops": 1416,
-      "power": 1416,
+      "troops": 91330,
+      "power": 91330,
       "formations": [
         "cav",
         "gun",
@@ -114,8 +114,8 @@
     },
     {
       "level": 600,
-      "troops": 87729,
-      "power": 87729,
+      "troops": 91330,
+      "power": 91330,
       "formations": [
         "cav",
         "gun",
@@ -125,8 +125,8 @@
     },
     {
       "level": 1000000,
-      "troops": 87729,
-      "power": 87729,
+      "troops": 91330,
+      "power": 91330,
       "formations": [
         "cav",
         "gun",
@@ -139,7 +139,7 @@
     {
       "level": 10,
       "kind": "worker",
-      "id": "botan"
+      "id": "roam_13"
     },
     {
       "level": 20,
@@ -171,7 +171,7 @@
     {
       "level": 70,
       "kind": "worker",
-      "id": "roam_08"
+      "id": "roam_26"
     },
     {
       "level": 80,
@@ -206,5 +206,5 @@
     "oldSaveStartsAt": 1,
     "newFields": 34
   },
-  "checks": 153
+  "checks": 336
 }

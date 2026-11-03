@@ -401,6 +401,9 @@ img.px, canvas.px { image-rendering: pixelated; image-rendering: crisp-edges; }
 .kbar i.plain { background: repeating-linear-gradient(45deg, rgba(42,29,26,.07) 0 4px, transparent 4px 8px); color: var(--ink-2); }
 .kfoot { display: flex; gap: 8px; align-items: center; justify-content: space-between; font-size: 11px; }
 .tate { margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(90,60,30,.35); font-size: 11px; display: grid; gap: 4px; } .tate .kl { font-weight: bold; } .tate img { width: 16px; height: 16px; vertical-align: middle; } .tate-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; } .tate .cov { color: #a02a1a; } .tate .cov.full { color: var(--pine); } .tate.locked { display: flex; gap: 8px; align-items: center; }
+.clan-policy{display:flex;align-items:center;flex-wrap:wrap;width:100%;gap:5px 12px;margin:6px 0;padding:10px;text-align:left}.clan-policy small{flex:1 0 65%;font-weight:normal;white-space:normal}.clan-policy span{margin-left:auto;font-size:11px}
+.vlist[data-craft-workers]{grid-template-columns:1fr}.craft-affinities{display:inline-flex;flex-wrap:wrap;gap:4px;margin-top:3px}.craft-affinities .craft-badge{margin-left:0}
+.craft-badge{display:inline-block;font-size:10px;padding:2px 5px;border-radius:3px;margin-left:5px;white-space:nowrap}.craft-badge.skill{background:#dce9cf;color:#30572e}.craft-badge.gear{background:#d8e4f0;color:#294f79}.assign .craft-skilled,.vcard.craft-skilled{border-left:3px solid #527d41}.assign .craft-equipped,.vcard.craft-equipped{box-shadow:inset 0 -2px #5b85ad}
 .engines { display: grid; gap: 6px; margin: 8px 10px 0; } .engine { display: flex; gap: 8px; align-items: center; font-size: 12px; } .engine img { width: 42px; height: 46px; object-fit: contain; flex-shrink: 0; } .engine .en-txt { flex: 1; min-width: 0; } .engine .paid { color: var(--pine); font-weight: bold; } .engine .btn { min-height: 30px; padding: 2px 9px; } .engine.on b { color: #a02a1a; }
 .dens { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; width: 100%; font-size: 12px; } .dens .btn small { opacity: .7; }
 .kfoot .btn { min-height: 28px; padding: 2px 8px; font-size: 11px; flex: 0 0 auto; }
@@ -1249,7 +1252,7 @@ const ITEMS = {
   corps_cav: { name: 'Horse Corps', jp: '騎馬組', slot: 'perk', cost: 0, tier: 2, corps: 'cav', desc: 'Raise Cavalry troops and name cavalry commanders.' },
   guild_charter: { name: 'Guild Charter', jp: '株仲間', slot: 'perk', cost: 0, tier: 1, desc: "Your Ton'ya seal the guild's offers on their own, for the raw goods you choose in the Ton'ya's Auto-accept tab. Needs a Tokumi Don'ya (Lv3 Ton'ya)." },
   horo:     { name: 'Horo-shū Corps',  slot: 'perk', cost: 0, tier: 3, desc: 'Unlocks retainers — elite cloaked bodyguards for your commanders.' },
-  siegegun: { name: 'Siege Battery',   slot: 'perk', cost: 0, tier: 5, desc: 'Lets you buy siege engines with their crews for one siege at a time, before the attack: up to 2 Bombards (4,000G, then 5,000G) that batter the gate, and up to 4 Hwacha (2,000–3,500G) that sweep defenders on the ramparts.' },
+  siegegun: { name: 'Siege Battery',   slot: 'perk', cost: 0, tier: 4, desc: 'Lets you buy siege engines with their crews for one siege at a time, before the attack: up to 2 Bombards (4,000G, then 5,000G) that batter the gate, and up to 4 Hwacha (2,000–3,500G) that sweep defenders on the ramparts.' },
   hawk:     { name: 'War Hawk',        slot: 'mount', atk: 1, def: 1, mrk: 2, wrk: 4, wild: 1, beast: 'arc', bonus: 0.12, cost: 800, tier: 2, desc: 'Beast: all Archers +12% damage. Found by hunting, loot or merchants; up to 3 stack (diminishing).' },
   hound:    { name: 'Akita Hound',     slot: 'mount', carry: .15, atk: 2, def: 1, wrk: 4, wild: 1, beast: 'inf', bonus: 0.12, cost: 800, tier: 2, desc: 'Beast: all Infantry +12% damage. Found by hunting, loot or merchants; up to 3 stack (diminishing). Carry +15%.' },
   jiba:     { name: 'Hill Horse',      slot: 'mount', carry: .4, ride: 1, atk: 3, def: 3, wrk: 6, move: .05, cost: 360, tier: 1, res: { rice: 6 }, desc: 'Sturdy local horse. Lets a villager command Cavalry; anyone riding gains ATK/DEF and spirit (Work). Carry +40%.' },
@@ -1600,11 +1603,14 @@ const WARES = {
 };
 /* ---------- Renovation: homes go Villa -> Mansion; Shophouses improve trade, not housing ---------- */
 const HOME_LV = {
+  hall: [{name:'Clan Hall'}, {name:'Kage Residence',jp:'影屋敷',cost:3500,res:{wood:40,ore:18,silk:10},appeal:6}],
+  workshop: [{name:'Workshop',input:1,upkeep:0}, {name:'Artisan Workshop',jp:'職人工房',cost:1000,res:{wood:18,ore:6},input:2,upkeep:15}, {name:'Master Workshop',jp:'匠工房',cost:2400,res:{wood:36,ore:14},input:3,upkeep:20}],
   hut:       [{ name: 'Thatched Hut', cap: 2 }, { name: 'Villa', jp: '別邸', cap: 3, work: .1, rest: 1.6, appeal: 2, cost: 420 }, { name: 'Mansion', jp: '屋敷', cap: 4, work: .22, rest: 2.4, appeal: 5, cost: 1100, res: { wood: 12, ore: 4 }, wins: 2 }],
   tonya:     [{ name: "Ton'ya", deal: '1 at a time · goods' }, { name: "Ō-don'ya", jp: '大問屋', deal: '2 at a time · goods · 1 ware', appeal: 2, cost: 1800 }, { name: "Tokumi Don'ya", jp: '十組問屋', deal: '3 at a time · goods · 1 ware · 2 wares · Guild Charter research', appeal: 3, cost: 3600, wins: 5 }],
   longhouse: [{ name: 'Longhouse', cap: 4 }, { name: 'Grand Longhouse', jp: '大長屋', cap: 6, work: .05, rest: 1.25, hp: 10, appeal: 3, cost: 900 }, { name: 'Manor House', jp: '御殿', cap: 8, work: .12, rest: 1.5, hp: 15, appeal: 7, cost: 2200, res: { wood: 18, ore: 6, silk: 4 }, wins: 2 }],
 };
 const SHOP_LV2 = { name: 'Shophouse', jp: '町屋', sale: .15, appeal: 2 };
+const SHOP_LV3 = {name:'Grand Shophouse',jp:'大町屋',sale:.15,appeal:4,storage:2,res:{wood:24,ore:10,silk:6}};
 /* level 2 wares: researched recipes, one more ingredient, much better prices */
 const WARES2 = {
   sakuramochi: { base: 'mochi',   name: 'Sakura Mochi',     jp: '桜', from: { rice: 2, tea: 1 }, shops: ['onigiri', 'noodle'], price: 66, weeks: 3, gold: 260, desc: 'Pink rice cakes wrapped in a salted cherry leaf.' },
@@ -2361,9 +2367,10 @@ function buildingSprite(id, variant = 0, lv = 1) {
   const B = BUILDINGS[id];
   // Formation forges have only 4 x 2 x 3 cached sprites: formation/focus/level.
   if(B.forgeType){lv=clamp(Math.floor(lv)||1,1,3);variant=variant>=4?4:0;}
-  if (lv > 1 && (HOME_LV[id] || BUILDINGS[id].cat === 'shop')) { const k2 = id + ':' + variant + ':L' + lv; return _bldCache[k2] || (_bldCache[k2] = buildingSpriteLv(id, variant, lv)); }
-  const key = id + ':' + variant + (B.forgeType?':L'+lv:''); if (_bldCache[key]) return _bldCache[key];
-  const W = B.w * 16, H = B.h * 16, top = B.forgeType&&lv>1?18:B.top || (id === 'hall' ? 28 : 10);
+  if(HOME_LV[id]||B.cat==='shop')lv=clamp(Math.floor(lv)||1,1,HOME_LV[id]?.length||3);
+  if (lv > 1 && id!=='hall'&&id!=='workshop' && (HOME_LV[id] || BUILDINGS[id].cat === 'shop')) { const k2 = id + ':' + variant + ':L' + lv; return _bldCache[k2] || (_bldCache[k2] = buildingSpriteLv(id, variant, lv)); }
+  const key = id + ':' + variant + (B.forgeType||((id==='hall'||id==='workshop')&&lv>1)?':L'+lv:''); if (_bldCache[key]) return _bldCache[key];
+  const W = B.w * 16, H = B.h * 16, top = B.forgeType&&lv>1?18:B.top || (id === 'hall' ? (lv>=2?44:28) : 10);
   let pb = new PB(W, H + top); const Y = top; // footprint starts at y=top
   const house = (o) => {
     const wallH = o.wallH || 11, roofH = H - wallH + top - 2 + (o.roofExtra || 0);
@@ -2397,6 +2404,7 @@ function buildingSprite(id, variant = 0, lv = 1) {
       const roofH = H - wallH + top - 4, ry = wallY - roofH + 3; roofTiles(pb, 0, ry, W, roofH, roof);
       for (let x = 4; x < W - 3; x += 7) for (let y = ry + 6; y < ry + roofH - 3; y += 6) if (pb.get(x, y)) pb.rect(x + ((y / 6) & 1), y, 2, 1, '#8a8a80');
       pb.rect(W - 9, ry - 2, 4, 9, '#a07a46'); pb.rect(W - 10, ry - 3, 6, 2, '#5a4a3a'); pb.hline(W - 9, ry + 2, 4, '#8a6a3a');
+      for(let i=1;i<lv;i++){const y=wallY+5-i*4;pb.rect(2,y,6,4,'#7a5230');pb.hline(2,y,6,'#c8945f');pb.vline(3,y,4,'#4a4a52');pb.vline(6,y,4,'#4a4a52');pb.set(3,y+1,'#8d93a3');}
       break; }
     case 'kura': { // 蔵: tall white plaster storehouse on a stone base, namako-tile lower wall, heavy iron-banded door, barred window
       const wood = '#3a3442', plaster = '#f4f0e6', roof = '#2e2a36', wallY = Y + H - 19, wallH = 17;
@@ -2427,7 +2435,14 @@ function buildingSprite(id, variant = 0, lv = 1) {
       pb.rect(W / 2 - 10, Y + H - 56, 3, 3, '#e0b54a'); pb.rect(W / 2 + 7, Y + H - 56, 3, 3, '#e0b54a');
       pb.rect(W / 2 - 5, Y + H - 24, 10, 7, '#e0b54a'); pb.rect(W / 2 - 4, Y + H - 23, 8, 5, '#2e3a52'); pb.circle(W / 2, Y + H - 20.5, 2, '#f2efe2');
       // banners
-      [4, W - 7].forEach(x => { pb.vline(x + 1, Y + H - 30, 28, '#6b4a2e'); pb.rect(x + 2, Y + H - 29, 4, 12, '#3b4a7a'); pb.rect(x + 3, Y + H - 26, 2, 2, '#f2efe2'); });
+      if(lv<2)[4,W-7].forEach(x=>{pb.vline(x+1,Y+H-30,28,'#6b4a2e');pb.rect(x+2,Y+H-29,4,12,'#3b4a7a');pb.rect(x+3,Y+H-26,2,2,'#f2efe2');});
+      else{
+        for(const x of [1,W-11]){const y=Y+H-78;pb.vline(x+1,y,75,'#4a321e');pb.vline(x+2,y,75,'#a8743f');pb.rect(x,y-1,4,2,'#e0b54a');pb.hline(x,y+2,11,'#6b4a2e');
+          pb.poly([[x+3,y+3],[x+10,y+4],[x+9,y+15],[x+10,y+28],[x+3,y+26]],'#3b4a7a');pb.vline(x+3,y+4,21,'#6276aa');pb.line(x+4,y+25,x+9,y+27,'#e0b54a');
+          pb.poly([[x+6,y+9],[x+9,y+13],[x+6,y+17],[x+4,y+13]],'#efe6d0');pb.set(x+6,y+13,'#3b4a7a');}
+        pb.hline(9,Y+H-57,W-18,'#e0b54a');pb.rect(W/2-2,Y+H-60,4,3,'#e0b54a');pb.set(W/2-1,Y+H-60,'#f2d27a');
+        pb.hline(8,Y+H-13,W-16,'#a8743f');for(const x of [9,W-10]){pb.vline(x,Y+H-12,9,'#6b4a2e');pb.set(x,Y+H-12,'#e0b54a');}
+      }
       break;
     }
     case 'paddy': case 'veggie': case 'teafield': {
@@ -3356,6 +3371,7 @@ function x2Tonya(W, H, lv) { // 大問屋 / 十組問屋: a two-storey wholesale
 }
 function buildingSpriteLv(id, variant, lv) {
   const B = BUILDINGS[id], W = B.w * 16, H = B.h * 16;
+  if(id==='hall'||id==='workshop')return buildingSprite(id,variant,lv);
   if (id === 'tonya') return x2Tonya(W, H, lv);
   if (B.cat === 'shop') return x2Shophouse(id, W, H);
   if (id === 'hut') return lv >= 3 ? x2Mansion(W, H) : x2Villa(W, H);
@@ -6996,6 +7012,35 @@ function calcPopularity() {
 }
 function rankOf(p) { const t = [0, 25, 60, 110, 180, 270]; let r = 0; t.forEach((v, i) => { if (p >= v) r = i; }); return r; }
 
+/* Two permanent clan choices, saved once for the whole village, never per villager. */
+const CLAN_POLICIES=[
+ {key:'calling',name:'Service charter',options:[{id:'workers',name:'Shokunin Charter',text:'All Workers: Work +20% · walking speed +10%'},{id:'others',name:'Samurai Service',text:'All non-workers: Work +20% · walking speed +10%'}]},
+ {key:'life',name:'Village edict',options:[{id:'recovery',name:'Restorative Care',text:'All villagers: energy and bed recovery ×1.5'},{id:'industry',name:'Diligence Edict',text:'All villagers: Work +15%'}]}
+];
+function clanService(v){const p=G&&G.clanPolicies;return !!p&&(p.calling==='workers'&&v.role==='work'||p.calling==='others'&&v.role!=='work');}
+function clanWorkBonus(v){return (clanService(v)?.2:0)+(G?.clanPolicies?.life==='industry'?.15:0);}
+function clanRecovery(){return G?.clanPolicies?.life==='recovery'?1.5:1;}
+function clanPolicyBlock(b,key,id){
+ const i=CLAN_POLICIES.findIndex(p=>p.key===key),P=CLAN_POLICIES[i];
+ if(!b||b.id!=='hall'||bLv(b)<2)return 'Renovate the Clan Hall to Lv2 first.';
+ if(!P||!P.options.some(o=>o.id===id))return 'Unknown policy.';
+ if(G.clanPolicies&&G.clanPolicies[key])return 'This choice has already been made.';
+ if(i>0&&!G.clanPolicies?.calling)return 'Choose a service charter first.';
+ return G.gold<5000?'Needs 5,000G.':null;
+}
+function buyClanPolicy(b,key,id){
+ const why=clanPolicyBlock(b,key,id);if(why)return why;
+ G.gold-=5000;if(!G.clanPolicies)G.clanPolicies={};G.clanPolicies[key]=id;ensureVillagerAgents();return null;
+}
+function clanPolicyPanel(b){
+ const el=h('<div class="clan-policies"></div>');
+ el.innerHTML=`<p class="note">Choose one charter, then one village edict. Each choice costs <b>5,000G</b> and is permanent. Policies include future villagers and follow their current role.</p>${bLv(b)<2?'<p class="note">Renovate the Clan Hall to Lv2 to issue policies.</p>':''}`;
+ CLAN_POLICIES.forEach((P,i)=>{const chosen=G.clanPolicies?.[P.key];el.appendChild(h(`<div class="sec">${i+1}. ${esc(P.name)}</div>`));
+  for(const o of P.options){const why=clanPolicyBlock(b,P.key,o.id),owned=chosen===o.id,bt=h(`<button class="btn ${owned?'gold':'ghost'} clan-policy" data-policy="${P.key}:${o.id}"${why?' disabled':''}${tipAttr(owned?'Adopted':why||'Choose once · 5,000G')}><b>${owned?'✓ ':''}${esc(o.name)}</b><small>${esc(o.text)}</small><span>${owned?'Adopted':chosen?'Other path chosen':'5,000G'}</span></button>`);
+   bt.onclick=()=>{const err=buyClanPolicy(b,P.key,o.id);if(err){toast(err);return;}Sound.play('combo');toast(esc(o.name)+' adopted.');refreshSheet();updateHUD();};el.appendChild(bt);}
+ });return el;
+}
+
 /* ---------- Villager stats ---------- */
 function vStats(v) {
   const d = vData(v.id), g = 1 + (v.lv - 1) * 0.12 * (d.growth || 1);
@@ -7008,7 +7053,7 @@ function vStats(v) {
   s.skill2 = d.skill2 || SKILL2[v.id] || null; s.slv2 = 0; if (s.skill2) SK2_AT.forEach(([lv, sl]) => { if (v.lv >= lv) s.slv2 = sl; });
   s.sk = {}; if (s.slv) s.sk[s.skill] = s.slv; if (s.slv2) s.sk[s.skill2] = (s.sk[s.skill2] || 0) + s.slv2;
   if (s.sk.swift) s.move += .12 * s.sk.swift; if (s.sk.artisan) s.craft += .2 * s.sk.artisan;
-  return s;
+  s.wrk*=1+clanWorkBonus(v);return s;
 }
 // the dojo's masters charge by the session, and teaching a veteran costs far more than drilling a novice
 function dojoFee(v) { return Math.round((3 + .6 * Math.pow(v.lv || 1, 1.55)) * boonOf('dojo')); }
@@ -7307,12 +7352,14 @@ function updateAgents(dt) {
 }
 function updateVillagerAgent(a, dt) {
   const v = vById(a.vid); if (!v) { dropLost(a);a.dead = true; return; }
-  if(a.state==='goodsRest'){v.en=Math.min(100,(v.en??100)+dt*4);a.timer-=dt;if(a.timer<=0){a.state='idle';a.timer=0;}return;}
+  if(a.state==='goodsRest'){v.en=Math.min(100,(v.en??100)+dt*4*clanRecovery());a.timer-=dt;if(a.timer<=0){a.state='idle';a.timer=0;}return;}
   if (a.state === 'walk') { if (stepAgent(a, dt)) { const b = bByUid(a.target); if (!b) { dropLost(a); a.mission = null; a.state = 'idle'; return; } arrive(a, v, b); } return; }
   if (a.state === 'work') {
     a.timer -= dt; a.ft += dt; if (a.ft > 0.3) { a.ft = 0; a.fr = (a.fr + 1) % 4; }
     if (Math.random() < dt * 1.5) RT.particles.push({ x: a.x + rnd(-6, 6), y: a.y - 12, vx: 0, vy: -10, t: 0.8, kind: 'sweat' });
-    if (a.timer <= 0) { const b = bByUid(a.target); if (!b)craftRelease(a); if (b) { if (BUILDINGS[b.id].craft) craftDone(b, v, a.craftWare, a); else produce(b, v); } v.en = Math.max(0, (v.en ?? 100) - (BUILDINGS[b ? b.id : 'paddy'].craft ? 9 : 11) * (1 - .15 * (vStats(v).sk.tireless || 0))); a.state = 'idle'; a.timer = Math.random() < .3 ? (a.cheer = RT.t + .9, .9) : 0.3; }
+    if(a.timer<=0){const b=bByUid(a.target);let made=0;if(!b)craftRelease(a);if(b){if(BUILDINGS[b.id].craft)made=craftDone(b,v,a.craftWare,a);else produce(b,v);}
+      v.en=Math.max(0,(v.en??100)-(BUILDINGS[b?b.id:'paddy'].craft?9:11)*(1-.15*(vStats(v).sk.tireless||0)));
+      a.state='idle';if(made&&continueAssignedCraft(a,v,b))return;a.timer=Math.random()<.3?(a.cheer=RT.t+.9,.9):.3;}
     return;
   }
   if (a.state === 'inside') {
@@ -7328,7 +7375,9 @@ function updateVillagerAgent(a, dt) {
   const hurt = v.hp != null && !a.carry, tired = ((v.en ?? 100) < 25 && !a.carry) || hurt, helps = v.role !== 'work' && Math.random() < clamp(.2 * vStats(v).wrk / 8, .1, .3);
   if (tired && (v.role === 'work' || helps || hurt)) { target = homeOf(v) || G.buildings.find(b => b.id === 'hall'); a.goingHome = true; a.mission = 'rest'; a.bubble = { t: 1.6, icon: 'z' }; }
   else if (v.role === 'work' || helps) {
-    a.porter=isPorter(v);if(a.porter)target=porterPlan(a,v);else {const supply=planShopSupply(a,v),J=supply?null:chooseSite(a,v,v.role!=='work');target=supply||(J&&workerPlan(a,v,J));} if (!target) { a.timer = rnd(1.2, 2.2); return; }
+    a.porter=isPorter(v);if(a.porter)target=porterPlan(a,v);else{const assigned=v.role==='work'&&v.job>=0?bByUid(v.job):null;
+      if(assigned&&!assigned.reno&&BUILDINGS[assigned.id].craft&&entranceOf(assigned)&&economyBuildingComponent(assigned,economyAgentComponent(a))===economyAgentComponent(a))target=workerPlan(a,v,assigned);
+      if(!target){const supply=planShopSupply(a,v),J=supply?null:chooseSite(a,v,v.role!=='work');target=supply||(J&&workerPlan(a,v,J));}} if (!target) { a.timer = rnd(1.2, 2.2); return; }
   } else if (v.role !== 'work') {
     const dojos = G.buildings.filter(b => b.id === 'dojo' && entranceOf(b));
     if (dojos.length && !G.dojoOff && G.gold >= dojoFee(v) && Math.random() < .7) target = pick(dojos);
@@ -7400,7 +7449,7 @@ function weekTick() {
 }
 function monthTick() {
   const troops = Object.values(G.troops).reduce((a, b) => a + b, 0);
-  const qm = Math.max(0, ...G.villagers.map(v => vStats(v).sk.quartermaster || 0)), upkeep = Math.ceil(troops * 0.35 * (1 - .08 * qm) * upkeepMul()) + guardCount() * GUARD_UPKEEP;
+  const qm = Math.max(0, ...G.villagers.map(v => vStats(v).sk.quartermaster || 0)), upkeep = Math.ceil(troops * 0.35 * (1 - .08 * qm) * upkeepMul()) + guardCount() * GUARD_UPKEEP + workshopMonthlyUpkeep();
   G.gold -= upkeep; yrNote('upkeep', upkeep); bondsMonth();
   G.stats.lastSales = RT.monthSales; G.stats.lastTrav = RT.monthTrav; RT.monthSales = 0; RT.monthTrav = 0; G.travM = 0;
   const hall = G.buildings.find(b => b.id === 'hall'); if (upkeep > 0 && hall) floater(hall.x * 16 + 24, hall.y * 16, '-' + upkeep, 'gold', '#ff8a7a');
@@ -7904,6 +7953,9 @@ function renderBHUD(){
 /* Shops sell only delivered stock. The existing global ledgers are the
    warehouse; local material/ware capacities are totals, not per item type. */
 const SHOP_CAP=30; // per shelf: 30 materials and 30 wares
+function shopCapacity(b){return SHOP_CAP*(bLv(b)>=3?2:1);}
+function workshopInputCap(b){return WS_IN_CAP*((lvInfo(b)||{}).input||1);}
+function workshopMonthlyUpkeep(){let n=0;for(const b of G.buildings)if(b.id==='workshop')n+=(lvInfo(b)||{}).upkeep||0;return n;}
 function shopIs(b){return !!b&&BUILDINGS[b.id]?.cat==='shop';}
 
 
@@ -7930,11 +7982,11 @@ function returnShopCarry(a){
 
 function shopStockPanel(b){
   const list=ware=>Object.entries(shopStock(b,ware)).filter(([,n])=>n>0).map(([k,n])=>`${icon((ware?'w_':'g_')+k)} ${esc(ware?WARES[k].name:GOODS[k].name)} <b>${n}</b>`).join(' · ')||'Empty';
-  return h(`<div class="shop-stock-info"><div class="sec">Delivered stock</div><p class="note">Materials <b>${shopTotal(b)}/${SHOP_CAP}</b> · ${list(false)}<br>Wares <b>${shopTotal(b,true)}/${SHOP_CAP}</b> · ${list(true)}<br>${!BUILDINGS[b.id].needWares&&!shopRawSalesAllowed(b)?'Raw sales paused at the Clan Hall · shelf materials await return.<br>':''}Workers carry stock here from fields, workshops and storehouses. Each limit is shared across all item types.</p></div>`);
+  return h(`<div class="shop-stock-info"><div class="sec">Delivered stock</div><p class="note">Materials <b>${shopTotal(b)}/${shopCapacity(b)}</b> · ${list(false)}<br>Wares <b>${shopTotal(b,true)}/${shopCapacity(b)}</b> · ${list(true)}<br>${!BUILDINGS[b.id].needWares&&!shopRawSalesAllowed(b)?'Raw sales paused at the Clan Hall · shelf materials await return.<br>':''}Workers carry stock here from fields, workshops and storehouses. Each limit is shared across all item types.</p></div>`);
 }
 function drawShopStock(ctx,b,B,px,py){
   for(const ware of [false,true]){if(shopTotal(b,ware)<1)continue;const stock=shopStock(b,ware),m={};for(const k in stock)if(stock[k]>0){const key=ware?'w_'+visWare(k):k;m[key]=(m[key]||0)+stock[k];}
-    drawPile(ctx,m,SHOP_CAP,ware?px+B.w*16+2:px-2,py+B.h*16+2,ware);
+    drawPile(ctx,m,shopCapacity(b),ware?px+B.w*16+2:px-2,py+B.h*16+2,ware);
   }
 }
 
@@ -8273,10 +8325,32 @@ function updatePlaceBar() {
 function doDemolish(b) { G.gold += Math.floor(BUILDINGS[b.id].cost / 2); removeBuilding(b); Sound.play('demolish'); RT.sel = null; updatePlaceBar(); updateHUD(); }
 
 /* ---------- Building info ---------- */
+function decorateCraftWorker(el,v){
+ const skill=(vStats(v).sk.artisan||0)>0,gear=Object.values(v.eq).some(k=>ITEMS[k]&&ITEMS[k].craft>0);
+ if(skill)el.classList.add('craft-skilled');if(gear)el.classList.add('craft-equipped');
+ if(skill||gear){const target=el.classList.contains('vcard')?el.querySelector('div'):el;
+  target.insertAdjacentHTML('beforeend',`<span class="craft-affinities">${skill?'<span class="craft-badge skill">Fine Craft</span>':''}${gear?'<span class="craft-badge gear">Craft gear</span>':''}</span>`);}
+}
+function buildingWorkersPanel(body,b,conn){const B=BUILDINGS[b.id];
+  if (B.cat === 'ind' || B.craft) {
+      const ws = G.villagers.filter(v => v.job === b.uid);
+      body.appendChild(h(`<div class="sec">Regulars ${ws.length}/${B.slots} ${ib('Regulars favour this site and its neighbours. Anyone may pitch in where work piles up. Assigned outdoor workers leave a small kit of work gear nearby: field tools, a chair and chopping axe, or a pickaxe and candle lantern. Indoor workshops use a wooden sign-in tag. These details disappear when nobody is assigned.')}</div>`));
+      const l = h('<div class="vlist" data-worker-list></div>');if(B.craft)l.dataset.craftWorkers='';
+      ws.forEach(v=>{const card=vCard(v);if(B.craft)decorateCraftWorker(card,v);l.appendChild(card);});
+      body.appendChild(l);
+      const free = G.villagers.filter(v => v.role === 'work' && v.job !== b.uid).sort((p, q) => (p.job >= 0 && bByUid(p.job) ? 1 : 0) - (q.job >= 0 && bByUid(q.job) ? 1 : 0)); // unassigned first
+      if (ws.length < B.slots && conn) { const row = h('<div class="row wrap assign" style="margin-top:8px"></div>');
+        free.forEach(v => { const d = vData(v.id), jb = v.job >= 0 && bByUid(v.job); const bt = h(`<button class="btn${jb ? ' busy' : ''}"${jb ? tipAttr(`Already a regular at <b>${esc(bName(jb))}</b> — tapping moves them here`) : tipAttr('Free — no regular site')}>${jb ? '⚒ ' : '○ '}${esc(d.name)} · Wrk ${Math.round(vStats(v).wrk)}${jb ? ` <span class="at">@ ${esc(bName(jb))}</span>` : ''}</button>`); bt.onclick = () => { v.job = b.uid;economyState().dirty=true; RT.agents.filter(a => a.vid === v.id).forEach(a => { dropLost(a); a.mission = null; a.resting = false; a.state = 'idle'; a.timer = 0; a.path = []; a.hidden = false; }); Sound.play('tap'); refreshSheet(); }; if(B.craft)decorateCraftWorker(bt,v);row.appendChild(bt); });
+        if (!free.length) row.appendChild(h('<p class="note">No spare workers. Set a villager to Worker in the Villagers panel.</p>'));
+        body.appendChild(h('<div class="sec">Assign</div>')); body.appendChild(row); }
+      if (B.makes) { const d = (b.pile || 0) >= 1 ? dropFor(B.makes, b) : null; body.appendChild(h(`<p class="note">${icon('g_' + B.makes)} <b>${Math.floor(b.pile || 0)}</b>/${PILE_CAP} waiting${(b.buffer||0)>0?' · '+b.buffer+' in finished baskets · production paused':''}${d ? ` → ${esc(bName(d))}` : ''} · stock <b>${Math.floor(G.stock[B.makes])}</b>${B.needTrees ? ` · 🌲${treesNear(b, 2)}` : ''}</p>`)); }
+    }
+}
 function openBuildingInfo(b) {
   UI.panel = 'binfo';
-  openSheet(esc(bName(b)) + (bLv(b) > 1 ? ` <small>Lv ${bLv(b)}</small>` : ''), b.id === 'tonya' ? [['deals', 'Contracts'], ['auto', 'Auto-accept']] : null, (body, tab) => {
+  openSheet(esc(bName(b)) + (bLv(b) > 1 ? ` <small>Lv ${bLv(b)}</small>` : ''), b.id === 'tonya' ? [['deals', 'Contracts'], ['auto', 'Auto-accept']] : b.id==='hall'?[['house','Clan Seat'],['policies','Clan Policies']]:null, (body, tab) => {
     const B = BUILDINGS[b.id];
+    if(b.id==='hall'&&tab==='policies'){body.appendChild(clanPolicyPanel(b));return;}
     if (b.id === 'tonya' && tab === 'auto') { body.appendChild(tradeAutoPanel(b)); return; }
     const conn = entranceOf(b);
     let html = `<div class="row" style="align-items:flex-start;gap:12px"><div class="card" style="flex:0 0 120px;padding:4px"><div class="thumb" style="height:84px"><img src="${dataURL((WORKSITE_DUTY[b.id]?worksiteInfoSprite(b):SEASON_NATURE[b.id]?seasonalNatureSprite(b.id,1):buildingSprite(b.id,b.id==='dojo'?dojoTrainingVariant(b):B.forgeType&&forgeFocus(b)==='armor'?4:1,bLv(b))).cv,2)}" alt="" style="max-height:80px"></div></div><div style="flex:1;min-width:0"><p class="note" style="margin-top:0">${esc(B.desc)}</p>`;
@@ -8291,6 +8365,7 @@ function openBuildingInfo(b) {
     if(b.id==='hall')body.appendChild(materialSalesPanel());
     if(b.id==='kura')body.appendChild(collectorHirePanel(b));
     if (B.forgeType) body.appendChild(armyForgePanel(b));
+    buildingWorkersPanel(body,b,conn);
     if (B.craft) body.appendChild(workshopPanel(b));
     if (b.id === 'tonya') body.appendChild(tradePanel(b));
     if (b.id === 'dojo') { const cs = G.villagers.filter(v => v.role !== 'work'), lv = [1, 10, 20, 30];
@@ -8299,19 +8374,6 @@ function openBuildingInfo(b) {
         <div class="row"><button class="btn ${G.dojoOff ? 'gold' : 'ghost'}">${G.dojoOff ? '▶ Resume lessons' : '⏸ Pause lessons'}</button></div></div>`);
       el.querySelector('button').onclick = () => { G.dojoOff = !G.dojoOff; Sound.play('tap'); refreshSheet(); }; body.appendChild(el); }
     if (B.store) body.appendChild(h(`<p class="note">${ib('Field hands drop harvests at the nearest store. Artisans fetch materials here.')} ${Object.keys(GOODS).filter(g => G.stock[g] >= 1).map(g => `${icon('g_' + g)} ${Math.floor(G.stock[g])}`).join(' · ') || 'empty'}.</p>`));
-    if (B.cat === 'ind' || B.craft) {
-      const ws = G.villagers.filter(v => v.job === b.uid);
-      body.appendChild(h(`<div class="sec">Regulars ${ws.length}/${B.slots} ${ib('Regulars favour this site and its neighbours. Anyone may pitch in where work piles up. Assigned outdoor workers leave a small kit of work gear nearby: field tools, a chair and chopping axe, or a pickaxe and candle lantern. Indoor workshops use a wooden sign-in tag. These details disappear when nobody is assigned.')}</div>`));
-      const l = h('<div class="vlist"></div>');
-      ws.forEach(v => l.appendChild(vCard(v)));
-      body.appendChild(l);
-      const free = G.villagers.filter(v => v.role === 'work' && v.job !== b.uid).sort((p, q) => (p.job >= 0 && bByUid(p.job) ? 1 : 0) - (q.job >= 0 && bByUid(q.job) ? 1 : 0)); // unassigned first
-      if (ws.length < B.slots && conn) { const row = h('<div class="row wrap assign" style="margin-top:8px"></div>');
-        free.forEach(v => { const d = vData(v.id), jb = v.job >= 0 && bByUid(v.job); const bt = h(`<button class="btn${jb ? ' busy' : ''}"${jb ? tipAttr(`Already a regular at <b>${esc(bName(jb))}</b> — tapping moves them here`) : tipAttr('Free — no regular site')}>${jb ? '⚒ ' : '○ '}${esc(d.name)} · Wrk ${Math.round(vStats(v).wrk)}${jb ? ` <span class="at">@ ${esc(bName(jb))}</span>` : ''}</button>`); bt.onclick = () => { v.job = b.uid;economyState().dirty=true; RT.agents.filter(a => a.vid === v.id).forEach(a => { dropLost(a); a.mission = null; a.resting = false; a.state = 'idle'; a.timer = 0; a.path = []; a.hidden = false; }); Sound.play('tap'); refreshSheet(); }; row.appendChild(bt); });
-        if (!free.length) row.appendChild(h('<p class="note">No spare workers. Set a villager to Worker in the Villagers panel.</p>'));
-        body.appendChild(h('<div class="sec">Assign</div>')); body.appendChild(row); }
-      if (B.makes) { const d = (b.pile || 0) >= 1 ? dropFor(B.makes, b) : null; body.appendChild(h(`<p class="note">${icon('g_' + B.makes)} <b>${Math.floor(b.pile || 0)}</b>/${PILE_CAP} waiting${(b.buffer||0)>0?' · '+b.buffer+' in finished baskets · production paused':''}${d ? ` → ${esc(bName(d))}` : ''} · stock <b>${Math.floor(G.stock[B.makes])}</b>${B.needTrees ? ` · 🌲${treesNear(b, 2)}` : ''}</p>`)); }
-    }
     if(B.cat==='shop'){body.appendChild(shopStockPanel(b));const m = (1 + (b.boost || 0)) * (b.combo ? b.combo.m : 1) * (1 + ((lvInfo(b) || {}).sale || 0)) * (1+(b.wideStreet?WIDE_STREET_BONUS.sale:0)), ws = waresOf(b.id);
       body.appendChild(h(`<p class="note shop-prices">${ws.length ? `Wares: ${ws.map(w => `${icon('w_' + w)} <b>${WARES[w].name}</b> ~${Math.round(WARES[w].price * m)}G (here ${shopStock(b,true)[w]||0})`).join(' · ')}.<br>` : ''}${B.needWares ? '<b>Sells only wares</b> — a Workshop must craft them.' : `Otherwise ${B.sells.map(g => `${icon('g_' + g)} ${GOODS[g].name} (here ${shopStock(b)[g]||0})`).join(' + ')} at ~<b>${Math.round(B.price * m)}G</b>.`}</p>`)); }
     if (HOME_LV[b.id] || B.cat === 'shop') body.appendChild(renoPanel(b));
@@ -8709,12 +8771,12 @@ document.addEventListener('keydown', e => { if ((e.key !== 'ArrowLeft' && e.key 
 /* ---------- renovation & workshop panels ---------- */
 function renoPanel(b) {
   const L = lvInfo(b), N = nextLv(b), el = h('<div class="reno"></div>'), B = BUILDINGS[b.id];
-  const perk = L2 => [L2.cap ? `Homes ${L2.cap}` : '', L2.work ? `work +${Math.round(L2.work * 100)}%` : '', L2.rest ? `rest ×${L2.rest}` : '', L2.hp ? `residents HP +${L2.hp}` : '', L2.sale ? `sales +${Math.round(L2.sale * 100)}%` : '', L2.appeal ? `appeal +${L2.appeal}` : '', L2.deal ? `contracts: ${L2.deal}` : ''].filter(Boolean).join(' · ');
-  const steps = HOME_LV[b.id] ? HOME_LV[b.id] : [{ name: B.name }, SHOP_LV2];
+  const perk = L2 => [L2.cap ? `Homes ${L2.cap}` : '', L2.work ? `work +${Math.round(L2.work * 100)}%` : '', L2.rest ? `rest ×${L2.rest}` : '', L2.hp ? `residents HP +${L2.hp}` : '', L2.sale ? `sales +${Math.round(L2.sale * 100)}%` : '', L2.appeal ? `appeal +${L2.appeal}` : '', L2.deal ? `contracts: ${L2.deal}` : '', L2.storage?`materials/wares storage ×${L2.storage}`:'',L2.input?`input storage ×${L2.input}`:'',L2.upkeep?`upkeep ${L2.upkeep}G/month`:''].filter(Boolean).join(' · ');
+  const steps = HOME_LV[b.id] ? HOME_LV[b.id] : [{ name: B.name }, SHOP_LV2, SHOP_LV3];
   el.innerHTML = `<div class="sec">Renovation 改築</div><div class="lvsteps">${steps.map((S, i) => `<span class="${i + 1 === bLv(b) ? 'on' : i + 1 < bLv(b) ? 'done' : ''}">${S.jp ? `<b>${S.jp}</b>` : ''}${esc(S.name)}</span>`).join('<i>→</i>')}</div>
     ${L && bLv(b) > 1 ? `<p class="note">Now: ${perk(L)}.</p>` : ''}
-    ${b.reno ? `<p class="note">${icon('build')} Carpenters at work — <b>${b.reno.w}</b> week${b.reno.w === 1 ? '' : 's'} left. Everything keeps running meanwhile.</p>`
-      : N ? `<div class="row wrap" style="align-items:center;gap:8px"><div class="note" style="flex:1;margin:0"><b>${esc(N.name)}</b>: ${perk(N)}.<br>${icon('gold')}${fmt(N.cost)} ${Object.entries(N.res || {}).map(([r, n]) => `${icon('g_' + r)}${n}`).join(' ')} · ${N.lv >= 3 ? 3 : 2} weeks${N.wins ? ` · needs ${N.wins} clan victories` : ''}</div><button class="btn gold">Renovate</button></div>`
+    ${b.reno ? `<p class="note">${icon('build')} Carpenters at work — <b>${b.reno.w}</b> week${b.reno.w === 1 ? '' : 's'} left. ${B.craft?'New crafting pauses; stock and assignments stay.':'Completed-level perks stay active.'}</p>`
+      : N ? `<div class="row wrap" style="align-items:center;gap:8px"><div class="note" style="flex:1;margin:0"><b>${esc(N.name)}</b>: ${perk(N)}.<br>${icon('gold')}${fmt(N.cost)} ${Object.entries(N.res || {}).map(([r, n]) => `${icon('g_' + r)}${n}`).join(' ')} · ${N.lv >= 3 ? 3 : 2} weeks${N.wins ? ` · needs ${N.wins} clan victories` : ''}${N.input?' · new crafting pauses during construction':''}</div><button class="btn gold">Renovate</button></div>`
       : `<p class="note">Fully renovated.</p>`}`;
   const bt = el.querySelector('.btn'); if (bt) { const err = renoBlock(b, N); if (err) bt.classList.add('dim');
     bt.onclick = () => { const e = startReno(b); if (e) { Sound.play('alert'); toast(e); return; } Sound.play('build'); toast(`Carpenters raise scaffolding around the ${esc(bName(b))}.`); refreshSheet(); updateHUD(); }; }
@@ -8725,7 +8787,7 @@ function workshopPanel(b) {
   const el = h('<div class="wsp"></div>'), act = activeWares();
   const inb = Object.entries(b.inbox).filter(([, n]) => n >= 1).map(([g, n]) => `<span class="chip">${icon('g_' + g)} ${Math.floor(n)}</span>`).join('') || '<span class="muted">no materials</span>';
   const out = Object.entries(b.outs).filter(([, n]) => n >= 1).map(([k, n]) => `<span class="chip">${icon('w_' + k)} ${n}</span>`).join('') || '<span class="muted">nothing waiting</span>';
-  el.innerHTML = `<div class="sec">Workshop ${ib('A small wooden sign-in tag marks assigned artisans. One or two carved tally strokes show the assigned worker count. The tag disappears when no workers are assigned.','Duty tag')}</div><div class="wst">${inb}<span class="arrow">→</span>${out}</div><p class="note" style="margin:2px 0 0">Materials <b>${Math.floor(inboxTotal(b))}/${WS_IN_CAP}</b> → Wares <b>${outTotal(b)}/${OUT_CAP}</b></p>
+  el.innerHTML = `<div class="sec">Workshop ${ib('A small wooden sign-in tag marks assigned artisans. One or two carved tally strokes show the assigned worker count. The tag disappears when no workers are assigned.','Duty tag')}</div><div class="wst">${inb}<span class="arrow">→</span>${out}</div><p class="note" style="margin:2px 0 0">Materials <b>${Math.floor(inboxTotal(b))}/${workshopInputCap(b)}</b> → Wares <b>${outTotal(b)}/${OUT_CAP}</b> · Upkeep <b>${(lvInfo(b)||{}).upkeep||0}G/month</b></p>
     <p class="note" style="margin-top:4px">${act.length ? act.map(k => icon('w_' + k)).join('') : '<span style="color:#a02a1a">No shop sells wares yet</span>'} ${ib('Artisans automatically batch useful wares. Batches make 1–5 wares. Contracts first, then shop shortages, your preferred recipe and other useful wares. Ingredients are charged per product; Work and Fine Craft shorten the cycle.')}</p>
     <div class="recipes">${Object.entries(WARES).map(([k, W]) => { const known = wareKnown(k), ok = act.includes(k); return `<button class="rcp${k === b.recipe ? ' on' : ''}${ok ? '' : ' dim'}" data-k="${k}"${known ? '' : ' disabled'}><img class="px" src="${ICONS['w_' + k]}" alt=""><span><b>${esc(W.name)}</b>${W.lv === 2 ? ' <span class="tagx rare">Lv 2</span>' : ''}<span class="muted">${known ? `${Object.entries(W.from).map(([g, n]) => `${n} ${GOODS[g].name}`).join(' + ')} → ~${W.price}G · ${W.shops.map(x => BUILDINGS[x].name).join('/')}` : 'Research the recipe in the Armory'}</span></span></button>`; }).join('')}</div>`;
   el.querySelectorAll('.rcp').forEach(x => x.onclick = () => { if (b.recipe === x.dataset.k || !wareKnown(x.dataset.k)) return; b.recipe = x.dataset.k; Sound.play('tap'); refreshSheet(); });
@@ -9240,7 +9302,7 @@ const HAUL_AT = 6, PILE_CAP = 60, WS_IN_CAP = 30, OUT_CAP = 30, CART_AT = 9, PIL
 
 /* ---------- levels ---------- */
 function bLv(b) { return b.lv || 1; }
-function lvInfo(b) { const L = HOME_LV[b.id]; if (L) return L[bLv(b) - 1]; if (BUILDINGS[b.id].cat === 'shop' && bLv(b) >= 2) return SHOP_LV2; return null; }
+function lvInfo(b) { const L = HOME_LV[b.id]; if (L) return L[bLv(b) - 1]; if (BUILDINGS[b.id].cat === 'shop' && bLv(b) >= 2) return bLv(b)>=3?SHOP_LV3:SHOP_LV2; return null; }
 function capOf(b) { if(BUILDINGS[b.id].cat==='shop')return 0;const L = lvInfo(b), c = (L ? L.cap : BUILDINGS[b.id].cap) || 0; return c > 0 && G.boons && G.boons.homeCap ? Math.max(1, c - G.boons.homeCap) : c; } // Cramped Homes
 function appealOf(b) { const L = lvInfo(b); return (BUILDINGS[b.id].appeal || 0) + (L && L.appeal || 0); }
 function bName(b) { const L = lvInfo(b); return L && bLv(b) > 1 ? (BUILDINGS[b.id].cat === 'shop' ? `${BUILDINGS[b.id].name} · ${L.name}` : L.name) : BUILDINGS[b.id].name; }
@@ -9248,6 +9310,7 @@ function nextLv(b) {
   const B = BUILDINGS[b.id], lv = bLv(b);
   if (HOME_LV[b.id]) { const L = HOME_LV[b.id][lv]; return L ? Object.assign({ lv: lv + 1 }, L) : null; }
   if (B.cat === 'shop' && lv === 1) return Object.assign({ lv: 2, cost: Math.round(B.cost * 1.4 / 10) * 10 }, SHOP_LV2);
+  if(B.cat==='shop'&&lv===2)return Object.assign({lv:3,cost:Math.round(B.cost*2.4/10)*10},SHOP_LV3);
   if (B.forgeType) return forgeUpgrade(b);
   return null;
 }
@@ -9266,12 +9329,12 @@ function startReno(b) {
 function renoWeek() {
   G.buildings.forEach(b => { if (!b.reno) return; b.reno.w--;
     if (b.reno.w <= 0) { b.lv = b.reno.lv; b.reno = null; b.born = RT.t; RT.groundDirty = true; Sound.play('combo');
-      toast(`${icon('build')} The carpenters finish: <b>${esc(bName(b))}</b>!`); assignHomes(true); refreshBoosts(); } });
+      toast(`${icon('build')} The carpenters finish: <b>${esc(bName(b))}</b>!`); assignHomes(true); refreshBoosts();economyState().goodsRevision++;economyState().dirty=true; } });
 }
 /* ---------- the home a villager comes back to ---------- */
 function homeOf(v) { const b=v.home>=0?bByUid(v.home):null;return b&&capOf(b)>0?b:null; }
 // scenery around a home (the same boost shops get) also helps its residents rest
-function homePerk(v) { const h = homeOf(v), L = h && lvInfo(h); return { work: L && L.work || 0, rest: (L && L.rest || (h ? 1 : .6)) * (1 + Math.min(.8, h && h.boost || 0)) * (1+(h&&h.wideStreet?WIDE_STREET_BONUS.rest:0)), decor: h && h.boost || 0 }; }
+function homePerk(v) { const h = homeOf(v), L = h && lvInfo(h); return { work: L && L.work || 0, rest: (L && L.rest || (h ? 1 : .6)) * (1 + Math.min(.8, h && h.boost || 0)) * (1+(h&&h.wideStreet?WIDE_STREET_BONUS.rest:0))*clanRecovery(), decor: h && h.boost || 0 }; }
 // Manual navigation reset: return real cargo once, release claims, then use normal bed recovery.
 function recallResident(id,uid){
   if(!G||BT)return false;const v=vById(id),home=bByUid(uid);
@@ -9286,7 +9349,7 @@ function recallResident(id,uid){
   a.dead=false;a.leaving=false;a.bubble=null;a.cheer=0;a.timer=0;a.mission='rest';arrive(a,v,home);
   return true;
 }
-function villagerSpeed(v) { const s = vStats(v); return Math.min(60, (18 + s.wrk * .45) * (1 + s.move)); }
+function villagerSpeed(v){const s=vStats(v),work=s.wrk/(1+clanWorkBonus(v));return Math.min(60,(18+work*.45)*(1+s.move))*(clanService(v)?1.1:1);}
 function carryOf(a) { const v = a.vid && vById(a.vid); return v ? vStats(v).carry : 0; }
 function workMul(v) { const en = v.en ?? 100; return (1 + homePerk(v).work) * (en > 70 ? 1.05 : en < 30 ? .9 : 1); }
 
@@ -9297,14 +9360,14 @@ function stores() { return G.buildings.filter(b => (b.id === 'kura' && !b.reno) 
 function inboxTotal(w){let n=0;const m=w.inbox;if(m)for(const g in m)n+=Math.max(0,m[g]||0);return n;}
 // the materials a workshop is working with: those its wanted wares call for, and those already in its inbox
 function inboxKinds(w){
- const memo=w._inK;if(memo&&memo.t===RT.t)return memo.k;const k=new Set();
+ const memo=w._inK;if(memo&&memo.t===RT.t&&memo.k instanceof Set)return memo.k;const k=new Set();
  for(const g in w.inbox||{})if((w.inbox[g]||0)>=1)k.add(g);
  for(const x in WARES)if(wareKnown(x)&&craftNeed(w,x)>0)for(const g in WARES[x].from)k.add(g);
  w._inK={t:RT.t,k};return k;
 }
-function inboxShare(w,g){const k=inboxKinds(w);return Math.max(1,Math.floor(WS_IN_CAP/Math.max(1,k.size+(k.has(g)?0:1))));}
+function inboxShare(w,g){const k=inboxKinds(w);return Math.max(1,Math.floor(workshopInputCap(w)/Math.max(1,k.size+(k.has(g)?0:1))));}
 function inboxRoom(w,g,incomingAll=0,incomingG=0){
- return Math.max(0,Math.floor(Math.min(WS_IN_CAP-inboxTotal(w)-incomingAll,inboxShare(w,g)-(w.inbox&&w.inbox[g]||0)-incomingG)));
+ return Math.max(0,Math.floor(Math.min(workshopInputCap(w)-inboxTotal(w)-incomingAll,inboxShare(w,g)-(w.inbox&&w.inbox[g]||0)-incomingG)));
 }
 function wantsGood(w,g) {
  if(inboxRoom(w,g)<=0)return false;
@@ -9354,7 +9417,7 @@ function craftMarketState(site,w){
  const R=WARES[w];let room=0,supply=0;view.urgent=false;
  for(const k in WARES)view.accepted[k]=false;
  for(const b of E.shops)if(component>0&&R.shops.includes(b.id)&&economyBuildingComponent(b,component)){
-  const stock=shopTotal(b,true);room+=Math.max(0,SHOP_CAP-stock);if(stock<3)view.urgent=true;
+  const stock=shopTotal(b,true);room+=Math.max(0,shopCapacity(b)-stock);if(stock<3)view.urgent=true;
   for(const k in WARES)if(WARES[k].shops.includes(b.id))view.accepted[k]=true;
  }
  for(const k in WARES)if(view.accepted[k])supply+=Math.max(0,entry.counts[k]-tradeHold(k)*2);
@@ -9533,7 +9596,7 @@ function drawLogi(ctx,b,B,px,py){
   if(B.cat==='shop')drawShopStock(ctx,b,B,px,py);
   if (B.makes && b.pile >= 1) drawPile(ctx, { [B.makes]: b.pile }, PILE_CAP, px + B.w * 16 - 1, py + B.h * 16 + 2, true);
   if (B.craft) { const inN = Object.values(b.inbox || {}).reduce((n, x) => n + x, 0);
-    if (inN >= 1) drawPile(ctx, b.inbox, WS_IN_CAP, px - 2, py + B.h * 16 + 2, false);
+    if (inN >= 1) drawPile(ctx, b.inbox, workshopInputCap(b), px - 2, py + B.h * 16 + 2, false);
     if (outTotal(b) >= 1) { const w = {}; for (const k in b.outs) if (b.outs[k] > 0) w['w_' + visWare(k)] = (w['w_' + visWare(k)] || 0) + b.outs[k]; drawPile(ctx, w, OUT_CAP, px + B.w * 16 + 2, py + B.h * 16 + 2, true); }
     if (RT.agents.some(a => a.state === 'work' && a.target === b.uid) && Math.random() < .05) RT.particles.push({ x: px + rnd(8, 24), y: py + 6, vx: rnd(-3, 3), vy: -9, t: 1.6, kind: 'smoke' }); }
   if (b.reno) { const im = scaffoldSprite(B.w, B.h, ((RT.t * 3) | 0) % 2); artDraw(ctx, im, px - 2, py + B.h * 16 - im.height + 1);
@@ -9698,6 +9761,7 @@ function tradeAutoRun() {
 }
 function tradeBreak(T, c, msg) { T.cs = T.cs.filter(x => x !== c); T.cd = TRADE_CD; T.offers = []; T.broke = (T.broke || 0) + 1; Sound.play('alert');
   announce('Contract broken', msg + ` The guild will sign no new contracts for a month${T.cs.length ? ' — your other contracts carry on' : ''}.`, 'scroll'); }
+function tradeQuiet(b){return bLv(b)>=3&&tradeAutoOn()&&Object.values(tradeAutoList()).some(Boolean);}
 function tradeWeek() {
   const T = tradeState();
   if (T.cd > 0 && --T.cd === 0 && freeHouses().length) { T.offers = tradeOffers(); if (T.offers.length) toast(`${icon('scroll')} The wholesalers will deal with you again.`); tradeAutoRun(); }
@@ -9711,7 +9775,7 @@ function tradeWeek() {
     G.gold += c.pay; G.stats.sales += c.pay; RT.monthSales += c.pay; c.got += c.pay; c.left--;
     floater(b.x * 16 + 16, b.y * 16 - 2, '+' + c.pay, 'gold', '#f2d27a'); Sound.play('coin', { vol: .7 });
     if (c.left <= 0) { T.cs = T.cs.filter(x => x !== c); T.done = (T.done || 0) + 1; if (!T.cd) { T.offers = tradeOffers(); tradeAutoRun(); }
-      announce('Contract fulfilled', `${c.items.map(it => tIcon(it.k)).join('')} Every lot delivered — <b>${fmt(c.got)}G</b> earned. New offers wait at the Ton'ya.`, 'gold'); }
+      if(!tradeQuiet(b))announce('Contract fulfilled', `${c.items.map(it => tIcon(it.k)).join('')} Every lot delivered — <b>${fmt(c.got)}G</b> earned. New offers wait at the Ton'ya.`, 'gold'); }
   });
   rushOrders();
 }
@@ -10388,6 +10452,7 @@ function enemyArmy(site) {
     // officers' own blows don't grow with their men, so correct toward the rolled multiple of the army's power
     grow(raid); for (let i = 0; i < 4; i++) { const r = armyPower(A) / Math.max(1, p0); if (Math.abs(r / raid - 1) < .02) break; grow(raid / r); }
     A.groups.forEach(g => g.troops = Math.max(1, Math.round(g.troops))); }
+  if(P0.id==='yamashiro')for(const g of A.groups){if(g.type==='gun')g.troops=Math.max(1,Math.round(g.troops*.5));else if(g.type==='arc')g.troops=Math.max(1,Math.round(g.troops*.3));}
   return finishArmy(A);
 }
 
@@ -11256,9 +11321,9 @@ function siegeScript(p) {
   const add = (t, k, o) => S.ev.push(Object.assign({ t, k }, o));
   if (p === 'inf') { const inf = alive(A, 'inf'); if (!inf.length) return;
     const dmg = inf.reduce((n, g) => n + fightingStrength(g) * battleAttack(g) * UNITS.inf.atk * g.atkMul * TACTICS[tacFam(g)].mod.mel * .26, 0) * (1 + A.strat * .05) * rnd(.85, 1.15);
-    const g0 = inf[0], x1 = BT.siege.x - 15;
+    const g0 = inf[0], x1 = BT.siege.x - (SIEGE_ENGINE_ART.ram.w+2)/2;
     if (!BT.ram) BT.ram = { x: g0.front + 6, y: mid + 10 };
-    BT.ram.mv = { from: BT.ram.x, to: x1, t0: T0, t1: T0 + Math.max(.5, Math.abs(x1 - BT.ram.x) / 70) };
+    BT.ram.mv = { from: BT.ram.x, to: x1, t0: T0, t1: T0 + Math.max(.5, Math.abs((BT.siege.x-15) - BT.ram.x) / 70) };
     const t1=Math.max(BT.ram.mv.t1,chargeGate(inf,T0,'inf'));BT.ram.mv.t1=t1;
     const strength=inf.reduce((n,g)=>n+fightingStrength(g),0);for(let k=0;k<3;k++)add(t1+.2+k*.6,'ram',{dmg:dmg/3,crew:'inf',strength});
   } else if ((p==='gun'||p==='arc')&&S.gateFire) { const groups=alive(A,p);if(!groups.length)return;
@@ -11327,7 +11392,7 @@ function drawCastleWall(x) {
   const gi = propImg(S.breached ? 'gateB' : 'gate', 1); artDraw(x, gi, x0 + 8 - gi.width / 2, gy - gi.height + 3);
 }
 // Native-pixel siege props. Muzzle points share the painter's grid, including its ground anchor.
-const SIEGE_ENGINE_ART={mortar:{w:44,h:34,mx:37,my:7},hwacha:{w:42,h:44,mx:31,my:12}};
+const SIEGE_ENGINE_ART={mortar:{w:44,h:34,mx:37,my:7},hwacha:{w:42,h:44,mx:31,my:12},ram:{w:48,h:28}};
 function siegeWheel(p,x,y,r){
   p.circle(x,y,r,OUTLINE);p.circle(x,y,r-1,'#4a321e');p.circle(x,y,r-2,'#a8743f');
   p.circle(x,y,r-3,'#4a321e');p.line(x-r+2,y,x+r-2,y,'#c8945f');p.line(x,y-r+2,x,y+r-2,'#a8743f');
@@ -11356,7 +11421,7 @@ function siegeEngineArt(k){
     p.rect(1,23,7,7,'#4a321e');p.poly([[0,23],[3,21],[9,22],[7,24]],'#a8743f');p.hline(1,25,6,'#7a5230');p.rect(3,24,2,5,'#4a4a52');p.set(3,25,'#b8beca');
     p.circle(37,29,2,'#4a4a52');p.set(36,28,'#8d93a3');p.circle(41,29,2,'#3a3442');p.set(40,28,'#8d93a3');
     siegeWheel(p,13,28,6);
-  }else{
+  }else if(k==='hwacha'){
     // Fire-arrow cart: a tilted tube matrix, iron-bound oak A-frame, and large spoked wheels.
     siegeWheel(p,29,37,5);p.line(4,37,38,33,'#4a321e');p.line(4,36,38,32,'#a8743f');
     p.line(5,33,1,39,'#4a321e');p.line(6,33,2,39,'#a8743f');
@@ -11384,6 +11449,19 @@ function siegeEngineArt(k){
     p.poly([[4,15],[9,13],[8,21],[3,23]],'#3b4a7a');p.set(6,17,'#efe6d0');p.set(5,18,'#efe6d0');p.set(7,18,'#efe6d0');
     for(let i=0;i<3;i++){p.line(36+i,28,39+i,18,'#a8743f');p.set(39+i,18,'#d8dce6');p.set(37+i,25,'#c8452c');}p.line(36,29,40,30,'#e0b884');
     siegeWheel(p,13,38,6);
+  }else{
+    // Kikkosha: heavy oak frame, a layered hide roof, and a bound log with an iron striking head.
+    p.rect(5,18,37,6,'#4a321e');for(const x of [8,24,39])siegeWheel(p,x,23,4);
+    p.rect(3,18,39,3,'#7a5230');p.hline(4,18,37,'#c8945f');p.hline(5,20,36,'#4a321e');
+    for(const x of [8,34]){p.rect(x,9,3,11,'#6b4a2e');p.vline(x,10,9,'#a8743f');p.rect(x-1,17,5,3,'#4a4a52');p.set(x,18,'#8d93a3');}
+    p.rect(0,15,47,5,'#6b4a2e');p.hline(1,15,44,'#c8945f');p.hline(2,17,42,'#a8743f');p.hline(1,19,44,'#4a321e');
+    for(const x of [11,28]){p.rect(x,14,3,7,'#4a321e');p.vline(x+1,15,5,'#e0b884');}
+    p.rect(42,14,6,8,'#3a3442');p.rect(43,15,5,5,'#8d93a3');p.vline(47,15,6,'#4a4a52');p.hline(43,14,4,'#d8dce6');p.set(44,20,'#d8dce6');
+    p.line(15,8,16,14,'#e0b884');p.line(31,8,30,14,'#e0b884');
+    p.poly([[3,14],[11,1],[33,1],[44,14]],'#4a321e');p.poly([[5,13],[12,3],[32,3],[41,13]],'#7a5230');
+    p.poly([[12,3],[32,3],[38,10],[8,10]],'#a8743f');p.hline(12,2,21,'#c8945f');p.hline(4,14,40,'#2a1a14');
+    for(const x of [14,22,30]){p.line(x,3,x-5,13,'#6b4a2e');p.line(x+1,3,x-4,12,'#c8945f');}p.hline(11,8,24,'#6b4a2e');
+    p.set(13,5,'#e0b884');p.set(31,5,'#e0b884');
   }
   return p;
 }
@@ -11411,10 +11489,7 @@ function propImg(k, si) {
   else if (k === 'yagura') { // corner tower: stone base, two plastered storeys, curved roofs
     p = new PB(20, 32); p.poly([[0, 31], [20, 31], [18, 24], [2, 24]], '#8a867e'); p.rect(3, 15, 14, 9, '#efe6d0'); p.rect(1, 12, 18, 3, '#3a4058'); p.rect(5, 6, 10, 6, '#efe6d0'); p.rect(3, 3, 14, 3, '#3a4058'); p.rect(7, 0, 6, 3, '#2e3446');
     p.rect(6, 17, 2, 3, '#2a2030'); p.rect(12, 17, 2, 3, '#2a2030'); p.rect(9, 8, 2, 2, '#2a2030'); p.hline(0, 12, 20, '#2e3446'); p.set(7, 0, '#e0b54a'); p.set(12, 0, '#e0b54a'); }
-  else if (k === 'mortar' || k === 'hwacha') p = siegeEngineArt(k);
-  else if (k === 'ram') { // kikkōsha: a hide-roofed shed on wheels sheltering a heavy log with an iron cap
-    p = new PB(28, 15); p.poly([[2, 9], [7, 1], [21, 1], [26, 9]], '#6b4a2e'); for (let x = 6; x < 24; x += 3) p.line(x, 2, x - 2, 9, '#8a6440'); p.hline(2, 9, 25, '#3a2414');
-    p.rect(0, 10, 28, 2, '#7a5230'); p.rect(24, 9, 4, 4, '#4a4e58'); p.set(27, 10, '#9aa2b2'); [5, 13, 21].forEach(x => { p.circle(x, 13, 1.6, '#3a2a1a'); p.set(x, 13, '#8a6440'); }); }
+  else if (k === 'mortar' || k === 'hwacha' || k==='ram') p = siegeEngineArt(k);
   else return null;
   p.shadeEdges(.85, 1.1); let c = p.outlined().canvas(); if (si === 1 && k !== 'wall' && k !== 'gate' && k !== 'gateB' && k !== 'yagura') c = flipCanvas(c);
   return (_propImg[key] = c);
@@ -13896,7 +13971,7 @@ function showProvCard(p) {
       <div class="muted">Enemy: ${ea.groups.map(g => UNITS[g.type].short + ' ' + fmt(g.troops)).join(' · ')}${(() => { const cd = p.type === 'clan' && clanDoc(p.clan); return cd ? ` <span class="chip"${tipAttr('This campaign the ' + esc(C.name) + ' favour ' + UNITS[cd.fav].name.toLowerCase() + (cd.kit ? (cd.kit > 0 ? ', with better gear than most' : ', poorly equipped') : ''))}><img class="px" src="${ICONS['u_' + cd.fav]}" alt="">${FAV_LABEL[cd.fav]}${cd.kit ? (cd.kit > 0 ? ' ⚙↑' : ' ⚙↓') : ''}</span>` : ''; })()}</div>
       <div class="muted">Marching: ${pa.groups.reduce((n, g) => n + g.cmds.filter(c => c.vref).length, 0)} villagers${skirm ? '' : ` leading ${fmt(totalOf(pa))} troops`}</div>
       <div class="rewards">${(p.type === 'dojo' ? `<span class="chip">${dojoPrizeChip(dojoPrize())}</span><span class="chip">No troop losses</span><span class="chip">${icon('xp')} XP for all who march</span>` : G.prov[p.id] && G.prov[p.id].retake ? rewardChips({ items: G.prov[p.id].retake.items, recruits: G.prov[p.id].retake.recruits }) : rewardChips(p.reward || {}))}</div>`;
-    if(p.type==='dojo'){const next=Math.ceil(trainingLevel()/10)*10;body+=`<p class="note">Win → next level · +5% strength, capped by your army.</p><div class="rewards"><span class="chip"><b>Clear Lv ${next}:</b> ${dojoMilestoneChip(dojoMilestoneReward(next))}</span></div>`;}
+    if(p.type==='dojo'){const next=Math.ceil(trainingLevel()/10)*10;body+=`<p class="note">Win → next level · +10% troops, at least +25, mainly infantry · capped by your army.</p><div class="rewards"><span class="chip"><b>Clear Lv ${next}:</b> ${dojoMilestoneChip(dojoMilestoneReward(next))}</span></div>`;}
     if (p.type === 'clan' && (p.capital || p.boss)) body += `<p class="note">🏯 Siege · 4 rounds ${ib('Walls and a gate: your troops fight at a heavy disadvantage until the gate falls.' + (G.researched.siegegun ? ' Bombards and Hwacha can be bought before the attack.' : ' Siege engines (research the Siege Battery in the Armory) help.'))}</p>`;
     if (!skirm && !pa.groups.length) body += `<p class="note" style="color:#a02a1a">⚠ No troops · Army panel</p>`;
     if (p.type === 'dojo' && G.trainCD > 0) body += `<p class="note">⏳ ${G.trainCD} mo</p>`;
@@ -13971,18 +14046,30 @@ function provinceTally() { const all = PROVINCES.filter(conquerable); return { o
    Only a cleared level advances. Save two bounded counters, retaining v1 saves and the normal rolled prizes. */
 function trainingLevel(){return clamp(Math.floor(Number(G.dojoLevel)||1),1,1000000);}
 function migrateTraining(){G.dojoLevel=trainingLevel();G.dojoMilestone=clamp(Math.floor(Number(G.dojoMilestone)||0),0,Math.floor((G.dojoLevel-1)/10));}
+function trainingNominal(level,limit=1e12){
+ let n=30;const early=Math.min(9,Math.max(0,level-1));n+=early*25;
+ for(let i=10;i<level&&n<limit;i++)n+=Math.max(25,Math.ceil(n*.1));
+ return Math.min(limit,n);
+}
+function trainingRanged(level,limit){
+ const counts={arc:0,gun:0,cav:0},types=['arc','gun','cav'],unlocks={arc:10,gun:20,cav:30},shares={arc:.16,gun:.10,cav:.08};
+ for(let m=10;m<=level;m+=10){const n=trainingNominal(m,limit),before=trainingNominal(m-1,limit);if(n===before)break;
+  const open=types.filter(t=>m>=unlocks[t]&&troopsOpen(t));if(!open.length)continue;
+  const t=m<=30?(open.includes(types[m/10-1])?types[m/10-1]:open[open.length-1]):open[(m/10-4)%open.length];
+  counts[t]+=Math.min(Math.floor((n-before)*.4),Math.max(0,Math.floor(n*shares[t])-counts[t]));
+ }return counts;
+}
 function trainingArmy(site){
-  const level=trainingLevel(),cap=Math.max(0,armyPower(playerArmy())),base=30*UNITS.inf.atk,
-    growth=Math.exp(Math.min((level-1)*Math.log(1.05),Math.log(Math.max(1,cap/base)))),goal=Math.min(cap,Math.round(base*growth)),
+  const level=trainingLevel(),cap=Math.max(0,armyPower(playerArmy())),limit=Math.max(1,Math.floor(cap/UNITS.inf.atk)),nominal=trainingNominal(level,limit),goal=Math.min(cap,Math.round(nominal*UNITS.inf.atk)),
     A={side:1,clan:site.clan,name:`Sparring Partners · Lv ${level}`,mode:'army',groups:[],ki:0,strat:0,trainingLevel:level,trainingCap:cap};
   if(!goal)return finishArmy(A);
-  const total=Math.max(1,Math.round(30*Math.min(growth,cap/base))),tier=Math.min(5,1+Math.floor((level-1)/20)),mix={inf:1};
+  const total=Math.max(1,nominal),tier=Math.min(5,1+Math.floor((level-1)/20)),mix={inf:1};
   if(level>=10&&troopsOpen('arc'))mix.arc=.16;
   if(level>=20&&troopsOpen('gun'))mix.gun=.10;
   if(level>=30&&troopsOpen('cav'))mix.cav=.08;
   mix.inf=1-(mix.arc||0)-(mix.gun||0)-(mix.cav||0);
-  let left=total;
-  for(const type of ['cav','gun','arc','inf']){if(!mix[type])continue;const troops=type==='inf'?left:Math.min(left-1,Math.floor(total*mix[type]));if(troops<1)continue;left-=troops;
+  const ranged=trainingRanged(level,limit);let left=total;
+  for(const type of ['cav','gun','arc','inf']){if(!mix[type])continue;const troops=type==='inf'?left:Math.max(0,Math.min(left-1,ranged[type]||0));if(troops<1)continue;left-=troops;
     const cmds=[],ek=enemyKit(type,tier,false,site);
     if(level>=10){const look=enemyLook(site.clan,UNIT_ORDER.indexOf(type),false,type,tier,site,tier*4),f=1+Math.min(4,(level-1)*.025),
       stats=enemyGearStats({atk:8*f,def:6*f,hp:28*f,str:6*f,mrk:8*f,wrk:3,duel:Math.min(5,Math.floor(level/20))},look);
@@ -13991,7 +14078,8 @@ function trainingArmy(site){
       calA:1/(m.atk*ek.atk),calD:(1+Math.min(.8,(level-1)*.008))/(m.def*ek.def)};
     A.groups.push(g);recalcGroup(g,A);
   }
-  // Keep a rounded 30-recruit opening, and put all subsequent strength under the cap.
+  // Keep a 30-recruit opening. Infantry gets every ordinary increase; one ranged arm may grow at a milestone.
+  // Calibrate all strength under the current-player cap without changing the saved level.
   // Calibrate through the same factors recalcGroup uses after an officer KO; no temporary power-only override.
   const bases=A.groups.map(g=>g.calA);let lo=.000001,hi=8;
   for(let k=0;k<24;k++){const m=(lo+hi)/2;for(let i=0;i<A.groups.length;i++){A.groups[i].calA=bases[i]*m;recalcGroup(A.groups[i],A);}
@@ -14664,8 +14752,8 @@ function shopRoom(b,good,exclude){
  if(ware?!WARES[good].shops.includes(b.id):!shopRawSalesAllowed(b)||!B.sells.includes(good))return 0;
  const stock=shopStock(b,ware);let incoming=0;const E=RT.eco;
  if(E){const p=economyPoint(b,'shelf');for(const c of E.claims.values())if(c.agent!==exclude){if(c.to===p&&!!WARES[c.good]===ware)incoming+=c.n;if(c.extra)for(const l of c.extra)if(l.to===p&&!!WARES[l.good]===ware)incoming+=l.n;}}
- const perKind=ware?SHOP_CAP:Math.max(1,Math.floor(SHOP_CAP/Math.max(1,B.sells.length)));
- return Math.max(0,Math.floor(Math.min(SHOP_CAP-shopTotal(b,ware)-incoming,perKind-(stock[good]||0)-shopIncoming(b,good,exclude))));
+ const cap=shopCapacity(b),perKind=ware?cap:Math.max(1,Math.floor(cap/Math.max(1,B.sells.length)));
+ return Math.max(0,Math.floor(Math.min(cap-shopTotal(b,ware)-incoming,perKind-(stock[good]||0)-shopIncoming(b,good,exclude))));
 }
 function releaseShopStock(b){
  if(!shopIs(b))return;const p=economyPoint(b,'shelf');
@@ -14795,7 +14883,7 @@ function workerPlan(a,v,J){
   J.inbox=J.inbox||{};J.outs=J.outs||{};
   const c=chooseCraft(J),outs=economyPoint(J,'outs'),reach=porterReach(J),full=outTotal(J)>=OUT_CAP;
   let ready=null,readyTo=null,n=0;for(const g in J.outs){const k=economyAvailable(outs,g);if(k>n){const to=dropFor(g,J,a);if(to&&to!==J){ready=g;readyTo=to;n=k;}}}
-  if(ready&&(full||(reach?n>=WS_HAUL:n>=3||!c||c.mode!=='craft'))){
+  if(ready&&(full||(!(v.role==='work'&&v.job===J.uid&&c&&c.mode==='craft')&&(reach?n>=WS_HAUL:n>=3||!c||c.mode!=='craft')))){
    const plan=economyStart(a,v,outs,economyDestination(readyTo,ready),ready,capacity,J,readyTo);if(plan)return plan;}
   if(full&&Object.keys(J.outs).some(g=>economyReserved(outs,g,false)>0))return economyWait(a,J);
   if(c&&c.mode==='craft'&&!full&&craftReserve(a,v,J,c.w,c.n)){a.mission='craft';return J;}
@@ -14817,6 +14905,11 @@ function produce(b,v){
  createGoods(economyPoint(b,'buffer'),B.makes,amt,'harvest');economyFlush(b);
  b.prog=(b.prog+1)%4;b.var=b.prog>=2?1:0;
  floater(b.x*16+B.w*8,b.y*16+4,'+'+amt,'g_'+B.makes,'#f2efe2');if(Math.random()<.25)giveXP(v,1);
+}
+function continueAssignedCraft(a,v,b){
+ if(!b||bByUid(b.uid)!==b||b.reno||v.role!=='work'||v.job!==b.uid||!BUILDINGS[b.id].craft||(v.en??100)<25||v.hp!=null||a.carry||economyFreightTotal(a))return false;
+ const c=chooseCraft(b);if(!c||c.mode!=='craft'||!craftReserve(a,v,b,c.w,c.n))return false;
+ a.mission='craft';arrive(a,v,b);return a.state==='work';
 }
 function craftDone(b,v,w,a){
  const E=economyState(),c=a&&E.crafting.get(a);if(!c||c.site!==b||c.w!==w)return 0;

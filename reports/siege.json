@@ -1,12 +1,12 @@
 {
   "gateHolds": {
-    "rounds": 2,
-    "blowsWhileHeld": 10,
-    "rangedOurs": 3,
-    "rangedTheirs": 7,
+    "rounds": 3,
+    "blowsWhileHeld": 8,
+    "rangedOurs": 4,
+    "rangedTheirs": 4,
     "meleeIntoTheGate": 0,
     "defendingMeleeAttacks": 0,
-    "gateDamage": 67
+    "gateDamage": 983
   },
   "duelBeforeBreach": true,
   "breach": {
@@ -32,16 +32,16 @@
   "engines": {
     "bombardsGate": "-40% of the gate from 2 shells (20% each)",
     "hwachaPlanned": [
-      115.1,
-      69,
-      46,
-      28.8
+      83,
+      49.8,
+      33.2,
+      20.8
     ],
     "hwachaActual": [
-      46,
-      69,
-      46,
-      28.8
+      23,
+      49.8,
+      33.2,
+      20.8
     ],
     "hwachaTargets": [
       "gun",

@@ -12,9 +12,13 @@ const root=path.resolve(__dirname,'..');
     if(level===1){ok(totalOf(A)===30&&A.groups.length===1&&A.groups[0].type==='inf'&&A.groups[0].cmds.length===0,'Opening is not 30 infantry');ok(p===30,'Opening strength scales with player');}
     if(level<10)ok(A.groups.every(g=>g.type==='inf'),'Advanced trainees too early');if(level===10)ok(A.groups.some(g=>g.type==='arc'),'Missing gradual archers');
     if(level===20)ok(A.groups.some(g=>g.type==='gun'),'Missing gradual gunners');if(level===30)ok(A.groups.some(g=>g.type==='cav'),'Missing gradual cavalry');
-    const expected=Math.min(cap,Math.round(30*Math.exp(Math.min(Math.log(Math.max(1,cap/30)),(level-1)*Math.log(1.05)))));
-    ok(p===expected,'Level does not follow its 5% nominal budget: '+JSON.stringify({level,p,expected}));
+    let count=30;for(let i=1;i<level&&count<cap;i++)count+=Math.max(25,Math.ceil(count*.1));const expected=Math.min(cap,count);
+    ok(p===expected,'Level does not follow 10% / minimum 25 recruits: '+JSON.stringify({level,p,expected}));
     for(const g of A.groups)recalcGroup(g,A);ok(armyPower(A)===p,'Calibration lost on recount');rows.push({level,troops:totalOf(A),power:p,formations:A.groups.map(g=>g.type)});}
+   let prior=null;for(let level=1;level<=40;level++){G.dojoLevel=level;const A=enemyArmy(dojo),counts=Object.fromEntries(A.groups.map(g=>[g.type,g.troops]));
+    if(prior){ok(totalOf(A)-prior.total>=Math.max(25,Math.ceil(prior.total*.1)),'Small level increment');ok(counts.inf>=prior.inf,'Milestone removed infantry');
+     if(level%10)for(const t of ['arc','gun','cav'])ok((counts[t]||0)===(prior[t]||0),'Every formation grew between milestones');}
+    prior={...counts,total:totalOf(A)};}
    out.ladder=rows;G.dojoLevel=30;const nominal=armyPower(enemyArmy(dojo));G.allHands=false;G.villagers.forEach(v=>v.role='work');G.troops={inf:15,arc:0,gun:0,cav:0};let A=enemyArmy(dojo);
    ok(armyPower(A)<=armyPower(playerArmy())&&armyPower(A)<nominal,'Army is not an upper cap');ok(G.dojoLevel===30,'Cap reset level');
    G.troops={inf:20000,arc:0,gun:0,cav:0};ok(armyPower(enemyArmy(dojo))===nominal,'Reinforcing changed nominal difficulty');
@@ -45,7 +49,7 @@ const root=path.resolve(__dirname,'..');
    G.dojoLevel=20;G.dojoMilestone=1;for(const r of RESEARCH)delete G.researched[r.item];const candidate=dojoMilestoneReward(20);
    if(candidate.kind==='tech'){const r=RESEARCH.find(r=>r.item===candidate.k);G.research={id:r.id,left:3};ok(dojoMilestoneReward(20).k!==candidate.k,'Reward duplicates active paid research');G.research=null;G.resQ=[{id:r.id,paid:123}];ok(dojoMilestoneReward(20).k!==candidate.k,'Reward duplicates queued paid research');G.resQ=[];}
    G.dojoLevel=10;G.dojoMilestone=0;G.troops.inf=1000;openMap();showProvCard(dojo);const text=$('#prov-card').textContent;
-   ok(text.includes('Level 10')&&text.includes('Clear Lv 10')&&text.includes('+5%'),'Card hides level/growth/milestone');
+   ok(text.includes('Level 10')&&text.includes('Clear Lv 10')&&text.includes('+10%')&&text.includes('+25'),'Card hides level/growth/milestone');
    ok($('#prov-card').scrollWidth<=document.documentElement.clientWidth,'Mobile card overflows');$('#prov-card').hidden=true;closeMap();
    G.dojoLevel=10;G.dojoMilestone=0;G.trainCD=0;G.dojoPrize={kind:'troops',t:'inf',mul:.75};ok(startBattle(dojo.id),'Milestone spar did not start');
    const snapshot=JSON.stringify(BT.dojoBonus);ok(BT.dojoLevel===10&&BT.dojoBonus,'Milestone not snapshotted');BT.A[1].groups.forEach(g=>g.troops=0);

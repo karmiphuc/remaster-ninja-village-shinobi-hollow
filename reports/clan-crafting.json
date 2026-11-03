@@ -1,0 +1,62 @@
+{
+  "continuous": {
+    "batches": 3,
+    "wares": 15,
+    "energy": 73,
+    "residual": 0
+  },
+  "upgrades": {
+    "workshop": [
+      {
+        "level": 2,
+        "input": 60,
+        "upkeep": 15
+      },
+      {
+        "level": 3,
+        "input": 90,
+        "upkeep": 20
+      }
+    ],
+    "shopShelf": 60,
+    "residual": 0
+  },
+  "upkeep": {
+    "level1": 0,
+    "level2": 15,
+    "level3": 20,
+    "charged": 35
+  },
+  "policies": {
+    "workMultiplier": 1.2,
+    "speedMultiplier": 1.1,
+    "recoveryMultiplier": 1.5,
+    "paid": 10000
+  },
+  "saveKB": 33.458984375,
+  "notifications": {
+    "automaticCompletion": "quiet",
+    "manualCompletion": "dialog",
+    "breach": "dialog"
+  },
+  "ram": {
+    "width": 50,
+    "height": 30
+  },
+  "castle": {
+    "before": {
+      "inf": 729,
+      "arc": 729,
+      "gun": 60,
+      "cav": 729
+    },
+    "after": {
+      "inf": 729,
+      "arc": 219,
+      "gun": 30,
+      "cav": 729
+    },
+    "otherCastleUnchanged": true
+  },
+  "checks": 69
+}
