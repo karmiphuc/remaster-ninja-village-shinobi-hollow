@@ -23,10 +23,10 @@
     "bonusBounded": true
   },
   "playback": {
-    "frontEnd": 2.553418591974513,
-    "rearContact": 3.803418591974513,
-    "firstRearDamage": 3.8605000000000125,
-    "gapAtDamage": 5.939722437203557,
+    "frontEnd": 3.694993545953353,
+    "rearContact": 6.9736130745728815,
+    "firstRearDamage": 7.115500000000026,
+    "gapAtDamage": 3.3700452124839444,
     "archersLeft": 300
   },
   "rebellion": {

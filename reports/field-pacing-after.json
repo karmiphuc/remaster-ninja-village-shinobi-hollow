@@ -1,0 +1,42 @@
+{
+  "inf": {
+    "duration": 9.891089504286647,
+    "firstHit": 2.164733767212166,
+    "lastDeath": 8.854255086256233,
+    "hits": [
+      240,
+      240
+    ],
+    "events": 50
+  },
+  "gun": {
+    "duration": 3.03,
+    "firstHit": 1.6517342099803503,
+    "lastDeath": 1.8067147946590558,
+    "hits": [
+      240,
+      240
+    ],
+    "events": 114
+  },
+  "arc": {
+    "duration": 3.85,
+    "firstHit": 2.1961831239843743,
+    "lastDeath": 2.6367147946590563,
+    "hits": [
+      240,
+      240
+    ],
+    "events": 118
+  },
+  "death": {
+    "reactionClock": 1.8910257684998215,
+    "elapsed": 1.4233333333333527,
+    "escapeAt": null
+  },
+  "rout": {
+    "reactionClock": 21.097917322690478,
+    "elapsed": 7.235000000000317,
+    "escapeAt": 1.2313006237288937
+  }
+}

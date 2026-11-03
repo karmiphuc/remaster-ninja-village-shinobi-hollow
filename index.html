@@ -11462,7 +11462,7 @@ function syncRevive(g) { const want = visibleCount(g); let have = g.spr.filter(s
 function sideOf(g) { return BT.A[0].groups.includes(g) ? 0 : 1; }
 /* Grounded chibi reactions. These states only present losses already resolved by
    combat; they never change troop totals, HP, inventory, wounded returns or loot. */
-const BATTLE_PACE=.7,BATTLE_RECIPES=new WeakMap();
+const BATTLE_PACE=.7,REACTION_SPEED=1.33,BATTLE_RECIPES=new WeakMap();
 const FALL_BEATS={
   inf:{flinch:.18,stagger:.29,kneel:.25,fall:.34,travel:6},
   arc:{flinch:.20,stagger:.43,kneel:.29,fall:.35,travel:4},
@@ -11700,7 +11700,7 @@ function routSprite(g,s,awayDir,survivor=false,delay=0){
 
 
 function updateLifeState(s,dt,g,si){
-  const f=s.fate;if(!f||s.gone||s.stamped)return;f.t+=dt;s.flash=0;
+  const f=s.fate;if(!f||s.gone||s.stamped)return;dt*=REACTION_SPEED;f.t+=dt;s.flash=0;
   if(f.kind==='rout'){
     if(f.t>=f.wait+f.recoil&&!s.droppedWeapon)discardGear(s,g,'weapon');
     if(f.t>=f.hatAt&&!s.droppedHat)discardGear(s,g,'head');
@@ -11726,10 +11726,12 @@ function stampBody(s,si){
   const pose=lifePose(s,{type:f.recipe?.type||'inf'});addRemain({kind:'body',owner:s,img:pose.img,angle:pose.angle,flat:pose.flat,face:s.face,scale:f.scale,x:s.x+f.dx,y:s.y-(s.lift||0)+f.dy,blood:f.blood,flag:s.sashimono?{...s.sashimono}:null});
 }
 function recoverVisual(s){
+  if(s.fieldExecution)endFieldExecution(s.fieldExecution);
   const A=BT.aftermathState;if(A){const bodies=A.records.filter(r=>r.owner===s&&r.kind==='body').length;BT.bodies=Math.max(0,BT.bodies-bodies);A.records=A.records.filter(r=>r.owner!==s);A.flying=A.flying.filter(p=>p.owner!==s);rebuildRemains();}
   delete s.duelCorpse;s.fate=null;s.lifeState='active';s.routedAlive=false;s.routPending=false;s.stamped=false;s.gone=false;s.unhorsed=false;s.droppedWeapon=false;s.droppedHat=false;s.ox=s.oy=s.rot=0;s.flash=0;s.kd=0;s.face=sideDir(s.si||0);
 }
 function releaseAftermath(){
+  clearFieldExecutions();
   if(!BT?.aftermathState)return;const A=BT.aftermathState;
   freeCanvases(A.cv);for(const cv of A.canvases)freeCanvases(cv);for(const r of A.recipes){r.frames.clear();r.duelFrames?.clear();r.parts?.clear();r.heldRight=null;}A.canvases.clear();A.assets.clear();A.horseFlips.clear();A.records.length=0;A.flying.length=0;BT.aftermathState=null;
 }
@@ -11773,6 +11775,63 @@ function drawBloodPool(ctx,r,blood,progress){
   const lx=((socket?socket.x+5.5:r.img.width/2)-r.img.width/2)*face*sc,ly=((socket?socket.y-1:r.img.height*.72)-r.img.height/2)*sc;
   const x=r.x+lx*Math.cos(a)-ly*Math.sin(a),u=easeOut(progress),w=cv.width*sc*(.28+.72*u),h=cv.height*sc*(.15+.85*u);
   ctx.save();ctx.globalAlpha*=.9*(.3+.7*u);artDraw(ctx,cv,x-w/2,r.y-.7*sc-h/2,w,h);ctx.restore();
+}
+
+// Small field finishes reuse the soldier's equipped wind/strike/recovery frames. No camera or damage events.
+const FIELD_EXECUTION={chance:.10,limit:2,lead:.24*BATTLE_PACE,after:.46*BATTLE_PACE};
+function planFieldExecutions(S){
+  if(siegeHold())return;
+  const R=seeded(artHash([BT.seed,BT.round,BT.phaseId||0,'field-finish'].join(':'))),n=S.ev.length;
+  for(let i=0;i<n;i++){const e=S.ev[i],h=e.h,s=e.s;
+    if(e.k!=='die'||!h||h.from.type!=='inf'||h.icpt||h.grenade||h.duelBonus||h.pk&&h.pk!=='inf'||!s||s.hero||s.guardOf||s.petOf||s.sprs.beast)continue;
+    if(R()<FIELD_EXECUTION.chance)S.ev.push({k:'fieldTell',t:e.t-FIELD_EXECUTION.lead,die:e});
+  }
+}
+function endFieldExecution(c){
+  if(c.A.fieldExecution===c)delete c.A.fieldExecution;if(c.V.fieldExecution===c)delete c.V.fieldExecution;
+  c.cancelled=true;
+}
+function updateFieldExecutions(){
+  const list=BT.fieldExecutions;if(!list)return;
+  for(let i=list.length-1;i>=0;i--){const c=list[i];
+    if(c.cancelled||BT.t>=c.end||!c.A.alive||c.A.fate||c.A.out||c.V.fate?.kind==='rout'||c.V.gone||c.V.stamped||BT.cine||BT.duelShot||
+      !c.hit&&(!c.V.alive||Math.abs(c.A.x-c.V.x)>c.reach+6*c.scale||Math.abs(c.A.y-c.V.y)>8*c.scale)){
+      endFieldExecution(c);list.splice(i,1);
+    }
+  }
+}
+function clearFieldExecutions(){if(!BT?.fieldExecutions)return;for(const c of BT.fieldExecutions)endFieldExecution(c);BT.fieldExecutions.length=0;}
+function beginFieldExecution(e){
+  updateFieldExecutions();const V=e.die.s,h=e.die.h;
+  if(BT.phaseName!=='inf'||siegeHold()||h.from.type!=='inf'||h.icpt||h.grenade||h.pk&&h.pk!=='inf'||BT.cine||BT.duelShot||!V.alive||V.fate||V.routPending||V.hero||V.guardOf||V.petOf||V.fieldExecution||BT.t>=e.die.t)return;
+  const list=BT.fieldExecutions||(BT.fieldExecutions=[]);if(list.length>=FIELD_EXECUTION.limit)return;
+  const sc=spriteScale(),dir=sideDir(sideOf(h.from)),assigned=e.die.hero||e.die.ret;
+  let A=null,reach=0,wid=null,best=Infinity;
+  const consider=s=>{if(!s?.alive||s.fate||s.out||s.fieldExecution||s.sprs.horse||s.sprs.beast||s.face!==dir)return;
+    const r=reactionRecipe(s,h.from),w=r?.wid,k=weaponKind(w)||'spear';if(w==='unarmed'||!['sword','spear','glaive'].includes(k))return;
+    const dx=dir*(V.x-s.x),dy=Math.abs(V.y-s.y),limit=(k==='spear'||k==='glaive'?36:w==='nodachi'||w==='zanbato'?30:26)*sc;
+    if(dx<0||dx>limit||dy>6*sc)return;const d=dx+dy*3;if(d<best){best=d;A=s;reach=limit;wid=w;}};
+  if(assigned)consider(assigned);else for(const s of h.from.spr)consider(s);
+  if(!A)return;const k=weaponKind(wid)||'spear',c={A,V,g:h.from,die:e.die,start:e.die.t-FIELD_EXECUTION.lead,impact:e.die.t,end:e.die.t+FIELD_EXECUTION.after,
+    dir,reach,scale:sc,style:k==='spear'?'thrust':wid==='nodachi'||wid==='zanbato'?'heavy':k==='glaive'?'sweep':'passing',hit:false};
+  A.fieldExecution=V.fieldExecution=c;list.push(c);
+}
+function drawFieldExecution(x,s,g,si,sc){
+  const c=s.fieldExecution;if(!c||c.A!==s||c.cancelled||!s.alive||s.fate||BT.cine||BT.duelShot||BT.t>=c.end)return false;
+  const u=(BT.t-c.impact)/BATTLE_PACE,set=s.sprs,before=u<0,
+    img=before?set.wind:u<.08?set.atk:u<.20?set.follow:set.recover,
+    progress=clamp((BT.t-c.start)/(c.end-c.start),0,1),step=Math.sin(progress*Math.PI),dx=c.dir*step*(c.style==='passing'?4:c.style==='heavy'?1:3)*sc,
+    low=c.style==='thrust'?.95:1,px=Math.round(s.x+dx-img.width*sc/2),py=Math.round(s.y-img.height*sc*low);
+  x.save();x.fillStyle='rgba(0,0,0,.22)';x.fillRect(Math.round(s.x-6*sc),Math.round(s.y)-1,12*sc,2);
+  if(s.sashimono)drawSashimono(x,s,g,px,py,img.width*sc,sc,img,c.dir);artDraw(x,img,px,py,img.width*sc,img.height*sc*low);
+  if(c.hit&&u>=0&&u<.20){const a=1-u/.20,vx=c.V.x,vy=c.V.y-10*sc;
+    x.lineCap='square';x.globalAlpha=a*.75;x.strokeStyle='#28222a';x.lineWidth=(c.style==='heavy'?2:1.2)*sc;x.beginPath();
+    if(c.style==='thrust'){x.moveTo(vx-c.dir*12*sc,vy+3*sc);x.lineTo(vx+c.dir*7*sc,vy+sc);}
+    else if(c.style==='heavy'){x.moveTo(vx-c.dir*3*sc,vy-10*sc);x.lineTo(vx+c.dir*3*sc,vy+10*sc);}
+    else{x.moveTo(vx-c.dir*9*sc,vy-6*sc);x.quadraticCurveTo(vx+c.dir*8*sc,vy-2*sc,vx+c.dir*6*sc,vy+7*sc);}
+    x.stroke();x.globalAlpha=a*.65;x.strokeStyle='#e0e8d9';x.lineWidth=.45*sc;x.stroke();
+  }
+  x.restore();if(s.hero)_tags.push({x:s.x,y:py+11*sc,name:s.hero.name,si,show:true,pri:8,aux:s.hero.aux});return true;
 }
 
 
@@ -11975,6 +12034,7 @@ function duelStrikePose(e){
 
 
 function startDuel(spec){
+  clearFieldExecutions();
   BT.phaseName='duel';BT.pt0=BT.t;BT.state='run';
   if(spec.refused){spec.ga.shock=BT.round;const c=gCenter(spec.ga);BT.labels.push({x:c.x,y:c.y-34,text:'−10%',t:.1,side:0});
     cutIn(1,spec.B[0].hero,pick(['Cowards!','No one? Ha!','Is there no warrior among you?']));BT.script=null;BT.next=1.2;return;}
@@ -12555,7 +12615,49 @@ function heroPhase(p, hits, spec) {
   });
   return ex;
 }
-function buildScript(p, hits, ex = { procs: [], bonus: new Map() }) {
+const INFANTRY_PRESENTATION=2,RANGED_IMPACT_EXTRA=.5*BATTLE_PACE,
+ PHASE_ACTOR_CLOCKS=['brandFrom','brandUntil','braceFrom','braceUntil','fightAt','fightUntil','hurtFrom','hurtUntil','aimFrom','aimUntil','fireAt','busyUntil','strikeAt'];
+// Stretch the choreography, never INF_CLOCK's damage/travel budget. Speeds and poses keep their normal cadence.
+function capturePhaseTiming(){
+  const actors=[],seen=new Set(),moves=new Set(),lunges=new Set(),keys=new Set();
+  const add=s=>{if(!s||seen.has(s))return;seen.add(s);actors.push({s,clocks:PHASE_ACTOR_CLOCKS.map(k=>s[k])});for(const q of s.q||[])moves.add(q);for(const l of s.lunges||[])lunges.add(l);};
+  for(const A of BT.A){for(const g of A.groups){for(const s of g.spr||[]){add(s);for(const q of s.guards||[])add(q);}
+    for(const s of g.heroes||[]){add(s);for(const q of s.guards||[])add(q);add(s.pet);}}for(const s of A.hqSpr||[])add(s);}
+  for(const K of BT.pk||[])for(const k of K)keys.add(k);return {actors,moves,lunges,keys};
+}
+function stretchInfantryScript(S,hits,prior){
+  const base=BT.t,span=S.dur-.25,first=Math.min(...S.wins.map(w=>w.t0)),lead=Number.isFinite(first)?clamp(first-base,0,Math.max(0,span-.05)):0,
+    anchor=base+lead,scale=(span*INFANTRY_PRESENTATION-lead)/(span-lead),at=t=>t<=anchor?t:anchor+(t-anchor)*scale;
+  S.logicalDuration=S.dur;S.presentationScale=INFANTRY_PRESENTATION;S.actionScale=scale;S.contactAt=anchor;
+  for(const e of S.ev){
+    if(e.k==='pitchThrow'&&Number.isFinite(e.land)){const flight=e.land-e.t;e.land=at(e.land);e.t=e.land-flight;}
+    else if(e.k==='shot'&&e.lethal&&e.flight>0)e.t=at(e.t+e.flight)-e.flight;
+    else e.t=e.k==='windup'&&e.die?at(e.die.t)-(e.die.t-e.t):at(e.t);
+    if(Number.isFinite(e.until))e.until=at(e.until);
+  }
+  for(const h of hits){if(Number.isFinite(h.t0))h.t0=at(h.t0);if(Number.isFinite(h.t1))h.t1=at(h.t1);}
+  const pairs=new Set();for(const w of S.wins){w.t0=at(w.t0);w.t1=at(w.t1);for(const pr of w.pairs||[])if(!pairs.has(pr)){pairs.add(pr);pr.tm=at(pr.tm);}}
+  if(S.duel)S.duel.end=at(S.duel.end);
+  for(const {s,clocks}of prior.actors){let added=false;
+    for(const q of s.q||[])if(!prior.moves.has(q)){q.t=at(q.t);if(q.fight>0)q.fight=at(q.fight);added=true;}
+    if(added)s.q.sort((a,b)=>a.t-b.t);
+    for(let i=0;i<PHASE_ACTOR_CLOCKS.length;i++){const k=PHASE_ACTOR_CLOCKS[i],v=s[k];if(v!==clocks[i]&&Number.isFinite(v)&&v>=base)s[k]=at(v);}
+    for(const l of s.lunges||[])if(!prior.lunges.has(l)){const hit=l.hitAt??l.t1-.14,delta=at(hit)-hit;l.t0+=delta;l.t1+=delta;l.hitAt=at(hit);}
+  }
+  for(const K of BT.pk||[])for(const k of K)if(!prior.keys.has(k)){const end=at(k.t+k.dur);k.t=at(k.t);k.dur=end-k.t;}
+  S.dur=span*INFANTRY_PRESENTATION+.25;
+}
+function buildScript(p,hits,ex={procs:[],bonus:new Map()}){
+  const prior=p==='inf'?capturePhaseTiming():null,S=buildPhaseScript(p,hits,ex);
+  if(prior){stretchInfantryScript(S,hits,prior);planFieldExecutions(S);}
+  else if(p==='gun'||p==='arc'){
+    // Extra time watching the landing zone; shots, damage and flight times are untouched.
+    S.logicalDuration=S.dur;S.impactExtra=RANGED_IMPACT_EXTRA;S.dur+=RANGED_IMPACT_EXTRA;
+    for(const h of hits)if(Number.isFinite(h.t1))h.t1+=RANGED_IMPACT_EXTRA;for(const w of S.wins)w.t1+=RANGED_IMPACT_EXTRA;
+  }
+  S.ev.sort((a,b)=>a.t-b.t);return S;
+}
+function buildPhaseScript(p, hits, ex = { procs: [], bonus: new Map() }) {
   const melee = p === 'inf' || p === 'cav', lead = melee ? BRANDISH : 0, T0 = BT.t + lead, S = { dur: 1.2, ev: [], i: 0, wins: [] }, planned = new Map();
   if (melee) { brandish([0, 1].flatMap(si => alive(BT.A[si], p)), lead, true, .3); }
   // how many sprites each hit removes
@@ -12756,7 +12858,7 @@ function heroStrikes(g, face, vEvs, at, p, ev, lim = at + 2.4) {
       if (arrive > lim) { pool.push(e); taken--; break; } // too far to reach before the phase is over: the rank and file take that one
       e.t = Math.max(e.t, arrive + .12); e.hero = hr;
       queueMove(hr, t, ax, ay, spd, e.t + .2);
-      ev(e.t - .1, 'windup', { hero: hr });
+      ev(e.t - .1, 'windup', { hero: hr, die:e });
       t = e.t + .14; px = ax; py = ay;
     }
     hr.busyUntil = t; hr.px = px; hr.py = py;
@@ -12842,14 +12944,14 @@ function retStrikes(g, vEvs, share) {
   const qs = (g.heroes || []).filter(hr => !hr.out && !hr.hero.ko).flatMap(hr => (hr.guards || []).filter(q => q.alive && q.retRef && !q.retRef.out)); if (!qs.length) return;
   const face = sideDir(sideOf(g)), pool = vEvs.filter(e => !e.hero && !e.ret).sort((a, b) => a.t - b.t), n = Math.min(pool.length, qs.length * 2, Math.round(vEvs.length * share * 1.5 + Math.random()));
   for (let k = 0; k < n; k++) { const e = pool[Math.floor(k * pool.length / n)], q = qs[k % qs.length], v = e.s; e.ret = q;
-    (q.lunges || (q.lunges = [])).push({ t0: e.t - .32, t1: e.t + .14, x: (e.impactX ?? v._ax ?? v.x) - face * 9, y: (e.impactY ?? v._ay ?? v.y) + rnd(-1, 1) }); }
+    (q.lunges || (q.lunges = [])).push({ t0: e.t - .32, t1: e.t + .14, hitAt:e.t, x: (e.impactX ?? v._ax ?? v.x) - face * 9, y: (e.impactY ?? v._ay ?? v.y) + rnd(-1, 1) }); }
 }
 function heroLineStrikes(g, P, vEvs, ev) {
   const face = sideDir(sideOf(g)), hs = (g.heroes || []).filter(hr => !hr.out && !hr.hero.ko && (P.timed||hr._ax != null)); if (!hs.length || !vEvs.length) return;
   const pool = vEvs.slice(), cap = Math.ceil(pool.length * .5);
   hs.forEach((hr, hi) => { for (let k = 0; k < 2 && pool.length && cap > vEvs.length - pool.length; k++) {
     const hy=P.timed?hr.y:hr._ay,i = pool.reduce((b, e, j) => Math.abs((e.s._ay ?? e.s.y) - hy) < Math.abs((pool[b].s._ay ?? pool[b].s.y) - hy) ? j : b, 0), e = pool.splice(i, 1)[0];
-      e.t = Math.max(e.t, P.arrive + .2 + hi * .1 + k * .35);if(P.timed)e.t=Math.min(e.t,P.until-.02);e.hero = hr; ev(Math.max(P.arrive,e.t-.12), 'windup', { hero: hr });
+      e.t = Math.max(e.t, P.arrive + .2 + hi * .1 + k * .35);if(P.timed)e.t=Math.min(e.t,P.until-.02);e.hero = hr; ev(Math.max(P.arrive,e.t-.12), 'windup', { hero: hr, die:e });
       const x=P.timed?hr.x+P.dx:hr._ax,y=P.timed?hr.y:hr._ay;
       queueMove(hr, Math.max(P.arrive,e.t-.16), x + face * 5, y, 90, P.until); queueMove(hr, e.t + .12, x, y, 50, P.until); } });
 }
@@ -12864,6 +12966,7 @@ function brandish(groups, dur, cry = true, brace = 0) {
 }
 function runScript() { const S = BT.script; if (!S) return; while (S.i < S.ev.length && S.ev[S.i].t <= BT.t) doEvent(S.ev[S.i++]); }
 function doEvent(e) {
+  if(e.k==='fieldTell'){beginFieldExecution(e);return;}
   if(tacticalEvent(e))return;
   const p = BT.phaseName;
   if (e.k === 'volley') { Sound.play('volley'); BT.flash = .08; BT.flashCol = '255,240,200'; BT.shake = Math.max(BT.shake, .25); BT.stop = .05; return; }
@@ -12951,6 +13054,7 @@ function doEvent(e) {
     const away = sideDir(sideOf(h.from));
     if (e.ret && e.ret.alive) { BT.fx.push({ k: 'hslash', x: s.x - away * 2, y: s.y - 8, t: .18, t0: .18, dir: away }); Sound.play('clash', { vol: .45, pitch: rnd(1.1, 1.3) }); }
     exitSprite(h.to,s,h.pk||p,away);
+    if(s.fieldExecution?.V===s){const c=s.fieldExecution;if(s.fate?.kind==='death'){c.hit=true;c.impact=BT.t;}else endFieldExecution(c);}
     const px = s.x, py = s.y - 8;
     if(s.fate?.kind==='rout'){if(e.hero){e.hero.hero.kills=(e.hero.hero.kills||0)+(e.cred||1);e.hero.glow=.4;e.hero.strikeAt=BT.t;}return;}
     if (e.hero) { const hr = e.hero, cs = sideOf2(hr) ? '255,120,100' : '255,226,140';
@@ -13015,7 +13119,7 @@ function updateBattle(rdt) {
   BT.pops.forEach(n => n.t += dt); BT.pops = BT.pops.filter(n => n.t < .8);
   BT.A.forEach((A, si) => A.groups.forEach(g => { g.spr.forEach(s => { updSprite(s, dt, g, si); if (s.guards) updGuards(s, dt, g, si); }); if (g.heroes) for (const hr of g.heroes) { updSprite(hr, dt, g, si); if (hr.glow > 0) hr.glow -= dt; updGuards(hr, dt, g, si); } if (g.bannerFall) g.bannerFall.t += dt; }));
   BT.A.forEach((A, si) => (A.hqSpr || []).forEach(s => { updSprite(s, dt, s.g, si); if (s.glow > 0) s.glow -= dt; }));
-  if(dt>0){separateSprites(dt);updateDroppedGear(dt);}
+  if(dt>0){separateSprites(dt);updateDroppedGear(dt);}updateFieldExecutions();
   if (BT.loose) { for (const h of BT.loose) { const R=h.random||Math.random;h.t += dt; h.x += h.vx * dt; if (R() < dt * 6) BT.fx.push({ k: 'dust', x: h.x - Math.sign(h.vx) * 8, y: h.y, vx: -Math.sign(h.vx) * (6+R()*8), vy: -(3+R()*6), t: .7, t0: .7, r: 3 }); } BT.loose=BT.loose.filter(h=>h.t<12&&h.x>-60&&h.x<BT.WW+60); }
   // projectiles land
   BT.proj = BT.proj.filter(p => { if ((BT.t - p.t0) / p.dur < 1) return true;
@@ -13265,6 +13369,7 @@ function drawLoose(x, h) {
 function drawSoldier(x,s,g,si,sc){
   if(s.gone||s.stamped||s.duelCorpse)return;if(s.fate){drawLifeState(x,s,g);return;}
   if(drawDuelActor(x,s,g,si,sc))return;
+  if(drawFieldExecution(x,s,g,si,sc))return;
   const t=BT.t;
   let tf = s.face, tsx = 1; // mid-turn: the old facing narrows to a sliver, then the new one opens out
   if (s.turnAt && t - s.turnAt < TURN && s.die <= 0) { const u = (t - s.turnAt) / TURN; tsx = Math.max(.2, Math.abs(Math.cos(Math.PI * u))); if (u < .5) tf = s.turnFrom; }
