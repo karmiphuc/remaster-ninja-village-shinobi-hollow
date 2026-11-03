@@ -1,9 +1,9 @@
 {
   "timing": {
     "inf": {
-      "before": 6.886492503061891,
-      "after": 13.772985006123783,
-      "firstContact": 3.85,
+      "before": 10.743635360204749,
+      "after": 10.743635360204749,
+      "firstContact": null,
       "kills": [
         240,
         240
@@ -107,7 +107,7 @@
     {
       "fps": 30,
       "speed": 4,
-      "frames": 108,
+      "frames": 85,
       "started": 5,
       "maxActive": 2,
       "remaining": [
@@ -118,7 +118,7 @@
     {
       "fps": 60,
       "speed": 4,
-      "frames": 215,
+      "frames": 169,
       "started": 5,
       "maxActive": 2,
       "remaining": [
@@ -127,5 +127,5 @@
       ]
     }
   ],
-  "checks": 113
+  "checks": 112
 }
