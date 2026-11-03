@@ -15,6 +15,10 @@ The whole game is one self-contained HTML file. It has no build step, no server 
 - **Dialogs:** a dialog never grows past the screen; its content scrolls. The dialogs you click straight through (the New Game campaign hand, the Year in review, duels, hunts and the battle deployment) have their buttons at the top as well as the bottom, and any other dialog too tall for the screen gets the top row too.
 - **Housing:** Shophouses provide no beds. Open a house and use **Recall home** below a resident to teleport them into normal rest and recovery, keeping their job and safely returning carried goods to storage. See [resident recall notes](docs/resident-recall.md).
 
+## Battlefield prototype
+
+Try the separate [Grand Battlefield HTML](prototypes/Shinobi%20Hollow%20-%20Grand%20Battlefield.html): 300 procedural figures on a continuous angled battlefield, cavalry wings, pan/pinch/zoom, formation orders and a second isometric perspective. It does not load or change your village. See [controls, scope and validation](docs/battlefield-prototype.md).
+
 ## Battlefield density and formations
 
 - **Battle density** (Village → Options, saved per device): **Standard** 25, **Dense** 36 (default) or **Epic** 48 soldiers at most per formation.

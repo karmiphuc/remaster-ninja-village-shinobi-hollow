@@ -1,0 +1,42 @@
+{
+  "desktop": {
+    "canvasMB": 31.582664489746094,
+    "canvases": 468,
+    "renderCanvasAllocations": 0,
+    "at40Seconds": [
+      1334.8713413151888,
+      800.6021423609695
+    ],
+    "final": [
+      884.6041879410402,
+      0
+    ],
+    "fallen": 231,
+    "routed": 18,
+    "deterministic30and60": true
+  },
+  "mobile": {
+    "count": 468,
+    "MB": 32.753929138183594,
+    "styles": 10,
+    "width": 860,
+    "height": 1864,
+    "backingDPR": 2,
+    "touchPinch": true,
+    "isolatedStorageAndAudio": {
+      "storage": 0,
+      "audio": 0
+    }
+  },
+  "standalone": {
+    "offlineDocument": true,
+    "externalAssets": 0,
+    "fileProtocol": "Managed browser policy blocks file:// navigation; physical Safari not tested"
+  },
+  "live": {
+    "advancedSeconds": 4.049999999999991,
+    "hud": "47 fps · p95 66.7 ms\n300 figures · 30.2 canvas MB\n10 shared rigs"
+  },
+  "checks": 41,
+  "errors": []
+}
