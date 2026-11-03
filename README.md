@@ -49,6 +49,8 @@ Equipped animal companions now have species-specific duel finishers, from bear s
   | Bombard (大筒) | 2 | 4,000G, then 5,000G | Batters the gate only: each takes 20% of its strength off every round. |
   | Hwacha (火車) | 4 | 2,000 / 2,500 / 3,000 / 3,500G | Sweeps defenders exposed on the ramparts (their gunners and archers) only, never the gate. Each extra cart adds less: ×1, ×0.6, ×0.4, ×0.25. |
 
+  Bombards and Hwacha use larger procedural bronze/timber sprites with distinct deployment thumbnails. See the [art comparison](docs/siege-engines-preview.png) and [battlefield view](docs/siege-engines-battle.png).
+
   Any engine can be sent back for a full refund until you order the attack (withdrawing refunds them all). Engines fire once a round while the gate stands and fall silent after the breach; a ball still in flight when the gate falls strikes nothing. Defenders never field engines.
 
 ## Wooden Tate (盾) for Gunners

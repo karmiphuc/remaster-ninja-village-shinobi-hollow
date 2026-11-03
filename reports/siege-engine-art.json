@@ -1,0 +1,25 @@
+{
+  "native": {
+    "mortar": {
+      "width": 46,
+      "height": 36,
+      "cached": true
+    },
+    "hwacha": {
+      "width": 44,
+      "height": 46,
+      "cached": true
+    }
+  },
+  "distinctDeploymentIcons": true,
+  "warmCanvasAllocations": 0,
+  "propCacheBefore": 7,
+  "propCacheAfter": 7,
+  "drawn": 2,
+  "maxBattery": {
+    "count": 6,
+    "minGap": 2,
+    "inField": true,
+    "sameY": true
+  }
+}
