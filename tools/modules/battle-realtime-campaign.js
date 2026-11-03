@@ -76,9 +76,9 @@ function rtUpdateExtras(dt){const R=BT.rt,t=R.model.time;for(const f of R.model.
  }
 }
 function rtStartWindow(){if(!rtFieldAllowed())return false;
- if(BT.rtGadgetRound!==BT.roundSeq){BT.rtGadgetRound=BT.roundSeq;const hits=[];equipmentGrenades('inf',hits,{siege:false});if(hits.length){BT.phaseName='inf';BT.pt0=BT.t;BT.script=buildPhaseScript('inf',hits);BT.next=Math.max(.6,BT.script.dur-.25);return false;}}
-const R=BT.rt||rtMakeCampaignModel();R.model.reconcile();R.windowAt=R.model.time;R.paused=false;releaseDuelCinema();BT.cine=BT.focus=null;R.view.resizeIfNeeded();BT.state='realtime';BT.phaseName='realtime';rtReleaseClassicBuffer();BT.script=null;BT.next=Infinity;$('#bcall').innerHTML='';$('#bcut').innerHTML='';$('#btac').innerHTML='';clearCamKeys();renderBHUD();rtRenderControls(true);return true;}
-function rtIsFieldView(){return !!(BT?.rt&&!siegeHold()&&BT.phaseName!=='duel'&&!BT.cine&&!BT.duelShot);}
+ if(BT.rtGadgetRound!==BT.roundSeq){BT.rtGadgetRound=BT.roundSeq;const hits=[];equipmentGrenades('inf',hits,{siege:false});if(hits.length){BT.rtGadgetAnimating=true;rtRestoreClassicBuffer();BT.phaseName='inf';BT.pt0=BT.t;BT.script=buildPhaseScript('inf',hits);BT.next=Math.max(.6,BT.script.dur-.25);return false;}}
+const R=BT.rt||rtMakeCampaignModel();BT.rtGadgetAnimating=false;R.model.reconcile();R.windowAt=R.model.time;R.paused=false;releaseDuelCinema();BT.cine=BT.focus=null;R.view.resizeIfNeeded();BT.state='realtime';BT.phaseName='realtime';rtReleaseClassicBuffer();BT.script=null;BT.next=Infinity;$('#bcall').innerHTML='';$('#bcut').innerHTML='';$('#btac').innerHTML='';clearCamKeys();renderBHUD();rtRenderControls(true);return true;}
+function rtIsFieldView(){return !!(BT?.rt&&!siegeHold()&&!BT.rtGadgetAnimating&&BT.phaseName!=='duel'&&!BT.cine&&!BT.duelShot);}
 function rtSelectFormation(id){const R=BT?.rt;if(!R)return;const f=R.model.groups[id];if(!f||f.g.troops<=0)return;
  if(f.side===0){R.selected=f;R.view.select(f);}else if(R.selected?.type==='cav'){R.model.target(R.selected.id,id);Sound.play('tap');}rtRenderControls(true);
 }

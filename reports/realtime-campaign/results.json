@@ -14,8 +14,8 @@
     "mode": "realtime",
     "stance": "pikewall",
     "v": 1,
-    "kb": 42.462890625,
-    "ms": 0.10000000149011612
+    "kb": 50.5439453125,
+    "ms": 0.30000000074505806
   },
   "pikewall": {
     "x0": 480,
@@ -29,26 +29,26 @@
     "state": "done",
     "round": 6,
     "result": "win",
-    "steps": 6086,
+    "steps": 6885,
     "actual": {
-      "inf": 68,
-      "gun": 41,
-      "arc": 119,
+      "inf": 69,
+      "gun": 34,
+      "arc": 120,
       "cav": 72
     },
     "expected": {
-      "inf": 68,
-      "gun": 41,
-      "arc": 119,
+      "inf": 69,
+      "gun": 34,
+      "arc": 120,
       "cav": 72
     },
-    "residual": 1.0231815394945443e-12,
-    "hp": 210.9399637013753,
-    "total": 210.93996370137512,
+    "residual": 6.821210263296962e-13,
+    "hp": 205.73792244983125,
+    "total": 205.73792244983116,
     "goldBefore": 1200,
     "goldAfter": 1217,
     "paidOnce": true,
-    "body": 130
+    "body": 132
   },
   "retreat": {
     "done": true,
@@ -97,6 +97,14 @@
     "rt": true,
     "residual": 0
   },
+  "grenade": {
+    "visible": true,
+    "used": true,
+    "state": "realtime",
+    "paused": true,
+    "residual": -1.4210854715202004e-14,
+    "cleared": true
+  },
   "duels": [
     {
       "save": null,
@@ -107,7 +115,7 @@
       "HP": [
         [
           0,
-          18
+          24
         ]
       ],
       "ward": false,
@@ -121,8 +129,8 @@
       "ended": 1,
       "HP": [
         [
-          0,
-          55
+          26,
+          0
         ]
       ],
       "ward": false,
@@ -136,7 +144,7 @@
       "ended": 1,
       "HP": [
         [
-          18,
+          46,
           27
         ]
       ],
@@ -150,6 +158,6 @@
     "hidden": true,
     "children": 0
   },
-  "checks": 25,
+  "checks": 28,
   "errors": []
 }
