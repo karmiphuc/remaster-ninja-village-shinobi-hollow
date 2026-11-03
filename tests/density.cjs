@@ -132,7 +132,8 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
       // a siege: defenders' gunners on the wall walkway, everyone inside the band
       fresh(); check(startBattle('yamashiro') && BT.siege, 'siege'); const F0 = formStats(0), F1 = formStats(1), B = BT.band;
       F0.concat(F1).forEach(f => check(f.top >= B.y0 - .5 && f.bottom <= B.y1 + .5, 'Siege ranks outside the band'));
-      const wall = BT.A[1].groups.find(g => g.onWall); if (wall) check(wall.spr.every(s => Math.abs(s.sx - BT.siege.x) < 40), 'Wall gunners off the wall');
+      const walls=BT.A[1].groups.filter(g=>g.onWall),wall=walls.find(g=>g.type==='gun');for(const g of walls)check(g.spr.every(s=>Math.abs(s.sx-BT.siege.x)<40),'Wall '+g.type+' off the wall');
+      regroup();for(const g of walls)check(g.front<BT.siege.x+40,'Rampart regroup pushed '+g.type+' off the wall');
       out.siege = { attackers: Object.fromEntries(F0.map(f => [f.type, f.n])), defenders: Object.fromEntries(F1.map(f => [f.type, f.n])), wallGunners: wall ? wall.spr.length : 0 };
       // a full siege plays out at Epic
       BT.autoKi.on = false; beginRound(); let n = 0; while (BT && BT.state !== 'done' && n++ < 30000) updateBattle(1 / 5); check(BT.state === 'done', 'Siege did not finish'); out.siege.result = BT.result; closeBattle(); clearModals();

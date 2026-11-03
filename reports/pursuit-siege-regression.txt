@@ -1,0 +1,14 @@
+Local Chromium regression; iPhone-sized focused playback; no physical Safari performance claim.
+PASS  pursuit-siege  57 focused assertions against source and standalone HTML.
+PASS  melee-rebels   27.2s
+PASS  field-combat   66.2s
+PASS  duel-executions   69.9s
+PASS  ranged-spill    7.8s
+PASS  tactics        80.1s
+PASS  battle-end    125.2s
+PASS  siege          66.3s
+PASS  density       147.0s
+
+9/9 related suites passed. Earlier test failures were fixed before these final results.
+Full-window neutral infantry losses remain 104; field ranged spill and reference duel ledgers pass.
+No source changes in the logistics module; standalone HTML matches index.html exactly.

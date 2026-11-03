@@ -10501,6 +10501,7 @@ function exitSprite(g,s,kind,away){
   const loss=g.start?1-g.troops/g.start:0,R=reactionRandom(s,'exit');
   if(!s.hero&&!s.guardOf&&!s.petOf&&BT.A[sideOf(g)].mode==='army'&&kind!=='burn'&&(s.routPending||loss>.55&&g.troops>.5&&R()<.18))routSprite(g,s,away);
   else killSprite(g,s,kind,away);
+  if(g.spr.includes(s)&&!g.spr.some(q=>q.alive&&!q.out))g.visualCleared=true;
   if(g.troops<=0){BT.hudDirty=true;unitBreak(g);}
 }
 function battleCheer(res){
@@ -10539,14 +10540,17 @@ function totalOf(A) { return A.groups.reduce((n, g) => n + Math.max(0, g.troops)
 function alive(A, type) { return A.groups.filter(g => g.troops > 0 && (!type || g.type === type)); }
 const PREF = { gun: ['inf', 'gun', 'arc', 'cav'], arc: ['gun', 'arc', 'inf', 'cav'], inf: ['inf', 'gun', 'arc', 'cav'], cav: ['cav', 'inf', 'gun', 'arc'] };
 // Infantry shares one post-contact clock. Clearing a line spends fighting time; moving to a new line spends time
-// with no attacks. Logical timings never depend on screen width, sprite density or playback speed.
-const INF_CLOCK={fight:2.7,advance:1.25,retarget:.14,swing:.25,approach:1.15};
+// with no attacks. The original phase damage is divided across the longer clock, not doubled. Timings never depend
+// on screen width, sprite density or playback speed.
+const INF_CLOCK={fight:5.4,advance:1.25,retarget:.14,swing:.25,approach:1.15};
 function resolveInfantry(strikes,D,left){
   const hits=[],order=PREF.inf.flatMap(type=>D.groups.filter(g=>g.type===type&&left.get(g)>0));
+  for(const s of strikes)s.g.infPursuit=null;
   let at=0,depth=0,prior=null;
   for(const t of order){
-    if(prior)at+=prior.type===t.type?INF_CLOCK.retarget:INF_CLOCK.advance;
-    const remaining=INF_CLOCK.fight-at;if(remaining<INF_CLOCK.swing)break;
+    const depart=at,travel=prior?(prior.type===t.type?INF_CLOCK.retarget:INF_CLOCK.advance):0;at+=travel;
+    const remaining=INF_CLOCK.fight-at;if(remaining<INF_CLOCK.swing){
+      if(prior&&depart<INF_CLOCK.fight)for(const s of strikes)s.g.infPursuit={to:t,depart,end:INF_CLOCK.fight,travel};break;}
     let rate=0;const res=battleResistance(t);
     for(const s of strikes){const g=s.g;
       let mult=s.tacT(t)*(1-Math.min(.3,t.mods.shadow*.05))*personalDamageGuard(t,'inf')*(g.solo?personalWeaponFactor(g.solo,t,'inf'):1);
@@ -10568,12 +10572,14 @@ function guardInfantryBreakthrough(hits){
   // The original simultaneous front-line exchange remains; a formation eliminated there cannot march on and
   // make posthumous attacks against the rear. Independent surviving infantry can still press their own attack.
   for(let i=hits.length-1;i>=0;i--){const h=hits[i];if(h.infAt!=null&&h.depth>0&&fallen.has(h.from)&&h.infAt>=fallen.get(h.from)-1e-8)hits.splice(i,1);}
+  for(const g of fallen.keys())if(g.infPursuit&&fallen.get(g)<=g.infPursuit.depart)g.infPursuit=null;
 }
 // Guns pass remaining volley damage down the ranks. Field arrows stay within one aimed line and its neighbours.
 // Only infantry converts the same stats into timed engagements; ranged attacks never spend its travel/fight clock.
 // Returns hits: {from, to, kills, depth}
 function resolvePhase(phase, A, D, ctx) {
   const hits = [],strikes=[],timedInf=phase==='inf'&&A.mode==='army'&&D.mode==='army'&&!ctx.siege;
+  if(ctx.siege&&(phase==='inf'||phase==='cav'))return hits;
   const atk = alive(A, phase); if (!atk.length) return hits;
   const left = new Map(D.groups.map(g => [g, g.troops]));
   const ranged = phase === 'gun' || phase === 'arc', melee = !ranged;
@@ -10594,7 +10600,8 @@ function resolvePhase(phase, A, D, ctx) {
       if (A.side === 0) dmg *= (phase === 'gun' ? .72 : phase === 'arc' ? .45 : phase === 'inf' ? .3 : .15) * (1 + (A.siegecraft || 0) * .1);
       else dmg *= phase === 'gun' || phase === 'arc' ? 1.35 : phase === 'inf' ? .7 : .25; }
     if(timedInf){strikes.push({g,dmg,retShare,tacT,rate:0});return;}
-    const order = PREF[phase].flatMap(t => D.groups.filter(x => x.type === t && left.get(x) > 0));
+    const wallAttack=ctx.siege&&A.side===0&&D.side===1&&ranged,
+      order=PREF[phase].flatMap(t=>D.groups.filter(x=>x.type===t&&left.get(x)>0&&(!wallAttack||x.type==='gun'||x.type==='arc')));
     // Keep the footprint anchored to this volley's original aim, even if it clears that line. Missing ranks do not
     // turn a distant formation into a neighbour. Another attacking group can aim afresh using the remaining troops.
     if(phase==='arc'&&!ctx.siege&&order.length){const aim=GROUP_ORDER[order[0].type];
@@ -10970,7 +10977,9 @@ const GROUP_ORDER = { inf: 0, gun: 1, arc: 2, cav: 3 };
 // in a siege the defenders put their shooters on the ramparts and keep their spears behind the gate
 const SIEGE_ORDER = { gun: 0, arc: 1, inf: 2, cav: 3 }, WALL_LIFT = 10;
 function siegeHold() { return !!(BT && BT.siege && !BT.siege.breached); }
-function grpOrder(g, si) { return (BT.siege && (si ?? sideOf(g)) === 1 ? SIEGE_ORDER : GROUP_ORDER)[g.type]; }
+// A standing gate shelters melee ranks; ranged volleys switch to the gate only after the ramparts are clear.
+function wallRangedAlive(){return siegeHold()&&BT.A[1].groups.some(g=>g.troops>TROOP_EPS&&(g.type==='gun'||g.type==='arc'));}
+function grpOrder(g, si) { return (siegeHold() && (si ?? sideOf(g)) === 1 ? SIEGE_ORDER : GROUP_ORDER)[g.type]; }
 const easeIO = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2, easeOut = u => 1 - (1 - u) * (1 - u);
 const BARKS = {
   0: { inf: ['Spears forward!', 'Break their line!', 'For the Kage clan!', 'With me—charge!'], cav: ['Ride them down!', 'Horses—now!', 'Trample them!'], gun: ['Fire!', 'Light the matches!', 'Aim low—fire!'], arc: ['Loose!', 'Darken the sky!', 'Draw… loose!'], rout: ["They're running!", 'The line is broken!', 'Victory is close!'], lost: ['Hold the line!', 'Close ranks!', 'Not one step back!'] },
@@ -11015,10 +11024,11 @@ function refitFormations() {
   const rest = ['prep', 'between', 'autowait', 'intro'].includes(BT.state) && !BT.script;
   BT.A.forEach((A, si) => { const face = sideDir(si); A.groups.forEach(g => { if (g.heroOnly || !g.R) return;
     const F = FORM_SHAPE[g.type] || FORM_SHAPE.inf, nTot = (g.nVis0 || 0) + (g.heroes || []).length, cols = R => Math.ceil(nTot / Math.max(1, Math.min(R, nTot)));
-    const GM = formGeom(g.type, nTot, g.onWall);
+    const span=BT.band.span/(g.onWall?g.wallCount||1:1),mid=BT.band.mid+(g.onWall?(g.wallIndex-((g.wallCount||1)-1)/2)*span:0);
+    const GM = formGeom(g.type, nTot, g.onWall,1,span);
     if (nTot && cols(GM.R) <= cols(g.R)) { g.R = GM.R; g.halfW = (cols(g.R) - 1) * g.colStep / 2; } // more room: more ranks, never a wider block (less room: the same ranks, closer)
-    g.rowStep = g.R > 1 ? Math.min(F.rMax * Math.max(BT.armySc, BT.band.sc), BT.band.span / (g.R - 1)) : 0; // the sprites keep their size; the ranks may open up to the new room
-    g.hy = BT.band.mid;
+    g.rowStep = g.R > 1 ? Math.min(F.rMax * Math.max(BT.armySc, BT.band.sc), span / (g.R - 1)) : 0; // the sprites keep their size; the ranks may open up to the new room
+    g.hy = mid;
     const al = g.spr.filter(s => s.alive && !s.fate), act = (g.heroes || []).filter(h => !h.out); if (!al.length && !act.length) return;
     const FP = formPlan(g, al.length, act.length, g.front, face, g.hy); al.sort((p, q) => p.y - q.y); FP.T.sort((p, q) => p.y - q.y);
     al.forEach((s, i) => { s.sx = FP.T[i].x; s.sy = FP.T[i].y; if (rest) { s.x = s.tx = s.sx; s.y = s.ty = s.sy; s.q = []; } });
@@ -11115,8 +11125,8 @@ function formationBand() {
   return { y0, y1, span: (y1 - y0) * FORM_FILL, mid: (y0 + y1) / 2, sc, hud };
 }
 // rows and files for one formation of n figures (soldiers and captains)
-function formGeom(type, n, onWall, tight = 1) {
-  const F = FORM_SHAPE[type] || FORM_SHAPE.inf, sc = BT.armySc || 1, span = BT.band ? BT.band.span : 100;
+function formGeom(type, n, onWall, tight = 1, spanOverride = 0) {
+  const F = FORM_SHAPE[type] || FORM_SHAPE.inf, sc = BT.armySc || 1, span = spanOverride || (BT.band ? BT.band.span : 100);
   const maxR = Math.max(1, Math.floor(span / (F.rMin * sc * tight)) + 1);
   let C = Math.min(FORM_MAX_COLS, Math.max(Math.ceil(n / maxR), n >= 30 ? 3 : n >= 8 ? 2 : 1)); C = Math.max(1, Math.min(C, n || 1));
   let R = Math.ceil(Math.max(1, n) / C); if (R > maxR) { R = maxR; C = Math.ceil(n / R); }
@@ -11181,7 +11191,8 @@ function layoutSprites() {
         }); });
       return;
     }
-    const sg = BT.siege && si === 1, order = A.groups.slice().sort((a, b) => grpOrder(a, si) - grpOrder(b, si));
+    const sg = siegeHold() && si === 1, order = A.groups.slice().sort((a, b) => grpOrder(a, si) - grpOrder(b, si));
+    const wallGroups=sg?order.filter(g=>g.type==='gun'||g.type==='arc'):[];
     BT.midY = mid;
     if (sg) { BT.siege.x = BT.cx + 40; siegeWorks(mid, fh); }
     let front = sg ? BT.siege.x + 17 : BT.cx - face * 66;
@@ -11190,19 +11201,22 @@ function layoutSprites() {
     if (!sg && !skirm) { const room = (face > 0 ? front : BT.WW - front) - 24, w = armyWidth(A, si, 1); if (w > room) fit.sq = Math.max(.6, room / w); }
     BT.fit = BT.fit || []; BT.fit[si] = fit;
     order.forEach((g, oi) => {
-      if(g.heroOnly){front=layoutIndependent(g,si,front,mid,fh);return;}
-      if (oi && A.mode === 'army' && worksOf(g).length) front -= face * 12; // room for a commander's field work
-      const onWall = sg && g.type === 'gun'; // gunners line the walkway; archers loose over the wall from behind it
+      const onWall=wallGroups.includes(g),span=onWall?BT.band.span/wallGroups.length:BT.band.span,
+        rowMid=onWall?mid+(wallGroups.indexOf(g)-(wallGroups.length-1)/2)*span:mid;
+      g.onWall=onWall;g.wallIndex=onWall?wallGroups.indexOf(g):0;g.wallCount=wallGroups.length;
+      if(onWall)front=BT.siege.x+17; // share the walkway along its length, not in blocks behind it
+      if(g.heroOnly){front=layoutIndependent(g,si,front,rowMid,fh);if(onWall)g.spr.forEach(s=>s.lift=WALL_LIFT);return;}
+      if (oi && !onWall && A.mode === 'army' && worksOf(g).length) front -= face * 12; // room for a commander's field work
       const nH = (g.cmds || []).filter(c => c.look && c.post !== 'hq').length;
-      const n = visibleCount(g), GM = formGeom(g.type, n + nH, onWall); Object.assign(g, { R: GM.R, rowStep: GM.rowStep, colStep: GM.colStep * (onWall ? 1 : fit.sq), stag: GM.stag, nVis0: n });
+      const n = visibleCount(g), GM = formGeom(g.type, n + nH, onWall,1,span); Object.assign(g, { R: GM.R, rowStep: GM.rowStep, colStep: onWall?Math.min(4,18/Math.max(1,GM.C-1)):GM.colStep*fit.sq, stag: GM.stag, nVis0: n });
       const rows = formRows(g, n + nH), cols = Math.ceil((n + nH) / rows), colStep = g.colStep;
-      g.front = g.post = front; g.halfW = (cols - 1) * colStep / 2; g.hx = front - face * g.halfW; g.hy = mid;
-      const FP = formPlan(g, n, nH, front, face, mid), pool = lookPool(g, si); g._hp = FP.H;
+      g.front = g.post = front; g.halfW = (cols - 1) * colStep / 2; g.hx = front - face * g.halfW; g.hy = rowMid;
+      const FP = formPlan(g, n, nH, front, face, rowMid), pool = lookPool(g, si); g._hp = FP.H;
       g.spr = FP.T.map(p => { const L = pool[(p.r * 2 + p.c * 3) % pool.length], q = mkSprite(g, si, p.x, p.y, null, L.kit, ART_TROOP_VARIANTS, L.v); q.rank = p.r; return q; });
       if (onWall) { g.onWall = true; g.spr.forEach(q => q.lift = WALL_LIFT); }
       if (A.mode === 'army' && g.type === 'gun' && g.tateCov > 0 && !onWall && g.spr.length) { const ys = g.spr.map(q => q.y), lo = Math.min(...ys), hi = Math.max(...ys), k = Math.max(1, Math.round(g.tateCov * rows)), xs = g.spr.map(q => q.x), fx = face > 0 ? Math.max(...xs) : Math.min(...xs);
         for (let i = 0; i < k; i++) BT.props.push({ k: 'pavise', si, g, tate: 1, x: fx + face * 6, y: (k === 1 ? (lo + hi) / 2 : lo + i * (hi - lo) / (k - 1)) + 2 }); }
-      g.heroes = heroSlots(g, face, mid, fh); fieldWorks(g, si, front, face, mid); if (onWall) g.heroes.forEach(q => { q.lift = WALL_LIFT; q.hdx = Math.min(q.hdx, 4); q.x = q.sx = front + face * q.hdx; });
+      g.heroes = heroSlots(g, face, rowMid, fh); fieldWorks(g, si, front, face, rowMid); if (onWall) g.heroes.forEach(q => { q.lift = WALL_LIFT; q.hdx = Math.min(q.hdx, 4); q.x = q.sx = front + face * q.hdx; });
       g.heroes.forEach(hr => mkGuards(g, si, hr));
       front -= face * ((cols - 1) * colStep + (onWall ? 24 : lane(g, cols) * fit.sq)); // bigger blocks, wider lanes between them
     });
@@ -11243,18 +11257,35 @@ function siegeScript(p) {
     const g0 = inf[0], x1 = BT.siege.x - 15;
     if (!BT.ram) BT.ram = { x: g0.front + 6, y: mid + 10 };
     BT.ram.mv = { from: BT.ram.x, to: x1, t0: T0, t1: T0 + Math.max(.5, Math.abs(x1 - BT.ram.x) / 70) };
-    const t1 = BT.ram.mv.t1; for (let k = 0; k < 3; k++) add(t1 + .2 + k * .6, 'ram', { dmg: dmg / 3 });
-  } else if (p === 'gun') { const gun = alive(A, 'gun'); if (!gun.length) return;
-    const dmg = gun.reduce((n, g) => n + fightingStrength(g) * battleAttack(g) * UNITS.gun.atk * g.atkMul * .26 * tateAtk(g), 0) * .14; add(T0 + RANGED_LEAD + .66, 'ram', { dmg, shot: 1 }); }
+    const t1=Math.max(BT.ram.mv.t1,chargeGate(inf,T0,'inf'));BT.ram.mv.t1=t1;
+    const strength=inf.reduce((n,g)=>n+fightingStrength(g),0);for(let k=0;k<3;k++)add(t1+.2+k*.6,'ram',{dmg:dmg/3,crew:'inf',strength});
+  } else if ((p==='gun'||p==='arc')&&S.gateFire) { const groups=alive(A,p);if(!groups.length)return;
+    const dmg=groups.reduce((n,g)=>n+fightingStrength(g)*battleAttack(g)*UNITS[p].atk*g.atkMul*.26*tateAtk(g),0)*(p==='gun'?.14:.04),
+      shots=S.ev.filter(e=>e.k==='shot'&&e.gate),land=Math.max(T0+RANGED_LEAD+.7,...shots.map(e=>e.t+(e.flight||.12)));
+    add(land,'ram',{dmg,shot:1,gateVolley:true,ledger:S.gateLedger});camKey(T0+RANGED_LEAD+.5,BT.siege.x-BT.vw*.12,.45); }
   else if (p === 'cav') { const cav = alive(A, 'cav'); if (!cav.length) return; // riders hack at the doors: half an infantry ram's weight
     const dmg = cav.reduce((n, g) => n + fightingStrength(g) * battleAttack(g) * UNITS.cav.atk * g.atkMul * TACTICS[tacFam(g)].mod.mel * .26, 0) * (1 + A.strat * .05) * .5 * rnd(.85, 1.15);
-    for (let k = 0; k < 2; k++) add(T0 + .8 + k * .5, 'ram', { dmg: dmg / 2, shot: 1 }); }
+    const arrive=chargeGate(cav,T0,'cav'),strength=cav.reduce((n,g)=>n+fightingStrength(g),0);
+    for (let k = 0; k < 2; k++) add(arrive + .2 + k * .5, 'ram', { dmg: dmg / 2, shot: 1,crew:'cav',strength }); }
   else return;
   S.ev.sort((a, b) => a.t - b.t); const end = Math.max(...S.ev.map(e => e.t)) - BT.t + .7; S.dur = Math.max(S.dur, end); BT.next = Math.max(BT.next, end - .2);
 }
+function chargeGate(groups,T0,type){
+  const face=1,goal=BT.siege.x-(type==='cav'?30:18),actors=[];let arrive=T0+.5;
+  for(const g of groups){const front=lineEdge([g],0)??g.front,shift=Math.max(0,goal-front),duration=Math.max(.5,Math.min(MAX_RUN,shift/(type==='cav'?130:65))),at=T0+duration;
+    arrive=Math.max(arrive,at);const band=(g.colStep||BT.colStep)*(type==='cav'?1:1.5);
+    for(const s of g.spr.concat(g.heroes||[]))if(s.alive&&!s.out){const fighting=s.hero||face*(s.x-front)>-band;
+      actors.push({s,x:s.x+shift,speed:Math.max(1,shift/duration),fighting});}
+  }
+  for(const {s,x,speed,fighting}of actors){const c=queueMove(s,T0,x,s.y,speed,fighting?arrive+1.5:0);c.gate=true;}
+  camKey(T0+.1,goal-BT.vw*.15,.6);return arrive;
+}
 function gateHit(e) {
   const G2 = BT.siege; if (!G2 || G2.breached) return;
-  G2.hp = Math.max(0, G2.hp - e.dmg); BT.hudDirty = true;
+  if(e.applied||e.gateVolley&&wallRangedAlive())return;e.applied=true;let dmg=e.dmg;
+  if(e.crew)dmg*=Math.min(1,alive(BT.A[0],e.crew).reduce((n,g)=>n+fightingStrength(g),0)/Math.max(1e-9,e.strength));
+  if(e.ledger)dmg*=Math.min(1,e.ledger.fired/Math.max(1,e.ledger.planned));if(!(dmg>0))return;
+  G2.hp = Math.max(0, G2.hp - dmg); BT.hudDirty = true;
   const gx = G2.x + 2, gy = (BT.midY || 0) + 10;
   if (!e.shot && BT.ram) BT.ram.strike = .22;
   BT.shake = Math.max(BT.shake, e.shot ? .2 : .45); BT.punch = Math.max(BT.punch, e.shot ? .02 : .05);
@@ -11272,7 +11303,8 @@ function breachGate() {
   for (let i = 0; i < 16; i++) BT.fx.push({ k: 'bigsmoke', x: gx + rnd(-6, 10), y: gy + rnd(-8, 4), vx: rnd(-6, 6), vy: rnd(-4, -1), t: rnd(1.5, 2.6), t0: 2.6, r: rnd(4, 8) });
   callout('城門破れたり', '');
   // the defenders come down from the walls and their nerve goes
-  BT.A[1].groups.forEach(g => { morale(g, .9, .93); g.spr.concat(g.heroes || []).forEach(q => { if (q.lift) { q.lift = 0; q.hop = .4; } }); });
+  BT.A[1].groups.forEach(g => { morale(g, .9, .93);if(g.onWall){g.onWall=false;const F=formGeom(g.type,visibleCount(g)+(g.heroes||[]).length,false);Object.assign(g,{R:F.R,rowStep:F.rowStep,colStep:F.colStep,stag:F.stag});}
+    g.spr.concat(g.heroes || []).forEach(q => { if (q.lift) { q.lift = 0; q.hop = .4; } }); });
 
 }
 // the wall runs from the far edge of the field to the near one: a battered stone base facing us, a plastered
@@ -11415,7 +11447,7 @@ function mkSprite(g, si, x, y, look, kit, nv = ART_TROOP_VARIANTS, variant = nul
 }
 function flipSet(s) { if (!s.sprsF) { const k = s.sprs; s.sprsF = k._f || (k._f = mapSet(k, flipCanvas)); } return s.sprsF; }
 // kf: keep facing — the soldier backs or sidesteps without turning (a duel winner withdrawing, eyes on the enemy)
-function queueMove(s, t, x, y, spd, fight = 0, kf = false) { s.q.push({ t, x, y, spd, fight, kf }); s.q.sort((a, b) => a.t - b.t); }
+function queueMove(s, t, x, y, spd, fight = 0, kf = false) { const c={t,x,y,spd,fight,kf};s.q.push(c);s.q.sort((a,b)=>a.t-b.t);return c; }
 function marchIn() { // armies walk onto the field from their camps
   BT.A.forEach((A, si) => A.groups.forEach(g => g.spr.concat(g.heroes || []).forEach(s => { const back = (s.hero && A.mode === 'army' ? 62 : 70) + rnd(0, 20); s.x = s.sx - s.face * back; s.y = s.sy + rnd(-3, 3); queueMove(s, BT.t + rnd(0, .5), s.sx, s.sy, rnd(34, 44)); })));
   setCam(BT.cx);
@@ -11439,7 +11471,7 @@ function regroup(types) {
         const adv = face > 0 ? Math.min(lead, g.front + MAX_ADV) : Math.max(lead, g.front - MAX_ADV);
         front = lim(face > 0 ? Math.max(adv, g.post) : Math.min(adv, g.post)); }
       // keep the formation order: a group never re-forms in front of the one ahead of it
-      const ahead = A.groups.filter(o => o !== g && o.troops > 0 && grpOrder(o, si) < grpOrder(g, si) && o.front != null);
+      const ahead = A.groups.filter(o => o !== g && !(siegeHold()&&g.onWall&&o.onWall) && o.troops > 0 && grpOrder(o, si) < grpOrder(g, si) && o.front != null);
       ahead.forEach(o => { const back = o.front - face * ((o.halfW || 0) * 2 + 18); front = face > 0 ? Math.min(front, back) : Math.max(front, back); });
       g.front = front; g.hx = front - face * g.halfW;
       const act = (g.heroes || []).filter(hr => !hr.out).sort((p, q) => p.y - q.y), FP = formPlan(g, al.length, act.length, front, face, g.hy), slots = FP.T;
@@ -11458,7 +11490,7 @@ function syncSprites(g, kind = 'burn') {
   const want = visibleCount(g); const al = g.spr.filter(s => s.alive); let have = al.length;
   while (have > want && al.length) { const s = al.splice((Math.random() * al.length) | 0, 1)[0]; exitSprite(g,s,kind,-sideDir(sideOf(g)));have--; }
 }
-function syncRevive(g) { const want = visibleCount(g); let have = g.spr.filter(s => s.alive).length; g.spr.forEach(s => { if (!s.alive && !s.gone && have < want) { recoverVisual(s);s.alive = true; s.die = 0; s.state = 'idle'; s.x = s.sx; s.y = s.sy; have++; } }); }
+function syncRevive(g) { if(g.troops>0)g.visualCleared=false;const want = visibleCount(g); let have = g.spr.filter(s => s.alive).length; g.spr.forEach(s => { if (!s.alive && !s.gone && have < want) { recoverVisual(s);s.alive = true; s.die = 0; s.state = 'idle'; s.x = s.sx; s.y = s.sy; have++; } }); }
 function sideOf(g) { return BT.A[0].groups.includes(g) ? 0 : 1; }
 /* Grounded chibi reactions. These states only present losses already resolved by
    combat; they never change troop totals, HP, inventory, wounded returns or loot. */
@@ -11839,6 +11871,7 @@ function drawFieldExecution(x,s,g,si,sc){
 function runPhase(p) {
   updateArmyCohesion();
   BT.phaseName = p; BT.pt = 0; BT.pt0 = BT.t; BT.stopBudget = .32; BT.phaseId = (BT.phaseId || 0) + 1;
+  if(p==='inf')for(const A of BT.A)for(const g of A.groups)g.infPursuit=null;
   BT.A.forEach(A => A.groups.forEach(g => (g.heroes || []).forEach(hr => { hr.px = hr.py = undefined; })));
   const has0 = alive(BT.A[0], p).length, has1 = alive(BT.A[1], p).length;
   const bat = p === 'gun' && siegeHold() && engCount() > 0 && BT.engFired !== BT.roundSeq; if (bat) BT.engFired = BT.roundSeq;
@@ -11899,7 +11932,7 @@ function batteryEvent(e) {
 function interceptHits(p) {
   const out = [];
   [0, 1].forEach(si => { const D = BT.A[si], A = BT.A[1 - si], tg = alive(A, p); if (!tg.length || (si === 0 && siegeHold())) return;
-    const screen = alive(D, 'inf').reduce((n, g) => n + g.troops, 0) > tg.reduce((n, g) => n + g.troops, 0) * .3;
+    const screen = !(si===1&&siegeHold())&&alive(D, 'inf').reduce((n, g) => n + g.troops, 0) > tg.reduce((n, g) => n + g.troops, 0) * .3;
     alive(D).filter(g => g.type === 'gun' || g.type === 'arc').forEach(g => {
       const tac = TACTICS[tacFam(g)].mod; let dmg = fightingStrength(g) * battleAttack(g,true) * UNITS[g.type].atk * g.atkMul * tac.rng * .26 * .28 * (screen ? .35 : 1) * (1 + (g.mods.counter || 0) * .3) * rnd(.85, 1.15) * tateAtk(g);
       if (BT.jutsu[1 - si] === 'smoke') dmg *= .4; if (BT.siege && si === 1 && siegeHold()) dmg *= 1.3;
@@ -12615,41 +12648,10 @@ function heroPhase(p, hits, spec) {
   });
   return ex;
 }
-const INFANTRY_PRESENTATION=2,RANGED_IMPACT_EXTRA=.5*BATTLE_PACE,
- PHASE_ACTOR_CLOCKS=['brandFrom','brandUntil','braceFrom','braceUntil','fightAt','fightUntil','hurtFrom','hurtUntil','aimFrom','aimUntil','fireAt','busyUntil','strikeAt'];
-// Stretch the choreography, never INF_CLOCK's damage/travel budget. Speeds and poses keep their normal cadence.
-function capturePhaseTiming(){
-  const actors=[],seen=new Set(),moves=new Set(),lunges=new Set(),keys=new Set();
-  const add=s=>{if(!s||seen.has(s))return;seen.add(s);actors.push({s,clocks:PHASE_ACTOR_CLOCKS.map(k=>s[k])});for(const q of s.q||[])moves.add(q);for(const l of s.lunges||[])lunges.add(l);};
-  for(const A of BT.A){for(const g of A.groups){for(const s of g.spr||[]){add(s);for(const q of s.guards||[])add(q);}
-    for(const s of g.heroes||[]){add(s);for(const q of s.guards||[])add(q);add(s.pet);}}for(const s of A.hqSpr||[])add(s);}
-  for(const K of BT.pk||[])for(const k of K)keys.add(k);return {actors,moves,lunges,keys};
-}
-function stretchInfantryScript(S,hits,prior){
-  const base=BT.t,span=S.dur-.25,first=Math.min(...S.wins.map(w=>w.t0)),lead=Number.isFinite(first)?clamp(first-base,0,Math.max(0,span-.05)):0,
-    anchor=base+lead,scale=(span*INFANTRY_PRESENTATION-lead)/(span-lead),at=t=>t<=anchor?t:anchor+(t-anchor)*scale;
-  S.logicalDuration=S.dur;S.presentationScale=INFANTRY_PRESENTATION;S.actionScale=scale;S.contactAt=anchor;
-  for(const e of S.ev){
-    if(e.k==='pitchThrow'&&Number.isFinite(e.land)){const flight=e.land-e.t;e.land=at(e.land);e.t=e.land-flight;}
-    else if(e.k==='shot'&&e.lethal&&e.flight>0)e.t=at(e.t+e.flight)-e.flight;
-    else e.t=e.k==='windup'&&e.die?at(e.die.t)-(e.die.t-e.t):at(e.t);
-    if(Number.isFinite(e.until))e.until=at(e.until);
-  }
-  for(const h of hits){if(Number.isFinite(h.t0))h.t0=at(h.t0);if(Number.isFinite(h.t1))h.t1=at(h.t1);}
-  const pairs=new Set();for(const w of S.wins){w.t0=at(w.t0);w.t1=at(w.t1);for(const pr of w.pairs||[])if(!pairs.has(pr)){pairs.add(pr);pr.tm=at(pr.tm);}}
-  if(S.duel)S.duel.end=at(S.duel.end);
-  for(const {s,clocks}of prior.actors){let added=false;
-    for(const q of s.q||[])if(!prior.moves.has(q)){q.t=at(q.t);if(q.fight>0)q.fight=at(q.fight);added=true;}
-    if(added)s.q.sort((a,b)=>a.t-b.t);
-    for(let i=0;i<PHASE_ACTOR_CLOCKS.length;i++){const k=PHASE_ACTOR_CLOCKS[i],v=s[k];if(v!==clocks[i]&&Number.isFinite(v)&&v>=base)s[k]=at(v);}
-    for(const l of s.lunges||[])if(!prior.lunges.has(l)){const hit=l.hitAt??l.t1-.14,delta=at(hit)-hit;l.t0+=delta;l.t1+=delta;l.hitAt=at(hit);}
-  }
-  for(const K of BT.pk||[])for(const k of K)if(!prior.keys.has(k)){const end=at(k.t+k.dur);k.t=at(k.t);k.dur=end-k.t;}
-  S.dur=span*INFANTRY_PRESENTATION+.25;
-}
+const RANGED_IMPACT_EXTRA=.5*BATTLE_PACE;
 function buildScript(p,hits,ex={procs:[],bonus:new Map()}){
-  const prior=p==='inf'?capturePhaseTiming():null,S=buildPhaseScript(p,hits,ex);
-  if(prior){stretchInfantryScript(S,hits,prior);planFieldExecutions(S);}
+  const S=buildPhaseScript(p,hits,ex);
+  if(p==='inf')planFieldExecutions(S);
   else if(p==='gun'||p==='arc'){
     // Extra time watching the landing zone; shots, damage and flight times are untouched.
     S.logicalDuration=S.dur;S.impactExtra=RANGED_IMPACT_EXTRA;S.dur+=RANGED_IMPACT_EXTRA;
@@ -12662,6 +12664,7 @@ function buildPhaseScript(p, hits, ex = { procs: [], bonus: new Map() }) {
   if (melee) { brandish([0, 1].flatMap(si => alive(BT.A[si], p)), lead, true, .3); }
   // how many sprites each hit removes
   const byTo = new Map(); hits.forEach(h => { if (!byTo.has(h.to)) byTo.set(h.to, []); byTo.get(h.to).push(h); });
+  for(const A of BT.A)for(const g of A.groups)g.visualCleared=!g.spr.some(s=>s.alive&&!s.out);
   byTo.forEach((hs, T) => { const tot = hs.reduce((n, h) => n + h.kills, 0); let d = T.spr.filter(s => s.alive).length - visibleCount({heroOnly:T.heroOnly,troops:Math.max(0,T.troops-tot)});
     hs.forEach((h, i) => { h.deaths = i === hs.length - 1 ? d : Math.min(d, Math.round(d * h.kills / tot)); d -= h.deaths; }); });
   const ev = (t, k, o) => S.ev.push(Object.assign({ t, k }, o));
@@ -12677,6 +12680,7 @@ function buildPhaseScript(p, hits, ex = { procs: [], bonus: new Map() }) {
     });
     const F = p === 'cav' ? .3 : .72, maxD = Math.max(0, ...hits.map(h => h.depth));
     const free = new Map(), plan = p === 'inf' && !siegeHold() ? infAdvance(hits, T0, ex.duel) : null;
+    if(plan)S.pursuits=[...plan.values()].filter(P=>P.pursuit);
     let firstContact = Infinity;
     for (let dep = 0; dep <= maxD; dep++) {
       hits.filter(h => h.depth === dep && !h.duelBonus && !h.icpt && !h.counter && !h.grenade).forEach(h => {
@@ -12777,12 +12781,13 @@ function buildPhaseScript(p, hits, ex = { procs: [], bonus: new Map() }) {
     // cavalry wheel back to their posts after the charge
     if (p === 'cav') free.forEach((st, g) => { g.spr.forEach(s => { if (s.alive && !planned.has(s)) queueMove(s, st.at + .25, s.sx, s.sy, rnd(80, 95)); }); (g.heroes || []).forEach(hr => { if (!hr.out) queueMove(hr, Math.max(st.at, hr.busyUntil || 0) + .3, hr.sx, hr.sy, 95); }); });
     meleeCam(p, S, T0);
+    for(const P of S.pursuits||[])paneKey(sideOf(P.g),P.depart,P.x,.45);
     { const c0 = Math.min(...S.wins.map(w => w.t0)); if (isFinite(c0)) { const w0 = S.wins.find(w => w.t0 === c0); ev(c0, 'contact', { x: w0 ? contactX(w0) : undefined }); } else if (isFinite(firstContact)) ev(firstContact, 'contact', {}); }
     S.dur = Math.min(9, Math.max(1.2, ...S.ev.map(e => e.t - T0).filter(isFinite)) + (p === 'cav' ? .95 : .55)) + lead;
   } else {
     // one volley, both lines at once: each pane opens on its own shooters readying (kneel / draw); they loose together and
     // each pane shows its line firing and the enemy's volley landing on it. Every lethal shot is a projectile that lands on its victim.
-    const fireAt = p === 'gun' ? .56 : .5, RL = RANGED_LEAD, pw = paneW(), T = BT.t + RL;
+    const fireAt = p === 'gun' ? .56 : .5, RL = RANGED_LEAD, pw = paneW(), T = BT.t + RL,gateFire=siegeHold()&&!wallRangedAlive();S.gateFire=gateFire;
     const cs = [0, 1].map(si => { const gs = alive(BT.A[si], p); if (!gs.length) return null; return { gs, main: gs.slice().sort((a, b) => b.troops - a.troops)[0] }; });
     const far = h => !!h && Math.abs(gCenter(h.from).x - gCenter(h.to).x) > BT.vw * .72;
     const flightOf = h => p === 'gun' ? (far(h) ? .4 : .12) : 1.0;
@@ -12820,7 +12825,10 @@ function buildPhaseScript(p, hits, ex = { procs: [], bonus: new Map() }) {
       S.wins.push({ g: h.from, T: h.to, t0: h.t0, t1: h.t1, pairs: [] });
     });
     // shooters with nothing to hit still fire at the field
-    [0, 1].forEach(si => alive(BT.A[si], p).forEach(g => { if (hits.some(h => h.from === g)) return; g.spr.filter(s => s.alive).forEach(shooter => ev(T + fireAt + rnd(0, .2), 'shot', { g, shooter, lethal: false })); }));
+    [0, 1].forEach(si => alive(BT.A[si], p).forEach(g => { if (hits.some(h => h.from === g)) return;
+      const siegeAim=si===0&&siegeHold()&&!gateFire?BT.A[1].groups.find(t=>t.troops>0&&(t.type==='gun'||t.type==='arc')):null,
+        shooters=si===0&&siegeHold()?[...new Set(g.spr.concat(g.heroes||[]))]:g.spr;
+      shooters.filter(s=>s.alive&&!s.out).forEach(shooter=>ev(T+fireAt+rnd(0,.2),'shot',{g,shooter,hero:shooter.hero?shooter:null,h:siegeAim?{to:siegeAim}:undefined,lethal:false,gate:si===0&&gateFire,flight:p==='gun'?.18:1})); }));
     S.dur = RL + fireAt + (p === 'gun' ? .12 : 1.0) + 1.3;
   }
   // skill procs flash as the blow lands; hero bonus kills ride on that hero's own strikes
@@ -12839,6 +12847,8 @@ function buildPhaseScript(p, hits, ex = { procs: [], bonus: new Map() }) {
       ev(at, 'hit', { h }); }); }
   S.ev.forEach(e => { if (e.k !== 'hit') return; const first = Math.min(...S.ev.filter(o => o.k === 'die' && o.h === e.h).map(o => o.t)); if (isFinite(first) && first < e.t) e.t = first - .01; });
   tacticalShotScript(S,p);S.dur=Math.max(S.dur,...S.ev.map(e=>e.t-BT.t+.5));
+  if(S.gateFire){const shots=S.ev.filter(e=>e.k==='shot'&&e.gate&&!e.burstVisual),ledger=S.gateLedger={planned:shots.length,fired:0};for(const e of shots)e.gateLedger=ledger;}
+  for(const P of S.pursuits||[])S.dur=Math.max(S.dur,P.end-BT.t+.25);
   S.ev.sort((a, b) => a.t - b.t);
   return S;
 }
@@ -12858,6 +12868,7 @@ function heroStrikes(g, face, vEvs, at, p, ev, lim = at + 2.4) {
       if (arrive > lim) { pool.push(e); taken--; break; } // too far to reach before the phase is over: the rank and file take that one
       e.t = Math.max(e.t, arrive + .12); e.hero = hr;
       queueMove(hr, t, ax, ay, spd, e.t + .2);
+      for(const c of hr.q)if(c.fight>0&&c.t>=t)c.target=e.h.to;
       ev(e.t - .1, 'windup', { hero: hr, die:e });
       t = e.t + .14; px = ax; py = ay;
     }
@@ -12907,10 +12918,17 @@ function timedInfAdvance(hits,T0,duel){
         if(prior){const target=lineEdge([h.to],1-si)+defShift-face*reachOf(g);shift=face*(target-ownFront)>0?target-ownFront:shift;}
         const depart=prior?contact+prior.h.infEnd:T0+.04,moveTime=Math.max(.05,at-depart-.03),oldShift=prior?prior.shift:0;
         for(const q of g.spr)if(q.alive){const x=q.x+shift;
-          queueMove(q,depart,x,q.y,Math.max(1,Math.abs(shift-oldShift)/moveTime),front.includes(q)?until:0);}
+          queueMove(q,depart,x,q.y,Math.max(1,Math.abs(shift-oldShift)/moveTime),front.includes(q)?until:0).target=h.to;}
         for(const hr of g.heroes||[])if(!hr.out&&!hr.hero.ko&&!(duel&&(hr===duel.a||hr===duel.b))){
-          queueMove(hr,depart,hr.x+shift,hr.y,Math.max(1,Math.abs(shift-oldShift)/moveTime),until);hr.px=hr.x+shift;hr.py=hr.y;}
+          queueMove(hr,depart,hr.x+shift,hr.y,Math.max(1,Math.abs(shift-oldShift)/moveTime),until).target=h.to;hr.px=hr.x+shift;hr.py=hr.y;}
         plan.set(h,{arrive:at,until,front,dx:shift,defShift,timed:true});prior={h,shift};
+      }
+      const p=g.infPursuit;if(p&&prior){const depart=contact+p.depart,end=contact+p.end,defShift=p.to.type==='inf'?dx[1-si]+(F[1-si]??0)-(lineEdge([p.to],1-si)??0):0,
+          goal=lineEdge([p.to],1-si)+defShift-face*reachOf(g)-ownFront;
+        const targetShift=face*(goal-shift)>0?goal:shift,fraction=Math.min(1,(end-depart)/Math.max(.05,p.travel)),nextShift=shift+(targetShift-shift)*fraction;
+        for(const q of g.spr.concat(g.heroes||[]))if(q.alive&&!q.out&&!q.hero?.ko){const speed=Math.max(1,Math.abs(targetShift-shift)/Math.max(.05,p.travel)),c=queueMove(q,depart,q.x+nextShift,q.y,speed);
+          c.target=p.to;c.pursuit=true;c.goalX=q.x+targetShift;c.deadline=end;}
+        plan.set(g,{pursuit:true,g,T:p.to,depart,end,x:ownFront+nextShift});
       }
     }
   }
@@ -12923,13 +12941,14 @@ function lineClash(h, P, S, planned, ev, p) {
   const def = T.spr.filter(q => q.alive && !planned.has(q)); if (!front.length || !def.length) return null;
   const pairs = front.map(a => { const ay=P.timed?a.y:a._ay,d = def.slice().sort((x, y) => Math.abs((x._ay ?? x.y) - ay) - Math.abs((y._ay ?? y.y) - ay))[0]; return { a, d, tm: P.arrive, ax: P.timed?a.x+P.dx:a._ax }; });
   const t0 = P.arrive, t1 = P.until;
+  for(const a of P.front.concat(g.heroes||[]))for(const c of a.q)if(c.fight===t1&&c.t<=t1)c.target=T;
   pairs.forEach(pr => { pr.d.hurtFrom = t0; pr.d.hurtUntil = t1; });
   // victims: the men nearest the foe go first
   const px=q=>P.timed?q.x+P.defShift:(q._ax??q.x),pos = q => tface * px(q);
   const victims = def.slice().sort((a, b) => pos(b) - pos(a) + rnd(-4, 4)).slice(0, h.deaths || 0).sort((a, b) => pos(b) - pos(a));
   const vEvs = [], stepped = new Set();
   victims.forEach((v, k) => { const pad=P.timed?Math.min(.16,(t1-t0)*.3):.25,endPad=P.timed?.03:.15,
-    td=clamp(lerp(t0+pad,t1-endPad,victims.length>1?k/(victims.length-1):.3)+rnd(-.02,.02),t0+.03,t1-.02);planned.set(v, td);
+    td=clamp(lerp(t0+pad,t1-endPad,victims.length>1?k/(victims.length-1):1)+rnd(-.02,.02),t0+.03,t1-.02);planned.set(v, td);
     const e = { t: td, k: 'die', s: v, h, cred: h.kills / Math.max(1, victims.length),impactX:px(v),impactY:v.y }; S.ev.push(e); vEvs.push(e);
     const vx = px(v), vy = v._ay ?? v.y;
     const nx = T.spr.filter(q => q.alive && q !== v && !victims.includes(q) && !stepped.has(q) && Math.abs((q._ay ?? q.y) - vy) < (T.rowStep || BT.rowStep) * .55 && tface * (vx - (q._ax ?? q.x)) > 2)
@@ -12953,7 +12972,7 @@ function heroLineStrikes(g, P, vEvs, ev) {
     const hy=P.timed?hr.y:hr._ay,i = pool.reduce((b, e, j) => Math.abs((e.s._ay ?? e.s.y) - hy) < Math.abs((pool[b].s._ay ?? pool[b].s.y) - hy) ? j : b, 0), e = pool.splice(i, 1)[0];
       e.t = Math.max(e.t, P.arrive + .2 + hi * .1 + k * .35);if(P.timed)e.t=Math.min(e.t,P.until-.02);e.hero = hr; ev(Math.max(P.arrive,e.t-.12), 'windup', { hero: hr, die:e });
       const x=P.timed?hr.x+P.dx:hr._ax,y=P.timed?hr.y:hr._ay;
-      queueMove(hr, Math.max(P.arrive,e.t-.16), x + face * 5, y, 90, P.until); queueMove(hr, e.t + .12, x, y, 50, P.until); } });
+      queueMove(hr, Math.max(P.arrive,e.t-.16), x + face * 5, y, 90, P.until).target=e.h.to; queueMove(hr, e.t + .12, x, y, 50, P.until).target=e.h.to; } });
 }
 const BRANDISH = .7, MAX_RUN = 1.15; // a melee charge reaches its foe within this many seconds
 // the ready beat: riders twirl their lances; foot soldiers throw their weapons up and jump (the cheer); when `brace` is
@@ -13018,11 +13037,13 @@ function doEvent(e) {
     if (p === 'cav' && e.x != null) for (let i = 0; i < 16; i++) BT.fx.push({ k: 'dust', x: e.x + rnd(-12, 12), y: rnd(BT.fy0 + 6, BT.fy1 - 2), vx: rnd(-18, 18), vy: -rnd(6, 16), t: rnd(.6, 1), t0: 1, r: rnd(2.5, 4) }); return; }
   if (e.k === 'jab') { if (e.s.alive) { e.s.jab = .32; } return; }
   if (e.k === 'shot') {
+    if(e.gate&&e.gateFired)return;
     const sh = e.shooter && e.shooter.alive ? e.shooter : pick(e.g.spr.filter(s => s.alive)) || (e.lethal ? { x: e.g.hx, y: e.g.hy, sprs: e.g.spr[0] && e.g.spr[0].sprs, lift: 0 } : null); if (!sh || !sh.sprs) return;
     const si = sideOf(e.g), face = sideDir(si), img = sh.sprs.atk, pk = e.pk || p;
     const mx = sh.x + face * (pk === 'gun' ? 15 : 8), my = sh.y - (pk === 'gun' ? 15 : 12) - (sh.lift || 0); // the muzzle sits at eye level now
     let tx, ty;
-    if (e.s) { tx = e.s.x + rnd(-1, 1); ty = e.s.y - 7 - (e.s.lift || 0); }
+    if(e.gate){if(!siegeHold())return;tx=BT.siege.x+2;ty=BT.siege.gy-8;e.gateFired=true;if(e.gateLedger)e.gateLedger.fired++;}
+    else if (e.s) { tx = e.s.x + rnd(-1, 1); ty = e.s.y - 7 - (e.s.lift || 0); }
     else if (e.h) { const ts = e.h.to.spr.filter(s => s.alive); const t = ts.length ? pick(ts) : null; tx = (t ? t.x : e.h.to.hx) + rnd(-9, 9); ty = (t ? t.y : e.h.to.hy) + rnd(-2, 5); }
     else { tx = sh.x + face * rnd(90, 180); ty = rnd(BT.fy0 + 8, BT.fy1 - 4); }
     if (sh.aimUntil > BT.t && Math.abs((sh.fireAt || 0) - BT.t) > .06) sh.fireAt = BT.t; // the fire frame lands on the flash, whatever rank he stands in
@@ -13044,7 +13065,7 @@ function doEvent(e) {
     const h=e.h;if(h.applied)return;h.applied=true;h.kills=Math.min(Math.max(0,h.to.troops),h.kills);if(!(h.kills>0))return; if (BT.A[0].mode === 'army') { if (h.retShare) retCredit(h.from, h.kills * h.retShare);
       retHit(h.to, h.kills).forEach(([c, f]) => { const hr = (h.to.heroes || []).find(x => x.hero === c), q = hr && (hr.guards || []).find(x => x.retRef === f); if (q && q.alive) killSprite(h.to, q, 'knock', sideDir(sideOf(h.from))); const pc = q || hr || gCenter(h.to); BT.labels.push({ x: pc.x, y: pc.y - 24, text: '郎党↓', t: .3, side: sideOf(h.to) }); }); }
     cmdPressure(h).forEach(([c, d]) => cmdHurt(h.to, c, d, h.from));
-    h.to.troops=Math.max(0,h.to.troops-h.kills);if(h.to.troops<TROOP_EPS)h.to.troops=0;independentDamage(h.to,h.from);if(h.to.solo&&!h.to.heroOnly&&BT.A[sideOf(h.to)].mode==='skirmish'&&h.to.solo.vref)h.to.solo.hp=Math.min(h.to.solo.hpMax||h.to.solo.s.hp,h.to.troops*3); if(h.from.heroOnly)h.from.solo.pk=(h.from.solo.pk||0)+h.kills;if (h.from.solo) h.from.solo.kills = (h.from.solo.kills || 0) + h.kills;
+    h.to.troops=Math.max(0,h.to.troops-h.kills);if(h.to.troops<TROOP_EPS)h.to.troops=0;independentDamage(h.to,h.from);if(h.to.heroOnly&&h.to.troops<=0)h.to.visualCleared=true;if(h.to.solo&&!h.to.heroOnly&&BT.A[sideOf(h.to)].mode==='skirmish'&&h.to.solo.vref)h.to.solo.hp=Math.min(h.to.solo.hpMax||h.to.solo.s.hp,h.to.troops*3); if(h.from.heroOnly)h.from.solo.pk=(h.from.solo.pk||0)+h.kills;if (h.from.solo) h.from.solo.kills = (h.from.solo.kills || 0) + h.kills;
     if (h.kills >= 20 || BT.A[0].mode === 'skirmish' || h.to.troops <= 0) addNum(h.to, h.kills, h.depth);
     cohesionDamage(h.to,h.kills,h.from);unitBreak(h.to);
     BT.hudDirty = true; return;
@@ -13178,8 +13199,16 @@ function stampArrow(p, onBody) { const dx = Math.sign(p.x1 - p.x0) || 1, x = Mat
 function updSprite(s, dt, g, si) {
   if (s.die < 0) return;
   if(s.fate){updateLifeState(s,dt,g,si);return;}
+  // Release the next planned advance as soon as the last visible defender falls; never keep attacking empty air.
+  if(s.fightTarget?.visualCleared){const old=s.fightTarget;s.fightTarget=null;s.fightUntil=0;if(s.state==='fight')s.state='idle';
+    const next=s.q.find(c=>c.target&&c.target!==old&&!c.target.visualCleared);
+    if(next){const cutoff=next.t;for(let i=s.q.length-1;i>=0;i--)if(s.q[i]!==next&&s.q[i].t<=cutoff)s.q.splice(i,1);
+      if(next.pursuit){const dist=next.goalX-s.x;next.x=s.x+Math.sign(dist)*Math.min(Math.abs(dist),next.spd*Math.max(0,next.deadline-BT.t));}
+      next.t=BT.t;s.q.sort((a,b)=>a.t-b.t);}
+  }
   // command queue
-  while (s.q.length && s.q[0].t <= BT.t) { const c = s.q.shift(); s.tx = c.x; s.ty = c.y; s.spd = c.spd; if (s.state !== 'run') s.runAt = BT.t; s.state = 'run'; s.fightUntil = c.fight || 0; s.kf = !!c.kf; s.kd = 0; }
+  while (s.q.length && s.q[0].t <= BT.t) { const c = s.q.shift(); s.tx = c.x; s.ty = c.y; s.spd = c.spd; if (s.state !== 'run') s.runAt = BT.t; s.state = 'run'; s.fightUntil = c.fight || 0; s.fightTarget=c.target||null;s.gateTarget=!!c.gate;s.kf = !!c.kf; s.kd = 0; }
+  if(s.gateTarget&&!siegeHold()){s.gateTarget=false;s.fightUntil=0;if(s.state==='fight')s.state='idle';}
   if (s.kd) { s.state = 'idle'; if (s.flash > 0) s.flash -= dt; if (s.jab > 0) s.jab -= dt; s.hop = 0; return; } // knocked down: lies where he fell until picked up
   if (s.state === 'run') {
     const dx = s.tx - s.x, dy = s.ty - s.y, d = Math.hypot(dx, dy), st = s.spd * dt;

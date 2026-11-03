@@ -14,7 +14,8 @@ const root=path.resolve(__dirname,'..');
   function raw(A,D,phase='inf'){BT={A:A.side?[D,A]:[A,D],round:1,maxR:3,tac:['steady','steady'],jutsu:[null,null]};const R=Math.random;Math.random=()=>.5;try{return resolvePhase(phase,A,D,{jutsu:[null,null],siege:false});}finally{Math.random=R;}}
   try{
    fresh();let E=army(1,[group('inf',2000,3)]),P=army(0,[group('inf',400),group('gun',100),group('arc',300),group('cav',100)]),hs=raw(E,P);
-   ok(hs.some(h=>h.to.type==='inf'&&h.kills===400),'Strong force did not beat front line');ok(!hs.some(h=>h.to.type==='arc'||h.to.type==='cav'),'Infantry swept every back line');
+   ok(hs.some(h=>h.to.type==='inf'&&h.kills===400),'Strong force did not beat front line');ok(!hs.some(h=>h.to.type==='cav'),'Infantry swept every back line');
+   for(let i=1;i<hs.length;i++)ok(hs[i].infAt>=hs[i-1].infEnd+INF_CLOCK.advance-1e-8,'Rear formation skipped its march');
    const first=hs.find(h=>h.to.type==='inf'),rear=hs.find(h=>h.to.type==='gun');ok(rear&&rear.infAt>=first.infEnd+INF_CLOCK.advance-1e-8,'Rear attack before clearing/advancing');
    ok(hs.every(h=>h.infAt>=0&&h.infEnd<=INF_CLOCK.fight&&h.infEnd>h.infAt),'Attack outside clock');
    out.example=hs.map(h=>({target:h.to.type,kills:h.kills,contact:h.infAt,end:h.infEnd}));
@@ -39,7 +40,7 @@ const root=path.resolve(__dirname,'..');
    out.clock={seconds:INF_CLOCK.fight,advance:INF_CLOCK.advance,sharedAcrossGroups:true,defendersScreen:true,exposedRangedVulnerable:true,deadCannotAdvance:true,bonusBounded:true};BT=null;
 
    // Actual script/events and movement, at phone size. A hit must wait for the march and reach the next line.
-   const pa=army(0,[group('inf',400),group('gun',100),group('arc',300)]),ea=army(1,[group('inf',2000,3)]);
+   const pa=army(0,[group('inf',400),group('gun',2000),group('arc',300)]),ea=army(1,[group('inf',2000,3)]);
    startBattle('balance',{site:{id:'balance',type:'camp',clan:'ikki',x:1,y:1,power:500,reward:{}},pa,ea});BT.autoKi.on=false;BT.round=1;BT.state='run';BT.phase=2;BT.speed=1;
    Math.random=()=>.5;runPhase('inf');Math.random=S.random;
    const wins=BT.script.wins.filter(w=>w.h?.infAt!=null&&w.g===ea.groups[0]),front=wins.find(w=>w.T.type==='inf'),next=wins.find(w=>w.T.type==='gun');

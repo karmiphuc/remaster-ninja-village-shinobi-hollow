@@ -48,6 +48,7 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
       check(!meleeIn.length, 'Attacking melee struck troops behind the gate: ' + JSON.stringify(meleeIn[0]));
       check(!meleeOut.length, 'Defending melee attacked before the breach: ' + JSON.stringify(meleeOut[0]));
       check(!grenades.length, 'Grenades thrown over a standing gate');
+      check(held.filter(h=>h.fs===0&&(h.ft==='gun'||h.ft==='arc')).every(h=>h.tt==='gun'||h.tt==='arc'),'Our ranged fire reached sheltered melee before breach');
       const rangedOut = held.filter(h => h.fs === 0 && (h.ft === 'gun' || h.ft === 'arc') && !h.icpt).length, rangedIn = held.filter(h => h.fs === 1 && (h.ft === 'gun' || h.ft === 'arc')).length;
       check(rangedOut > 0 && rangedIn > 0, `Ranged exchange missing: ours ${rangedOut}, theirs ${rangedIn}`);
       check(held.filter(h => h.icpt && h.fs === 0).length === 0, 'We shot at defenders who never charged');

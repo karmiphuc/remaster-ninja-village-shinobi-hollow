@@ -38,8 +38,8 @@ Equipped animal companions now have species-specific duel finishers, from bear s
 
 - **While the gate stands:**
   - Your infantry ram it and your cavalry hack at it; they never strike the troops sheltered behind it.
-  - The defenders' infantry and cavalry hold the walls and don't attack.
-  - Archers and gunners on both sides keep trading volleys.
+  - The defenders' infantry and cavalry remain sheltered behind the gate and don't attack.
+  - Your archers and gunners can hit only the exposed wall archers and gunners. Once those defenders are cleared, the next volley targets the gate. Wall defenders also fire on charging infantry and cavalry.
   - Commanders can still be called out to duel.
 - **When the gate falls:** the breach plays out, the rest of that round is skipped, and open combat starts again at **Round 1** with the survivors. Casualties, commanders' wounds and KOs, and Ki carry over.
 - **Siege engines** (research the *Siege Battery* in the Armory) are bought one at a time in the pre-battle deployment panel, for that siege only:
@@ -82,9 +82,9 @@ Equipped animal companions now have species-specific duel finishers, from bear s
 
 Battles are prepared, not micromanaged. Everything is set in the **Army** screen, and once you press *Attack!* the rounds play out without pausing. *Retreat* and speed stay on the battle bar, and a retreat takes effect at the end of the current round.
 
-Army infantry has a **2.7-second clash window** after approach. Defeating a line uses fighting time; reaching the next line costs **1.25 seconds** with no melee attacks. Surviving infantry protects the ranks behind it. Strong forces can still break through and attack the rear with their remaining time. See [infantry and uprising balance notes](docs/melee-rebellion-balance.md).
+Army infantry has a **5.4-second fight-and-pursuit window** after approach, with the same capped phase damage spread over that window. Defeating a line uses fighting time; reaching the next line costs **1.25 seconds** with no melee attacks. Surviving infantry protects the ranks behind it. Strong forces can still break through and attack the rear with their remaining time. See [infantry and uprising balance notes](docs/melee-rebellion-balance.md) and [pursuit/siege targeting](docs/pursuit-siege.md).
 
-**Ranged spill has no infantry timer.** Guns carry remaining volley damage through **Infantry → Gunners → Archers → Cavalry**. Archers prioritize the ranged lines and spill only beside their original target: Gunners → Infantry/Archers; Archers → Gunners/Cavalry. The existing damage budget and 25% attenuation between targets remain. See [ranged targeting and validation](docs/ranged-spill.md).
+**Ranged spill has no infantry timer.** In field battles, guns carry remaining volley damage through **Infantry → Gunners → Archers → Cavalry**. Archers prioritize the ranged lines and spill only beside their original target: Gunners → Infantry/Archers; Archers → Gunners/Cavalry. The existing damage budget and 25% attenuation between targets remain. See [ranged targeting and validation](docs/ranged-spill.md).
 
 **Auto Duel** is a separate saved choice under **Village → Options**, off by default. With it off, a challenge pauses Auto Battle so you can choose champions and Fight or Refuse. Turn it on to let Auto Battle accept and assign champions. Manual battles always show the picker; refusing retains its existing cohesion penalty.
 
@@ -94,7 +94,7 @@ Foot spearmen can also throw their equipped yari and retrieve it after the KO. A
 
 Execution families roll randomly from weapon-, target- and hit-count-compatible pools on each KO. The chosen move stays stable through playback, while later duels receive fresh visual rolls without consuming combat randomness.
 
-Infantry phases now provide twice as much time to watch the fighting, with occasional nearby battlefield finishes using existing equipment frames. Two can play at once while the battle continues. Gun/archer impact holds gain 0.5 seconds; casualty death and rout playback is 33% faster. See [field combat timing and validation](docs/field-combat.md).
+Infantry uses a longer shared fight-and-pursuit window, advancing when a line clears, with occasional nearby battlefield finishes using existing equipment frames. Two can play at once while the battle continues. Gun/archer impact holds gain 0.5 seconds; casualty death and rout playback is 33% faster. See [field combat timing and validation](docs/field-combat.md).
 
 **Formation tactics.** Each formation (Infantry, Archers, Gunners, Cavalry) takes its own orders. How many orders it can take depends on the highest Strategy among its own active commanders. Formations never share Strategy.
 

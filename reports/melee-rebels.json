@@ -4,17 +4,23 @@
       "target": "inf",
       "kills": 400,
       "contact": 0,
-      "end": 0.6923076923076924
+      "end": 1.3846153846153848
     },
     {
       "target": "gun",
       "kills": 100,
-      "contact": 1.9423076923076925,
-      "end": 2.1923076923076925
+      "contact": 2.634615384615385,
+      "end": 2.884615384615385
+    },
+    {
+      "target": "arc",
+      "kills": 300,
+      "contact": 4.134615384615385,
+      "end": 4.596153846153847
     }
   ],
   "clock": {
-    "seconds": 2.7,
+    "seconds": 5.4,
     "advance": 1.25,
     "sharedAcrossGroups": true,
     "defendersScreen": true,
@@ -23,10 +29,10 @@
     "bonusBounded": true
   },
   "playback": {
-    "frontEnd": 3.694993545953353,
-    "rearContact": 6.9736130745728815,
-    "firstRearDamage": 7.115500000000026,
-    "gapAtDamage": 3.3700452124839444,
+    "frontEnd": 3.450579078054306,
+    "rearContact": 4.7005790780543055,
+    "firstRearDamage": 4.830000000000017,
+    "gapAtDamage": 0.8802909073024807,
     "archersLeft": 300
   },
   "rebellion": {
@@ -40,5 +46,5 @@
     "expiryAndRetakeConsistent": true,
     "saveVersion": 1
   },
-  "checks": 31
+  "checks": 33
 }

@@ -1,4 +1,4 @@
-// Presentation timing, nearby executions and fast casualties must preserve the existing resolved losses.
+// Real infantry timing, nearby executions and fast casualties preserve resolved damage and equipment.
 const fs=require('fs'),http=require('http'),path=require('path'),assert=require('assert'),{chromium}=require('playwright'),install=require('../tools/field-combat-fixture.cjs');
 const root=path.resolve(__dirname,'..'),baseline=JSON.parse(fs.readFileSync(path.join(root,'reports/field-pacing-baseline.json')));
 (async()=>{const server=http.createServer((q,r)=>{r.setHeader('content-type','text/html');r.end(fs.readFileSync(process.env.FIELD_DOWNLOAD||path.join(root,'index.html')));});await new Promise(r=>server.listen(0,'127.0.0.1',r));
@@ -12,19 +12,19 @@ const root=path.resolve(__dirname,'..'),baseline=JSON.parse(fs.readFileSync(path
     ok(JSON.stringify(BT.A.flatMap(A=>A.groups.flatMap(g=>g.spr.flatMap(s=>s.q.map(q=>[q.x,q.y,q.spd])))))===JSON.stringify(rawMoves),'Timing changed positions or movement speeds');
     ok(script.ev.filter(e=>e.k==='hit').length===raw.ev.filter(e=>e.k==='hit').length&&script.ev.filter(e=>e.k==='die').length===raw.ev.filter(e=>e.k==='die').length,'Timing invented/dropped casualties');
     if(type==='inf'){
-      near(script.dur-.25,(raw.dur-.25)*2,'Infantry phase not doubled');near(script.contactAt,rawContact,'Infantry approach was needlessly delayed');
-      near(INF_CLOCK.fight,2.7,'Infantry damage budget enlarged');near(INF_CLOCK.advance,1.25,'Infantry breakthrough budget changed');
-      near(raw.dur,baseline.inf.duration,'Baseline fixture drifted');
+      near(script.dur,raw.dur,'Infantry phase padded after the actual exchange');
+      near(INF_CLOCK.fight,5.4,'Infantry fight/pursuit clock is not doubled');near(INF_CLOCK.advance,1.25,'Infantry breakthrough travel changed');
+      near(Math.min(...script.wins.map(w=>w.t0)),rawContact,'Infantry approach was needlessly delayed');
       for(const e of script.ev.filter(e=>e.k==='fieldTell'))ok(script.ev.includes(e.die)&&e.die.k==='die','Execution has no resolved casualty');
     }else if(type==='gun'||type==='arc'){
       near((script.dur-raw.dur)/BATTLE_PACE,.5,'Ranged impact hold not +0.5 seconds');ok(JSON.stringify(script.ev.map(e=>[e.k,e.t,e.flight||0]))===JSON.stringify(rawEvents),'Ranged firing/flight/impact times changed');
       near(raw.dur,baseline[type].duration,'Ranged baseline fixture drifted');
     }else near(script.dur,raw.dur,'Cavalry phase stretched');
-    timing[type]={before:(raw.dur-.25)/BATTLE_PACE,after:(script.dur-.25)/BATTLE_PACE,firstContact:script.contactAt??null,kills:a.hits.map(h=>h.kills),candidates:script.ev.filter(e=>e.k==='fieldTell').length};closeBattle();
+    timing[type]={before:(raw.dur-.25)/BATTLE_PACE,after:(script.dur-.25)/BATTLE_PACE,firstContact:Number.isFinite(rawContact)?rawContact:null,kills:a.hits.map(h=>h.kills),candidates:script.ev.filter(e=>e.k==='fieldTell').length};closeBattle();
    }out.timing=timing;
    {const a=fieldCombatFixture();BT.siege={hp:100,max:100,breached:false,x:BT.cx};const h={from:a.pa.groups[0],to:a.ea.groups[0],kills:10,depth:0,grenade:true,owner:{},pk:'burn'};a.hits.push(h);
     Math.random=seeded(101);const script=buildScript('inf',a.hits);Math.random=R;const thrown=script.ev.find(e=>e.k==='pitchThrow'),burst=script.ev.find(e=>e.k==='pitchBurst');
-    near(burst.t-thrown.t,.7,'Stretch desynchronized grenade flight/explosion');near(h.t0,burst.t,'Grenade damage no longer lands at explosion');
+    near(burst.t-thrown.t,.7,'Infantry timing desynchronized grenade flight/explosion');near(h.t0,burst.t,'Grenade damage no longer lands at explosion');
     ok(!script.ev.some(e=>e.k==='fieldTell'),'Field execution crosses an unbreached wall');closeBattle();}
 
    out.reactions={};for(const kind of ['death','rout']){fieldCombatFixture();const g=BT.A[0].groups[0],s=g.spr[0],troops=g.troops;if(kind==='death')killSprite(g,s,'inf',1);else routSprite(g,s,-1);
@@ -70,7 +70,7 @@ const root=path.resolve(__dirname,'..'),baseline=JSON.parse(fs.readFileSync(path
     BT.script=script;BT.next=script.dur-.25;BT.phaseDur=BT.next;BT.speed=4;BT.auto=false;const original=doEvent;let frames=0,started=0,maxActive=0;
     doEvent=function(e){original(e);if(e.k==='fieldTell'&&e.die.s.fieldExecution)started++;maxActive=Math.max(maxActive,BT.fieldExecutions?.length||0);};
     try{while(BT.state==='run'&&BT.script===script&&frames++<3000){updateBattle(1/fps);if(frames%7===0)drawBattle();}}finally{doEvent=original;}
-    ok(frames<3000,'Doubled infantry phase stalled');near(g0.troops,160,'Actual phase lost wrong allied troop count');near(g1.troops,160,'Actual phase lost wrong enemy troop count');
+    ok(frames<3000,'Infantry phase stalled');near(g0.troops,160,'Actual phase lost wrong allied troop count');near(g1.troops,160,'Actual phase lost wrong enemy troop count');
     ok(maxActive<=2,'Playback exceeded execution cap');observed+=started;runs.push({fps,speed:4,frames,started,maxActive,remaining:[g0.troops,g1.troops]});closeBattle();
    }ok(observed>0,'Executions never appear in real line combat');out.runs=runs;out.checks=checks;return out;
   }finally{Math.random=R;if(BT)closeBattle();simRestore(S);}

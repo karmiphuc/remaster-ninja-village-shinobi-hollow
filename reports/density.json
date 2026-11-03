@@ -36,8 +36,8 @@
         "cav": "88%"
       },
       "spriteSets": 40,
-      "startMs": 4210,
-      "frameMs": 5.15
+      "startMs": 6519,
+      "frameMs": 8.82
     },
     "dense": {
       "fieldWidth": 920,
@@ -65,9 +65,9 @@
         "gun": "88%",
         "cav": "88%"
       },
-      "spriteSets": 35,
-      "startMs": 3459,
-      "frameMs": 6.27
+      "spriteSets": 40,
+      "startMs": 7002,
+      "frameMs": 11.59
     },
     "epic": {
       "fieldWidth": 1116,
@@ -95,9 +95,9 @@
         "gun": "88%",
         "cav": "88%"
       },
-      "spriteSets": 35,
-      "startMs": 2840,
-      "frameMs": 4.26
+      "spriteSets": 37,
+      "startMs": 6203,
+      "frameMs": 9.71
     }
   },
   "deterministic": true,
@@ -175,10 +175,10 @@
         "cav": 20
       },
       "defenders": {
-        "inf": 14,
-        "arc": 14,
+        "inf": 16,
+        "arc": 16,
         "gun": 3,
-        "cav": 14
+        "cav": 16
       },
       "wallGunners": 3,
       "result": "lose"
@@ -193,7 +193,7 @@
         412
       ],
       "infFill": "88%",
-      "frameMs": 3.54
+      "frameMs": 6.76
     },
     "844x390": {
       "fieldWidth": 920,
@@ -203,7 +203,7 @@
         184
       ],
       "infFill": "88%",
-      "frameMs": 6.06
+      "frameMs": 8.01
     },
     "768x1024": {
       "fieldWidth": 971,
@@ -213,7 +213,7 @@
         248
       ],
       "infFill": "88%",
-      "frameMs": 2.81
+      "frameMs": 3.57
     },
     "1024x768": {
       "fieldWidth": 1009,
@@ -223,7 +223,7 @@
         242
       ],
       "infFill": "88%",
-      "frameMs": 5.64
+      "frameMs": 10.94
     }
   },
   "resize": {

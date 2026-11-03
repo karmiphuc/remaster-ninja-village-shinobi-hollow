@@ -9,12 +9,12 @@
     "left": 0
   },
   "fights": 52,
-  "maxRound": 7,
+  "maxRound": 8,
   "seed18": [
     "hollow: win in 3 rounds",
     "hollow: win in 3 rounds",
     "ronin: win in 3 rounds",
-    "shrine: win in 7 rounds"
+    "shrine: win in 8 rounds"
   ],
   "stuck": [],
   "errors": []
