@@ -16,6 +16,9 @@ function rtTrimVillageFrames(){for(const c of _villageRigCache.values())perfRele
 function rtFieldAllowed(){return rtBattleChosen()&&!siegeHold();}
 function rtRestoreClassicBuffer(){if(BT?.buf&&!BT.buf.width){BT.buf.width=BT.vw*ART_DENSITY;BT.buf.height=BT.vh*ART_DENSITY;BT.bx=BT.buf.getContext('2d',{alpha:false});BT.bx._artDensity=ART_DENSITY;}}
 function rtReleaseClassicBuffer(){if(BT?.rt&&rtIsFieldView()&&BT.buf)BT.buf.width=BT.buf.height=0;}
+// Classic resolves a whole burst in one hit; the live model resolves each bullet.
+function rtPersonalFactor(c,to,kind){return kind==='gun'&&ITEMS[commanderWeapon(c)]?.burst?1:personalWeaponFactor(c,to,kind);}
+function rtCounterPower(g){const side=sideOf(g),lv=side===0&&BT.flv?BT.flv[g.type]||0:BT.A[side].strat||0;return 1+counterBonus(lv);}
 function rtGround(x,y){return 30*Math.exp(-((x-260)**2/40000+(y-270)**2/50000))+39*Math.exp(-((x-1060)**2/55000+(y-790)**2/50000))-8*Math.exp(-((y-(443+Math.sin(x*.006)*45))**2)/1600);}
 function rtDeploymentHTML(){if(!rtBattleChosen())return '<p class="note" style="margin:6px 10px">Battle mode: Classic · change in Village → Options before battle.</p>';
  return `<div class="rt-deploy"><b>Real-time field combat</b><span class="muted"> · ${BT.siege?'Classic wall siege, then real-time after the breach.':'Continuous attacks, physical projectiles and cavalry orders.'}</span><div class="row wrap">${['inf','gun','arc','cav'].filter(t=>BT.A[0].groups.some(g=>g.type===t)).map(t=>`<label>${icon('u_'+t)} ${UNITS[t].name} <select data-rt-deploy="${t}" aria-label="${UNITS[t].name} stance">${Object.keys(GrandCombat.stances[t]).map(k=>`<option value="${k}"${G.battleStances?.[t]===k?' selected':''}>${GrandCombat.stances[t][k].name}</option>`).join('')}</select></label>`).join('')}</div><small class="muted">Army tactics, commander skills, Ki and cinematic duels still apply. Shape and cavalry targets can be changed on the field.</small></div>`;
@@ -25,7 +28,7 @@ function rtNormalizeStyle(s,g,side,cache){if(cache.has(s))return cache.get(s);co
  if(r){const sample={...s,fate:{kind:'death',recipe:r},droppedHat:false};for(const key of ['stagger','kneel','rest','panic']){frames[key]=reactionFrame(sample,g,key);faces[key]=1;}sample.fate.kind='rout';for(const key of ['runA','runB']){frames['flee'+key]=reactionFrame(sample,g,key);faces['flee'+key]=1;}}
  else{frames.stagger=k.hurt||k.idle[0];frames.kneel=frames.rest=k.fall||k.hurt||k.idle[0];frames.panic=frames.stagger;frames.fleerunA=frames.runA;frames.fleerunB=frames.runB;}
  const weapon=r?.L.gear?.w||s.look?.gear?.w||s.artKit?.w,meta=ITEMS[weapon];
- const out={frames,faces,burst:meta?.burst||1,reload:meta?.reload||1,nativeFace:side?-1:1,kit:r?.L.gear||s.look?.gear||s.artKit||{},weapon:r?reactionProp(r,'weapon')?.cv:null,flag:s.sashimono?sashimonoFrames(s.sashimono):null};cache.set(s,out);return out;
+ const out={frames,faces,burst:meta?.burst||1,reload:meta?.burst?1+(meta.reload||0):1,shotPower:meta?.shotPower??1,nativeFace:side?-1:1,kit:r?.L.gear||s.look?.gear||s.artKit||{},weapon:r?reactionProp(r,'weapon')?.cv:null,flag:s.sashimono?sashimonoFrames(s.sashimono):null};cache.set(s,out);return out;
 }
 function rtMapSource(m){const s=m.source;if(!s)return;const x=m.x/1400*BT.WW,y=BT.fy0+m.y/1020*(BT.fy1-BT.fy0);s.x=s.tx=s.sx=x;s.y=s.ty=s.sy=y;s.face=m.face;s.q.length=0;s.state=m.moving?'run':m.pendingAt?'fight':'idle';s.fightUntil=m.pendingAt?BT.t+.3:0;s.hurtUntil=m.hurtUntil>BT.rt.model.time?BT.t+(m.hurtUntil-BT.rt.model.time):0;}
 function rtMakeCampaignModel(){const session=BT,styleCache=new WeakMap(),sources=new Map(),extras=[],mapped=new Set(),rng=seeded(BT.seed^0x6d2b79f5),rt={model:null,view:null,selected:null,extras,styleCache,sources,rng,windowAt:0,hudAt:0,panelKey:'',paused:false,hooking:false};BT.rt=rt;
@@ -36,11 +39,12 @@ function rtMakeCampaignModel(){const session=BT,styleCache=new WeakMap(),sources
  const sim={A:session.A,random:rng,clock:()=>{},power:(g,force,kind,scale=1)=>{const A=session.A[sideOf(g)],ranged=kind==='gun'||kind==='arc',tac=TACTICS[tacFam(g)].mod,
    ret=retEq(g)/Math.max(1,g.troops),personal=A.mode==='army'&&!g.heroOnly?1+persShare(g):1,
    skills=(1+(A.strat||0)*.05+(g.mods.attackup||0)*.1+(A.beast?.[kind]||0))*(1+Math.min(.30,(ranged?g.mods.rapid:g.mods.chain||0)*.03)),
-   j=session.jutsu[sideOf(g)]==='clone'?1.4:1;
-  return force*(1+ret)*personal*UNITS[kind].atk*g.atkMul*battleAttack(g)*tac[ranged?'rng':'mel']*skills*j*tateAtk(g)*scale*(.88+rng()*.24);
- },impact:(power,to,force,kind,from)=>{const ward=kind==='gun'?to.mods.bulletres:kind==='arc'?to.mods.arrowres:kind==='cav'?to.mods.horseres:0,
-   fromSide=1-sideOf(to),mask=session.jutsu[sideOf(to)]==='smoke'&&(kind==='gun'||kind==='arc')?.4:1,
-   mult=(1-Math.min(.6,(ward||0)*.1))*(1-Math.min(.3,(to.mods.shadow||0)*.05))*TACTICS[tacFam(to)].mod.take*personalDamageGuard(to,kind)*(from?.solo?personalWeaponFactor(from.solo,to,kind):1)*tateTake(to,kind)*mask;
+   weaponSkill=ranged?1+(g.mods.marksman||0)*.08:kind==='cav'?1+(g.mods.cavmaster||0)*.1:1,j=session.jutsu[sideOf(g)]==='clone'?1.4:1;
+  return force*(1+ret)*personal*UNITS[kind].atk*g.atkMul*battleAttack(g)*tac[ranged?'rng':'mel']*skills*weaponSkill*j*tateAtk(g)*scale*(.88+rng()*.24);
+ },prepareShot:(p,g)=>{p.counterFamily=tacFam(g);p.counterPower=rtCounterPower(g);},impact:(power,to,force,kind,from,shot)=>{const ward=kind==='gun'?to.mods.bulletres:kind==='arc'?to.mods.arrowres:kind==='cav'?to.mods.horseres:0,
+   fam=shot?shot.counterFamily:from?tacFam(from):null,counter=fam&&COUNTER[fam]===tacFam(to)?(shot?shot.counterPower:rtCounterPower(from)):1,
+   mask=session.jutsu[sideOf(to)]==='smoke'&&(kind==='gun'||kind==='arc')?.4:1,
+   mult=(1-Math.min(.6,(ward||0)*.1))*(1-Math.min(.3,(to.mods.shadow||0)*.05))*TACTICS[tacFam(to)].mod.take*counter*personalDamageGuard(to,kind)*(from?.solo?rtPersonalFactor(from.solo,to,kind):1)*tateTake(to,kind)*mask;
   return battleDamage(power,battleResistance(to),mult,force);
  },totals:()=>session.A.map(totalOf)};sim.damage=(g,to,force,kind,scale)=>sim.impact(sim.power(g,force,kind,scale),to,force,kind,g);
  const art={battle:()=>sim,style:(type,side,variant,g,i)=>rtNormalizeStyle(sources.get(g)[i],g,side,styleCache),building:id=>buildingSprite(id),prop:(id,side=0)=>propImg(id,side)};
@@ -51,8 +55,8 @@ function rtMakeCampaignModel(){const session=BT,styleCache=new WeakMap(),sources
   beforeHit:(from,to,n,kind)=>{if(rt.hooking)return;rt.hooking=true;try{randomCall(()=>{const h={from:from.f.g,to:to.f.g,kills:n};rtMapSource(from);rtMapSource(to);
     if(session.A[0].mode==='army'){const share=retEq(h.from)/Math.max(1,h.from.troops+retEq(h.from));if(share)retCredit(h.from,n*share);for(const [c,f]of retHit(h.to,n)){const hr=h.to.heroes?.find(s=>s.hero===c),q=hr?.guards?.find(q=>q.retRef===f);if(q?.alive)killSprite(h.to,q,'knock',from.face);}}
     for(const [c,d]of cmdPressure(h))cmdHurt(h.to,c,d,h.from);
-    const shares=heroShares(h.from);for(const o of shares){const credit=n*o.sh;o.c.kills=(o.c.kills||0)+credit;o.c.pk=(o.c.pk||0)+credit;}
     if(h.from.solo){h.from.solo.kills=(h.from.solo.kills||0)+n;if(h.from.heroOnly)h.from.solo.pk=(h.from.solo.pk||0)+n;}
+    else for(const o of heroShares(h.from)){const credit=n*o.sh;o.c.kills=(o.c.kills||0)+credit;o.c.pk=(o.c.pk||0)+credit;}
    });}finally{rt.hooking=false;}},
   afterHit:(from,to,n,kind)=>{const g=to.f.g;independentDamage(g,from.f.g);if(g.solo&&!g.heroOnly&&session.A[sideOf(g)].mode==='skirmish')g.solo.hp=Math.min(g.solo.hpMax||g.solo.s.hp,g.troops*3);cohesionDamage(g,n,from.f.g);session.hudDirty=true;},
   casualty:m=>{const s=m.source;rtMapSource(m);if(s.alive&&!s.fate)randomCall(()=>exitSprite(m.f.g,s,m.f.type,m.face));if(m.f.g.troops<=0)unitBreak(m.f.g);return s.fate?.kind==='rout'?'rout':'death';},

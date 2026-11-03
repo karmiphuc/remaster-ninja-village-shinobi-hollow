@@ -14,8 +14,8 @@
     "mode": "realtime",
     "stance": "pikewall",
     "v": 1,
-    "kb": 50.5439453125,
-    "ms": 0.30000000074505806
+    "kb": 45.93359375,
+    "ms": 0.5
   },
   "pikewall": {
     "x0": 480,
@@ -27,28 +27,28 @@
   },
   "full": {
     "state": "done",
-    "round": 6,
+    "round": 9,
     "result": "win",
-    "steps": 6885,
+    "steps": 9895,
     "actual": {
-      "inf": 69,
-      "gun": 34,
-      "arc": 120,
-      "cav": 72
+      "inf": 60,
+      "gun": 30,
+      "arc": 86,
+      "cav": 74
     },
     "expected": {
-      "inf": 69,
-      "gun": 34,
-      "arc": 120,
-      "cav": 72
+      "inf": 60,
+      "gun": 30,
+      "arc": 86,
+      "cav": 74
     },
-    "residual": 6.821210263296962e-13,
-    "hp": 205.73792244983125,
-    "total": 205.73792244983116,
+    "residual": 2.2737367544323206e-13,
+    "hp": 142.099958927679,
+    "total": 142.09995892767904,
     "goldBefore": 1200,
     "goldAfter": 1217,
     "paidOnce": true,
-    "body": 132
+    "body": 143
   },
   "retreat": {
     "done": true,
@@ -114,8 +114,8 @@
       "ended": 1,
       "HP": [
         [
-          0,
-          24
+          30,
+          0
         ]
       ],
       "ward": false,
@@ -129,7 +129,7 @@
       "ended": 1,
       "HP": [
         [
-          26,
+          90,
           0
         ]
       ],
@@ -144,7 +144,7 @@
       "ended": 1,
       "HP": [
         [
-          46,
+          90,
           27
         ]
       ],

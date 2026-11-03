@@ -1,5 +1,5 @@
 {
-  "checks": 485,
+  "checks": 481,
   "cases": 24,
   "rows": [
     {
@@ -20,8 +20,8 @@
           "warmDone": true
         }
       ],
-      "maxUpdateMs": 125.2,
-      "maxDrawMs": 45.3
+      "maxUpdateMs": 60.3,
+      "maxDrawMs": 51.4
     },
     {
       "kind": "tripleThrust",
@@ -34,15 +34,15 @@
       "clips": [
         {
           "kind": "tripleThrust",
-          "frames": 10,
-          "before": 5,
+          "frames": 9,
+          "before": 4,
           "after": 5,
-          "bgMB": 4.5494842529296875,
+          "bgMB": 4.385833740234375,
           "warmDone": true
         }
       ],
-      "maxUpdateMs": 96.2,
-      "maxDrawMs": 37.4
+      "maxUpdateMs": 27.7,
+      "maxDrawMs": 55.5
     },
     {
       "kind": "slidingThrust",
@@ -58,12 +58,12 @@
           "frames": 9,
           "before": 5,
           "after": 4,
-          "bgMB": 4.434928894042969,
+          "bgMB": 4.385833740234375,
           "warmDone": true
         }
       ],
-      "maxUpdateMs": 21.8,
-      "maxDrawMs": 38.5
+      "maxUpdateMs": 21.5,
+      "maxDrawMs": 40.6
     },
     {
       "kind": "jump",
@@ -76,15 +76,15 @@
       "clips": [
         {
           "kind": "jump",
-          "frames": 10,
+          "frames": 9,
           "before": 5,
-          "after": 5,
-          "bgMB": 4.5494842529296875,
+          "after": 4,
+          "bgMB": 4.434928894042969,
           "warmDone": true
         }
       ],
-      "maxUpdateMs": 23.7,
-      "maxDrawMs": 96.2
+      "maxUpdateMs": 19.3,
+      "maxDrawMs": 28.8
     },
     {
       "kind": "guardBreak",
@@ -100,12 +100,12 @@
           "frames": 9,
           "before": 5,
           "after": 4,
-          "bgMB": 4.385833740234375,
+          "bgMB": 4.434928894042969,
           "warmDone": true
         }
       ],
-      "maxUpdateMs": 22.1,
-      "maxDrawMs": 24.5
+      "maxUpdateMs": 28.2,
+      "maxDrawMs": 34.6
     },
     {
       "kind": "yariCast",
@@ -125,8 +125,8 @@
           "warmDone": true
         }
       ],
-      "maxUpdateMs": 22.6,
-      "maxDrawMs": 37.8
+      "maxUpdateMs": 216.2,
+      "maxDrawMs": 48.5
     },
     {
       "kind": "spearBrace",
@@ -140,14 +140,14 @@
         {
           "kind": "spearBrace",
           "frames": 11,
-          "before": 6,
-          "after": 5,
-          "bgMB": 4.369468688964844,
+          "before": 7,
+          "after": 4,
+          "bgMB": 4.4185638427734375,
           "warmDone": true
         }
       ],
-      "maxUpdateMs": 18.8,
-      "maxDrawMs": 34.3
+      "maxUpdateMs": 28.3,
+      "maxDrawMs": 47
     },
     {
       "kind": "riderDrag",
@@ -160,15 +160,15 @@
       "clips": [
         {
           "kind": "riderDrag",
-          "frames": 12,
+          "frames": 11,
           "before": 7,
-          "after": 5,
-          "bgMB": 4.533119201660156,
+          "after": 4,
+          "bgMB": 4.4185638427734375,
           "warmDone": true
         }
       ],
-      "maxUpdateMs": 12.9,
-      "maxDrawMs": 32.9
+      "maxUpdateMs": 10.1,
+      "maxDrawMs": 28.4
     },
     {
       "kind": "cavBackKick",
@@ -184,12 +184,12 @@
           "frames": 11,
           "before": 6,
           "after": 5,
-          "bgMB": 4.434928894042969,
+          "bgMB": 4.385833740234375,
           "warmDone": true
         }
       ],
-      "maxUpdateMs": 40.5,
-      "maxDrawMs": 30.2
+      "maxUpdateMs": 21.6,
+      "maxDrawMs": 61.7
     },
     {
       "kind": "cavTrample",
@@ -202,15 +202,15 @@
       "clips": [
         {
           "kind": "cavTrample",
-          "frames": 10,
+          "frames": 11,
           "before": 6,
-          "after": 4,
+          "after": 5,
           "bgMB": 4.385833740234375,
           "warmDone": true
         }
       ],
-      "maxUpdateMs": 45.1,
-      "maxDrawMs": 30.9
+      "maxUpdateMs": 35.7,
+      "maxDrawMs": 22.7
     },
     {
       "kind": "beastPounce",
@@ -230,8 +230,8 @@
           "warmDone": true
         }
       ],
-      "maxUpdateMs": 28.5,
-      "maxDrawMs": 35.2
+      "maxUpdateMs": 17.2,
+      "maxDrawMs": 28.3
     },
     {
       "kind": "beastFeint",
@@ -247,12 +247,12 @@
           "frames": 11,
           "before": 6,
           "after": 5,
-          "bgMB": 4.5494842529296875,
+          "bgMB": 4.434928894042969,
           "warmDone": true
         }
       ],
-      "maxUpdateMs": 10.5,
-      "maxDrawMs": 57
+      "maxUpdateMs": 28.6,
+      "maxDrawMs": 25.5
     },
     {
       "kind": "beastPounce",
@@ -266,14 +266,14 @@
         {
           "kind": "beastPounce",
           "frames": 10,
-          "before": 6,
-          "after": 4,
+          "before": 5,
+          "after": 5,
           "bgMB": 4.385833740234375,
           "warmDone": true
         }
       ],
-      "maxUpdateMs": 29.2,
-      "maxDrawMs": 22.3
+      "maxUpdateMs": 6.9,
+      "maxDrawMs": 37.1
     },
     {
       "kind": "beastFeint",
@@ -293,8 +293,8 @@
           "warmDone": true
         }
       ],
-      "maxUpdateMs": 27.7,
-      "maxDrawMs": 49.6
+      "maxUpdateMs": 19,
+      "maxDrawMs": 31.3
     },
     {
       "kind": "boarToss",
@@ -307,15 +307,15 @@
       "clips": [
         {
           "kind": "boarToss",
-          "frames": 11,
-          "before": 6,
+          "frames": 10,
+          "before": 5,
           "after": 5,
-          "bgMB": 4.434928894042969,
+          "bgMB": 4.385833740234375,
           "warmDone": true
         }
       ],
-      "maxUpdateMs": 103.5,
-      "maxDrawMs": 56.4
+      "maxUpdateMs": 44.8,
+      "maxDrawMs": 21.7
     },
     {
       "kind": "bearSlam",
@@ -329,14 +329,14 @@
         {
           "kind": "bearSlam",
           "frames": 10,
-          "before": 5,
-          "after": 5,
+          "before": 6,
+          "after": 4,
           "bgMB": 4.385833740234375,
           "warmDone": true
         }
       ],
-      "maxUpdateMs": 47.2,
-      "maxDrawMs": 27.7
+      "maxUpdateMs": 22.8,
+      "maxDrawMs": 24.9
     },
     {
       "kind": "monkeyVault",
@@ -356,8 +356,8 @@
           "warmDone": true
         }
       ],
-      "maxUpdateMs": 27.5,
-      "maxDrawMs": 47.3
+      "maxUpdateMs": 33.4,
+      "maxDrawMs": 29.1
     },
     {
       "kind": "birdDive",
@@ -370,15 +370,15 @@
       "clips": [
         {
           "kind": "birdDive",
-          "frames": 10,
+          "frames": 11,
           "before": 6,
-          "after": 4,
-          "bgMB": 4.385833740234375,
+          "after": 5,
+          "bgMB": 4.434928894042969,
           "warmDone": true
         }
       ],
-      "maxUpdateMs": 30.9,
-      "maxDrawMs": 29.6
+      "maxUpdateMs": 21.5,
+      "maxDrawMs": 35.2
     },
     {
       "kind": "birdDive",
@@ -391,15 +391,15 @@
       "clips": [
         {
           "kind": "birdDive",
-          "frames": 10,
-          "before": 5,
+          "frames": 11,
+          "before": 6,
           "after": 5,
-          "bgMB": 4.385833740234375,
+          "bgMB": 4.434928894042969,
           "warmDone": true
         }
       ],
-      "maxUpdateMs": 10.4,
-      "maxDrawMs": 40.1
+      "maxUpdateMs": 39.5,
+      "maxDrawMs": 68.5
     },
     {
       "kind": "beastPounce",
@@ -412,15 +412,15 @@
       "clips": [
         {
           "kind": "beastPounce",
-          "frames": 11,
+          "frames": 10,
           "before": 6,
-          "after": 5,
-          "bgMB": 4.434928894042969,
+          "after": 4,
+          "bgMB": 4.385833740234375,
           "warmDone": true
         }
       ],
-      "maxUpdateMs": 43.4,
-      "maxDrawMs": 34.1
+      "maxUpdateMs": 42.6,
+      "maxDrawMs": 100.7
     },
     {
       "kind": "spearBrace",
@@ -433,15 +433,15 @@
       "clips": [
         {
           "kind": "thrust",
-          "frames": 11,
+          "frames": 12,
           "before": 7,
-          "after": 4,
-          "bgMB": 4.369468688964844,
+          "after": 5,
+          "bgMB": 4.533119201660156,
           "warmDone": true
         }
       ],
-      "maxUpdateMs": 10.8,
-      "maxDrawMs": 24.9
+      "maxUpdateMs": 12.5,
+      "maxDrawMs": 43.7
     },
     {
       "kind": "riderDrag",
@@ -461,8 +461,8 @@
           "warmDone": true
         }
       ],
-      "maxUpdateMs": 19.2,
-      "maxDrawMs": 31.8
+      "maxUpdateMs": 75.2,
+      "maxDrawMs": 82.8
     },
     {
       "kind": "tripleThrust",
@@ -498,8 +498,8 @@
           "warmDone": true
         }
       ],
-      "maxUpdateMs": 22.6,
-      "maxDrawMs": 23.6
+      "maxUpdateMs": 25,
+      "maxDrawMs": 40.6
     },
     {
       "kind": "beastPounce",
@@ -512,31 +512,31 @@
       "clips": [
         {
           "kind": "beastPounce",
-          "frames": 11,
+          "frames": 10,
           "before": 6,
-          "after": 5,
-          "bgMB": 4.2876434326171875,
-          "warmDone": false
-        },
-        {
-          "kind": "beastPounce",
-          "frames": 11,
-          "before": 6,
-          "after": 5,
+          "after": 4,
           "bgMB": 4.4185638427734375,
           "warmDone": false
         },
         {
           "kind": "beastPounce",
-          "frames": 11,
+          "frames": 10,
           "before": 6,
+          "after": 4,
+          "bgMB": 4.3531036376953125,
+          "warmDone": false
+        },
+        {
+          "kind": "beastPounce",
+          "frames": 10,
+          "before": 5,
           "after": 5,
-          "bgMB": 4.467658996582031,
+          "bgMB": 4.402198791503906,
           "warmDone": true
         }
       ],
-      "maxUpdateMs": 27.6,
-      "maxDrawMs": 30.5
+      "maxUpdateMs": 39.5,
+      "maxDrawMs": 58.2
     }
   ],
   "errors": []
