@@ -14,8 +14,8 @@
     "mode": "realtime",
     "stance": "pikewall",
     "v": 1,
-    "kb": 45.93359375,
-    "ms": 0.5
+    "kb": 47.3544921875,
+    "ms": 0.30000000074505806
   },
   "pikewall": {
     "x0": 480,
@@ -25,30 +25,41 @@
     "stance": "pikewall",
     "mode": "realtime"
   },
+  "continuity": {
+    "sameModel": true,
+    "state": "realtime",
+    "round": 4,
+    "previous": 3,
+    "smooth": true,
+    "healed": 60,
+    "expected": 60,
+    "once": true,
+    "residual": -1.8189894035458565e-12
+  },
   "full": {
     "state": "done",
-    "round": 9,
+    "round": 3,
     "result": "win",
-    "steps": 9895,
+    "steps": 2253,
     "actual": {
-      "inf": 60,
-      "gun": 30,
-      "arc": 86,
-      "cav": 74
+      "inf": 96,
+      "gun": 90,
+      "arc": 120,
+      "cav": 55
     },
     "expected": {
-      "inf": 60,
-      "gun": 30,
-      "arc": 86,
-      "cav": 74
+      "inf": 96,
+      "gun": 90,
+      "arc": 120,
+      "cav": 55
     },
-    "residual": 2.2737367544323206e-13,
-    "hp": 142.099958927679,
-    "total": 142.09995892767904,
+    "residual": -3.410605131648481e-13,
+    "hp": 299.95119458960266,
+    "total": 299.9511945896029,
     "goldBefore": 1200,
     "goldAfter": 1217,
     "paidOnce": true,
-    "body": 143
+    "body": 131
   },
   "retreat": {
     "done": true,
@@ -65,26 +76,26 @@
   "density": [
     {
       "setting": "standard",
-      "n": 158,
+      "n": 182,
       "totals": [
-        443.26520425747213,
-        391.9700047262661
+        455.4269914011196,
+        381.4903061538107
       ]
     },
     {
       "setting": "dense",
-      "n": 158,
+      "n": 182,
       "totals": [
-        443.26520425747213,
-        391.9700047262661
+        455.4269914011196,
+        381.4903061538107
       ]
     },
     {
       "setting": "epic",
-      "n": 158,
+      "n": 182,
       "totals": [
-        443.26520425747213,
-        391.9700047262661
+        455.4269914011196,
+        381.4903061538107
       ]
     }
   ],
@@ -114,7 +125,7 @@
       "ended": 1,
       "HP": [
         [
-          30,
+          59,
           0
         ]
       ],
@@ -129,7 +140,7 @@
       "ended": 1,
       "HP": [
         [
-          90,
+          55,
           0
         ]
       ],
@@ -144,7 +155,7 @@
       "ended": 1,
       "HP": [
         [
-          90,
+          62,
           27
         ]
       ],
@@ -158,6 +169,6 @@
     "hidden": true,
     "children": 0
   },
-  "checks": 28,
+  "checks": 30,
   "errors": []
 }

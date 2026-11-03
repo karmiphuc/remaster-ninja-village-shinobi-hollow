@@ -27,6 +27,7 @@ const root=path.resolve(__dirname,'..'),html=path.join(root,'prototypes/Shinobi 
   ok(start.groups[0].x>start.groups[1].x&&start.groups[1].x>start.groups[2].x&&start.groups[2].x>start.groups[3].x&&start.groups[4].x<start.groups[5].x&&start.groups[5].x<start.groups[6].x&&start.groups[6].x<start.groups[7].x,'Formation order changed');
   result.realtime=await p.evaluate(require('./helpers/battlefield-realtime.cjs'));ok(result.realtime.failures.length===0,result.realtime.failures.join('\n'));
   result.tactics=await p.evaluate(require('./helpers/battlefield-tactics.cjs'));ok(result.tactics.failures.length===0,result.tactics.failures.join('\n'));
+  result.flow=await p.evaluate(require('./helpers/battlefield-flow.cjs'));ok(result.flow.failures.length===0,result.flow.failures.join('\n'));
   const steady=await p.evaluate(()=>{const n=__audit.canvas;for(let i=0;i<120;i++){GrandBattle.advance(1/60);GrandBattle.render();}return {allocated:__audit.canvas-n,now:GrandBattle.snapshot()};});
   ok(steady.allocated===0,'Rendering allocated new canvases');
   const run=async(step,iso=false)=>p.evaluate(({step,iso})=>{GrandBattle.reset(7711);if(iso)GrandBattle.angle();for(let t=0;t<40-1e-7;t+=step)GrandBattle.advance(step);const s=GrandBattle.snapshot();if(iso)GrandBattle.angle();return s;},{step,iso});
@@ -83,6 +84,6 @@ const root=path.resolve(__dirname,'..'),html=path.join(root,'prototypes/Shinobi 
   await live.waitForFunction(()=>GrandBattle?.ready,null,{timeout:60000});await live.waitForFunction(()=>GrandBattle.snapshot().time>4,null,{timeout:15000});const liveA=await live.evaluate(()=>GrandBattle.snapshot());
   ok(liveA.time>2.5,'Live loop stalled');await live.click('#pause');const paused=await live.evaluate(()=>GrandBattle.snapshot());await live.waitForTimeout(400);const still=await live.evaluate(()=>GrandBattle.snapshot());near(paused.time,still.time,'Paused game advanced');
   result.live={advancedSeconds:liveA.time,hud:await live.textContent('#perf')};await live.close();
-  ok(errors.length===0,errors.join('\n'));result.checks=checks+result.realtime.checks+result.tactics.checks;result.errors=errors;fs.writeFileSync(path.join(reportDir,'results.json'),JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));
+  ok(errors.length===0,errors.join('\n'));result.checks=checks+result.realtime.checks+result.tactics.checks+result.flow.checks;result.errors=errors;fs.writeFileSync(path.join(reportDir,'results.json'),JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));
  }finally{await browser.close();await new Promise(r=>server.close(r));}
 })().catch(e=>{console.error(e);process.exitCode=1;});

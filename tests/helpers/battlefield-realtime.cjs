@@ -7,9 +7,9 @@ module.exports=function mechanics(){
  const fixture=(counts,positions,mrk)=>make({troops:counts,positions,orders:allHold,mrk});
  const move=(c,id,x,y)=>{const f=c.groups[id],dx=x-f.x,dy=y-f.y;f.x=f.homeX=x;f.y=f.homeY=y;for(const m of f.members){m.x+=dx;m.y+=dy;m.vx=m.vy=0;}};
  const audit=(c,name)=>{const s=c.snapshot();near(s.residual,0,name+' ledger');near(s.hp,s.totals[0]+s.totals[1],name+' actor HP');ok(c.models.every(m=>m.hp>=0&&Number.isFinite(m.x)&&Number.isFinite(m.y)),name+' negative/invalid actor');ok(s.groups.every(f=>f.troops>=0&&f.landed+f.missed<=f.fired),name+' projectile accounting');};
- // Full opaque friendly screen: hold fire, then resume after it moves away.
+ // Friendly infantry is bypassed; rear guns fire without damaging or waiting on allies.
  let c=fixture([[1,1,0,0],[1,0,0,0]],{0:[450,500],1:[300,500],4:[650,500]});
- let s=wait(c,7);ok(s.groups[1].fired===0&&s.groups[1].blocked>0,'Gun fired through a friendly blocker');near(s.applied,0,'Blocked gun applied damage');
+ let s=wait(c,7);ok(s.groups[1].fired>0&&s.groups[1].landed>0,'Rear gun did not fire through allies');ok(s.applied>0,'Rear gun did not damage an enemy');
  move(c,0,450,560);s=wait(c,12);ok(s.groups[1].fired>0&&s.groups[1].landed>0,'Gun did not resume after lane cleared');near(c.groups[0].members[0].hp,1,'Friendly soldier took damage');audit(c,'cleared lane');
  out.firingLane={blockedAttempts:s.groups[1].blocked,shotsAfterClearing:s.groups[1].fired,hits:s.groups[1].landed};
  // Range is a prerequisite; bows can also be out of range rather than firing globally.
@@ -24,9 +24,9 @@ module.exports=function mechanics(){
  // Move a target after release: an arrow keeps its sampled endpoint; no damage is scheduled merely for firing.
  c=fixture([[0,0,1,0],[1,0,0,0]],{2:[300,500],4:[620,500]});let p=null;for(let i=0;i<360&&!p;i++){c.advance(1/60);p=c.shots.find(p=>p.on);}
  ok(!!p,'No arrow released for moving-target check');if(p){const x=p.x1,y=p.y1;c.groups[2].members[0].nextFire=Infinity;move(c,4,1050,500);s=wait(c,2);near(c.groups[4].members[0].hp,1,'Missed moving target took arrow damage');near(p.x1,x,'Arrow homed in X');near(p.y1,y,'Arrow homed in Y');ok(s.groups[2].missed===1,'Missed arrow not accounted');}audit(c,'moving arrow target');
- // A friendly can enter the ray after release. Stop the bullet without friendly HP damage.
+ // A friendly crossing after release is bypassed too; the enemy behind can still be hit.
  c=fixture([[1,1,0,0],[1,0,0,0]],{0:[490,560],1:[300,500],4:[700,500]});p=null;for(let i=0;i<360&&!p;i++){c.advance(1/60);p=c.shots.find(p=>p.on);}
- ok(!!p,'No bullet released for crossing check');if(p){c.groups[1].members[0].nextFire=Infinity;move(c,0,490,500);s=wait(c,1);near(c.groups[0].members[0].hp,1,'Crossing ally was shot');near(c.groups[4].members[0].hp,1,'Bullet damaged target beyond crossing ally');ok(s.groups[1].intercepted===1&&s.groups[1].missed===1,'Crossing interception not recorded');}audit(c,'crossing ally');
+ ok(!!p,'No bullet released for crossing check');if(p){c.groups[1].members[0].nextFire=Infinity;move(c,0,490,500);s=wait(c,1);near(c.groups[0].members[0].hp,1,'Crossing ally was shot');ok(c.groups[4].members[0].hp<1,'Bullet stopped at a crossing ally');ok(s.groups[1].intercepted===0&&s.groups[1].landed===1,'Friendly bypass not recorded as a hit');}audit(c,'crossing ally');
  // Projectile power belongs to release time, including when its shooter is later wounded or buffed.
  const shotDamage=[];for(const buff of [1,1000]){c=fixture([[0,6000,0,0],[200000,0,0,0]],{1:[300,500],4:[700,500]});p=null;for(let i=0;i<360&&!p;i++){c.advance(1/60);p=c.shots.find(p=>p.on);}ok(!!p,'No projectile for release-power check');if(p){for(const m of c.groups[1].members)m.nextFire=Infinity;c.groups[1].g.atkMul*=buff;s=wait(c,1);shotDamage.push(s.applied);audit(c,'release power '+buff);}}
  ok(shotDamage[0]>0,'Release-power projectile did not land');near(shotDamage[0],shotDamage[1],'In-flight projectile changed power after release');out.releaseDamage=shotDamage[0];

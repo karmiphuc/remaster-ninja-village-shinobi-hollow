@@ -1,0 +1,107 @@
+{
+  "environment": "Chromium, 430x932 CSS px, DPR 3 device / DPR 2 battlefield; software rendering, not physical Safari",
+  "samples": [
+    {
+      "cap": 36,
+      "officers": 0,
+      "models": 288,
+      "extras": 0,
+      "artSets": 16,
+      "atlasMB": 4.8330078125,
+      "canvas": [
+        860,
+        1864
+      ],
+      "startMB": 27.736434936523438,
+      "endMB": 27.741989135742188,
+      "seconds": 8.400000000000103,
+      "updateMedian": 0.30000000074505806,
+      "updateP95": 3.900000002235174,
+      "renderMedian": 3.800000000745058,
+      "renderP95": 56.69999999925494,
+      "canvasesCreated": 3,
+      "renderCanvases": 0,
+      "setsBefore": 16,
+      "setsAfter": 16,
+      "maxMB": 27.736434936523438,
+      "residual": 9.094947017729282e-13
+    },
+    {
+      "cap": 36,
+      "officers": 16,
+      "models": 288,
+      "extras": 48,
+      "artSets": 48,
+      "atlasMB": 19.146621704101562,
+      "canvas": [
+        860,
+        1864
+      ],
+      "startMB": 46.391197204589844,
+      "endMB": 46.40825653076172,
+      "seconds": 8.400000000000103,
+      "updateMedian": 0.30000000074505806,
+      "updateP95": 2.5,
+      "renderMedian": 3.2999999970197678,
+      "renderP95": 40.30000000074506,
+      "canvasesCreated": 9,
+      "renderCanvases": 0,
+      "setsBefore": 48,
+      "setsAfter": 48,
+      "maxMB": 46.402503967285156,
+      "residual": 9.094947017729282e-13
+    },
+    {
+      "cap": 48,
+      "officers": 0,
+      "models": 384,
+      "extras": 0,
+      "artSets": 16,
+      "atlasMB": 4.8330078125,
+      "canvas": [
+        860,
+        1864
+      ],
+      "startMB": 28.35321807861328,
+      "endMB": 28.370079040527344,
+      "seconds": 8.400000000000103,
+      "updateMedian": 0.5,
+      "updateP95": 4.100000001490116,
+      "renderMedian": 5.100000001490116,
+      "renderP95": 64.30000000074506,
+      "canvasesCreated": 9,
+      "renderCanvases": 0,
+      "setsBefore": 16,
+      "setsAfter": 16,
+      "maxMB": 28.36432647705078,
+      "residual": -4.547473508864641e-13
+    },
+    {
+      "cap": 48,
+      "officers": 16,
+      "models": 384,
+      "extras": 48,
+      "artSets": 47,
+      "atlasMB": 18.978775024414062,
+      "canvas": [
+        860,
+        1864
+      ],
+      "startMB": 46.773223876953125,
+      "endMB": 46.79008483886719,
+      "seconds": 8.400000000000103,
+      "updateMedian": 0.4000000022351742,
+      "updateP95": 2.5,
+      "renderMedian": 4.599999997764826,
+      "renderP95": 46.80000000074506,
+      "canvasesCreated": 9,
+      "renderCanvases": 0,
+      "setsBefore": 47,
+      "setsAfter": 47,
+      "maxMB": 46.79008483886719,
+      "residual": 4.547473508864641e-13
+    }
+  ],
+  "errors": [],
+  "checks": 23
+}

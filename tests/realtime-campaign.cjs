@@ -29,6 +29,14 @@ const root=path.resolve(__dirname,'..');
  ok(result.pikewall.stance==='pikewall'&&result.pikewall.x0===result.pikewall.x1&&result.pikewall.y0===result.pikewall.y1,'Pikewall moved');
  await p.evaluate(()=>{BT.speed=0;rtSelectFormation(BT.rt.model.groups.find(f=>f.side===0&&f.type==='cav').id);drawBattle();});
  fs.mkdirSync(path.join(root,'reports/realtime-campaign'),{recursive:true});await p.screenshot({path:path.join(root,'reports/realtime-campaign/cavalry-targets.png')});
+ // Window bookkeeping must not pause marching; recovery stays once per round and overtime cannot auto-defeat.
+ result.continuity=await p.evaluate(()=>{closeBattle();rtTestFresh();G.battleMode='realtime';rtTestStart([2000,600,600,500]);rtTestEnter();const R=BT.rt,M=R.model,g=BT.A[0].groups.find(g=>g.type==='inf');
+  for(const f of M.groups){M.order(f.id,'hold');for(const m of f.members){m.nextFire=m.nextStrike=Infinity;}}
+  g.mods.medic=1;g.troops-=100;M.reconcile();BT.round=BT.maxR;const round=BT.round,hp=g.troops;M.advance(24.9);let smooth=true,steps=0;BT.speed=1;
+  while(BT.round===round&&steps++<60){const t=M.time;updateBattle(1/30);smooth&&=BT.state==='realtime'&&M.time>t;}
+  const healed=g.troops-hp,first=g.cohRecovered;updateBattle(1/30);return {sameModel:BT.rt===R,state:BT.state,round:BT.round,previous:round,smooth,healed,expected:g.start*.03,once:g.cohRecovered===first,residual:M.snapshot().residual};});
+ ok(result.continuity.sameModel&&result.continuity.smooth&&result.continuity.state==='realtime'&&result.continuity.round===result.continuity.previous+1,'Real-time window inserted a pause or automatic defeat');
+ ok(Math.abs(result.continuity.healed-result.continuity.expected)<1e-7&&result.continuity.once&&Math.abs(result.continuity.residual)<1e-6,'Seamless window skipped or duplicated medicine');
  // A complete real-time campaign fight uses the existing reward/loss/wounded ledger exactly once.
  result.full=await p.evaluate(()=>{closeBattle();rtTestFresh();G.battleMode='realtime';const before=G.gold;rtTestStart();rtTestEnter();let steps=0;for(;steps<50000&&BT.state!=='done';steps++)updateBattle(1/30);const s=BT.rt.model.snapshot(),expected={};const wf=BT.result==='win'?.3:BT.result==='draw'?.2:.1;
   for(const g of BT.A[0].groups)expected[g.type]=Math.ceil(g.troops)+Math.round(Math.max(0,g.start-Math.ceil(g.troops))*wf);const paid=G.gold;finishBattle(BT.result);for(let i=0;i<100;i++)updateBattle(1/30);return {state:BT.state,round:BT.round,result:BT.result,steps,actual:G.troops,expected,residual:s.residual,hp:s.hp,total:s.totals[0]+s.totals[1],goldBefore:before,goldAfter:paid,paidOnce:G.gold===paid,body:s.fallen+s.routed};});
