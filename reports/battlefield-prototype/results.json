@@ -1,0 +1,205 @@
+{
+  "realtime": {
+    "firingLane": {
+      "blockedAttempts": 39,
+      "shotsAfterClearing": 3,
+      "hits": 3
+    },
+    "mrk": [
+      {
+        "mrk": 0,
+        "cadence": 6,
+        "shots": 144,
+        "hits": 144
+      },
+      {
+        "mrk": 80,
+        "cadence": 3.8297872340425534,
+        "shots": 226,
+        "hits": 223
+      }
+    ],
+    "arrows": {
+      "fired": 294,
+      "hits": 53,
+      "misses": 227,
+      "active": 14
+    },
+    "releaseDamage": 80.79068555813703,
+    "cavalry": [
+      {
+        "side": 0,
+        "charges": 4,
+        "withdrawals": 3,
+        "regroups": 3,
+        "firstTarget": "inf",
+        "strikes": 48,
+        "impacts": 35
+      },
+      {
+        "side": 1,
+        "charges": 4,
+        "withdrawals": 4,
+        "regroups": 3,
+        "firstTarget": "inf",
+        "strikes": 46,
+        "impacts": 31
+      }
+    ],
+    "concurrent": {
+      "gun": 32,
+      "arrows": 139,
+      "melee": 104
+    },
+    "seeds": [
+      {
+        "seed": 11,
+        "totals": [
+          868.1344414738863,
+          0
+        ],
+        "fallen": 211,
+        "routed": 29
+      },
+      {
+        "seed": 79,
+        "totals": [
+          719.5935266137299,
+          0
+        ],
+        "fallen": 230,
+        "routed": 20
+      },
+      {
+        "seed": 7711,
+        "totals": [
+          784.9504402691718,
+          0
+        ],
+        "fallen": 229,
+        "routed": 17
+      },
+      {
+        "seed": 9441,
+        "totals": [
+          841.3473709325706,
+          0
+        ],
+        "fallen": 228,
+        "routed": 15
+      },
+      {
+        "seed": 18937,
+        "totals": [
+          829.5637857573402,
+          0
+        ],
+        "fallen": 227,
+        "routed": 16
+      }
+    ],
+    "checks": 113,
+    "failures": []
+  },
+  "tactics": {
+    "flank": {
+      "shots": 4,
+      "position": [
+        535,
+        237.89999999999998
+      ]
+    },
+    "accuracy": [
+      {
+        "distance": 200,
+        "fired": 50,
+        "hits": 50,
+        "accuracy": 1
+      },
+      {
+        "distance": 350,
+        "fired": 50,
+        "hits": 50,
+        "accuracy": 1
+      },
+      {
+        "distance": 630,
+        "fired": 50,
+        "hits": 24,
+        "accuracy": 0.48
+      }
+    ],
+    "infantry": [
+      {
+        "stance": "line",
+        "lost": 433.8816616917793
+      },
+      {
+        "stance": "loose",
+        "lost": 529.1239776729017
+      },
+      {
+        "stance": "pikewall",
+        "lost": 291.01818772009574
+      }
+    ],
+    "cavalry": [
+      {
+        "charged": false,
+        "line": 111.24662802874772,
+        "skein": 89.39461180881513
+      },
+      {
+        "charged": true,
+        "line": 333.73988408624314,
+        "skein": 402.275753139668
+      }
+    ],
+    "disengagement": {
+      "tied": true,
+      "slowed": true
+    },
+    "checks": 20,
+    "failures": []
+  },
+  "desktop": {
+    "canvasMB": 31.582664489746094,
+    "canvases": 468,
+    "renderCanvasAllocations": 0,
+    "at40Seconds": [
+      1466.139922166182,
+      1123.8878668126158
+    ],
+    "final": [
+      784.9504402691718,
+      0
+    ],
+    "fallen": 229,
+    "routed": 17,
+    "deterministic30and60": true
+  },
+  "mobile": {
+    "count": 468,
+    "MB": 32.753929138183594,
+    "styles": 10,
+    "width": 860,
+    "height": 1864,
+    "backingDPR": 2,
+    "touchPinch": true,
+    "isolatedStorageAndAudio": {
+      "storage": 0,
+      "audio": 0
+    }
+  },
+  "standalone": {
+    "offlineDocument": true,
+    "externalAssets": 0,
+    "fileProtocol": "Managed browser policy blocks file:// navigation; physical Safari not tested"
+  },
+  "live": {
+    "advancedSeconds": 4.016666666666658,
+    "hud": "60 fps · p95 16.7 ms\n300 figures · 30.2 canvas MB\n10 shared rigs"
+  },
+  "checks": 176,
+  "errors": []
+}

@@ -1,0 +1,109 @@
+{
+  "browser": "Chromium headless; 430x932 CSS pixels; emulated DPR 3; display cap 2",
+  "physicalSafari": false,
+  "fixture": "Eight formations of 750 troops; officer case has sixteen actual equipped officers, each with two retainers",
+  "rows": [
+    {
+      "heroes": 0,
+      "sets": 16,
+      "atlasMB": 4.8330078125,
+      "reactionMB": 1.3402633666992188,
+      "state": "realtime",
+      "memory": {
+        "canvases": 1506,
+        "mb": 31.869361877441406
+      },
+      "canvas": [
+        860,
+        1864
+      ],
+      "afterGC": {
+        "canvases": 1500,
+        "mb": 28.32916259765625
+      },
+      "large": [
+        {
+          "w": 860,
+          "h": 1864,
+          "MB": 6.1151123046875,
+          "name": ""
+        },
+        {
+          "w": 1197,
+          "h": 429,
+          "MB": 1.9588966369628906,
+          "name": "gnd"
+        },
+        {
+          "w": 1197,
+          "h": 429,
+          "MB": 1.9588966369628906,
+          "name": "decal"
+        },
+        {
+          "w": 1197,
+          "h": 429,
+          "MB": 1.9588966369628906,
+          "name": ""
+        },
+        {
+          "w": 1822,
+          "h": 1017,
+          "MB": 7.068534851074219,
+          "name": ""
+        }
+      ]
+    },
+    {
+      "heroes": 2,
+      "sets": 47,
+      "atlasMB": 18.918350219726562,
+      "reactionMB": 4.1862945556640625,
+      "state": "realtime",
+      "memory": {
+        "canvases": 2916,
+        "mb": 50.22529602050781
+      },
+      "canvas": [
+        860,
+        1864
+      ],
+      "afterGC": {
+        "canvases": 2910,
+        "mb": 46.685096740722656
+      },
+      "large": [
+        {
+          "w": 860,
+          "h": 1864,
+          "MB": 6.1151123046875,
+          "name": ""
+        },
+        {
+          "w": 1197,
+          "h": 429,
+          "MB": 1.9588966369628906,
+          "name": "gnd"
+        },
+        {
+          "w": 1197,
+          "h": 429,
+          "MB": 1.9588966369628906,
+          "name": "decal"
+        },
+        {
+          "w": 1197,
+          "h": 429,
+          "MB": 1.9588966369628906,
+          "name": ""
+        },
+        {
+          "w": 1822,
+          "h": 1017,
+          "MB": 7.068534851074219,
+          "name": ""
+        }
+      ]
+    }
+  ]
+}

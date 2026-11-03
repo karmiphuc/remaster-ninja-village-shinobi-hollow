@@ -15,9 +15,15 @@ The whole game is one self-contained HTML file. It has no build step, no server 
 - **Dialogs:** a dialog never grows past the screen; its content scrolls. The dialogs you click straight through (the New Game campaign hand, the Year in review, duels, hunts and the battle deployment) have their buttons at the top as well as the bottom, and any other dialog too tall for the screen gets the top row too.
 - **Housing:** Shophouses provide no beds. Open a house and use **Recall home** below a resident to teleport them into normal rest and recovery, keeping their job and safely returning carried goods to storage. See [resident recall notes](docs/resident-recall.md).
 
+## Battle modes
+
+Choose **Village → Options → Battle: Classic / Real-time** before a battle. Classic is the default for new games and older saves. Real-time uses your actual campaign armies, continuous MRK-paced fire, physical projectiles, infantry contact and cavalry charge/regroup cycles. Tap a friendly formation to change its shape; select cavalry and tap an enemy formation or a target icon to name its preferred target. Tight infantry screens block friendly gunfire, forcing gunners to find exposed flanks. Siege walls and cinematic duels retain their existing rules. See [controls, balance, integration and validation](docs/battle-realtime.md).
+
+The separate [Grand Battlefield HTML](prototypes/Shinobi%20Hollow%20-%20Grand%20Battlefield.html) remains an isolated demonstration that never accesses your village save. See [prototype notes](docs/battlefield-prototype.md).
+
 ## Battlefield density and formations
 
-- **Battle density** (Village → Options, saved per device): **Standard** 25, **Dense** 36 (default) or **Epic** 48 soldiers at most per formation.
+- **Classic density** (Village → Options, saved per device): **Standard** 25, **Dense** 36 (default) or **Epic** 48 soldiers at most per formation. Real-time uses a fixed 36-figure cap per formation so this visual setting cannot affect physical targeting or outcomes.
   - At the start of each battle one soldier stands for a fixed number of men, so the largest formation fills the cap and smaller ones look smaller.
   - Troop numbers, casualties and combat results are the same at every setting. The tests run the same seeded battle at all three and compare every blow.
 - **Formations** stand in even, deterministic ranks spread over about 88% of the room between the HUD and the bottom of the screen, safe area included. The lines of men one behind another stand 1.75 body widths apart (body measured from the sprites, weapon left out), so each line's weapons show clear of the line in front; the ranks keep their close order down the field. When a big army needs it, the battlefield widens (up to about 3× its old width) and the camera pans further. Ranks keep their shape at rest and re-form after each clash. Charges, duels, casualties and routs still break them up for a moment.

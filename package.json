@@ -3,7 +3,10 @@
   "private": true,
   "version": "19.1.0",
   "scripts": {
-    "test": "node tests/run-all.cjs"
+    "test": "node tests/run-all.cjs",
+    "test:prototype": "node tests/battlefield-prototype.cjs",
+    "test:realtime": "node tests/realtime-campaign.cjs",
+    "test:duel-cold": "node tests/duel-cold-playback.cjs"
   },
   "devDependencies": {
     "playwright": "^1.56.1"
