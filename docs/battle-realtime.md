@@ -18,7 +18,7 @@ Infantry, gunners, archers and cavalry retain their original deployment order. I
 | Archers / gunners | +12% attack; 15% tighter dispersion | 10% less incoming damage; wider ranks | — |
 | Cavalry | +12% ordinary melee attack | +15% movement; 10% less ranged damage | Skein: +35% first charge impact; −10% ordinary melee attack |
 
-Gun cadence is **20% slower** than the initial prototype: the base interval rises from 4.8 to 6 seconds. Bow base cadence stays 3.25 seconds. Both use `base / (1 + .85 × MRK / (MRK + 40))`. Guns retain close/mid-range accuracy, with dispersion rising between 390 and their maximum 650-unit range. Bows reach 840. Repeater/rifle bursts emit their actual two/three projectiles with a reload trade-off. Charge bonuses apply to first impact only, not every defensive strike during withdrawal.
+Gun cadence is **20% slower** than the initial prototype: the base interval rises from 4.8 to 6 seconds. Bow base cadence stays 3.25 seconds. Both use `base / (1 + .85 × MRK / (MRK + 40))`. Guns and bows reach 840 units. Gun dispersion rises after 390, with a further long-range penalty beyond the former 650-unit limit; close/mid-range accuracy remains. Supporting ranged formations close the gap when rear-rank depth or an idle infantry screen would leave them unable to fire. Bow scatter is 14.3% wider, retaining MRK and stance benefits. See [the reproduced engagement failures and validation](realtime-engagement.md). Repeater/rifle bursts emit their actual two/three projectiles with a reload trade-off. Charge bonuses apply to first impact only, not every defensive strike during withdrawal.
 
 ## Integration and limits
 

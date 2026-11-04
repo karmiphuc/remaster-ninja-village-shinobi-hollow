@@ -1,0 +1,64 @@
+{
+  "method": "Sequential ABBA; 430x932 CSS pixels, DPR 3; 120 warm/360 measured frames, actual campaign; software Chromium, not physical Safari",
+  "before": [
+    {
+      "updateMedian": 0.3999999985098839,
+      "renderMedian": 2.5,
+      "frameMedian": 3.1999999955296516,
+      "frameP95": 76.90000000596046,
+      "drawCanvases": 0,
+      "updateCanvases": 3,
+      "memory": {
+        "canvases": 2985,
+        "mb": 47.959617614746094
+      },
+      "startMB": 47.954063415527344,
+      "endMB": 47.959617614746094
+    },
+    {
+      "updateMedian": 0.4000000059604645,
+      "renderMedian": 3.2000000029802322,
+      "frameMedian": 3.899999998509884,
+      "frameP95": 81.39999999850988,
+      "drawCanvases": 0,
+      "updateCanvases": 3,
+      "memory": {
+        "canvases": 2985,
+        "mb": 47.959617614746094
+      },
+      "startMB": 47.954063415527344,
+      "endMB": 47.959617614746094
+    }
+  ],
+  "after": [
+    {
+      "updateMedian": 0.5,
+      "renderMedian": 2.899999998509884,
+      "frameMedian": 3.7000000029802322,
+      "frameP95": 86.89999999850988,
+      "drawCanvases": 0,
+      "updateCanvases": 3,
+      "memory": {
+        "canvases": 2985,
+        "mb": 47.959617614746094
+      },
+      "startMB": 47.954063415527344,
+      "endMB": 47.959617614746094
+    },
+    {
+      "updateMedian": 0.5,
+      "renderMedian": 3.399999998509884,
+      "frameMedian": 4.4000000059604645,
+      "frameP95": 111.89999999850988,
+      "drawCanvases": 0,
+      "updateCanvases": 3,
+      "memory": {
+        "canvases": 2985,
+        "mb": 47.959617614746094
+      },
+      "startMB": 47.954063415527344,
+      "endMB": 47.959617614746094
+    }
+  ],
+  "errors": []
+}

@@ -14022,6 +14022,7 @@ window.GrandArt={style:grandStyle,prop:(k,side=0)=>grandOwn(propImg(k,side)),bui
 (()=>{'use strict';
 const STEP=1/60,THINK=.18,CELL=64,COLS=26,ROWS=20;
 const TYPES=['inf','gun','arc','cav'],FIGURES=[72,30,30,18],Y=500;
+const RANGES={gun:840,arc:840};
 const STANCES={
  inf:{line:{name:'Line',melee:.82,ranged:1,attack:1,speed:1,gap:.95},loose:{name:'Loose',melee:1,ranged:.90,attack:1,speed:1,gap:1.25},pikewall:{name:'Pikewall',melee:.55,ranged:1,attack:1,speed:0,gap:.92}},
  gun:{line:{name:'Line',melee:1,ranged:1,attack:1.12,speed:1,gap:.90,accuracy:.85},loose:{name:'Loose',melee:.90,ranged:.90,attack:1,speed:1,gap:1.25,accuracy:1}},
@@ -14029,7 +14030,7 @@ const STANCES={
  cav:{line:{name:'Line',melee:1,ranged:1,attack:1.12,speed:1,gap:1},loose:{name:'Loose',melee:1,ranged:.90,attack:1,speed:1.15,gap:1.18},skein:{name:'Skein',melee:1,ranged:1,attack:.90,charge:1.5,speed:1,gap:.82}}
 };
 function stance(f){return STANCES[f.type][f.stance]||STANCES[f.type].line;}
-function gunSpread(distance,mrk,accuracy=1){const t=clamp((distance-390)/260,0,1);return (distance*.0015+32*t*t)*(1-.35*Math.max(0,mrk)/(Math.max(0,mrk)+40))*accuracy;}
+function gunSpread(distance,mrk,accuracy=1){const t=clamp((distance-390)/260,0,1);return (distance*.0015+32*t*t+Math.max(0,distance-650)*.065)*(1-.35*Math.max(0,mrk)/(Math.max(0,mrk)+40))*accuracy;}
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 function hash(x,y=0){let n=Math.imul(x+7919,374761393)^Math.imul(y+104729,668265263);n=Math.imul(n^(n>>>13),1274126177);return ((n^(n>>>16))>>>0)/4294967296;}
 function cadence(type,mrk){const training=Math.max(0,mrk)/(Math.max(0,mrk)+40);return (type==='gun'?6:3.25)/(1+.85*training);}
@@ -14103,7 +14104,7 @@ function create(art,seed=7711,options={},ground=()=>0){
   for(let i=1;i<5;i++){const u=i/5;if(ground(a.x+(b.x-a.x)*u,a.y+(b.y-a.y)*u)>h0+(h1-h0)*u-2)return false;}return true;
  }
  function clearShot(m,target){return terrainClear(m,target);}
- function range(m){return m.f.type==='gun'?650:840;}
+ function range(m){return RANGES[m.f.type]||0;}
  function rangedTarget(m){let best=null;const max=range(m),r2=max*max;let hasBlocked=false;
   // Try nearer candidates first, without allocating a sorted target list every think.
   const candidates=m.candidates,scores=m.scores;scores.fill(Infinity);candidates.fill(null);
@@ -14169,7 +14170,12 @@ function create(art,seed=7711,options={},ground=()=>0){
    const e=closestFormation(f);if(e){
     if(f.type==='inf'){tx=e.bodyX-f.face*28;ty=e.bodyY;}
     else{let lead=null;for(const g of groups)if(g.side===f.side&&g.index<f.index&&g.g.troops>0&&g.type!=='cav'){lead=g;break;}
-     if(lead){tx=lead.bodyX-f.face*(f.type==='gun'?160:300);ty=f.homeY;}
+     if(lead){tx=lead.bodyX-f.face*(f.type==='gun'?160:300);ty=f.homeY;
+      // Support spacing must not strand the rear ranks outside weapon range, even behind a held screen.
+      const rear=Math.max(0,f.cols-1)*f.depthStep,reach=Math.max(70,RANGES[f.type]-rear-70);if(Math.max(0,e.minY-ty,ty-e.maxY)>reach*.5)ty=clamp(ty,e.minY,e.maxY);
+      const dy=Math.max(0,e.minY-ty,ty-e.maxY),across=Math.sqrt(Math.max(0,reach*reach-dy*dy)),close=e.bodyX-f.face*across;
+      tx=f.face>0?Math.max(tx,close):Math.min(tx,close);
+     }
      else{const stand=f.type==='gun'?Math.max(70,380-Math.max(0,time-f.lastShotAt-3)*22):500;if(Math.hypot(e.bodyX-f.x,e.bodyY-f.y)>stand+10){tx=e.bodyX-f.face*stand;ty=e.bodyY;}}
     }
    }
@@ -14195,13 +14201,14 @@ function create(art,seed=7711,options={},ground=()=>0){
   }
   if(f.type==='gun'&&f.order!=='hold'){
    const front=ownFront(f);
+   if(!front)m.fireLane=false;
    if(m.blocked&&m.blockedAt&&time-m.blockedAt>1.25&&front){const sign=m.row<(f.rows/2)?-1:1,outer=(front.rows-1)*front.stride/2;
     m.fireLane=true;m.laneX=front.x+f.face*(35-m.rank*23);m.laneY=front.y+sign*(outer+36+(m.row%Math.ceil(f.rows/2))*16);
    }
    if(m.fireLane){tx=m.laneX;ty=clamp(m.laneY,60,960);if(front&&Math.abs(m.y-ty)>18&&(m.x-front.x)*f.face<0)tx=front.x-f.face*(front.cols*front.depthStep+30);}
   }
   // Plant the feet for the aimed release/recoil; reloading can continue on the march.
-  if(f.type==='gun'&&(m.plantUntil>time||m.aimUntil>time&&m.target?.alive&&Math.hypot(m.target.x-m.x,m.target.y-m.y)<=range(m))){tx=m.x;ty=m.y;if(m.target?.alive)m.face=m.target.x>=m.x?1:-1;}
+  if(f.type==='gun'&&(m.plantUntil>time||m.aimUntil>time&&!m.blocked&&m.target?.alive&&Math.hypot(m.target.x-m.x,m.target.y-m.y)<=range(m))){tx=m.x;ty=m.y;if(m.target?.alive)m.face=m.target.x>=m.x?1:-1;}
   const dx=tx-m.x,dy=ty-m.y,d=Math.hypot(dx,dy),step=velocity*STEP;let nx=m.x,ny=m.y;
   if(d>.15&&!outcome){nx+=dx/d*Math.min(d,step);ny+=dy/d*Math.min(d,step);}
   m.vx=(nx-m.x)/STEP;m.vy=(ny-m.y)/STEP;m.moving=Math.abs(nx-m.x)+Math.abs(ny-m.y)>.02&&!outcome;m.x=nx;m.y=ny;
@@ -14226,7 +14233,7 @@ function create(art,seed=7711,options={},ground=()=>0){
  function launch(m,target,extra=false,powerScale=1){const f=m.f,type=f.type,max=range(m);let p=null;for(const q of shots)if(!q.on){p=q;break;}if(!p)return false;
   const dx=target.x-m.x,dy=target.y-m.y,d=Math.hypot(dx,dy);if(d>max)return false;
   const flight=type==='arc'?clamp(d/440,.7,1.8):d/1400,lead=type==='arc'?Math.min(flight,.65):0,lx=target.x+clamp(target.vx*lead,-38,38),ly=target.y+clamp(target.vy*lead,-38,38);
-  let ax=lx,ay=ly;if(type==='arc'){const mrk=f.g.mrk,spread=(14+d*.035)*(1-.65*mrk/(mrk+40))*(stance(f).accuracy||1),angle=sim.random()*Math.PI*2,r=Math.sqrt(sim.random())*spread;ax+=Math.cos(angle)*r;ay+=Math.sin(angle)*r;}
+  let ax=lx,ay=ly;if(type==='arc'){const mrk=f.g.mrk,spread=(16+d*.04)*(1-.65*mrk/(mrk+40))*(stance(f).accuracy||1),angle=sim.random()*Math.PI*2,r=Math.sqrt(sim.random())*spread;ax+=Math.cos(angle)*r;ay+=Math.sin(angle)*r;}
   if(type==='gun'){const spread=gunSpread(d,f.g.mrk,stance(f).accuracy||1),angle=sim.random()*Math.PI*2,r=Math.sqrt(sim.random())*spread;ax+=Math.cos(angle)*r;ay+=Math.sin(angle)*r;aimPoint.x=ax;aimPoint.y=ay;if(!terrainClear(m,aimPoint)){f.blocked++;m.blocked=true;return false;}}
   const len=Math.hypot(ax-m.x,ay-m.y)||1,ux=(ax-m.x)/len,uy=(ay-m.y)/len;
   const counter=f.g.mods?.counter||0,incoming=counter>0&&d<=260&&(target.f.type==='inf'||target.f.type==='cav')&&(target.vx*(m.x-target.x)+target.vy*(m.y-target.y)>1||target.f.engaged);
@@ -14257,7 +14264,8 @@ function create(art,seed=7711,options={},ground=()=>0){
    }else{
     if(m.burstLeft&&time>=m.burstAt){if(!m.target?.alive)m.target=rangedTarget(m);if(time>m.burstUntil||!m.target?.alive)m.burstLeft=0;else if(launch(m,m.target,true)){m.burstLeft--;m.burstAt=time+.14;}else m.burstAt=time+.05;}
     if(m.rapidAt&&time>=m.rapidAt){if(!m.target?.alive)m.target=rangedTarget(m);if(time>m.rapidUntil||!m.target?.alive)m.rapidAt=0;else if(launch(m,m.target,'rapid',m.rapidScale))m.rapidAt=0;else m.rapidAt=time+.05;}
-    if(m.target?.alive&&time>=m.nextFire-.2){m.aimUntil=time+.15;if(type==='gun'){m.moving=false;m.vx=m.vy=0;}}
+    if(m.target?.alive&&time>=m.nextFire-.2&&Math.hypot(m.target.x-m.x,m.target.y-m.y)<=range(m)&&(type!=='gun'||!m.blocked)){m.aimUntil=time+.15;if(type==='gun'){m.moving=false;m.vx=m.vy=0;}}
+    else if(type==='gun')m.aimUntil=0;
     if(time>=m.nextFire){if(!m.target?.alive||!launch(m,m.target))m.nextFire=time+.18;}
    }
   }
