@@ -1,4 +1,4 @@
-// Duel art must preserve the pre-art-change HP ledger, including multi-champion assistance and burst weapons.
+// Duel art preserves non-burst baseline HP ledgers; burst reload removal intentionally changes those weapons.
 const fs=require('fs'),http=require('http'),path=require('path'),assert=require('assert'),{chromium}=require('playwright'),install=require('../tools/duel-art-fixture.cjs');
 const root=path.resolve(__dirname,'..'),baseline=path.join(root,'reports/duel-execution-baseline.json');
 (async()=>{
@@ -16,7 +16,9 @@ const root=path.resolve(__dirname,'..'),baseline=path.join(root,'reports/duel-ex
   }finally{simRestore(S);}
  });
  if(process.env.DUEL_RECORD_BASELINE){fs.writeFileSync(baseline,JSON.stringify({source:'d6b0970aecd75a043e82d55188c463596b0781b0',ledger},null,2));console.log('Captured '+ledger.length+' pre-art duel ledgers');return;}
- assert.deepStrictEqual(ledger,JSON.parse(fs.readFileSync(baseline)).ledger,'Art changed real duel outcomes');
+ // Removing burst reload turns intentionally changes those 24 ledgers; retain exact checks for all other weapons.
+ const unaltered=r=>r.w!=='repeater'&&r.w!=='rifle';
+ assert.deepStrictEqual(ledger.filter(unaltered),JSON.parse(fs.readFileSync(baseline)).ledger.filter(unaltered),'Art changed real duel outcomes');
  await install(p);
  const report=await p.evaluate(()=>{
   const S=simPrepare(),out={};let checks=0;const ok=(v,m)=>{checks++;if(!v)throw Error(m);};
@@ -90,6 +92,6 @@ const root=path.resolve(__dirname,'..'),baseline=path.join(root,'reports/duel-ex
    out.runs=runs;out.cinematicSeconds=DUEL_CINE_TIME;out.checks=checks;return out;
   }finally{if(BT)closeBattle();simRestore(S);}
  });
- assert.deepStrictEqual(errors,[]);report.ledgerCases=ledger.length;report.unchangedHPDamage=true;fs.writeFileSync(path.join(root,'reports/duel-executions.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
+ assert.deepStrictEqual(errors,[]);report.ledgerCases=ledger.length;report.exactBaselineCases=ledger.filter(unaltered).length;report.burstCadenceCases=ledger.filter(r=>!unaltered(r)).length;report.unchangedNonBurstHPDamage=true;fs.writeFileSync(path.join(root,'reports/duel-executions.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2));
  }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

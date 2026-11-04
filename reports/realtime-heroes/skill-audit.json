@@ -1,0 +1,239 @@
+{
+  "checks": 3098,
+  "volley": {
+    "seconds": 12.000000000000176,
+    "fired": 72,
+    "landed": 64,
+    "damage": 251.1152587973257,
+    "maxSimultaneousFire": 22,
+    "peakShotsPer200ms": 12,
+    "walkingWhileInRange": 0.6523654916512059,
+    "hist": [
+      0,
+      0,
+      0,
+      12,
+      12,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      12,
+      12,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      12,
+      12,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "vanguard": null,
+    "residual": -1.1368683772161603e-13
+  },
+  "skills": {
+    "rapid": [
+      {
+        "level": 0,
+        "fired": 196,
+        "strikes": 0,
+        "damage": 26.993235288907844,
+        "rapid": 0,
+        "chain": 0,
+        "residual": -2.149036504306423e-11
+      },
+      {
+        "level": 3,
+        "fired": 332,
+        "strikes": 0,
+        "damage": 35.48283869367482,
+        "rapid": 136,
+        "chain": 0,
+        "residual": -4.696687483374262e-11
+      }
+    ],
+    "chain": [
+      {
+        "level": 0,
+        "fired": 0,
+        "strikes": 238,
+        "damage": 4.071112570927131,
+        "rapid": 0,
+        "chain": 0,
+        "residual": -5.951150683358719e-11
+      },
+      {
+        "level": 3,
+        "fired": 0,
+        "strikes": 392,
+        "damage": 5.346201337345021,
+        "rapid": 0,
+        "chain": 154,
+        "residual": 1.1295142599010433e-10
+      }
+    ],
+    "counter": [
+      {
+        "level": 0,
+        "shots": 0,
+        "damage": 20.17738271795283,
+        "residual": -2.8709479238386848e-11
+      },
+      {
+        "level": 3,
+        "shots": 50,
+        "damage": 26.73243312632556,
+        "residual": -7.338485374930315e-11
+      }
+    ],
+    "numeric": {
+      "attackup": [
+        1.1072170898877085,
+        1.4393822168540211
+      ],
+      "marksman": [
+        1.7715473438203337,
+        2.1967187063372138
+      ],
+      "arrowres": [
+        20,
+        14
+      ],
+      "bulletres": [
+        20,
+        14
+      ],
+      "horseres": [
+        20,
+        14
+      ],
+      "shadow": [
+        20,
+        17
+      ],
+      "ironwall": [
+        1.84740625,
+        2.2907837499999997
+      ],
+      "vanguard": [
+        30.4,
+        44.08
+      ],
+      "duelist": [
+        35,
+        44
+      ],
+      "strategy": [
+        1.1072170898877085,
+        1.2732996533708647
+      ],
+      "laststand": [
+        0.9949749999999999,
+        1.126855
+      ]
+    },
+    "cavalry": [
+      {
+        "charge": 1.6608256348315629,
+        "ordinary": 1.572485950458795
+      },
+      {
+        "charge": 2.1590733252810317,
+        "ordinary": 1.572485950458795
+      }
+    ],
+    "medic": {
+      "recovered": 9000,
+      "once": true
+    }
+  },
+  "vanguard": {
+    "leads": [
+      126.56410555254297,
+      126.564608192126
+    ],
+    "bothSides": 2,
+    "moving": true,
+    "honjinPreserved": true
+  },
+  "mass": {
+    "models": 384,
+    "peakProjectiles": 267,
+    "pool": 384,
+    "completedBursts": 96
+  },
+  "audit": {
+    "battle": [
+      "chain",
+      "rapid",
+      "strategy",
+      "arrowres",
+      "bulletres",
+      "horseres",
+      "attackup",
+      "shadow",
+      "medic",
+      "vanguard",
+      "ironwall",
+      "marksman",
+      "cavmaster",
+      "duelist",
+      "laststand",
+      "siegecraft",
+      "counter",
+      "quartermaster"
+    ],
+    "village": [
+      "strongback",
+      "greenthumb",
+      "artisan",
+      "swift",
+      "tireless",
+      "haggler"
+    ]
+  },
+  "errors": []
+}

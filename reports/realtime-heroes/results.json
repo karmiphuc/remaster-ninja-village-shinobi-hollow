@@ -1,0 +1,196 @@
+{
+  "engagement": [
+    {
+      "type": "inf",
+      "post": "line",
+      "x": 791.8313763571967,
+      "hp": 159.99450629918027,
+      "shots": 0,
+      "strikes": 6,
+      "damage": 0.8177497396348292,
+      "charges": 1
+    },
+    {
+      "type": "inf",
+      "post": "van",
+      "x": 817.5819570473936,
+      "hp": 159.94623979253672,
+      "shots": 0,
+      "strikes": 8,
+      "damage": 2.644628750603042,
+      "charges": 1
+    },
+    {
+      "type": "gun",
+      "post": "line",
+      "x": 487.1441324533529,
+      "hp": 160,
+      "shots": 9,
+      "strikes": 0,
+      "damage": 4.6833573935039166,
+      "charges": 0
+    },
+    {
+      "type": "gun",
+      "post": "van",
+      "x": 494.2496378820775,
+      "hp": 160,
+      "shots": 9,
+      "strikes": 0,
+      "damage": 13.197562843829763,
+      "charges": 0
+    },
+    {
+      "type": "arc",
+      "post": "line",
+      "x": 407.91623973123535,
+      "hp": 160,
+      "shots": 5,
+      "strikes": 0,
+      "damage": 0.4204722823095922,
+      "charges": 0
+    },
+    {
+      "type": "arc",
+      "post": "van",
+      "x": 415.4996468647625,
+      "hp": 160,
+      "shots": 5,
+      "strikes": 0,
+      "damage": 2.0403559605205612,
+      "charges": 0
+    },
+    {
+      "type": "cav",
+      "post": "line",
+      "x": 665.731045947843,
+      "hp": 160,
+      "shots": 0,
+      "strikes": 0,
+      "damage": 0,
+      "charges": 0
+    },
+    {
+      "type": "cav",
+      "post": "van",
+      "x": 783.9540714334722,
+      "hp": 159.98804530099474,
+      "shots": 0,
+      "strikes": 5,
+      "damage": 4.660025920846359,
+      "charges": 1
+    }
+  ],
+  "commitment": {
+    "before": 5,
+    "after": 7,
+    "xBefore": 783.9540714334722,
+    "xAfter": 783.9540714334722,
+    "formationState": "withdraw"
+  },
+  "budgets": [
+    {
+      "type": "inf",
+      "personal": 1799.9999999999998,
+      "rankMultiplier": 1,
+      "cap": 1800
+    },
+    {
+      "type": "gun",
+      "personal": 1799.9999999999998,
+      "rankMultiplier": 1,
+      "cap": 1800
+    },
+    {
+      "type": "arc",
+      "personal": 1799.9999999999998,
+      "rankMultiplier": 1,
+      "cap": 1800
+    },
+    {
+      "type": "cav",
+      "personal": 1724.9999999999995,
+      "rankMultiplier": 1,
+      "cap": 1800
+    }
+  ],
+  "officerHP": {
+    "before": 160,
+    "after": 159.91968581036258,
+    "troopsBefore": 100,
+    "troopsAfter": 100
+  },
+  "lastStand": {
+    "rankTroops": 0,
+    "healthBeforeKO": 159.98763054978997,
+    "strikes": 9,
+    "result": "lose"
+  },
+  "bursts": [
+    {
+      "weapon": "repeater",
+      "shots": 8,
+      "cadence": 4.295942720763723,
+      "releases": [
+        0.49999999999999994,
+        4.799999999999988,
+        9.100000000000032,
+        13.400000000000245
+      ],
+      "duelRounds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ]
+    },
+    {
+      "weapon": "rifle",
+      "shots": 12,
+      "cadence": 4.295942720763723,
+      "releases": [
+        0.49999999999999994,
+        4.799999999999988,
+        9.100000000000032,
+        13.400000000000245
+      ],
+      "duelRounds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ]
+    }
+  ],
+  "render": {
+    "mb": 47.36981964111328,
+    "models": 384,
+    "officers": 16,
+    "extras": 48,
+    "beforeCollectionMB": 47.371742248535156
+  },
+  "checks": 133,
+  "errors": [],
+  "sourceSha256": "8faa9f9f0f94a839a6b3b4a520d017c9c4555fc59463c3dfb77859a4c20ac7df",
+  "download": "Shinobi Hollow.html"
+}

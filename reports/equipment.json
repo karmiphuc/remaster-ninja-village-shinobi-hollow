@@ -2,38 +2,54 @@
   "additions": 11,
   "duelSamples": {
     "duels": 1100,
-    "clawPairs": 2793,
-    "clawTriples": 1384,
-    "shots": 8820,
-    "reloads": 4433,
-    "kos": 2502,
-    "counters": 12089,
-    "assists": 2011
+    "clawPairs": 1965,
+    "clawTriples": 1041,
+    "shots": 15348,
+    "reloads": 0,
+    "kos": 2508,
+    "counters": 12517,
+    "assists": 2793
   },
   "burstCadence": {
     "repeater": {
       "shots": 2,
       "attackRounds": [
         0,
+        1,
         2,
+        3,
         4,
+        5,
         6,
+        7,
         8,
+        9,
         10,
-        12
+        11,
+        12,
+        13
       ],
-      "reloads": 7
+      "reloads": 0
     },
     "rifle": {
       "shots": 3,
       "attackRounds": [
         0,
+        1,
+        2,
         3,
+        4,
+        5,
         6,
+        7,
+        8,
         9,
-        12
+        10,
+        11,
+        12,
+        13
       ],
-      "reloads": 9
+      "reloads": 0
     }
   },
   "antiCavalry": true,

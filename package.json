@@ -12,6 +12,7 @@
     "test:realtime-review": "node tests/realtime-review.cjs",
     "test:realtime-volleys": "node tests/realtime-volley-skills.cjs",
     "test:realtime-engagement": "node tests/realtime-engagement.cjs",
+    "test:realtime-heroes": "node tests/realtime-heroes.cjs",
     "test:realtime-perf": "node tests/realtime-flow-performance.cjs",
     "test:battle-balance": "node tests/battle-balance-performance.cjs",
     "test:duel-cold": "node tests/duel-cold-playback.cjs"

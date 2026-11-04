@@ -1,0 +1,30 @@
+Standalone SHA-256: 8faa9f9f0f94a839a6b3b4a520d017c9c4555fc59463c3dfb77859a4c20ac7df
+
+Core combat integration
+Running 10 suite(s), 3 at a time…
+PASS  equipment      23.1s
+PASS  duel-executions   70.6s
+PASS  tactics       116.1s
+PASS  siege         173.5s
+PASS  realtime-review   49.9s
+PASS  battle-auto-resolve   13.7s
+PASS  realtime-campaign  173.9s
+PASS  duel-cold-playback  233.3s
+PASS  realtime-engagement  113.6s
+PASS  realtime-volley-skills  183.4s
+
+10/10 passed in 420.5s wall time (1151.1s if run one after another).
+
+Final controller/burst checks
+Running 4 suite(s), 2 at a time…
+PASS  equipment      15.7s
+PASS  realtime-campaign   82.4s
+PASS  realtime-volley-skills  118.3s
+PASS  realtime-heroes   55.4s
+
+4/4 passed in 137.8s wall time (271.8s if run one after another).
+
+Downloaded standalone hero checks
+PASS: 133 checks; no browser errors.
+
+Standalone prototype: 245 checks passed; no browser errors.

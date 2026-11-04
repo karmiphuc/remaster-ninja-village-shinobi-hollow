@@ -9,6 +9,7 @@ const ALL = ['density', 'siege', 'battle-end', 'battle-heraldry', 'field-combat'
 ALL.push('assignment-mounts');
 ALL.push('realtime-volley-skills');
 ALL.push('realtime-engagement');
+ALL.push('realtime-heroes');
 const pick = process.argv.slice(2), suites = pick.length ? ALL.filter(s => pick.includes(s)) : ALL;
 const unknown = pick.filter(s => !ALL.includes(s));
 if (unknown.length) { console.error('Unknown suite(s): ' + unknown.join(', ') + '. Known: ' + ALL.join(', ')); process.exit(2); }

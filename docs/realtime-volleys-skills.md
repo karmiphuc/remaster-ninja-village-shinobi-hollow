@@ -1,5 +1,7 @@
 # Real-time volleys, hero skills and Vanguard behavior
 
+The [officer combat follow-up](realtime-heroes.md) replaces regular officers' formation-proxy attacks with their own HP-based field combat, and removes the extra burst reload turns. The paired volley measurements below describe the earlier build.
+
 The earlier checks covered damage, campaign settlement and render errors, but did not establish readable firing ranks. This review reproduces the actual campaign field rather than relying on the art viewer.
 
 ## Corrections

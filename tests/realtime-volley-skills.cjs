@@ -56,7 +56,7 @@ const root=path.resolve(__dirname,'..'),dir=path.join(root,'reports/realtime-vol
    for(let i=0;i<150;i++){step(R,1/60);moving||=vans.some(m=>m.moving);}
    for(const m of vans){const line=R.extras.find(q=>q.f===m.f&&q.source.hero?.post==='line');leads.push((m.x-line.x)*m.f.face);ok(leads.at(-1)>25,'Vanguard did not take the lead');}
    ok(moving&&vans.every(m=>m.chargeTarget?.alive),'Vanguard has no charge/pursuit behavior');
-   const actual=vans[0];R.model.order(actual.f.id,'hold');step(R,2);ok((actual.x-actual.f.x)*actual.f.face<12,'Vanguard ignored explicit Hold');
+   const actual=vans[0],heldX=actual.x,heldY=actual.y;R.model.order(actual.f.id,'hold');step(R,2);near(actual.x,heldX,'Vanguard ignored explicit Hold X');near(actual.y,heldY,'Vanguard ignored explicit Hold Y');
    const HQ=volleyFixture({post:'hq',skill:'vanguard'}),camp=HQ.extras.filter(m=>m.hq);step(HQ,3);ok(camp.length>0&&camp.every(m=>!m.vanguard&&(m.f.side?m.x===1335:m.x===65)),'Honjin officer charged out of camp');
    const vanguard={leads,bothSides:vans.length,moving,honjinPreserved:true};
    // A full field with real triple-barrel styles and Rapid Shot must finish each released burst.
