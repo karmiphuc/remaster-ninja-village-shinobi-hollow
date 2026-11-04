@@ -1,0 +1,197 @@
+{
+  "fields": [
+    {
+      "label": "win",
+      "result": "win",
+      "round": 1,
+      "totals": [
+        454.6486870468865,
+        0
+      ],
+      "actual": {
+        "inf": 294,
+        "gun": 76,
+        "arc": 70,
+        "cav": 20
+      },
+      "expected": {
+        "inf": 294,
+        "gun": 76,
+        "arc": 70,
+        "cav": 20
+      },
+      "gold": 37,
+      "once": true,
+      "double": false,
+      "fieldWork": 0,
+      "visible": false
+    },
+    {
+      "label": "lose",
+      "result": "lose",
+      "round": 1,
+      "totals": [
+        0,
+        499.7199647591892
+      ],
+      "actual": {
+        "inf": 0,
+        "gun": 0,
+        "arc": 0,
+        "cav": 0
+      },
+      "expected": {
+        "inf": 0,
+        "gun": 0,
+        "arc": 0,
+        "cav": 0
+      },
+      "gold": 0,
+      "once": true,
+      "double": false,
+      "fieldWork": 0,
+      "visible": false
+    },
+    {
+      "label": "overtime",
+      "result": "lose",
+      "round": 40,
+      "totals": [
+        0,
+        0.08457209939642378
+      ],
+      "actual": {
+        "inf": 0,
+        "gun": 0,
+        "arc": 0,
+        "cav": 0
+      },
+      "expected": {
+        "inf": 0,
+        "gun": 0,
+        "arc": 0,
+        "cav": 0
+      },
+      "gold": 0,
+      "once": true,
+      "double": false,
+      "fieldWork": 0,
+      "visible": false
+    }
+  ],
+  "sites": [
+    {
+      "kind": "clan",
+      "result": "lose",
+      "rounds": 7,
+      "breached": true,
+      "gate": 0,
+      "fieldWork": 0,
+      "drill": false,
+      "troopsSame": false,
+      "dojo": 1,
+      "cooldown": 0,
+      "duels": 2,
+      "report": true,
+      "v": 1
+    },
+    {
+      "kind": "dojo",
+      "result": "win",
+      "rounds": 1,
+      "fieldWork": 0,
+      "drill": true,
+      "troopsSame": true,
+      "dojo": 2,
+      "cooldown": 2,
+      "duels": 0,
+      "report": true,
+      "v": 1
+    },
+    {
+      "kind": "land",
+      "result": "win",
+      "rounds": 3,
+      "fieldWork": 0,
+      "drill": false,
+      "troopsSame": true,
+      "dojo": 1,
+      "cooldown": 0,
+      "land": true,
+      "duels": 0,
+      "report": true,
+      "v": 1
+    },
+    {
+      "kind": "hunt",
+      "result": "win",
+      "rounds": 5,
+      "fieldWork": 0,
+      "drill": false,
+      "troopsSame": true,
+      "dojo": 1,
+      "cooldown": 0,
+      "duels": 0,
+      "report": true,
+      "v": 1
+    }
+  ],
+  "march": {
+    "first": {
+      "id": "mistwood",
+      "left": 0.2857142857142857,
+      "total": 0.2857142857142857,
+      "from": "home",
+      "name": "Yamato",
+      "autoResolve": true
+    },
+    "persisted": true,
+    "headless": true
+  },
+  "retreat": {
+    "result": "lose",
+    "retreat": true,
+    "both": true
+  },
+  "wallPenalty": {
+    "field": 20.8,
+    "lob": 3.2760000000000002,
+    "tag": true
+  },
+  "rescues": [
+    {
+      "save": "ward",
+      "committed": 2,
+      "expected": 2,
+      "ward": true,
+      "lost": 0,
+      "koAfter": false,
+      "hp": 9,
+      "formation": 500
+    },
+    {
+      "save": "guard",
+      "committed": 2,
+      "expected": 2,
+      "ward": false,
+      "lost": 1,
+      "koBefore": true,
+      "koAfter": false,
+      "hp": 7.5,
+      "formation": 500
+    },
+    {
+      "save": null,
+      "committed": 2,
+      "expected": 2,
+      "ward": false,
+      "lost": 0,
+      "koBefore": true,
+      "koAfter": true,
+      "hp": 0,
+      "formation": 500
+    }
+  ],
+  "checks": 33,
+  "errors": []
+}

@@ -1,0 +1,13 @@
+Running 10 suite(s), 3 at a time…
+PASS  pursuit-siege   23.0s
+PASS  campaign       20.3s
+PASS  equipment       7.1s
+PASS  siege          56.0s
+PASS  duel-executions   30.2s
+PASS  realtime-review   20.3s
+PASS  battle-end    103.0s
+PASS  battle-auto-resolve    4.3s
+PASS  armory-presets    4.5s
+PASS  realtime-campaign   57.0s
+
+10/10 passed in 113.0s wall time (325.5s if run one after another).

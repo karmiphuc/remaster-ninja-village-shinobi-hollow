@@ -1,0 +1,49 @@
+{
+  "migration": {
+    "v": 1,
+    "profiles": 8,
+    "enabled": false,
+    "same": true
+  },
+  "build": {
+    "uid": 147,
+    "gold": 750,
+    "connected": true,
+    "assigned": 0,
+    "cap": 0
+  },
+  "core": {
+    "fail": [],
+    "n": 5,
+    "chosen": {
+      "weapon": "bokken",
+      "armor": "hemp",
+      "head": "bandana",
+      "mount": "jiba",
+      "special": "sickle",
+      "special2": "sickle"
+    },
+    "purchase": "domaru"
+  },
+  "arrival": {
+    "id": "botan",
+    "slots": 6,
+    "valid": true,
+    "profile": "arc"
+  },
+  "cache": {
+    "keys": 1,
+    "w": 50,
+    "h": 44
+  },
+  "save": {
+    "v": 1,
+    "profiles": true,
+    "eq": true,
+    "kb": 55.767578125,
+    "configBytes": 1063,
+    "building": true
+  },
+  "checks": 15,
+  "errors": []
+}

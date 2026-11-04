@@ -37,6 +37,7 @@
 }
 @media(max-height:480px) and (min-width:651px){#bformations{top:calc(env(safe-area-inset-top,0px) + 49px)}#bhud .bround{padding:2px 5px}.bcontrols button{min-height:20px}#bcall{top:calc(env(safe-area-inset-top,0px) + 78px)}}
 
+.bugu-profiles{display:flex;flex-direction:column;gap:6px;margin:12px 0}.bugu-profiles select,.bugu-slot select,.bugu-review select,.bugu-settings select{font:inherit;font-size:12px;background:#efe6d0;color:#30251e;border:2px solid var(--line);padding:6px}.bugu-profiles select{min-height:40px}.bugu-settings{margin:8px 0}.bugu-settings summary{cursor:pointer;color:#665637}.bugu-settings .row{margin:8px 0}.bugu-settings label{display:flex;gap:6px;align-items:center}.bugu-slots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}.bugu-slot{display:flex;flex-direction:column;gap:6px;border:1px solid var(--line);padding:8px;min-width:0}.bugu-slot b{display:flex;align-items:center;gap:5px}.bugu-slot img{width:20px;height:20px;object-fit:contain;image-rendering:pixelated}.bugu-slot select,.bugu-review select{max-width:100%;min-width:0;width:100%;min-height:38px}.bugu-review{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}.bugu-review select{flex:1;width:160px}.bugu-review .vcard{width:100%}@media(max-width:360px){.bugu-slots{grid-template-columns:1fr}}
 </style><style id="battle-realtime-css">
 #battle-cv{touch-action:none}.rt-deploy{padding:8px 10px;font-size:12px;border-top:1px solid #a48b5140}.rt-deploy .row{gap:10px;margin:7px 0}.rt-deploy label{white-space:nowrap}.rt-deploy select{font:inherit;background:#ede0bc;border:1px solid #988455;border-radius:3px;padding:4px;color:#30251e}.rt-deploy small{display:block;font-size:10px}
 #rt-controls{position:absolute;bottom:max(8px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);max-width:calc(100% - 16px);width:max-content;max-height:34%;overflow:auto;padding:6px 9px;border:1px solid #bca46c99;border-radius:4px;background:#191e1cee;color:#e9dfc3;box-shadow:0 3px 15px #1115;font:11px var(--f-ui,monospace);z-index:5;text-align:center}#rt-controls[hidden]{display:none}#rt-controls .btn.ghost{color:#ecdfbc;border-color:#a58d5a;background:transparent}#rt-controls .btn.gold{color:#2d231a}#rt-controls .btn{font-size:11px;padding:5px 9px;min-height:30px}#rt-controls .rt-tools,#rt-controls .rt-orders,#rt-controls .rt-choices,#rt-controls .rt-targets{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:5px}#rt-controls .rt-orders{margin-top:5px}#rt-controls .rt-detail{flex-basis:100%;font-size:10px;color:#c3c7ae}#rt-controls>small{display:block;margin:5px 0 0;max-width:440px;font-size:9px}#rt-controls img{width:18px;height:18px;vertical-align:middle;image-rendering:pixelated}#rt-controls button:focus-visible,#bformations [role=button]:focus-visible{outline:2px solid #efcf85;outline-offset:2px}#bformations [role=button]{cursor:pointer}
@@ -2372,6 +2373,7 @@ function fieldWorkPad(id) {
 
 function buildingSprite(id, variant = 0, lv = 1) {
   const B = BUILDINGS[id];
+  if(id==='bugugura'){variant=0;lv=1;}
   // Formation forges have only 4 x 2 x 3 cached sprites: formation/focus/level.
   if(B.forgeType){lv=clamp(Math.floor(lv)||1,1,3);variant=variant>=4?4:0;}
   if(HOME_LV[id]||B.cat==='shop')lv=clamp(Math.floor(lv)||1,1,HOME_LV[id]?.length||3);
@@ -2388,6 +2390,7 @@ function buildingSprite(id, variant = 0, lv = 1) {
   if (id === 'stall') return (_bldCache[key] = stallSprite(STALL_KINDS[variant >> 1] || 'smith', variant & 1));
   switch (id) {
     case 'porter': res=porterHouseSprite();break;
+    case 'bugugura': buguGuraArt(pb,W,H,Y);break;
     case 'hut': house({ roof: '#c8a45a', style: 'thatch', plaster: '#d8c8a0', wood: '#7a5230', door: true, noren: '#3b4a7a' }); break;
     case 'longhouse': house({ roof: '#c8a45a', style: 'thatch', plaster: '#d8c8a0', wood: '#7a5230', door: true, noren: '#5f9e3e' }); pb.rect(W - 10, Y + H - 4, 6, 3, '#8a6a3a'); break;
     case 'onigiri': house({ roof: '#7a5a8a', plaster: '#efe6d0', door: true, noren: '#f2efe2' }); signIcon(pb, W / 2 - 4, Y + H - 22, 'rice'); pb.rect(3, Y + H - 6, 5, 4, '#8a6a3a'); pb.rect(3, Y + H - 7, 5, 1, '#c8a45a'); break;
@@ -6746,7 +6749,7 @@ function addVillager(id, silent) {
   if (d.role !== 'work' && G.villagers.filter(x => x.role === d.role).length < MAX_CMD) takeRole(v, d.role);
   G.villagers.push(v);
   if (!silent) { assignHomes(); assignJobs(); }
-  return v;
+  presetOnArrival(v);return v;
 }
 
 /* ---------- Callings: what a villager needs to lead a unit ----------
@@ -7451,7 +7454,7 @@ function weekTick() {
   merchantWeek(); renoWeek(); tradeWeek();
   if (G.research) { const libs = Math.min(2, G.buildings.filter(b => b.id === 'library').length); G.research.left -= 1 + 0.5 * libs;
     if (G.research.left <= 0) { const R = RESEARCH.find(r => r.id === G.research.id); G.research = null; Sound.play('research');
-      { const q = G.resQ && G.resQ.shift(); const N = q && RESEARCH.find(r => r.id === q.id); if (N && !G.researched[N.item]) G.research = { id: N.id, left: N.weeks }; else if (N) G.gold += q.paid; } if (ITEMS[R.item].corps) unlockCorps(ITEMS[R.item].corps); else { G.researched[R.item] = 1; announce('Research complete', `<b>${ITEMS[R.item].name}</b> can now be bought in the Armory.`, 'research'); } } }
+      { const q = G.resQ && G.resQ.shift(); const N = q && RESEARCH.find(r => r.id === q.id); if (N && !G.researched[N.item]) G.research = { id: N.id, left: N.weeks }; else if (N) G.gold += q.paid; } if (ITEMS[R.item].corps) unlockCorps(ITEMS[R.item].corps); else { G.researched[R.item] = 1;restockArmoryPresets(); announce('Research complete', `<b>${ITEMS[R.item].name}</b> can now be bought in the Armory.`, 'research'); } } }
   G.week++;
   if (G.week > 4) { G.week = 1; monthTick(); }
   collectorWeek();
@@ -7946,9 +7949,9 @@ function typeRows(){
     return r?bar+number:number+bar;};
   return UNIT_ORDER.map(t=>`<div class="trow${cur===t?' on':''}" data-formation="${t}">${cell(BT.A[0],t,0)}<span class="ty"${tipAttr(UNITS[t].name)}>${icon('u_'+t)}</span>${cell(BT.A[1],t,1)}</div>`).join('');
 }
-function renderRunStrip(){if(!BT||BT.state==='done')return;$('#btac').innerHTML='';renderBHUD();}
+function renderRunStrip(){if(!BT||BT.headless||BT.state==='done')return;$('#btac').innerHTML='';renderBHUD();}
 function renderBHUD(){
-  if(!BT)return;
+  if(!BT||BT.headless)return;
   const live=['run','realtime','between','autowait','duelpick'].includes(BT.state),side=(A,r)=>
     `<div class="bside lac${r?' r':''}"><div class="nm">${icon('mon_'+A.clan)}<span>${esc(A.name)}</span></div><div class="bmetrics"><span${tipAttr('Total fighting strength')}>${icon('army')}<b>${fmt(armyPower(A))}</b></span><span${tipAttr('Active units: troops and independent heroes')}>${icon('people')}<b>${fmt(combatCount(A))}</b></span></div></div>`;
   const pressure=offensivePressure(),gate=BT.siege?`<div class="gaterow"${tipAttr(`Castle gate · ${Math.ceil(BT.siege.hp)}/${BT.siege.max}`)}>${icon('it_kabuto')}<div class="gatebar"><i style="width:${clamp(BT.siege.hp/BT.siege.max*100,0,100)}%"></i></div></div>`:'';
@@ -8357,8 +8360,8 @@ function buildingWorkersPanel(body,b,conn){const B=BUILDINGS[b.id];
     }
 }
 function openBuildingInfo(b) {
-  UI.panel = 'binfo';
-  openSheet(esc(bName(b)) + (bLv(b) > 1 ? ` <small>Lv ${bLv(b)}</small>` : ''), b.id === 'tonya' ? [['deals', 'Contracts'], ['auto', 'Auto-accept']] : b.id==='hall'?[['house','Clan Seat'],['policies','Clan Policies']]:null, (body, tab) => {
+  UI.panel = 'binfo';if(b.id==='bugugura'){UI.buguLastTab=null;UI.buguReviewUid=null;}
+  openSheet(esc(bName(b)) + (bLv(b) > 1 ? ` <small>Lv ${bLv(b)}</small>` : ''), b.id === 'tonya' ? [['deals', 'Contracts'], ['auto', 'Auto-accept']] : b.id==='hall'?[['house','Clan Seat'],['policies','Clan Policies']]:b.id==='bugugura'?[['presets','Equipment presets'],['review','Kit review']]:null, (body, tab) => {
     const B = BUILDINGS[b.id];
     if(b.id==='hall'&&tab==='policies'){body.appendChild(clanPolicyPanel(b));return;}
     if (b.id === 'tonya' && tab === 'auto') { body.appendChild(tradeAutoPanel(b)); return; }
@@ -8371,6 +8374,7 @@ function openBuildingInfo(b) {
     if (b.combo) { const C = COMBOS.find(c => c.id === b.combo.id); html += `<div class="chip" style="color:var(--ink);background:var(--gold-l)">Combo: ${esc(C.name)} ×${b.combo.m}</div>`; }
     html += `</div></div>`;
     body.appendChild(h(`<div>${html}</div>`));
+    if(b.id==='bugugura')buguPanel(body,b,tab);
     if(b.id==='porter')body.appendChild(porterPanel(b));
     if(b.id==='hall')body.appendChild(materialSalesPanel());
     if(b.id==='kura')body.appendChild(collectorHirePanel(b));
@@ -9658,18 +9662,18 @@ function openHunt(H) {
   openSheet(`狩 <small>Hunt · ${esc(I.name)}</small>`, null, body => {
     const pick = UI.hunters.ids.map(vById).filter(Boolean), pp = pick.length ? armyPower(playerSkirmish(pick)) : 0, ep = armyPower(huntArmy(H)), odds = pp / (pp + ep || 1);
     body.appendChild(h(`<div class="row" style="align-items:center;gap:10px"><img class="px" src="${ICONS['it_' + H.k]}" style="width:48px;height:48px" alt=""><div style="flex:1"><b>${esc(H.n > 1 ? H.n + ' × ' + H.name : H.name)}</b> in ${esc(H.where)} · level ${huntLevel().toFixed(1)}<div class="odds" style="margin-top:4px"><i style="width:${Math.round(odds * 100)}%;background:#3b4a7a"></i><i style="flex:1;background:#6b8a3a"></i></div><div class="muted">Hunters ${fmt(pp)} vs beast ${fmt(ep)}</div></div></div>`));
-    const top = h(`<div class="row" data-top-of="hunt" style="margin:8px 0 2px"><button class="btn ghost">Let it go</button><span class="sp"></span><button class="btn red"${pick.length ? '' : ' disabled'}>狩 · Begin the hunt</button></div>`); body.appendChild(top);
+    const top = h(`<div class="row" data-top-of="hunt" style="margin:8px 0 2px"><button class="btn ghost">Let it go</button><span class="sp"></span><button class="btn ghost" data-hunt-auto${pick.length ? '' : ' disabled'}>Auto-resolve</button><button class="btn red"${pick.length ? '' : ' disabled'}>狩 · Begin the hunt</button></div>`); body.appendChild(top);
     body.appendChild(h(`<div class="sec">Hunting party ${pick.length}/3</div>`));
     const l = h('<div class="vlist"></div>');
     G.villagers.forEach(v => { const on = UI.hunters.ids.includes(v.id), c = vCard(v); c.classList.toggle('on', on); c.onclick = () => { const ids = UI.hunters.ids; if (on) ids.splice(ids.indexOf(v.id), 1); else if (ids.length < 3) ids.push(v.id); else { Sound.play('alert'); toast('Three hunters at most.'); return; } Sound.play('tap'); refreshSheet(); }; l.appendChild(c); });
     body.appendChild(l);
-    const row = h(`<div class="row" style="margin-top:10px"><button class="btn ghost">Let it go</button><span class="sp"></span><button class="btn red"${pick.length ? '' : ' disabled'}>狩 · Begin the hunt</button></div>`);
-    const [no, go] = row.querySelectorAll('button');
+    const row = h(`<div class="row" style="margin-top:10px"><button class="btn ghost">Let it go</button><span class="sp"></span><button class="btn ghost" data-hunt-auto${pick.length ? '' : ' disabled'}>Auto-resolve</button><button class="btn red"${pick.length ? '' : ' disabled'}>狩 · Begin the hunt</button></div>`);
+    const [no, ar, go] = row.querySelectorAll('button');
     no.onclick = () => { UI.hunters = null; closeSheet(); };
-    go.onclick = () => { const party = UI.hunters.ids.map(vById).filter(Boolean); if (!party.length) return; UI.hunters = null; closeSheet();
-      startBattle(null, { site: { id: 'hunt', type: 'hunt', clan: 'wild', name: H.where, power: Math.round(40 + huntLevel() * 40), hunt: Object.assign({ lvl: huntLevel() }, H), reward: {} }, pa: playerSkirmish(party), ea: huntArmy(H) }); };
+    const huntGo=headless=>{const party = UI.hunters.ids.map(vById).filter(Boolean); if (!party.length) return; UI.hunters = null; closeSheet();
+      startBattle(null, { site: { id: 'hunt', type: 'hunt', clan: 'wild', name: H.where, power: Math.round(40 + huntLevel() * 40), hunt: Object.assign({ lvl: huntLevel() }, H), reward: {} }, pa: playerSkirmish(party), ea: huntArmy(H) },headless);};go.onclick=()=>huntGo(false);ar.onclick=()=>huntGo(true);
     body.appendChild(row);
-    const [tno, tgo] = top.querySelectorAll('button'); tno.onclick = no.onclick; tgo.onclick = go.onclick;
+    const [tno, tar, tgo] = top.querySelectorAll('button'); tno.onclick = no.onclick; tar.onclick=ar.onclick;tgo.onclick = go.onclick;
   });
 }
 // beasts taken from a beaten army: mounted clans leave horses, hawk clans their birds
@@ -9687,7 +9691,7 @@ function landSite(k) { const F = LAND_FIGHT[k]; return { id: 'land_' + k, type: 
 function landFightPrompt(k) {
   const F = LAND_FIGHT[k], site = landSite(k), pp = armyPower(playerSkirmish()), ep = armyPower(enemyArmy(site));
   modal(`${LAND_NAME[k]} · held by ${F.who}`, `${F.line}<br><br>Your villagers will fight them one on one. Win and the plot is ours, with their hoard of <b>${F.gold}G</b>.<div class="odds" style="margin-top:8px"><i style="width:${Math.round(pp / (pp + ep) * 100)}%;background:#3b4a7a"></i><i style="flex:1;background:#8a2b2b"></i></div><span class="muted">Our fighters ${fmt(pp)} vs theirs ${fmt(ep)}</span>`,
-    [['Not yet', null, 'ghost'], ['Drive them out!', () => startBattle(null, { site, pa: playerSkirmish(), ea: enemyArmy(site) }), 'red']], { icon: 'mon_' + F.clan });
+    [['Not yet', null, 'ghost'], ['Auto-resolve',()=>startBattle(null,{site,pa:playerSkirmish(),ea:enemyArmy(site)},true),'ghost'], ['Drive them out!', () => startBattle(null, { site, pa: playerSkirmish(), ea: enemyArmy(site) }), 'red']], { icon: 'mon_' + F.clan });
 }
 
 /* ================= TRADE: the 問屋 Ton'ya wholesale houses =================
@@ -10492,7 +10496,7 @@ function updateCohesion(g,announce=false){
     attack:clamp(1-(1-value)*.22+risk+skill,.8,1.24),
     defense:clamp(1-(1-value)*.10-risk*.85,.68,1),
     counter:clamp(1+(stage===3?.35:stage===2?.15:0)+Math.min(.15,best('counter')*.025),1,1.5)};
-  if(announce&&prior&&stage!==prior.stage&&g.troops>0&&BT?.labels){const p=gCenter(g),S=COHESION_STAGES[stage];
+  if(!BT?.headless&&announce&&prior&&stage!==prior.stage&&g.troops>0&&BT?.labels){const p=gCenter(g),S=COHESION_STAGES[stage];
     BT.labels.push({x:p.x,y:p.y-32,text:`${S.jp} ${S.name}`,t:0,side:sideOf(g)});BT.hudDirty=true;
     if(BT.log)BT.log.push(`${sideOf(g)?'Enemy':'Our'} ${UNITS[g.type].name}: ${S.name}`);}
   return c;
@@ -10519,7 +10523,7 @@ function battleDamage(dmg,res,mult=1,force=1){
 function cohesionDamage(g,kills,from){
   if(!(kills>0))return;
   g.cohStress=clamp((g.cohStress||0)+kills/Math.max(1,g.start||g.max)*.32,0,.3);
-  const c=updateCohesion(g,true),live=(g.spr||[]).filter(s=>s.alive&&!s.fate);
+  const c=updateCohesion(g,true);if(BT?.headless)return;const live=(g.spr||[]).filter(s=>s.alive&&!s.fate);
   if(c.stage){const n=Math.min(live.length,c.stage===1?2:3),offset=((BT.phaseId||0)+(g.cohReaction||0))%Math.max(1,live.length);g.cohReaction=(g.cohReaction||0)+1;
     for(let i=0;i<n;i++){const s=live[(offset+i)%live.length];s.cohReact={at:BT.t,dur:.22+c.stage*.07,stage:c.stage,dir:from?sideDir(sideOf(from)):-s.face};}}
 }
@@ -10555,6 +10559,7 @@ function endRound(){
 }
 function unitBreak(g){
   if(g.troops>0||g.cohEliminated)return;
+  if(BT.headless){g.cohEliminated=g.cohBreakStarted=true;for(const h of independentHeroes(g))h.alive=false;BT.A[sideOf(g)].groups.forEach(o=>{if(o!==g&&o.troops>0)morale(o,.95);});return;}
   if(!g.cohBreakStarted){
     g.cohBreakStarted=true;
     // Preserve the existing collapse presentation for an already-eliminated
@@ -10657,6 +10662,8 @@ function resolvePhase(phase, A, D, ctx) {
   const hits = [],strikes=[],timedInf=phase==='inf'&&A.mode==='army'&&D.mode==='army'&&!ctx.siege;
   if(ctx.siege&&(phase==='inf'||phase==='cav'))return hits;
   const atk = alive(A, phase); if (!atk.length) return hits;
+  const wallAttack=ctx.siege&&A.side===0&&D.side===1&&(phase==='gun'||phase==='arc'),
+    wallLob=wallAttack&&phase==='arc'&&!D.groups.some(g=>g.troops>TROOP_EPS&&(g.type==='gun'||g.type==='arc'));
   const left = new Map(D.groups.map(g => [g, g.troops]));
   const ranged = phase === 'gun' || phase === 'arc', melee = !ranged;
   atk.forEach(g => {
@@ -10675,16 +10682,16 @@ function resolvePhase(phase, A, D, ctx) {
     if (ctx.siege) { // behind walls: attackers strike at stone and timber, defenders shoot down from the ramparts
       if (A.side === 0) dmg *= (phase === 'gun' ? .72 : phase === 'arc' ? .45 : phase === 'inf' ? .3 : .15) * (1 + (A.siegecraft || 0) * .1);
       else dmg *= phase === 'gun' || phase === 'arc' ? 1.35 : phase === 'inf' ? .7 : .25; }
+    if(wallLob)dmg*=WALL_LOB_ACCURACY;
     if(timedInf){strikes.push({g,dmg,retShare,tacT,rate:0});return;}
-    const wallAttack=ctx.siege&&A.side===0&&D.side===1&&ranged,
-      order=PREF[phase].flatMap(t=>D.groups.filter(x=>x.type===t&&left.get(x)>0&&(!wallAttack||x.type==='gun'||x.type==='arc')));
+    const order=PREF[phase].flatMap(t=>D.groups.filter(x=>x.type===t&&left.get(x)>0&&(!wallAttack||(wallLob?(x.type==='inf'||x.type==='cav'):(x.type==='gun'||x.type==='arc')))));
     // Keep the footprint anchored to this volley's original aim, even if it clears that line. Missing ranks do not
     // turn a distant formation into a neighbour. Another attacking group can aim afresh using the remaining troops.
     if(phase==='arc'&&!ctx.siege&&order.length){const aim=GROUP_ORDER[order[0].type];
       for(let i=order.length-1;i>0;i--)if(Math.abs(GROUP_ORDER[order[i].type]-aim)>1)order.splice(i,1);}
     // A small part of the volley may land next door while the aimed formation is still standing.
     let stray = null;
-    if (phase === 'arc' && !ctx.siege && order.length > 1) { const others = order.filter(t=>t.type!==order[0].type);
+    if (phase === 'arc' && (!ctx.siege||wallLob) && order.length > 1) { const others = order.filter(t=>t.type!==order[0].type);
       if(others.length&&Math.random()<.85){stray={t:others[(Math.random()*others.length)|0],dmg:dmg*.15};dmg-=stray.dmg;} }
     let depth = 0;
     for (const t of order) {
@@ -10697,7 +10704,7 @@ function resolvePhase(phase, A, D, ctx) {
       mult*=personalDamageGuard(t,phase)*(g.solo?personalWeaponFactor(g.solo,t,phase):1)*tateTake(t,phase);
       const need = left.get(t), kills = Math.min(need, battleDamage(dmg,res,mult,fightingStrength(g)));
       if (!(kills > 0)) break;
-      hits.push({ from: g, to: t, kills, depth, retShare });
+      hits.push({ from: g, to: t, kills, depth, retShare, wallLob });
       left.set(t, need - kills);
       dmg -= kills * res / mult;
       if (dmg <= .05) break;
@@ -10706,7 +10713,7 @@ function resolvePhase(phase, A, D, ctx) {
     }
     if (stray) { const t = stray.t, need = left.get(t); if (need > 0) {
       const res = battleResistance(t), mult = (1 - Math.min(.6, (t.mods.arrowres || 0) * .1)) * tacT(t) * (1 - Math.min(.3, t.mods.shadow * .05)) * (t.type === 'inf' ? 1 : 1) * tateTake(t, 'arc');
-      const kills = Math.min(need, battleDamage(stray.dmg,res,mult,fightingStrength(g)*.15)); if (kills > 0) { hits.push({ from: g, to: t, kills, depth: 1, stray: true }); left.set(t, need - kills); } } }
+      const kills = Math.min(need, battleDamage(stray.dmg,res,mult,fightingStrength(g)*.15)); if (kills > 0) { hits.push({ from: g, to: t, kills, depth: 1, stray: true, wallLob }); left.set(t, need - kills); } } }
   });
   if(timedInf)hits.push(...resolveInfantry(strikes,D,left));
   return hits;
@@ -10754,14 +10761,15 @@ function aiTactic(E, P) {
 
 /* ---------- Battle session ---------- */
 let BT = null;
-function startBattle(provId, opt) {
+function startBattle(provId, opt, headless=false) {
+  if(BT)return false;
   const P0 = opt ? opt.site : siteById(provId); if (!P0) return false;
   const skirm = opt || siteMode(P0) === 'skirmish';
   const pa = opt ? opt.pa : skirm ? playerSkirmish() : playerArmy(), ea = opt ? opt.ea : enemyArmy(P0);
   if (!opt) tateEquip(pa, ea, P0);
   if (!pa.groups.length) { toast(skirm ? 'You need villagers to fight.' : 'You have no troops! Hire some in the Army panel.'); return false; }
   MAPV.open = false;
-  BT = { prov: P0, A: [pa, ea], combatMode:battleModeOf(), round: 0, phase: -1, state: 'prep', t: 0, speed: 1, tac: ['steady', 'steady'], jutsu: [null, null], ki: [pa.ki, ea.ki], fx: [], proj: [], nums: [], pops: [], labels: [], shake: 0, log: [], auto: true, sky: pick(['day', 'day', 'dusk', 'dawn', 'storm']), seed: rint(1, 9999), clouds: [], wind: rnd(4, 9) * pick([-1, 1]), cam: null, stop: 0, punch: 0, bodies: 0 };
+  BT = { prov: P0, A: [pa, ea], combatMode:battleModeOf(), headless, round: 0, phase: -1, state: 'prep', t: 0, speed: 1, tac: ['steady', 'steady'], jutsu: [null, null], ki: [pa.ki, ea.ki], fx: [], proj: [], nums: [], pops: [], labels: [], shake: 0, log: [], auto: true, sky: pick(['day', 'day', 'dusk', 'dawn', 'storm']), seed: rint(1, 9999), clouds: [], wind: rnd(4, 9) * pick([-1, 1]), cam: null, stop: 0, punch: 0, bodies: 0 };
   if(P0.type==='dojo'){dojoPrize();BT.dojoLevel=trainingLevel();BT.dojoBonus=BT.dojoLevel%10===0?dojoMilestoneReward(BT.dojoLevel):null;}
   // clan seats and the Shogun's keep are sieges: walls, a gate to ram, archers and gunners on the ramparts, a fourth round
   BT.maxR = 3;
@@ -10771,6 +10779,7 @@ function startBattle(provId, opt) {
     const pp = pa.power0 || armyPower(pa), ep = ea.power0 || armyPower(ea);
     BT.kiCap = pa.kiCap ?? 1; BT.ki[0] = Math.min(BT.kiCap, G.ki ?? BT.kiCap);
     BT.autoKi = { on: autoCastOn(), pref: jutsuPref(), share: pp / Math.max(1, pp + ep), eligible: autoKiEligible(pp, ep) }; }
+  if(headless){prepareAutoArmy();runAutoResolve();return true;}
   if(rtBattleChosen())rtTrimVillageFrames();
   for (let i = 0; i < 6; i++) BT.clouds.push({ x: rnd(0, 1), y: rnd(.05, .3), s: rnd(.6, 1.4), v: rnd(.002, .006) });
   $('#battle-layer').hidden = false; $('#map-layer').hidden = true;
@@ -10824,6 +10833,7 @@ function beginRound() {
   BT.jutsu[0] = autoJutsu(); // once per battle, from the banked Ki, at the first useful moment
   if (BT.jutsu[0]) { const cost = JUTSU[BT.jutsu[0]].ki; BT.ki[0] -= cost; G.ki = Math.max(0, kiNow(BT.kiCap) - cost); BT.kiCast = { round: BT.round, j: BT.jutsu[0], cost }; castJutsu(0, BT.jutsu[0]); }
   if (BT.jutsu[1]) castJutsu(1, BT.jutsu[1]);
+  if(BT.headless){updateArmyCohesion(true);BT.lastTac0=BT.ftac?dominantFam():BT.tac[0];preDuel();return;}
   callout(`第${combatRoundName(BT.round)}陣`, BT.ftac ? `Round ${BT.round} · ${esc(BT.A[1].name)}: ${TACTICS[BT.tac[1]].name}` : `Round ${BT.round} · ${TACTICS[BT.tac[0]].name} vs ${TACTICS[BT.tac[1]].name}`);
   updateArmyCohesion(true);
   // formations that beat each other: judged formation by formation against the enemy's army-wide order
@@ -10860,6 +10870,7 @@ function endIntro() { if (!BT || BT.state !== 'intro') return; BT.intro = null; 
 function castJutsu(side, j) {
   const D = BT.A[1 - side], dir = side === 0 ? 1 : -1;
   Sound.play(j === 'fire' ? 'fire' : 'smoke');
+  if(BT.headless){autoJutsuEffect(side,j);return;}
   if (j === 'fire' || j === 'wind') { const types = j === 'fire' ? ['gun', 'arc'] : ['inf', 'cav']; const tg = D.groups.filter(g => types.includes(g.type) && g.troops > 0);
     tg.forEach(g => { const kills = Math.min(g.troops, (j === 'fire' ? .16 : .1) * g.troops + 3); g.troops -= kills; addNum(g, kills); syncSprites(g, j === 'fire' ? 'burn' : 'knock'); BT.hudDirty = true; const c = gCenter(g); for (let i = 0; i < 40; i++) BT.fx.push({ k: j === 'fire' ? 'flame' : 'wslash', x: c.x + rnd(-24, 24), y: rnd(BT.fy0 + 5, BT.fy1 - 5), vx: j === 'wind' ? 80 * dir : rnd(-5, 5), vy: j === 'fire' ? rnd(-30, -10) : 0, t: rnd(.6, 1.2), t0: 1 }); });
     BT.shake = .5; BT.flash = .2; BT.flashCol = j === 'fire' ? '255,160,80' : '220,240,255'; }
@@ -10937,7 +10948,7 @@ function finishBattle(res, note) {
   const c0=totalOf(BT.A[0]),c1=totalOf(BT.A[1]);
   if(!BT.playerRetreat){if(c0>0&&c1>0)return false;res=c0<=0&&c1<=0?'draw':c1<=0?'win':'lose';}
   BT.result = res;
-  BT.state = 'done'; const P = BT.prov, pa = BT.A[0], st = siteState(P), drill = P.type === 'dojo'; battleCheer(res);
+  BT.state = 'done'; const P = BT.prov, pa = BT.A[0], st = siteState(P), drill = P.type === 'dojo'; if(!BT.headless)battleCheer(res);
   // commit losses (sparring with wooden weapons costs nothing)
   // the wounded: part of the fallen limp home and rejoin (more when you hold the field)
   let wounded = 0; const wf = (res === 'win' ? .3 : res === 'draw' ? .2 : .1) + (pa.qm || 0) * .05;
@@ -11027,7 +11038,7 @@ function finishBattle(res, note) {
   const duelHtml = duelWon.length || duelLost.length ? `<div class="muted">一騎打ち: ${duelWon.map(c => `<b>${esc(c.name)}</b> won${c.duelWins > 1 ? ' ×' + c.duelWins : ''} (+XP)`).concat(duelLost.map(c => `${esc(c.name)} was beaten`)).join(' · ')}${foesLost.some(c => c.lord) ? ' · the enemy lord was humbled' : ''}</div>` : '';
   // who did what: each commander's own blows, the endurance they have left, and how they left the field
   const PN = { van: '先 Van', line: '陣 Line', hq: '本 HQ' }, eOff = BT.A[1].groups.flatMap(g => g.cmds), eRet = eOff.filter(c => c.retreated).length;
-  const repHtml = pa.mode === 'army' && heroes.length ? `<div class="crep">${heroes.filter(c => !c.aux || c.pk >= 1 || c.retreated).sort((a, b) => (b.pk || 0) - (a.pk || 0)).slice(0, 8).map(c => { const f = c.hpMax ? clamp(c.hp / c.hpMax, 0, 1) : 1;
+  const repHtml = !BT.headless&&pa.mode === 'army' && heroes.length ? `<div class="crep">${heroes.filter(c => !c.aux || c.pk >= 1 || c.retreated).sort((a, b) => (b.pk || 0) - (a.pk || 0)).slice(0, 8).map(c => { const f = c.hpMax ? clamp(c.hp / c.hpMax, 0, 1) : 1;
     return `<div class="cr"><img class="px" src="${pURL(c.look)}" alt=""><span class="nm">${esc(c.name)}<small>${PN[c.post] || ''}${c.aux ? ' · militia' : ''}</small></span><span class="k"${tipAttr('Own blows (STR / MRK) · all foes credited to them, including the strikes they led')}>⚔ ${fmt(Math.round(c.pk || 0))}<small> / ${fmt(Math.round(c.kills || 0))}</small></span><span class="hpb"${tipAttr(`HP ${Math.round(c.hp ?? 0)}/${Math.round(c.hpMax || 0)} — heals by sleeping at home`)}><i style="width:${Math.round(f * 100)}%;background:${f < .3 ? '#e05a3a' : '#7ad06a'}"></i></span><span class="st">${c.retreated ? '<b class="bad">carried off</b>' : c.ko ? 'beaten in a duel' : c.duelWins ? 'duel won' : ''}</span></div>`; }).join('')}
     ${eOff.length ? `<div class="muted" style="grid-column:1/-1">Enemy officers: ${fmt(Math.round(eOff.reduce((n, c) => n + (c.pk || 0), 0)))} of ours fell to their own hands${eRet ? ` · <b>${eRet}</b> worn down and carried off` : ''}${foesLost.length ? ` · ${foesLost.length} beaten in duels` : ''}</div>` : ''}</div>` : '';
   rewards.push(`${icon('xp')} +${xp} XP × ${cmds.size} villagers`);
@@ -11035,7 +11046,8 @@ function finishBattle(res, note) {
   const lost = pa.mode === 'army' && !drill ? pa.groups.filter(g=>!g.heroOnly).reduce((n,g)=>n+Math.max(0,Math.round(g.start)-Math.ceil(g.troops)),0) : 0;
   const kanji = res === 'win' ? '勝' : res === 'lose' ? '敗' : '引';
   const title = P.type === 'land' ? (res === 'win' ? `${LAND_NAME[P.land]} is ours!` : res === 'lose' ? 'Driven back' : 'They hold their ground') : P.type === 'hunt' ? (res === 'win' ? 'Captured!' : res === 'lose' ? 'The beast drove you off' : 'It got away into ' + P.name) : res === 'win' ? (note || (drill ? 'Training complete!' : 'Victory!')) : res === 'lose' ? (note || (drill ? 'Outfought — but wiser for it' : 'Defeat')) : 'Neither army has combatants remaining';
-  const mvpHtml = mvp && mvp.kills > 0 ? `<div class="mvp"><img class="px" src="${pURL(mvp.look)}" alt=""><div><b>MVP · ${esc(mvp.name)}</b><span>${fmt(Math.round(mvp.kills))} foes struck down · +50% XP</span></div></div>` : '';
+  const mvpHtml = BT.headless&&mvp&&mvp.kills>0?`<p>MVP · <b>${esc(mvp.name)}</b> · ${fmt(Math.round(mvp.kills))} foes struck down · +50% XP</p>`:mvp && mvp.kills > 0 ? `<div class="mvp"><img class="px" src="${pURL(mvp.look)}" alt=""><div><b>MVP · ${esc(mvp.name)}</b><span>${fmt(Math.round(mvp.kills))} foes struck down · +50% XP</span></div></div>` : '';
+  if(BT.headless){autoResolveReport({title,res,rewards,unlockMsgs,mvpHtml,duelHtml,lost,drill,rounds:BT.roundSeq});return true;}
   $('#btac').innerHTML = `<div class="in lac"><div class="paper result"><div class="kanji${res === 'win' ? '' : ' lose'}">${kanji}</div><h3>${esc(title)}</h3>
     <div class="muted">${drill ? 'Sparring: no troops were lost · ' : pa.mode === 'army' ? `Troops lost: ${fmt(lost)} · ` : ''}Enemy remaining: ${fmt(combatCount(BT.A[1]))}</div>
     ${mvpHtml}${duelHtml}${repHtml}
@@ -11045,7 +11057,7 @@ function finishBattle(res, note) {
   $('#bt-done').onclick = () => { closeBattle(); if (P.type !== 'hunt' && P.type !== 'land') openMap(); unlockMsgs.forEach(m => announce('Spoils of war', m, 'scroll')); saveGame(); };
   renderBHUD();
 }
-function closeBattle() { rtReleaseBattle(); $('#battle-layer').hidden = true; if (BT) { releaseDuelCinema();releaseAftermath();for (const k in BT) if (BT[k] instanceof HTMLCanvasElement) BT[k].width = BT[k].height = 0; releaseBattleSprites();releaseBattleHeraldry(); } BT = null; Sound.music('map'); updateHUD(); }
+function closeBattle() { if(BT?.headless){BT=null;updateHUD();return;}rtReleaseBattle(); $('#battle-layer').hidden = true; if (BT) { releaseDuelCinema();releaseAftermath();for (const k in BT) if (BT[k] instanceof HTMLCanvasElement) BT[k].width = BT[k].height = 0; releaseBattleSprites();releaseBattleHeraldry(); } BT = null; Sound.music('map'); updateHUD(); }
 
 /* ================= BATTLEFIELD: world, camera, soldiers, choreography, rendering =================
    The battle is a world wider than the screen. Every sprite is an individual soldier with its own
@@ -11057,7 +11069,8 @@ const GROUP_ORDER = { inf: 0, gun: 1, arc: 2, cav: 3 };
 // in a siege the defenders put their shooters on the ramparts and keep their spears behind the gate
 const SIEGE_ORDER = { gun: 0, arc: 1, inf: 2, cav: 3 }, WALL_LIFT = 10;
 function siegeHold() { return !!(BT && BT.siege && !BT.siege.breached); }
-// A standing gate shelters melee ranks; ranged volleys switch to the gate only after the ramparts are clear.
+// Gunners switch to the gate; archers lob over the cleared ramparts with a steep accuracy penalty.
+const WALL_LOB_ACCURACY=.35;
 function wallRangedAlive(){return siegeHold()&&BT.A[1].groups.some(g=>g.troops>TROOP_EPS&&(g.type==='gun'||g.type==='arc'));}
 function grpOrder(g, si) { return (siegeHold() && (si ?? sideOf(g)) === 1 ? SIEGE_ORDER : GROUP_ORDER)[g.type]; }
 const easeIO = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2, easeOut = u => 1 - (1 - u) * (1 - u);
@@ -11084,6 +11097,7 @@ function resizeBattle() {
 }
 function clampCamB() { const h = BT.vw / 2; BT.cam.x = BT.WW <= BT.vw ? BT.WW / 2 : clamp(BT.cam.x, h, BT.WW - h); }
 function onBattleResize() {
+  if(!BT||BT.headless)return;
   const liveField=BT?.rt&&rtIsFieldView();
   const ob = BT.band, o0 = ob ? ob.y0 : BT.fy0, o1 = ob ? ob.y1 : BT.fy1; BT.fy1Base = null; resizeBattle(); BT.fy1Base = BT.fy1;
   if (ob && BT.A[0].mode !== 'skirmish') { BT.band = formationBand(); BT.fy1 = Math.max(BT.fy1Base, Math.round(BT.band.y1 + 2)); }
@@ -11330,24 +11344,27 @@ function fieldWorks(g, si, front, face, mid) {
 function siegeWorks(mid, fh) {
   BT.siege.gy = mid + 10; BT.siege.towers = [BT.fy0 + fh * .16, BT.fy0 + fh * .86].map(Math.round);
 }
+function siegeAttackPower(p){const A=BT.A[0];if(p==='arc')return 0;
+ return alive(A,p).reduce((n,g)=>n+fightingStrength(g)*battleAttack(g)*UNITS[p].atk*g.atkMul*(p==='gun'?tateAtk(g):TACTICS[tacFam(g)].mod.mel)*.26,0)*(p==='gun'?.14:(1+A.strat*.05)*(p==='cav'?.5:1)*rnd(.85,1.15));
+}
 // what the siege adds to a phase: the ram goes in with the infantry, gunners chip at the gate
 function siegeScript(p) {
   const S = BT.script; if (!S) return; const A = BT.A[0];
   const T0 = BT.t + (p === 'inf' || p === 'cav' ? BRANDISH : 0), mid = BT.midY || (BT.fy0 + BT.fy1) / 2;
   const add = (t, k, o) => S.ev.push(Object.assign({ t, k }, o));
   if (p === 'inf') { const inf = alive(A, 'inf'); if (!inf.length) return;
-    const dmg = inf.reduce((n, g) => n + fightingStrength(g) * battleAttack(g) * UNITS.inf.atk * g.atkMul * TACTICS[tacFam(g)].mod.mel * .26, 0) * (1 + A.strat * .05) * rnd(.85, 1.15);
+    const dmg=siegeAttackPower('inf');
     const g0 = inf[0], x1 = BT.siege.x - (SIEGE_ENGINE_ART.ram.w+2)/2;
     if (!BT.ram) BT.ram = { x: g0.front + 6, y: mid + 10 };
     BT.ram.mv = { from: BT.ram.x, to: x1, t0: T0, t1: T0 + Math.max(.5, Math.abs((BT.siege.x-15) - BT.ram.x) / 70) };
     const t1=Math.max(BT.ram.mv.t1,chargeGate(inf,T0,'inf'));BT.ram.mv.t1=t1;
     const strength=inf.reduce((n,g)=>n+fightingStrength(g),0);for(let k=0;k<3;k++)add(t1+.2+k*.6,'ram',{dmg:dmg/3,crew:'inf',strength});
-  } else if ((p==='gun'||p==='arc')&&S.gateFire) { const groups=alive(A,p);if(!groups.length)return;
-    const dmg=groups.reduce((n,g)=>n+fightingStrength(g)*battleAttack(g)*UNITS[p].atk*g.atkMul*.26*tateAtk(g),0)*(p==='gun'?.14:.04),
+  } else if (p==='gun'&&S.gateFire) { const groups=alive(A,p);if(!groups.length)return;
+    const dmg=siegeAttackPower(p),
       shots=S.ev.filter(e=>e.k==='shot'&&e.gate),land=Math.max(T0+RANGED_LEAD+.7,...shots.map(e=>e.t+(e.flight||.12)));
     add(land,'ram',{dmg,shot:1,gateVolley:true,ledger:S.gateLedger});camKey(T0+RANGED_LEAD+.5,BT.siege.x-BT.vw*.12,.45); }
   else if (p === 'cav') { const cav = alive(A, 'cav'); if (!cav.length) return; // riders hack at the doors: half an infantry ram's weight
-    const dmg = cav.reduce((n, g) => n + fightingStrength(g) * battleAttack(g) * UNITS.cav.atk * g.atkMul * TACTICS[tacFam(g)].mod.mel * .26, 0) * (1 + A.strat * .05) * .5 * rnd(.85, 1.15);
+    const dmg=siegeAttackPower('cav');
     const arrive=chargeGate(cav,T0,'cav'),strength=cav.reduce((n,g)=>n+fightingStrength(g),0);
     for (let k = 0; k < 2; k++) add(arrive + .2 + k * .5, 'ram', { dmg: dmg / 2, shot: 1,crew:'cav',strength }); }
   else return;
@@ -11369,6 +11386,7 @@ function gateHit(e) {
   if(e.crew)dmg*=Math.min(1,alive(BT.A[0],e.crew).reduce((n,g)=>n+fightingStrength(g),0)/Math.max(1e-9,e.strength));
   if(e.ledger)dmg*=Math.min(1,e.ledger.fired/Math.max(1,e.ledger.planned));if(!(dmg>0))return;
   G2.hp = Math.max(0, G2.hp - dmg); BT.hudDirty = true;
+  if(BT.headless){if(G2.hp<=0)breachGate();return;}
   const gx = G2.x + 2, gy = (BT.midY || 0) + 10;
   if (!e.shot && BT.ram) BT.ram.strike = .22;
   BT.shake = Math.max(BT.shake, e.shot ? .2 : .45); BT.punch = Math.max(BT.punch, e.shot ? .02 : .05);
@@ -11377,8 +11395,13 @@ function gateHit(e) {
   for (let i = 0; i < (e.shot ? 2 : 6); i++) BT.fx.push({ k: 'dust', x: gx - 4 + rnd(-3, 3), y: gy, vx: rnd(-14, 4), vy: -rnd(4, 12), t: .8, t0: .8, r: 3 });
   if (G2.hp <= 0) breachGate();
 }
+function releaseWallDefenders(){
+  BT.A[1].groups.forEach(g => { morale(g, .9, .93);if(g.onWall&&!BT.headless){g.onWall=false;const F=formGeom(g.type,visibleCount(g)+(g.heroes||[]).length,false);Object.assign(g,{R:F.R,rowStep:F.rowStep,colStep:F.colStep,stag:F.stag});}
+    g.onWall=false;g.spr.concat(g.heroes || []).forEach(q => { if (q.lift) { q.lift = 0; q.hop = .4; } }); });
+}
 function breachGate() {
   const G2 = BT.siege; G2.breached = true; G2.brokeAt = BT.t; BT.breachReset = true;
+  if(BT.headless){releaseWallDefenders();return;}
   const gx = G2.x + 2, gy = (BT.midY || 0) + 10;
   BT.stop = Math.max(BT.stop, .4); BT.shake = 1; BT.punch = .14; BT.flash = .3; BT.flashCol = '255,236,170';
   Sound.play('hit', { pitch: .5 }); Sound.play('taiko'); Sound.play('shout', { vol: 1 }); setTimeout(() => BT && Sound.play('combo'), 400);
@@ -11386,8 +11409,7 @@ function breachGate() {
   for (let i = 0; i < 16; i++) BT.fx.push({ k: 'bigsmoke', x: gx + rnd(-6, 10), y: gy + rnd(-8, 4), vx: rnd(-6, 6), vy: rnd(-4, -1), t: rnd(1.5, 2.6), t0: 2.6, r: rnd(4, 8) });
   callout('城門破れたり', '');
   // the defenders come down from the walls and their nerve goes
-  BT.A[1].groups.forEach(g => { morale(g, .9, .93);if(g.onWall){g.onWall=false;const F=formGeom(g.type,visibleCount(g)+(g.heroes||[]).length,false);Object.assign(g,{R:F.R,rowStep:F.rowStep,colStep:F.colStep,stag:F.stag});}
-    g.spr.concat(g.heroes || []).forEach(q => { if (q.lift) { q.lift = 0; q.hop = .4; } }); });
+  releaseWallDefenders();
 
 }
 // the wall runs from the far edge of the field to the near one: a battered stone base facing us, a plastered
@@ -11572,7 +11594,8 @@ function updGuards(hr, dt, g, si) {
 // commanders carried off by their retainers rejoin at the start of the next round
 function returnHeroes() {
   BT.A.forEach((A, si) => A.groups.forEach(g => independentHeroes(g).forEach(hr => { const c = hr.hero;
-    if (c.ko && c.koRound && c.koRound < BT.round && (g.troops>0||g.heroOnly&&totalOf(A)>0)) { c.ko = false; c.koRound = 0; delete hr.duelDown; delete hr.duelPose; hr.out = false; hr.fadeAt = 0; hr.q = []; const face = sideDir(si);
+    if (c.ko && c.koRound && c.koRound < BT.round && (g.troops>0||g.heroOnly&&totalOf(A)>0)) {
+      if(BT.headless){c.ko=false;c.koRound=0;hr.out=false;hr.alive=true;c.hp=Math.max(c.hp||0,c.hpMax*.25);refreshGroup(g,.98);return;} c.ko = false; c.koRound = 0; delete hr.duelDown; delete hr.duelPose; hr.out = false; hr.fadeAt = 0; hr.q = []; const face = sideDir(si);
       hr.x = g.front - face * 80; hr.y = g.hy + hr.hdy; queueMove(hr, BT.t + .1, g.front + face * hr.hdx, g.hy + hr.hdy, 70);
       if (c.hp != null) c.hp = Math.max(c.hp, c.hpMax * .25); refreshGroup(g, .98);
       BT.labels.push({ x: g.front, y: g.hy - 30, text: `${c.name} ↩`, t: .3, side: si }); } })));
@@ -11637,7 +11660,7 @@ function syncSprites(g, kind = 'burn') {
   const want = visibleCount(g); const al = g.spr.filter(s => s.alive); let have = al.length;
   while (have > want && al.length) { const s = al.splice((Math.random() * al.length) | 0, 1)[0]; exitSprite(g,s,kind,-sideDir(sideOf(g)));have--; }
 }
-function syncRevive(g) { if(g.troops>0)g.visualCleared=false;const want = visibleCount(g); let have = g.spr.filter(s => s.alive).length; g.spr.forEach(s => { if (!s.alive && !s.gone && have < want) { recoverVisual(s);s.alive = true; s.die = 0; s.state = 'idle'; s.x = s.sx; s.y = s.sy; have++; } }); }
+function syncRevive(g) { if(BT?.headless){if(g.troops>0)for(const h of g.spr)if(!h.hero?.ko){h.alive=true;h.out=false;}return;}if(g.troops>0)g.visualCleared=false;const want = visibleCount(g); let have = g.spr.filter(s => s.alive).length; g.spr.forEach(s => { if (!s.alive && !s.gone && have < want) { recoverVisual(s);s.alive = true; s.die = 0; s.state = 'idle'; s.x = s.sx; s.y = s.sy; have++; } }); }
 function sideOf(g) { return BT.A[0].groups.includes(g) ? 0 : 1; }
 /* Grounded chibi reactions. These states only present losses already resolved by
    combat; they never change troop totals, HP, inventory, wounded returns or loot. */
@@ -12016,16 +12039,7 @@ function drawFieldExecution(x,s,g,si,sc){
 
 
 /* ---------- flow & choreography ---------- */
-function runPhase(p) {
-  if(rtFieldAllowed()){rtStartWindow();return;}
-  updateArmyCohesion();
-  BT.phaseName = p; BT.pt = 0; BT.pt0 = BT.t; BT.stopBudget = .32; BT.phaseId = (BT.phaseId || 0) + 1;
-  if(p==='inf')for(const A of BT.A)for(const g of A.groups)g.infPursuit=null;
-  BT.A.forEach(A => A.groups.forEach(g => (g.heroes || []).forEach(hr => { hr.px = hr.py = undefined; })));
-  const has0 = alive(BT.A[0], p).length, has1 = alive(BT.A[1], p).length;
-  const bat = p === 'gun' && siegeHold() && engCount() > 0 && BT.engFired !== BT.roundSeq; if (bat) BT.engFired = BT.roundSeq;
-  if (!has0 && !has1) { if (bat) { BT.script = { dur: 2.2, ev: [], i: 0, wins: [] }; callout('大筒', ''); engineScript(); BT.next = 2.1; return; } BT.next = 0.05; BT.script = null; return; }
-  callout(PHASE_CALL[p][0], ''); renderRunStrip();
+function collectPhaseHits(p){
   const ctx = { tac: BT.tac, jutsu: BT.jutsu, siege: siegeHold() };
   // behind a standing gate: attacking infantry and cavalry strike the gate only (siegeScript), and the defenders'
   // infantry and cavalry hold the walls without attacking; archers and gunners still trade volleys
@@ -12036,6 +12050,19 @@ function runPhase(p) {
   const hits = walled ? ih : ih.concat(resolvePhase(p, BT.A[0], BT.A[1], ctx), resolvePhase(p, BT.A[1], BT.A[0], ctx)); if (!walled) hits.push(...counterHits(p, hits, ctx));
   if (!walled) equipmentGrenades(p,hits,ctx);
   ih.forEach(h => h.to.troops += h.kills);updateArmyCohesion();
+  return hits;
+}
+function runPhase(p) {
+  if(rtFieldAllowed()){rtStartWindow();return;}
+  updateArmyCohesion();
+  BT.phaseName = p; BT.pt = 0; BT.pt0 = BT.t; BT.stopBudget = .32; BT.phaseId = (BT.phaseId || 0) + 1;
+  if(p==='inf')for(const A of BT.A)for(const g of A.groups)g.infPursuit=null;
+  BT.A.forEach(A => A.groups.forEach(g => (g.heroes || []).forEach(hr => { hr.px = hr.py = undefined; })));
+  const has0 = alive(BT.A[0], p).length, has1 = alive(BT.A[1], p).length;
+  const bat = p === 'gun' && siegeHold() && engCount() > 0 && BT.engFired !== BT.roundSeq; if (bat) BT.engFired = BT.roundSeq;
+  if (!has0 && !has1) { if (bat) { BT.script = { dur: 2.2, ev: [], i: 0, wins: [] }; callout('大筒', ''); engineScript(); BT.next = 2.1; return; } BT.next = 0.05; BT.script = null; return; }
+  callout(PHASE_CALL[p][0], ''); renderRunStrip();
+  const hits=collectPhaseHits(p);
   BT.camAnchor = null; clearCamKeys();
   finishPhase(p, hits, null);
   if (siegeHold()) siegeScript(p);
@@ -12097,11 +12124,10 @@ function readyHeroes(g){return independentHeroes(g).filter(x=>x.alive&&!x.out&&!
 function duelCands(p, hits) { return hits.filter(h => !h.icpt && h.depth === 0 && sideOf(h.from) === 0 && h.to.type === p && hits.some(o => o.from === h.to && o.to === h.from && o.depth === 0) && readyHeroes(h.from).length && readyHeroes(h.to).length); }
 function boutOdds(a, b) { const pa = Math.pow(duelPow(a), 1.8), pb = Math.pow(duelPow(b), 1.8); return pa / (pa + pb); }
 function duelOdds(a, b) { const p = boutOdds(a, b), q = 1 - p; return p * p * p * (1 + 3 * q + 6 * q * q); } // win 3 exchanges before losing 3
+function preparePhaseEffects(p,hits,spec){if(p==='inf'){normalizeBattleHits(hits);guardInfantryBreakthrough(hits);}const ex=heroPhase(p,hits,spec);normalizeBattleHits(hits);return ex;}
 function finishPhase(p, hits, spec) {
   const has0 = alive(BT.A[0], p).length, has1 = alive(BT.A[1], p).length;
-  if(p==='inf'){normalizeBattleHits(hits);guardInfantryBreakthrough(hits);}
-  const ex = heroPhase(p, hits, spec);
-  normalizeBattleHits(hits);
+  const ex=preparePhaseEffects(p,hits,spec);
   BT.script = buildScript(p, hits, ex);
   BT.next = Math.max(.6, BT.script.dur - .25); BT.phaseDur = BT.script.dur;
   // commander cut-in: the side with the stronger blow this phase speaks
@@ -12169,6 +12195,7 @@ function preDuel() {
   const pool = gs => gs.flatMap(g => readyHeroes(g).map(hr => (hr._g = g, hr))), mine = pool(m0), foes = pool(m1);
   const n = duelSize(Math.min(3, mine.length, foes.length));
   const B = (Math.random() < .7 ? foes.slice().sort((x, y) => duelPow(y.hero) - duelPow(x.hero)) : shuffle(foes.slice())).slice(0, n);
+  if(BT.headless){if(autoDuelOn())autoDuelResolve(autoPairs(B,mine));else mine[0]._g.shock=BT.round;return true;}
   if (!BT.auto || !autoDuelOn()) { openDuelPicker(B, mine); return true; }
   startDuel({ pairs: autoPairs(B, mine) }); return true;
 }
@@ -12760,7 +12787,8 @@ function duelLoss(f, by, n) {
 // rebuild a player unit's multipliers after a commander drops out (or returns)
 // a commander worn down: a small red number, and at zero HP his men carry him from the field for the rest of the battle
 function cmdHurt(g, c, d, by) {
-  const hr = (g.heroes || []).find(x => x.hero === c);
+  const hr = independentHeroes(g).find(x => x.hero === c);
+  if(BT.headless){if(c.hp>0||c.ko)return;c.ko=true;c.retreated=true;c.koRound=0;refreshGroup(g);if(hr)hr.out=true;if(c.lord){const A=BT.A[sideOf(g)];A.strat=Math.floor(A.strat/2);A.groups.forEach(x=>{if(x!==g)morale(x,.965);});}return;}
   if (hr && !hr.out && d >= 1.5 && BT.pops.length < 18) BT.pops.push({ x: hr.x + rnd(-2, 2), y: hr.y - 26, v: Math.round(d), t: 0, side: sideOf(g), hero: 1 });
   if (c.hp > 0 || c.ko) return;
   const si = sideOf(g), A = BT.A[si]; c.ko = true; c.retreated = true; c.koRound = 0; refreshGroup(g);
@@ -12821,7 +12849,7 @@ function heroPhase(p, hits, spec) {
     if (lv > 0 && Math.random() < Math.min(.85, .35 + .1 * lv)) { const got = add(hs, base * (.25 + .08 * lv)); if (got >= .5) ex.procs.push({ g, si: sideOf(g), name: p === 'inf' ? 'Chain Strike' : 'Rapid Shot', n: got, lv }); }
     // each commander's own blows, on his own numbers: STR or MRK against the target's armour, scaled by where he stands
     const sd = sideOf(g), T = hs[0].to, sg = siegeHold() ? (sd === 0 ? { gun: .72, arc: .45, inf: .3, cav: .15 }[p] : p === 'gun' || p === 'arc' ? 1.35 : .7) : 1;
-    const mood=battleAttack(g);
+    const mood=battleAttack(g)*(hs[0].wallLob?WALL_LOB_ACCURACY:1);
     const coh = cohesion(g), L = persList(g); let cap = base * PERS_CAP + 2 * L.length; // a unit that is being beaten can't hide behind its officers for long
     L.forEach(({ c, p: pp, w }) => { const spr = (g.heroes || []).find(x => x.hero === c); if (spr && spr.out) return; if (cap <= .05) return;
       const want = Math.min(cap, PERS_K * pp * w * coh * rnd(.75, 1.25) * sg * mood * personalWeaponFactor(c,T,p) / battleResistance(T)), got = add(hs, want); cap -= got; if (got > .05) { c.pk = (c.pk || 0) + got; if (got > .2) ex.bonus.set(spr || c, (ex.bonus.get(spr || c) || 0) + got); } });
@@ -12967,10 +12995,10 @@ function buildPhaseScript(p, hits, ex = { procs: [], bonus: new Map() }) {
   } else {
     // one volley, both lines at once: each pane opens on its own shooters readying (kneel / draw); they loose together and
     // each pane shows its line firing and the enemy's volley landing on it. Every lethal shot is a projectile that lands on its victim.
-    const fireAt = p === 'gun' ? .56 : .5, RL = RANGED_LEAD, pw = paneW(), T = BT.t + RL,gateFire=siegeHold()&&!wallRangedAlive();S.gateFire=gateFire;
+    const fireAt = p === 'gun' ? .56 : .5, RL = RANGED_LEAD, pw = paneW(), T = BT.t + RL,gateFire=p==='gun'&&siegeHold()&&!wallRangedAlive();S.gateFire=gateFire;S.wallLob=p==='arc'&&siegeHold()&&!wallRangedAlive();
     const cs = [0, 1].map(si => { const gs = alive(BT.A[si], p); if (!gs.length) return null; return { gs, main: gs.slice().sort((a, b) => b.troops - a.troops)[0] }; });
     const far = h => !!h && Math.abs(gCenter(h.from).x - gCenter(h.to).x) > BT.vw * .72;
-    const flightOf = h => p === 'gun' ? (far(h) ? .4 : .12) : 1.0;
+    const flightOf = h => p === 'gun' ? (far(h) ? .4 : .12) : h?.wallLob?1.5:1.0;
     const win = [null, null], foc = [null, null], open = [null, null];
     // each pane holds one shot for the whole phase: its side's shooters and the ground the enemy's volley lands on. When the
     // pane is too narrow for both (portrait), the landing zone is kept whole and the shooters show from their front ranks;
@@ -12998,18 +13026,18 @@ function buildPhaseScript(p, hits, ex = { procs: [], bonus: new Map() }) {
       const hs = (h.from.heroes || []).filter(x => !x.out && !x.hero.ko && burstReady(x.hero) && x.shotId !== BT.phaseId);
       victims.forEach((v, k) => { const hero = k < hs.length && k < victims.length * .6 ? hs[k] : null; if (hero) hero.shotId = BT.phaseId;
         const shooter = hero || pick(sh), tf = Tb + (hero ? fireAt - .1 + k * .09 : rankT(shooter)), td = tf + fl * (hero && p !== 'gun' ? .8 : 1); planned.set(v, td);
-        ev(tf, 'shot', { g: h.from, shooter, h, s: v, lethal: true, hero, flight: fl * (hero && p !== 'gun' ? .8 : 1) }); ev(td, 'die', { s: v, h, hero, cred: h.kills / Math.max(1, victims.length) }); });
+        ev(tf, 'shot', { g: h.from, shooter, h, s: v, lethal: true, hero, lob:h.wallLob, flight: fl * (hero && p !== 'gun' ? .8 : 1) }); ev(td, 'die', { s: v, h, hero, cred: h.kills / Math.max(1, victims.length) }); });
       const misses = Math.min(36, sh.length * (p === 'arc' ? 2 : 1)) - victims.length;
-      for (let i = 0; i < misses; i++) { const shooter = sh[i % sh.length]; ev(Tb + rankT(shooter) + (i >= sh.length ? .14 : 0), 'shot', { g: h.from, shooter, h, lethal: false, flight: fl }); }
+      for (let i = 0; i < misses; i++) { const shooter = sh[i % sh.length]; ev(Tb + rankT(shooter) + (i >= sh.length ? .14 : 0), 'shot', { g: h.from, shooter, h, lob:h.wallLob, lethal: false, flight: fl }); }
       h.t0 = Tb + fireAt + fl; h.t1 = h.t0 + .5; ev(h.t0 + .05, 'hit', { h });
       S.wins.push({ g: h.from, T: h.to, t0: h.t0, t1: h.t1, pairs: [] });
     });
     // shooters with nothing to hit still fire at the field
     [0, 1].forEach(si => alive(BT.A[si], p).forEach(g => { if (hits.some(h => h.from === g)) return;
-      const siegeAim=si===0&&siegeHold()&&!gateFire?BT.A[1].groups.find(t=>t.troops>0&&(t.type==='gun'||t.type==='arc')):null,
+      const siegeAim=si===0&&siegeHold()&&!gateFire?BT.A[1].groups.find(t=>t.troops>0&&(S.wallLob?(t.type==='inf'||t.type==='cav'):(t.type==='gun'||t.type==='arc'))):null,
         shooters=si===0&&siegeHold()?[...new Set(g.spr.concat(g.heroes||[]))]:g.spr;
-      shooters.filter(s=>s.alive&&!s.out).forEach(shooter=>ev(T+fireAt+rnd(0,.2),'shot',{g,shooter,hero:shooter.hero?shooter:null,h:siegeAim?{to:siegeAim}:undefined,lethal:false,gate:si===0&&gateFire,flight:p==='gun'?.18:1})); }));
-    S.dur = RL + fireAt + (p === 'gun' ? .12 : 1.0) + 1.3;
+      shooters.filter(s=>s.alive&&!s.out).forEach(shooter=>ev(T+fireAt+rnd(0,.2),'shot',{g,shooter,hero:shooter.hero?shooter:null,h:siegeAim?{to:siegeAim}:undefined,lethal:false,gate:si===0&&gateFire,lob:si===0&&S.wallLob,flight:p==='gun'?.18:S.wallLob?1.5:1})); }));
+    S.dur = RL + fireAt + (p === 'gun' ? .12 : S.wallLob?1.5:1.0) + 1.3;
   }
   // skill procs flash as the blow lands; hero bonus kills ride on that hero's own strikes
   ex.procs.forEach(pr => { const h0 = hits.filter(h => h.from === pr.g && !h.duelBonus).sort((a, b) => (a.t0 || 0) - (b.t0 || 0))[0]; ev(Math.max(T0, (h0 && h0.t0 || T0 + .4) - .08), 'proc', pr); });
@@ -13164,6 +13192,17 @@ function brandish(groups, dur, cry = true, brace = 0) {
   if (cry && groups.length) Sound.play('warcry', { vol: Math.min(1, .5 + groups.length * .12) });
 }
 function runScript() { const S = BT.script; if (!S) return; while (S.i < S.ev.length && S.ev[S.i].t <= BT.t) doEvent(S.ev[S.i++]); }
+function applyBattleHit(h){
+    if(h.applied)return;h.applied=true;h.kills=Math.min(Math.max(0,h.to.troops),h.kills);if(!(h.kills>0))return; if (BT.A[0].mode === 'army') { if (h.retShare) retCredit(h.from, h.kills * h.retShare);
+      retHit(h.to, h.kills).forEach(([c, f]) => { if(BT.headless)return; const hr = (h.to.heroes || []).find(x => x.hero === c), q = hr && (hr.guards || []).find(x => x.retRef === f); if (q && q.alive) killSprite(h.to, q, 'knock', sideDir(sideOf(h.from))); const pc = q || hr || gCenter(h.to); BT.labels.push({ x: pc.x, y: pc.y - 24, text: '郎党↓', t: .3, side: sideOf(h.to) }); }); }
+    cmdPressure(h).forEach(([c, d]) => cmdHurt(h.to, c, d, h.from));
+    h.to.troops=Math.max(0,h.to.troops-h.kills);if(h.to.troops<TROOP_EPS)h.to.troops=0;independentDamage(h.to,h.from);if(h.to.heroOnly&&h.to.troops<=0)h.to.visualCleared=true;if(h.to.solo&&!h.to.heroOnly&&BT.A[sideOf(h.to)].mode==='skirmish'&&h.to.solo.vref)h.to.solo.hp=Math.min(h.to.solo.hpMax||h.to.solo.s.hp,h.to.troops*3); if(h.from.heroOnly)h.from.solo.pk=(h.from.solo.pk||0)+h.kills;if (h.from.solo) h.from.solo.kills = (h.from.solo.kills || 0) + h.kills;
+    if (!BT.headless&&(h.kills >= 20 || BT.A[0].mode === 'skirmish' || h.to.troops <= 0)) addNum(h.to, h.kills, h.depth);
+    if(BT.headless&&!h.to.heroOnly){const fled=h.to.start&&h.to.troops/h.to.start<.45?h.kills*.18:0;h.to.fledN=(h.to.fledN||0)+fled;h.to.fellN=(h.to.fellN||0)+h.kills-fled;}
+    if(BT.headless&&!h.from.solo)for(const o of heroShares(h.from))o.c.kills=(o.c.kills||0)+h.kills*o.sh;
+    cohesionDamage(h.to,h.kills,h.from);unitBreak(h.to);
+    BT.hudDirty = true; return;
+}
 function doEvent(e) {
   if(e.k==='fieldTell'){beginFieldExecution(e);return;}
   if(tacticalEvent(e))return;
@@ -13235,21 +13274,13 @@ function doEvent(e) {
       if (e.hero) { Sound.play('gun', { vol: .8, pitch: .8 }); BT.fx.push({ k: 'ring', x: mx, y: my, t: .25, t0: .25, col: si ? '255,120,100' : '255,226,140' }); sh.glow = .5; }
       else if (Math.random() < .3) Sound.play('gun', { vol: .4, pitch: rnd(.85, 1.15) });
     } else {
-      BT.proj.push(warpProj({ k: 'arrow', x0: mx, y0: my, x1: tx, y1: ty, t0: BT.t, dur: e.flight || (e.hero ? .8 : 1.0), h: e.hero ? rnd(26, 34) : rnd(38, 58), lethal: e.lethal, hero: !!e.hero }));
+      BT.proj.push(warpProj({ k: 'arrow', x0: mx, y0: my, x1: tx, y1: ty, t0: BT.t, dur: e.flight || (e.hero ? .8 : 1.0), h: e.lob?Math.max(90,Math.min(150,Math.abs(tx-mx)*.3)):e.hero ? rnd(26, 34) : rnd(38, 58), lethal: e.lethal, hero: !!e.hero }));
       BT.fx.push({ k: 'flick', x: mx - face * 3, y: my, t: .09, t0: .09 }); // the string snapping forward
       if (e.hero) { Sound.play('arrow', { vol: .8, pitch: 1.2 }); sh.glow = .5; }
     }
     sh.flash = 0; return;
   }
-  if (e.k === 'hit') {
-    const h=e.h;if(h.applied)return;h.applied=true;h.kills=Math.min(Math.max(0,h.to.troops),h.kills);if(!(h.kills>0))return; if (BT.A[0].mode === 'army') { if (h.retShare) retCredit(h.from, h.kills * h.retShare);
-      retHit(h.to, h.kills).forEach(([c, f]) => { const hr = (h.to.heroes || []).find(x => x.hero === c), q = hr && (hr.guards || []).find(x => x.retRef === f); if (q && q.alive) killSprite(h.to, q, 'knock', sideDir(sideOf(h.from))); const pc = q || hr || gCenter(h.to); BT.labels.push({ x: pc.x, y: pc.y - 24, text: '郎党↓', t: .3, side: sideOf(h.to) }); }); }
-    cmdPressure(h).forEach(([c, d]) => cmdHurt(h.to, c, d, h.from));
-    h.to.troops=Math.max(0,h.to.troops-h.kills);if(h.to.troops<TROOP_EPS)h.to.troops=0;independentDamage(h.to,h.from);if(h.to.heroOnly&&h.to.troops<=0)h.to.visualCleared=true;if(h.to.solo&&!h.to.heroOnly&&BT.A[sideOf(h.to)].mode==='skirmish'&&h.to.solo.vref)h.to.solo.hp=Math.min(h.to.solo.hpMax||h.to.solo.s.hp,h.to.troops*3); if(h.from.heroOnly)h.from.solo.pk=(h.from.solo.pk||0)+h.kills;if (h.from.solo) h.from.solo.kills = (h.from.solo.kills || 0) + h.kills;
-    if (h.kills >= 20 || BT.A[0].mode === 'skirmish' || h.to.troops <= 0) addNum(h.to, h.kills, h.depth);
-    cohesionDamage(h.to,h.kills,h.from);unitBreak(h.to);
-    BT.hudDirty = true; return;
-  }
+  if (e.k === 'hit') {applyBattleHit(e.h);return;}
   if (e.k === 'die') {
     const s = e.s, h = e.h; if (!s.alive) return;
     const away = sideDir(sideOf(h.from));
@@ -13291,7 +13322,7 @@ function cutIn(si, c, text) {
 
 /* ---------- update ---------- */
 function updateBattle(rdt) {
-  if (!BT) return;
+  if (!BT||BT.headless) return;
   if(BT.rt&&(BT.state==='realtime'||BT.state==='done'&&rtIsFieldView())){rtUpdateBattle(rdt);return;}
   updateDuelCinema(rdt);
   let dt=rdt*battlePlaybackRate();
@@ -13478,7 +13509,7 @@ function whiteOf(img) { let w = _white.get(img); if (w) return w; w = gameCanvas
 function spriteScale() { return BT.A[0].mode === 'skirmish' ? ((BT.fy1Base || BT.fy1) - BT.fy0 >= 120 ? 2 : 1) : BT.armySc || 1; }
 const _draws = [];
 function drawBattle() {
-  if (!BT) return;
+  if (!BT||BT.headless) return;
   if(BT.rt){$('#rt-controls').hidden=BT.state!=='realtime';if(rtIsFieldView()){BT.rt.view.render();return;}}
   const x = BT.bx, W = BT.vw, H = BT.vh; x.imageSmoothingEnabled = false;
   const shx = BT.shake > 0 ? Math.round(rnd(-2, 2) * BT.shake * 4) : 0, shy = BT.shake > 0 ? Math.round(rnd(-1, 1) * BT.shake * 3) : 0;
@@ -13936,17 +13967,17 @@ function drawMap() {
 function marchPlan(p) { const own = PROVINCES.filter(q => G.prov[q.id] && G.prov[q.id].owner === 'kage'); let best = Infinity, from = own[0] || PROVINCES[0];
   own.forEach(q => { const d = Math.hypot(q.x - p.x, q.y - p.y); if (d < best) { best = d; from = q; } }); return { w: clamp(Math.round(best / 300 * 7) / 7, 2 / 7, 2.5) * boonOf('march'), from }; }
 function daysStr(w) { return Math.max(0, Math.ceil(w * 7)) + 'd'; }
-function startMarch(p) {
+function startMarch(p,autoResolve=false) {
   if (G.march) { toast('The army is already on the march.'); return false; }
   if (!playerArmy().groups.length) { Sound.play('alert'); toast('You have no troops! Hire some in the Army panel.'); return false; }
-  const { w, from } = marchPlan(p); G.march = { id: p.id, left: w, total: w, from: from.id, name: p.name };
+  const { w, from } = marchPlan(p); G.march = { id: p.id, left: w, total: w, from: from.id, name: p.name };if(autoResolve)G.march.autoResolve=true;
   Sound.play('horn'); toast(`⚔ The army marches on <b>${esc(p.name)}</b> · ${daysStr(w)}`); updateHUD(); return true;
 }
 function marchCheck() { // called from the village loop: on arrival, the battle begins (once nothing else is on screen)
   const M = G.march; if (!M || M.left > 0 || G.speed<=0 || RT.mode==='move' || BT || MQ.length || MAPV.open || $('#sheet').classList.contains('open')) return;
   G.march = null; const P = siteById(M.id);
   if (!P || (G.prov[P.id] && G.prov[P.id].owner === 'kage')) { toast('The enemy has gone — the army returns.'); return; }
-  startBattle(P.id);
+  startBattle(P.id,null,M.autoResolve===true);
 }
 function drawMarch(x, z) {
   const M = G.march; if (!M) return; const P = siteById(M.id), F = siteById(M.from); if (!P || !F) return;
@@ -14026,12 +14057,13 @@ function showProvCard(p) {
     if (p.type === 'dojo' && G.trainCD > 0) body += `<p class="note">⏳ ${G.trainCD} mo</p>`;
     else if (!att) body += `<p class="note">🔒 Take a neighbour first</p>`;
     const M = G.march, here = M && M.id === p.id, mw = !skirm && p.type !== 'dojo' && marchPlan(p).w;
-    if (here) body += `<div class="row"><span class="note" style="margin:0">⚔ Marching · ${daysStr(M.left)}</span><span class="sp"></span><button class="btn ghost" id="pc-recall">Recall</button></div>`;
-    else body += `<div class="row"><span class="sp"></span><button class="btn red" id="pc-go" ${att && !(M && mw) ? '' : 'disabled'} style="min-width:140px"${M && mw ? tipAttr('The army is already on the march') : ''}>${p.type === 'dojo' ? 'Spar!' : p.type === 'camp' ? 'Attack camp!' : 'March!'}${mw ? ` · ⏳${daysStr(mw)}` : ''}</button></div>`;
+    if (here) body += `<div class="row"><span class="note" style="margin:0">⚔ Marching · ${daysStr(M.left)}${M.autoResolve?' · auto-resolve':''}</span><span class="sp"></span><button class="btn ghost" id="pc-recall">Recall</button></div>`;
+    else body += `<div class="row wrap"><span class="sp"></span><button class="btn ghost" id="pc-auto" ${att && !(M && mw) && pa.groups.length ? '' : 'disabled'}${tipAttr(AUTO_RESOLVE_TIP)}>Auto-resolve${mw?` · ${daysStr(mw)}`:''}</button><button class="btn red" id="pc-go" ${att && !(M && mw) ? '' : 'disabled'} style="min-width:140px"${M && mw ? tipAttr('The army is already on the march') : ''}>${p.type === 'dojo' ? 'Spar!' : p.type === 'camp' ? 'Attack camp!' : 'March!'}${mw ? ` · ⏳${daysStr(mw)}` : ''}</button></div>`;
   }
   const el = $('#prov-card'); el.hidden = false; el.innerHTML = `<div class="in lac"><div class="bd paper">${body}</div></div>`;
   $('#pc-x').onclick = () => { MAPV.sel = null; el.hidden = true; };
   const go = $('#pc-go'); if (go) go.onclick = () => { if (siteMode(p) === 'army' && p.type !== 'dojo' ? startMarch(p) : startBattle(p.id)) { el.hidden = true; MAPV.sel = null; } };
+  const ar=$('#pc-auto');if(ar)ar.onclick=()=>{if(siteMode(p)==='army'&&p.type!=='dojo'?startMarch(p,true):startBattle(p.id,null,true)){el.hidden=true;MAPV.sel=null;}};
   const rc = $('#pc-recall'); if (rc) rc.onclick = () => { G.march = null; Sound.play('tap'); toast('The army turns back.'); showProvCard(p); updateHUD(); };
   const hm = $('#pc-home'); if (hm) hm.onclick = () => closeMap();
 }
@@ -14312,7 +14344,7 @@ function campTick() {
 
 function centerOnHall() { const h = G.buildings.find(b => b.id === 'hall'); VIEW.cx = (h ? h.x + 1.5 : 15) * 16; VIEW.cy = (h ? h.y + 3 : 11) * 16; clampCam(); }
 function afterLoad() {
-  migrateBattleConfig();
+  migrateBattleConfig();migrateArmoryPresets();
   if (!G.endYear) G.endYear = rint(20, 30);
   if (G.speed === 3) G.speed = 4; // fast-forward is now 4x
   applyCampaign(); // per-campaign clans, recruits and doctrine prices (old saves: the classic map)
@@ -15143,6 +15175,148 @@ function economyAgentComponent(a){
  const E=economyState(),sx=clamp(Math.round((a.x-8)/16),0,MAP_W-1),sy=clamp(Math.round((a.y-12)/16),0,MAP_H-1);
  let n=E.components[idx(sx,sy)];if(n)return n;const p=navigationStart(a);return p?E.components[idx(p[0],p[1])]:0;
 }
+
+/*SH_ARMORY_PRESETS_START*/
+/* Bugu-gura: finite saved equipment profiles; arrivals and explicit armory actions only. */
+BUILDINGS.bugugura={name:'Bugu-gura',jp:'武具蔵',cat:'train',w:3,h:2,cost:750,appeal:2,desc:'Clan armory. Prepare six-slot kits for new villagers, stock researched equipment in advance, and review incomplete kits.'};
+if(!BUILD_ORDER.includes('bugugura'))BUILD_ORDER.splice(BUILD_ORDER.indexOf('library')+1,0,'bugugura');
+const BUGU_PROFILES={duelist:{name:'Infantry · Duelist',role:'inf'},frontline:{name:'Infantry · Frontline',role:'inf'},arc:{name:'Archers',role:'arc'},gun:{name:'Gunners',role:'gun'},cav:{name:'Cavalry',role:'cav'},delivery:{name:'Workers · Delivery',role:'work'},craft:{name:'Workers · Craft',role:'work'},farm:{name:'Workers · Farm',role:'work'}};
+const BUGU_SLOTS=[['weapon','Weapon'],['armor','Armor'],['head','Headwear'],['mount','Mount / companion'],['special','Special I'],['special2','Special II']];
+function buguBuilt(){return G.buildings.some(b=>b.id==='bugugura'&&!b.reno);}
+function migrateArmoryPresets(){const old=G.armory||{},profiles={};
+ for(const id in BUGU_PROFILES){const from=old.profiles?.[id]||{},slots={};for(const [key] of BUGU_SLOTS){const k=from.slots?.[key];slots[key]=k==='*'?'*':k&&buguFits(BUGU_PROFILES[id].role,key,k)?k:k===undefined?'*':null;}profiles[id]={slots,buy:from.buy===true,reserve:from.reserve===true&&from.buy===true};}
+ G.armory={enabled:old.enabled===true,inf:old.inf==='duelist'?'duelist':'frontline',work:['farm','delivery','craft'].includes(old.work)?old.work:'farm',profiles};return G.armory;
+}
+function armoryState(){return G.armory?.profiles?G.armory:migrateArmoryPresets();}
+function buguFits(role,slot,k){const I=ITEMS[k];if(!I||I.slot!==(slot==='special2'?'special':slot)||!itemFits(role,k))return false;
+ return !(ROLE_NEED[role]&&roleSlot(role)===slot)||fitsRole(role,k);
+}
+function buguProfileFor(v){const A=armoryState();if(v.role==='inf')return A.inf;if(v.role!=='work')return BUGU_PROFILES[v.role]?v.role:'frontline';
+ const b=bByUid(v.job);return b?.id==='porter'?'delivery':BUILDINGS[b?.id]?.craft?'craft':A.work;
+}
+function buguScore(id,k){const I=ITEMS[k],base=(I.def||0)*.5+(I.hp||0)*.2;
+ if(id==='delivery')return base+(I.carry||0)*1000+(I.move||0)*200+(I.wrk||0)*2;
+ if(id==='craft')return base+(I.craft||0)*1000+(I.wrk||0)*6+(I.move||0)*35;
+ if(id==='farm')return base+(I.wrk||0)*10+(I.move||0)*70+(I.carry||0)*80;
+ if(id==='duelist')return base+(I.str||0)*3+(I.atk||0)*2+(I.duel||0)*6;
+ if(id==='frontline')return (I.def||0)*4+(I.hp||0)+(I.str||0)*1.5+(I.atk||0);
+ if(id==='arc'||id==='gun')return base+(I.mrk||0)*4+(I.atk||0);
+ return base+(I.atk||0)*2+(I.str||0)*2+(I.hp||0)*.5+(I.ride?10:0);
+}
+function buguAny(id,role,slot){let best=null,score=-Infinity;for(const k in G.items)if(G.items[k]>0&&buguFits(role,slot,k)){const s=buguScore(id,k);if(s>score||s===score&&k<best){score=s;best=k;}}return best;}
+function buguBuy(k){const I=ITEMS[k];if(!I||!G.researched[k]||I.cost<=0||I.wild||!canBuyItem(k))return false;
+ G.gold-=I.cost;if(I.res)for(const r in I.res)destroyGoods(economyCentral(r),r,I.res[r],'equipment');G.items[k]=(G.items[k]||0)+1;return true;
+}
+function applyEquipmentPreset(v,id){const P=armoryState().profiles[id];if(!v||!P||BUGU_PROFILES[id]?.role!==v.role||!buguBuilt())return 0;let n=0;
+ for(const [slot] of BUGU_SLOTS){if(v.eq[slot])continue;let k=P.slots[slot];if(k==='*')k=buguAny(id,v.role,slot);if(!k||!buguFits(v.role,slot,k))continue;
+  if(!(G.items[k]>0)&&P.buy)buguBuy(k);if(!(G.items[k]>0))continue;G.items[k]--;v.eq[slot]=k;n++;
+ }return n;
+}
+function armoryReservePlan(){const wish={},A=armoryState();for(const id in BUGU_PROFILES){const P=A.profiles[id];if(!P.buy||!P.reserve)continue;for(const [slot] of BUGU_SLOTS){const k=P.slots[slot];if(k&&k!=='*'&&buguFits(BUGU_PROFILES[id].role,slot,k)&&G.researched[k]&&ITEMS[k].cost>0&&!ITEMS[k].wild)wish[k]=(wish[k]||0)+1;}}
+ const need={};for(const k in wish){const n=wish[k]-(G.items[k]||0);if(n>0)need[k]=n;}return need;
+}
+function restockArmoryPresets(){if(!buguBuilt())return 0;const need=armoryReservePlan();let n=0;for(const k in need)for(let i=0;i<need[k];i++){if(!buguBuy(k))break;n++;}return n;}
+function presetOnArrival(v){if(!buguBuilt())return;const A=armoryState();if(A.enabled)applyEquipmentPreset(v,buguProfileFor(v));restockArmoryPresets();}
+function buguChoiceFor(v){const id=UI.buguChoice?.[v.id];return BUGU_PROFILES[id]?.role===v.role?id:buguProfileFor(v);}
+function buguPanel(body,b,tab){const A=armoryState();if(tab==='review'){if(UI.buguLastTab!=='review'||UI.buguReviewUid!==b.uid)buguScan(b);UI.buguLastTab='review';renderBuguReview(body,b);return;}UI.buguLastTab='presets';
+ const id=BUGU_PROFILES[UI.buguProfile]?UI.buguProfile:'frontline',P=A.profiles[id],meta=BUGU_PROFILES[id];UI.buguProfile=id;
+ body.appendChild(h('<p class="note">Presets fill empty slots. Gear villagers bring stays equipped.</p>'));
+ const controls=h(`<details class="bugu-settings"><summary>New arrivals · auto-kit ${A.enabled?'on':'off'}</summary><div class="row wrap"><label><input type="checkbox" data-bugu-auto${A.enabled?' checked':''}> Equip new arrivals</label><label>Infantry default <select data-bugu-default="inf"><option value="frontline"${A.inf==='frontline'?' selected':''}>Frontline</option><option value="duelist"${A.inf==='duelist'?' selected':''}>Duelist</option></select></label><label>Worker default <select data-bugu-default="work">${['farm','craft','delivery'].map(k=>`<option value="${k}"${A.work===k?' selected':''}>${BUGU_PROFILES[k].name.split(' · ')[1]}</option>`).join('')}</select></label></div></details>`);
+ controls.querySelector('[data-bugu-auto]').onchange=e=>{A.enabled=e.target.checked;controls.querySelector('summary').textContent='New arrivals · auto-kit '+(A.enabled?'on':'off');};controls.querySelectorAll('[data-bugu-default]').forEach(el=>el.onchange=()=>{A[el.dataset.buguDefault]=el.value;});body.appendChild(controls);
+ const profiles=h(`<label class="bugu-profiles"><b>Equipment profile</b><select data-bugu-profile>${Object.entries(BUGU_PROFILES).map(([k,m])=>`<option value="${k}"${id===k?' selected':''}>${m.name}</option>`).join('')}</select></label>`);profiles.querySelector('select').onchange=e=>{UI.buguProfile=e.target.value;refreshSheet();};body.appendChild(profiles);
+ const grid=h('<div class="bugu-slots"></div>');for(const [slot,name] of BUGU_SLOTS){const keys=Object.keys(ITEMS).filter(k=>buguFits(meta.role,slot,k)).sort((a,b)=>ITEMS[a].tier-ITEMS[b].tier||ITEMS[a].cost-ITEMS[b].cost),selected=P.slots[slot];
+  const row=h(`<label class="bugu-slot"><b>${selected&&selected!=='*'?icon('it_'+selected):icon({weapon:'it_katana',armor:'it_lamellar',head:'it_jingasa',mount:'it_jiba',special:'it_horo',special2:'it_ise'}[slot])} ${name}</b><select data-bugu-slot="${slot}"><option value="*"${selected==='*'?' selected':''}>✦ Any available</option><option value=""${selected===null?' selected':''}>— Leave as is</option>${keys.map(k=>`<option value="${k}"${selected===k?' selected':''}>T${ITEMS[k].tier} · ${esc(ITEMS[k].name)}${G.researched[k]?'':' · not researched'} · stock ${G.items[k]||0}</option>`).join('')}</select><small class="muted">${selected&&selected!=='*'?itemStat(selected):selected==='*'?'Uses fitting stock, ranked for this profile.':'Keeps this slot untouched.'}</small></label>`);
+  row.querySelector('select').onchange=e=>{P.slots[slot]=e.target.value||null;refreshSheet();};grid.appendChild(row);
+ }body.appendChild(grid);
+ const buy=h(`<div class="row wrap"><label><input data-bugu-buy type="checkbox"${P.buy?' checked':''}> Buy missing researched gear</label><label><input data-bugu-reserve type="checkbox"${P.reserve?' checked':''}${P.buy?'':' disabled'}> Keep one spare kit</label></div>`);
+ buy.querySelector('[data-bugu-buy]').onchange=e=>{P.buy=e.target.checked;if(!P.buy)P.reserve=false;refreshSheet();};buy.querySelector('[data-bugu-reserve]').onchange=e=>{P.reserve=e.target.checked;refreshSheet();};body.appendChild(buy);
+ const need=armoryReservePlan(),cost=Object.entries(need).reduce((n,[k,q])=>n+ITEMS[k].cost*q,0),row=h(`<div class="row wrap"><button class="btn" data-bugu-stock>Stock spare kits</button><span class="muted">${Object.values(need).reduce((a,n)=>a+n,0)} named pieces · up to ${fmt(cost)}G + normal materials</span></div>`);
+ row.querySelector('button').onclick=()=>{const n=restockArmoryPresets();Sound.play('coin');toast(`${n} spare piece${n===1?'':'s'} bought.`);updateHUD();refreshSheet();};body.appendChild(row);
+ body.appendChild(h('<p class="note">Auto-buy applies to named, researched gear at its normal price. “Any available” only uses owned stock. Spare-kit orders are replenished on arrivals and research completion, or with Stock spare kits. Trade-reserved materials remain protected. Workers assigned to a Porter House or Workshop use Delivery or Craft; other workers use your default.</p>'));
+}
+function buguScan(b){UI.buguReviewUid=b.uid;const limit=UI.buguThreshold===5?5:6;UI.buguReviewIds=G.villagers.filter(v=>BUGU_SLOTS.filter(([s])=>!!v.eq[s]).length<limit).map(v=>v.id);}
+function renderBuguReview(body,b){const head=h(`<div><p class="note">A snapshot taken when this tab opens. Fill missing slots while keeping personal weapons and existing gear.</p><div class="row wrap"><label>Show fewer than <select data-bugu-threshold><option value="6"${UI.buguThreshold!==5?' selected':''}>6 slots</option><option value="5"${UI.buguThreshold===5?' selected':''}>5 slots</option></select></label><button class="btn ghost" data-bugu-scan>Rescan</button><button class="btn gold" data-bugu-all>Equip listed</button></div></div>`);
+ head.querySelector('[data-bugu-threshold]').onchange=e=>{UI.buguThreshold=+e.target.value;buguScan(b);refreshSheet();};head.querySelector('[data-bugu-scan]').onclick=()=>{buguScan(b);refreshSheet();};head.querySelector('[data-bugu-all]').onclick=()=>{let n=0;for(const id of UI.buguReviewIds||[]){const v=vById(id);if(v)n+=applyEquipmentPreset(v,buguChoiceFor(v));}restockArmoryPresets();toast(`${n} empty slots equipped.`);updateHUD();refreshSheet();};body.appendChild(head);
+ let count=0;for(const id of UI.buguReviewIds||[]){const v=vById(id);if(!v)continue;count++;const filled=BUGU_SLOTS.filter(([s])=>!!v.eq[s]).length,pid=buguChoiceFor(v),row=h(`<div class="bugu-review"><div data-card></div><div class="row wrap"><span class="chip">${filled}/6 slots</span><select data-bugu-choice aria-label="Equipment profile for ${esc(vData(id).name)}">${Object.entries(BUGU_PROFILES).filter(([k,m])=>m.role===v.role).map(([k,m])=>`<option value="${k}"${pid===k?' selected':''}>${m.name}</option>`).join('')}</select><button class="btn" data-bugu-equip="${esc(id)}"${filled===6?' disabled':''}>Fill missing</button></div></div>`);
+  row.querySelector('[data-card]').appendChild(vCard(v));row.querySelector('select').onchange=e=>{(UI.buguChoice||={})[id]=e.target.value;};row.querySelector('[data-bugu-equip]').onclick=()=>{const n=applyEquipmentPreset(v,buguChoiceFor(v));restockArmoryPresets();toast(n?`${n} empty slots equipped.`:'No fitting stock or affordable researched gear.');updateHUD();refreshSheet();};body.appendChild(row);
+ }if(!count)body.appendChild(h('<p class="note">Everyone meets the selected equipment threshold.</p>'));
+}
+function buguGuraArt(p,W,H,Y){const by=Y+H-1,wall=by-16;
+ p.rect(2,by-2,W-4,3,'#6d6562');wallFront(p,2,wall,W-4,15,{plaster:'#efe6d0',wood:'#7a5230',door:false});roofTiles(p,0,1,W,wall+3,'#3a3442');
+ p.rect(4,wall+4,12,10,'#2a1a24');p.rect(18,wall+3,13,12,'#4a321e');p.rect(19,wall+4,5,10,'#7a5230');p.rect(25,wall+4,5,10,'#6b4a2e');p.vline(24,wall+4,10,'#2a1a14');p.set(23,wall+9,'#d6ae62');
+ // A kabuto and lamellar cuirass in the open bay; native village pixels, not character-scale art.
+ p.rect(7,wall+5,6,2,'#8d93a3');p.rect(6,wall+7,8,1,'#4a4a52');p.rect(8,wall+8,4,5,'#3b4a7a');p.hline(8,wall+9,4,'#c8945f');p.hline(8,wall+11,4,'#8d93a3');p.rect(6,wall+9,2,3,'#973f35');p.rect(12,wall+9,2,3,'#973f35');p.hline(5,by-3,12,'#a8743f');
+ p.rect(34,wall+4,10,11,'#4a321e');for(let x=35;x<=41;x+=3){p.vline(x,wall+5,10,'#a8743f');p.poly([[x-1,wall+5],[x,wall+1],[x+1,wall+5]],'#d8dce6');}p.hline(33,wall+10,12,'#6b4a2e');
+ p.rect(20,wall,10,3,'#3b4a7a');p.vline(24,wall,3,'#efe6d0');p.rect(17,by-1,15,2,'#8a7e6d');
+}
+
+/*SH_ARMORY_PRESETS_END*/
+
+/*SH_AUTO_BATTLE_START*/
+/* Data-only staged combat. No battlefield, soldier frames or shared clock fast-forward.
+   Damage, round effects, HP duels and the final campaign settlement use the watched battle's rules. */
+const AUTO_RESOLVE_TIP='Resolve without loading the battlefield. Uses staged combat, your army tactics, equipment and Auto Duel setting. Losses and rewards still apply; army march time is unchanged. Sieges use your army without hiring siege engines.';
+function prepareAutoArmy(){
+ for(const A of BT.A){A.hqSpr=[];for(const g of A.groups){g.spr=[];g.heroes=[];g.hx=g.hy=g.front=0;
+  for(const c of g.cmds||[]){c.hpMax??=c.s.hp;c.hp??=c.hpMax;
+   if(c.post==='hq'&&!g.solo)continue;
+   const h={hero:c,_g:g,alive:g.troops>0,out:!!c.ko,guards:[],x:0,y:0,sx:0,sy:0,hdx:0,hdy:0,si:A.side,q:[]};
+   if(g.solo===c)g.spr.push(h);else g.heroes.push(h);
+  }
+ }}
+}
+function autoJutsuEffect(side,j){const D=BT.A[1-side];
+ if(j==='fire'||j==='wind')for(const g of D.groups)if(g.troops>0&&(j==='fire'?g.type==='gun'||g.type==='arc':g.type==='inf'||g.type==='cav')){
+  g.troops=Math.max(0,g.troops-Math.min(g.troops,(j==='fire'?.16:.1)*g.troops+3));independentDamage(g);unitBreak(g);
+ }
+}
+function autoDuelResolve(pairs){const D=simDuel(pairs);BT.duels=(BT.duels||0)+1;
+ for(const e of D.log){if(e.reload)continue;e.applied=true;D.committed++;if(!e.hit)continue;
+  e.t.cur=e.hp;e.t.hr.hero.hp=e.hp;if(e.t.g.heroOnly)refreshIndependent(e.t.g);
+  if(e.ko&&!e.t.loss){e.t.loss=duelLoss(e.t,e.f,pairs.length);D.res.push(e.t.loss);}
+ }
+ for(const f of D.yields)if(!f.loss){f.loss=duelLoss(f,f.by,pairs.length);D.res.push(f.loss);}
+ for(const R of D.res){R.L.out=R.save!=='ward';independentDuelExit(R.gL);}
+ return D;
+}
+function autoResolveRound(){const session=BT;if(!session?.headless||session.state==='done')return;
+ if(session.retreatReq){session.playerRetreat=true;finishBattle('lose','You sounded the retreat.');return;}
+ beginRound();
+ for(const p of PHASES){session.phaseName=p;session.phaseId=(session.phaseId||0)+1;
+  if(p==='inf')for(const A of session.A)for(const g of A.groups)g.infPursuit=null;
+  const gateFire=siegeHold()&&p==='gun'&&!wallRangedAlive(),walled=siegeHold()&&(p==='inf'||p==='cav'),
+    hits=collectPhaseHits(p);
+  preparePhaseEffects(p,hits,null);
+  // Countershots resolve before the clash. Front/rear infantry hits retain their shared travel clock.
+  hits.sort(autoHitOrder);for(const h of hits)applyBattleHit(h);
+  if(siegeHold()&&(walled||gateFire))gateHit({dmg:siegeAttackPower(p),shot:p==='gun',gateVolley:gateFire});
+  for(const A of session.A)for(const g of A.groups)unitBreak(g);
+  if(totalOf(session.A[0])<=0||totalOf(session.A[1])<=0||session.breachReset)break;
+ }
+ session.t+=25;endRound();session.labels.length=0;session.fx.length=0;session.nums.length=0;session.pops.length=0;
+ if(session.log.length>200)session.log.splice(0,session.log.length-200);
+ if(session.ftacLog)for(const k in session.ftacLog)if(+k<session.round-2)delete session.ftacLog[k];
+}
+function autoHitOrder(a,b){return (a.icpt?-1:a.infAt??0)-(b.icpt?-1:b.infAt??0);}
+function dismissAutoProgress(session){const i=MQ.indexOf(session.autoDialog);if(i<0)return;MQ.splice(i,1);if(i===0)showModal();session.autoDialog=null;}
+function runAutoResolve(){const session=BT,bank=G.ki;session.quick=true;session.autoResolve=true;
+ $('#map-layer').hidden=true;
+ modal('Auto-resolving',`<b>${esc(session.prov.name)}</b><p id="auto-progress" class="note">Resolving attacks, losses and recovery…</p>`,[['Retreat',()=>{if(BT===session&&session.state!=='done')session.retreatReq=true;},'ghost']],{must:true,icon:'army'});
+ session.autoDialog=MQ[MQ.length-1];
+ function chunk(){if(BT!==session||session.state==='done')return;const until=performance.now()+8;
+  try{let n=0;do{autoResolveRound();}while(session.state!=='done'&&++n<8&&performance.now()<until);
+  }catch(e){console.error('Auto-resolve failed',e);dismissAutoProgress(session);if(session.state!=='done'){G.ki=bank;closeBattle();toast('Auto-resolve could not finish. Your army can still fight this battle normally.');}return;}
+  if(session.state!=='done'){const el=$('#auto-progress');if(el)el.textContent=`Round ${session.roundSeq} · ${fmt(combatCount(session.A[0]))} vs ${fmt(combatCount(session.A[1]))} active`;setTimeout(chunk,0);}
+ }
+ setTimeout(chunk,0);
+}
+function autoResolveReport(o){const session=BT;dismissAutoProgress(session);updateHUD();
+ const done=()=>{if(BT===session)closeBattle();if(!['hunt','land'].includes(session.prov.type))openMap();o.unlockMsgs.forEach(m=>announce('Spoils of war',m,'scroll'));saveGame();};
+ modal(esc(o.title),`<p class="note">Auto-resolved · ${o.rounds} round${o.rounds===1?'':'s'} · staged combat</p><p>${o.drill?'Sparring: no troops lost':session.A[0].mode==='army'?`Troops lost: <b>${fmt(o.lost)}</b>`:'Villager skirmish'} · Enemy remaining: ${fmt(combatCount(session.A[1]))}</p>${o.mvpHtml}${o.duelHtml}<div class="rewards">${o.rewards.map(r=>`<span class="chip">${r}</span>`).join('')}</div>`,[['Continue',done]],{must:true,icon:o.res==='win'?'army':'u_inf'});
+ saveGame();
+}
+
+/*SH_AUTO_BATTLE_END*/
 
 /*SH_REALTIME_MODEL_START*/
 // Continuous, camera-independent combat for the standalone battlefield study.
