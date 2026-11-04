@@ -1,0 +1,29 @@
+{
+  "checks": 17,
+  "movement": 0.5,
+  "farmWork": 20.000000000000004,
+  "secondarySkill": 1,
+  "workerMountedPreview": true,
+  "mounts": {
+    "checks": 188,
+    "rideable": [
+      "kiso",
+      "ashige",
+      "yoroiuma",
+      "akayoroi",
+      "jiba",
+      "nanbu",
+      "pony",
+      "stallion"
+    ],
+    "formations": [
+      "inf",
+      "arc",
+      "gun",
+      "cav"
+    ],
+    "realtimeMountedOfficers": 8,
+    "warmCanvasAllocations": 0
+  },
+  "errors": []
+}

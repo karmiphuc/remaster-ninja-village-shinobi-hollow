@@ -1,6 +1,7 @@
 /* Campaign adapter: Classic remains the default. Realtime owns open-field hits only;
    the existing deployment, duels, wall siege, rewards, retreats and save version remain authoritative. */
 const RT_ACTOR_CAP=48;
+const RT_GUN_SOUND={vol:.38};
 const RT_STANCE_TEXT={
  inf:{line:'Line: 18% less melee damage.',loose:'Loose: wider spacing and 10% less ranged damage.',pikewall:'Pikewall: stationary; 45% less melee damage.'},
  gun:{line:'Line: +12% damage, 15% tighter aim; closer ranks.',loose:'Loose: wider spacing and 10% less incoming damage.'},
@@ -29,29 +30,30 @@ function rtNormalizeStyle(s,g,side,cache){if(cache.has(s))return cache.get(s);co
  if(r){const sample={...s,fate:{kind:'death',recipe:r},droppedHat:false};for(const key of ['stagger','kneel','rest','panic']){frames[key]=reactionFrame(sample,g,key);faces[key]=1;}sample.fate.kind='rout';for(const key of ['runA','runB']){frames['flee'+key]=reactionFrame(sample,g,key);faces['flee'+key]=1;}}
  else{frames.stagger=k.hurt||k.idle[0];frames.kneel=frames.rest=k.fall||k.hurt||k.idle[0];frames.panic=frames.stagger;frames.fleerunA=frames.runA;frames.fleerunB=frames.runB;}
  const weapon=r?.L.gear?.w||s.look?.gear?.w||s.artKit?.w,meta=ITEMS[weapon];
- const out={frames,faces,burst:meta?.burst||1,reload:meta?.burst?1+(meta.reload||0):1,shotPower:meta?.shotPower??1,nativeFace:side?-1:1,kit:r?.L.gear||s.look?.gear||s.artKit||{},weapon:r?reactionProp(r,'weapon')?.cv:null,flag:s.sashimono?sashimonoFrames(s.sashimono):null};cache.set(s,out);return out;
+ const socket=k.atk?.muzzleSocket;const out={frames,faces,muzzleX:socket?Math.abs(socket.x-k.atk.width/2):12,muzzleHeight:socket?k.atk.height-socket.y:17,mounted:!!k.horse,burst:meta?.burst||1,reload:meta?.burst?1+(meta.reload||0):1,shotPower:meta?.shotPower??1,nativeFace:side?-1:1,kit:r?.L.gear||s.look?.gear||s.artKit||{},weapon:r?reactionProp(r,'weapon')?.cv:null,flag:s.sashimono?sashimonoFrames(s.sashimono):null};cache.set(s,out);return out;
 }
 function rtMapSource(m){const s=m.source;if(!s)return;const x=m.x/1400*BT.WW,y=BT.fy0+m.y/1020*(BT.fy1-BT.fy0);s.x=s.tx=s.sx=x;s.y=s.ty=s.sy=y;s.face=m.face;s.q.length=0;s.state=m.moving?'run':m.pendingAt?'fight':'idle';s.fightUntil=m.pendingAt?BT.t+.3:0;s.hurtUntil=m.hurtUntil>BT.rt.model.time?BT.t+(m.hurtUntil-BT.rt.model.time):0;}
-function rtMakeCampaignModel(){const session=BT,styleCache=new WeakMap(),sources=new Map(),extras=[],mapped=new Set(),rng=seeded(BT.seed^0x6d2b79f5),rt={model:null,view:null,selected:null,extras,styleCache,sources,rng,windowAt:0,hudAt:0,panelKey:'',paused:false,hooking:false};BT.rt=rt;
+function rtMakeCampaignModel(){const session=BT,styleCache=new WeakMap(),sources=new Map(),extras=[],mapped=new Set(),rng=seeded(BT.seed^0x6d2b79f5),rt={model:null,view:null,selected:null,extras,styleCache,sources,rng,windowAt:0,hudAt:0,heroThinkAt:0,gunAudioAt:-1000,panelKey:'',paused:false,hooking:false};BT.rt=rt;
  for(const A of BT.A)for(const g of A.groups){let list=g.heroOnly?g.spr.slice(0,1):g.spr.filter(s=>s.alive&&!s.fate);if(g.troops>0&&!list.length&&g.spr.length){const s=g.spr[0];recoverVisual(s);s.alive=true;list=[s];}sources.set(g,list);
   const kit=g.kitDist,gearMrk=kit?['w','a','h'].reduce((n,slot)=>n+(kit[slot]||[]).reduce((v,[id,w])=>v+(ITEMS[id]?.mrk||0)*w,0),0):0,cmds=(g.cmds||[]).filter(c=>!c.ko&&c.s);g.mrk=Math.max(0,g.solo?.s.mrk||((cmds.length?cmds.reduce((n,c)=>n+c.s.mrk,0)/cmds.length:12)+gearMrk));
  }
  function randomCall(fn){const old=Math.random;Math.random=rng;try{return fn();}finally{Math.random=old;}}
- const sim={A:session.A,random:rng,clock:()=>{},power:(g,force,kind,scale=1)=>{const A=session.A[sideOf(g)],ranged=kind==='gun'||kind==='arc',tac=TACTICS[tacFam(g)].mod,
+ const sim={A:session.A,random:rng,clock:()=>{},power:(g,force,kind,scale=1,charged=kind==='cav')=>{const A=session.A[sideOf(g)],ranged=kind==='gun'||kind==='arc',tac=TACTICS[tacFam(g)].mod,
    ret=retEq(g)/Math.max(1,g.troops),personal=A.mode==='army'&&!g.heroOnly?1+persShare(g):1,
-   skills=(1+(A.strat||0)*.05+(g.mods.attackup||0)*.1+(A.beast?.[kind]||0))*(1+Math.min(.30,(ranged?g.mods.rapid:g.mods.chain||0)*.03)),
-   weaponSkill=ranged?1+(g.mods.marksman||0)*.08:kind==='cav'?1+(g.mods.cavmaster||0)*.1:1,j=session.jutsu[sideOf(g)]==='clone'?1.4:1;
+   skills=1+(A.strat||0)*.05+(g.mods.attackup||0)*.1+(A.beast?.[kind]||0),
+   weaponSkill=ranged?1+(g.mods.marksman||0)*.08:kind==='cav'&&charged?1+(g.mods.cavmaster||0)*.1:1,j=session.jutsu[sideOf(g)]==='clone'?1.4:1;
   return force*(1+ret)*personal*UNITS[kind].atk*g.atkMul*battleAttack(g)*tac[ranged?'rng':'mel']*skills*weaponSkill*j*tateAtk(g)*scale*(.88+rng()*.24);
  },prepareShot:(p,g)=>{p.counterFamily=tacFam(g);p.counterPower=rtCounterPower(g);},impact:(power,to,force,kind,from,shot)=>{const ward=kind==='gun'?to.mods.bulletres:kind==='arc'?to.mods.arrowres:kind==='cav'?to.mods.horseres:0,
    fam=shot?shot.counterFamily:from?tacFam(from):null,counter=fam&&COUNTER[fam]===tacFam(to)?(shot?shot.counterPower:rtCounterPower(from)):1,
    mask=session.jutsu[sideOf(to)]==='smoke'&&(kind==='gun'||kind==='arc')?.4:1,
    mult=(1-Math.min(.6,(ward||0)*.1))*(1-Math.min(.3,(to.mods.shadow||0)*.05))*TACTICS[tacFam(to)].mod.take*counter*personalDamageGuard(to,kind)*(from?.solo?rtPersonalFactor(from.solo,to,kind):1)*tateTake(to,kind)*mask;
   return battleDamage(power,battleResistance(to),mult,force);
- },totals:()=>session.A.map(totalOf)};sim.damage=(g,to,force,kind,scale)=>sim.impact(sim.power(g,force,kind,scale),to,force,kind,g);
+ },totals:()=>session.A.map(totalOf)};sim.damage=(g,to,force,kind,scale,charged=kind==='cav')=>sim.impact(sim.power(g,force,kind,scale,charged),to,force,kind,g);
  const art={battle:()=>sim,style:(type,side,variant,g,i)=>rtNormalizeStyle(sources.get(g)[i],g,side,styleCache),building:id=>buildingSprite(id),prop:(id,side=0)=>propImg(id,side)};
  rt.model=GrandCombat.create(art,session.seed,{count:g=>g.troops>0||g.heroOnly?sources.get(g).length:0,
   stanceOf:(g,side)=>side===0?G.battleStances?.[g.type]||'line':g.type==='cav'?'skein':g.type==='arc'?'loose':'line',
-  attach:(m,g,i)=>{m.source=sources.get(g)[i];if(!m.alive){m.fate=m.source.duelCorpse?'death':'rout';m.fateAt=-20;}mapped.add(m.source);},
+  attach:(m,g,i)=>{m.source=sources.get(g)[i];const c=m.source.hero;m.vanguard=!!c&&c.post!=='hq'&&(c.post==='van'||skv(c,'vanguard')>0);if(!m.alive){m.fate=m.source.duelCorpse?'death':'rout';m.fateAt=-20;}mapped.add(m.source);},
+  onShot:m=>{if(m.f.type==='gun'){const now=performance.now();if(now-rt.gunAudioAt>120){rt.gunAudioAt=now;Sound.play('volley',RT_GUN_SOUND);}}},
   onStance:f=>{if(f.side===0)(G.battleStances||={})[f.type]=f.stance;},
   beforeHit:(from,to,n,kind)=>{if(rt.hooking)return;rt.hooking=true;try{randomCall(()=>{const h={from:from.f.g,to:to.f.g,kills:n};rtMapSource(from);rtMapSource(to);
     if(session.A[0].mode==='army'){const share=retEq(h.from)/Math.max(1,h.from.troops+retEq(h.from));if(share)retCredit(h.from,n*share);for(const [c,f]of retHit(h.to,n)){const hr=h.to.heroes?.find(s=>s.hero===c),q=hr?.guards?.find(q=>q.retRef===f);if(q?.alive)killSprite(h.to,q,'knock',from.face);}}
@@ -64,19 +66,26 @@ function rtMakeCampaignModel(){const session=BT,styleCache=new WeakMap(),sources
   externallyDead:m=>!m.source.alive||!!m.source.fate,
   revive:m=>{recoverVisual(m.source);m.source.alive=true;}
  },rtGround);
- function addExtra(s,g,side,owner=null,hq=false){if(mapped.has(s))return;mapped.add(s);const f=rt.model.groups.find(f=>f.g===g);if(!f)return;extras.push({id:1000+extras.length,source:s,owner,hq,f,style:rtNormalizeStyle(s,g,side,styleCache),face:side?-1:1,x:f.x,y:f.y,phase:s.ph||0,alive:s.alive&&!s.out,fate:null,fateAt:0,hurtUntil:0,actionAt:-100,shotAt:-100,pendingAt:0,aimUntil:0,reloadUntil:0,moving:false,dropX:0,dropY:0,dropAngle:(hash2(extras.length,6)-.5)*2.5,hidden:false});}
+ const actorsBySource=new Map();for(const m of rt.model.models)actorsBySource.set(m.source,m);
+ function addExtra(s,g,side,owner=null,hq=false){if(mapped.has(s))return;mapped.add(s);const f=rt.model.groups.find(f=>f.g===g);if(!f)return;const c=s.hero,hs=g.heroes||[],m={id:1000+extras.length,source:s,ownerActor:actorsBySource.get(owner)||null,hq,f,heroIndex:Math.max(0,hs.indexOf(s)),heroCount:hs.length,vanguard:!!c&&!hq&&(c.post==='van'||skv(c,'vanguard')>0),chargeTarget:null,positioned:false,style:rtNormalizeStyle(s,g,side,styleCache),face:side?-1:1,x:f.x,y:f.y,phase:s.ph||0,alive:s.alive&&!s.out,fate:null,fateAt:0,hurtUntil:0,actionAt:-100,shotAt:-100,pendingAt:0,aimUntil:0,reloadUntil:0,moving:false,dropX:0,dropY:0,dropAngle:(hash2(extras.length,6)-.5)*2.5,hidden:false};extras.push(m);actorsBySource.set(s,m);}
  for(let side=0;side<2;side++){const A=session.A[side];for(const g of A.groups){for(const s of g.spr)if(!mapped.has(s))addExtra(s,g,side);for(const s of g.heroes||[]){addExtra(s,g,side);for(const q of s.guards||[])addExtra(q,g,side,s);if(s.pet)addExtra(s.pet,g,side,s);}}for(const s of A.hqSpr||[])addExtra(s,s.g,side,null,true);}
  rt.view=GrandFieldView.create($('#battle-cv'),art,rt.model,{ground:rtGround,canvasFactory:gameCanvas,castle:!!session.siege,top:$('#bformations').getBoundingClientRect().bottom-$('#battle-cv').getBoundingClientRect().top+8,bottom:100,extras:()=>extras,enabled:()=>!!BT&&BT===session&&rtIsFieldView(),select:f=>rtSelectFormation(f.id)});
  rtUpdateExtras(0);return rt;
 }
 function rtUpdateExtras(dt){const R=BT.rt,t=R.model.time;for(const f of R.model.groups){f.g.front=f.x/1400*BT.WW;f.g.hx=f.g.front;f.g.hy=BT.fy0+f.y/1020*(BT.fy1-BT.fy0);for(const m of f.members){if(m.alive)rtMapSource(m);else if(m.source.fate)updateLifeState(m.source,dt,f.g,f.side);}}
+ if(t>=R.heroThinkAt){R.heroThinkAt=t+.18;for(const m of R.extras)if(m.vanguard&&m.alive)m.chargeTarget=R.model.enemyNear(m.x,m.y,m.f.side,900);}
  for(let i=0;i<R.extras.length;i++){const m=R.extras[i],s=m.source,f=m.f;if(s.fate)updateLifeState(s,dt,f.g,f.side);if(s.out&&!s.fate)updSprite(s,dt,f.g,f.side);
   if(s.fate||s.out||!s.alive){if(!m.fate){m.alive=false;m.fate=s.fate?.kind==='death'||s.duelCorpse?'death':'rout';m.fateAt=t;m.dropX=m.x+6;m.dropY=m.y+7;}if(m.fate==='rout'){m.x-=f.face*60*dt;m.hidden=t-m.fateAt>5;}continue;}
   if(!m.alive){m.alive=true;m.fate=null;m.hidden=false;m.fateAt=0;}
-  const hs=f.g.heroes||[],k=Math.max(0,hs.indexOf(s)),owner=R.extras.find(q=>q.source===m.owner);
-  m.x=m.hq?(f.side?1335:65):owner?owner.x-f.face*(10+(i%3)*8):f.x+f.face*8;
-  m.y=m.hq?260+(i%5)*33:owner?owner.y+((i%3)-1)*14:f.y+(k-(Math.max(1,hs.length)-1)/2)*Math.min(40,Math.max(24,(f.rows-1)*f.stride/Math.max(1,hs.length)));
-  m.face=f.face;m.moving=f.type==='cav'?['approach','charge','withdraw'].includes(f.state):Math.hypot(f.goalX-f.x,f.goalY-f.y)>2;m.pendingAt=f.engaged?t+.08:0;m.actionAt=f.engaged?t-.15:-100;m.shotAt=(f.type==='arc'||f.type==='gun')&&t-f.lastShotAt<.2?t-.1:-100;
+  const owner=m.ownerActor,n=Math.max(1,m.heroCount),baseY=f.y+(m.heroIndex-(n-1)/2)*Math.min(40,Math.max(24,(f.rows-1)*f.stride/n));
+  let tx=m.hq?(f.side?1335:65):owner?owner.x-f.face*(10+(i%3)*8):f.x+f.face*(f.type==='inf'&&!m.vanguard?-14:8),ty=m.hq?260+(i%5)*33:owner?owner.y+((i%3)-1)*14:baseY;
+  if(m.vanguard&&f.order!=='hold'&&f.stance!=='pikewall'&&!(f.type==='cav'&&(f.state==='withdraw'||f.state==='regroup'))){const e=m.chargeTarget,ranged=f.type==='gun'||f.type==='arc',lead=ranged?42:70;
+   tx=f.x+f.face*lead;if(e?.alive){const stop=e.x-f.face*(ranged?180:14);tx=f.face>0?Math.min(tx,stop):Math.max(tx,stop);ty=clamp(e.y,baseY-45,baseY+45);}
+  }
+  tx=clamp(tx,45,1355);ty=clamp(ty,70,950);if(!m.positioned){m.x=m.hq?tx:f.x+f.face*8;m.y=ty;m.positioned=true;}
+  const dx=tx-m.x,dy=ty-m.y,d=Math.hypot(dx,dy),step=(m.hq?60:Math.max(owner?100:65,f.speed+(m.vanguard?45:15)))*dt;
+  m.moving=d>.7&&step>0;if(d>0&&step>0){m.x+=dx/d*Math.min(d,step);m.y+=dy/d*Math.min(d,step);}m.face=m.chargeTarget?.alive&&m.vanguard?(m.chargeTarget.x>=m.x?1:-1):f.face;
+  m.pendingAt=0;m.actionAt=f.lastStrikeAt;m.shotAt=(f.type==='arc'||f.type==='gun')&&f.fired>0?f.lastShotAt:-100;m.aimUntil=0;
   rtMapSource(m);
  }
 }

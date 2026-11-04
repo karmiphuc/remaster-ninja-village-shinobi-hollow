@@ -1,0 +1,239 @@
+{
+  "checks": 3953,
+  "volley": {
+    "seconds": 12.000000000000176,
+    "fired": 72,
+    "landed": 59,
+    "damage": 225.19813408489992,
+    "maxSimultaneousFire": 22,
+    "peakShotsPer200ms": 12,
+    "walkingWhileInRange": 0.6546929316338355,
+    "hist": [
+      0,
+      0,
+      0,
+      12,
+      12,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      12,
+      12,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      12,
+      12,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "vanguard": null,
+    "residual": 1.1368683772161603e-13
+  },
+  "skills": {
+    "rapid": [
+      {
+        "level": 0,
+        "fired": 192,
+        "strikes": 0,
+        "damage": 27.19088109498958,
+        "rapid": 0,
+        "chain": 0,
+        "residual": -3.6070701980861486e-11
+      },
+      {
+        "level": 3,
+        "fired": 313,
+        "strikes": 0,
+        "damage": 34.40050595991139,
+        "rapid": 121,
+        "chain": 0,
+        "residual": -9.837464176598587e-11
+      }
+    ],
+    "chain": [
+      {
+        "level": 0,
+        "fired": 0,
+        "strikes": 238,
+        "damage": 4.990714367602444,
+        "rapid": 0,
+        "chain": 0,
+        "residual": 2.3659296743971936e-11
+      },
+      {
+        "level": 3,
+        "fired": 0,
+        "strikes": 400,
+        "damage": 7.096121321696308,
+        "rapid": 0,
+        "chain": 162,
+        "residual": 5.520028878436278e-11
+      }
+    ],
+    "counter": [
+      {
+        "level": 0,
+        "shots": 0,
+        "damage": 20.16934716901654,
+        "residual": -4.293099209462525e-11
+      },
+      {
+        "level": 3,
+        "shots": 48,
+        "damage": 26.20304502663885,
+        "residual": -3.076650045841234e-12
+      }
+    ],
+    "numeric": {
+      "attackup": [
+        1.3596625863821061,
+        1.8735884708243848
+      ],
+      "marksman": [
+        1.9572191327399653,
+        2.426951724597557
+      ],
+      "arrowres": [
+        20,
+        14
+      ],
+      "bulletres": [
+        20,
+        14
+      ],
+      "horseres": [
+        20,
+        14
+      ],
+      "shadow": [
+        20,
+        17
+      ],
+      "ironwall": [
+        1.84740625,
+        2.2907837499999997
+      ],
+      "vanguard": [
+        30.4,
+        44.08
+      ],
+      "duelist": [
+        35,
+        44
+      ],
+      "strategy": [
+        1.3596625863821061,
+        1.6574051857292633
+      ],
+      "laststand": [
+        0.9949749999999999,
+        1.126855
+      ]
+    },
+    "cavalry": [
+      {
+        "charge": 1.7902848638030486,
+        "ordinary": 1.6950592142894292
+      },
+      {
+        "charge": 2.3273703229439633,
+        "ordinary": 1.6950592142894292
+      }
+    ],
+    "medic": {
+      "recovered": 9000,
+      "once": true
+    }
+  },
+  "vanguard": {
+    "leads": [
+      84,
+      84
+    ],
+    "bothSides": 2,
+    "moving": true,
+    "honjinPreserved": true
+  },
+  "mass": {
+    "models": 384,
+    "peakProjectiles": 218,
+    "pool": 384,
+    "completedBursts": 72
+  },
+  "audit": {
+    "battle": [
+      "chain",
+      "rapid",
+      "strategy",
+      "arrowres",
+      "bulletres",
+      "horseres",
+      "attackup",
+      "shadow",
+      "medic",
+      "vanguard",
+      "ironwall",
+      "marksman",
+      "cavmaster",
+      "duelist",
+      "laststand",
+      "siegecraft",
+      "counter",
+      "quartermaster"
+    ],
+    "village": [
+      "strongback",
+      "greenthumb",
+      "artisan",
+      "swift",
+      "tireless",
+      "haggler"
+    ]
+  },
+  "errors": []
+}

@@ -1,0 +1,115 @@
+{
+  "baselineCommit": "c1bbb1529164c8e44214d303a231bf0d7702a9bf",
+  "before": {
+    "ordinary": {
+      "seconds": 12.000000000000176,
+      "fired": 60,
+      "landed": 57,
+      "damage": 219.19287938603705,
+      "maxSimultaneousFire": 5,
+      "peakShotsPer200ms": 4,
+      "walkingWhileInRange": 0,
+      "vanguard": null,
+      "residual": 1.7053025658242404e-12
+    },
+    "officers": {
+      "seconds": 12.000000000000176,
+      "fired": 68,
+      "landed": 65,
+      "damage": 365.3514769635849,
+      "maxSimultaneousFire": 5,
+      "peakShotsPer200ms": 5,
+      "walkingWhileInRange": 0,
+      "vanguard": {
+        "x": 703.4565166895526,
+        "front": 709.100872906463,
+        "formation": 695.4565166895526,
+        "line": 703.4565166895526
+      },
+      "residual": -2.2737367544323206e-13
+    },
+    "rifles": {
+      "seconds": 12.000000000000176,
+      "fired": 72,
+      "landed": 69,
+      "damage": 243.83458452605234,
+      "maxSimultaneousFire": 6,
+      "peakShotsPer200ms": 7,
+      "walkingWhileInRange": 0,
+      "vanguard": {
+        "x": 705.3050303436294,
+        "front": 697.5839869784256,
+        "formation": 697.3050303436294,
+        "line": 705.3050303436294
+      },
+      "residual": -2.2737367544323206e-13
+    },
+    "stationary": {
+      "seconds": 12.000000000000176,
+      "fired": 60,
+      "landed": 30,
+      "damage": 115.15267010075382,
+      "maxSimultaneousFire": 5,
+      "peakShotsPer200ms": 4,
+      "walkingWhileInRange": 0,
+      "vanguard": null,
+      "residual": -1.7053025658242404e-13
+    }
+  },
+  "after": {
+    "ordinary": {
+      "seconds": 12.000000000000176,
+      "fired": 72,
+      "landed": 59,
+      "damage": 225.19813408489992,
+      "maxSimultaneousFire": 22,
+      "peakShotsPer200ms": 12,
+      "walkingWhileInRange": 0.6546929316338355,
+      "vanguard": null,
+      "residual": 1.1368683772161603e-13
+    },
+    "officers": {
+      "seconds": 12.000000000000176,
+      "fired": 72,
+      "landed": 61,
+      "damage": 352.59090043043295,
+      "maxSimultaneousFire": 22,
+      "peakShotsPer200ms": 12,
+      "walkingWhileInRange": 0.662186641734354,
+      "vanguard": {
+        "x": 700.078346070953,
+        "front": 701.3176842487431,
+        "formation": 696.0794228367877,
+        "line": 682.0794228367877
+      },
+      "residual": -4.547473508864641e-13
+    },
+    "rifles": {
+      "seconds": 12.000000000000176,
+      "fired": 72,
+      "landed": 54,
+      "damage": 191.11890896427272,
+      "maxSimultaneousFire": 24,
+      "peakShotsPer200ms": 32,
+      "walkingWhileInRange": 0.6746960046323104,
+      "vanguard": {
+        "x": 707.9783460709533,
+        "front": 693.8844468985392,
+        "formation": 697.3011681308614,
+        "line": 683.3011681308614
+      },
+      "residual": -1.2505552149377763e-12
+    },
+    "stationary": {
+      "seconds": 12.000000000000176,
+      "fired": 72,
+      "landed": 35,
+      "damage": 136.15606134749277,
+      "maxSimultaneousFire": 22,
+      "peakShotsPer200ms": 12,
+      "walkingWhileInRange": 0,
+      "vanguard": null,
+      "residual": -1.1368683772161603e-13
+    }
+  }
+}

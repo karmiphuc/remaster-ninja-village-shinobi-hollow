@@ -1,0 +1,21 @@
+Running 10 suite(s), 3 at a time…
+PASS  clan-crafting    6.5s
+PASS  equipment      12.1s
+PASS  porter-menu     9.8s
+PASS  field-combat   50.5s
+PASS  duel-executions   38.4s
+PASS  battle-auto-resolve   12.6s
+PASS  armory-presets    6.7s
+PASS  duel-cavalry   61.7s
+PASS  realtime-campaign  103.3s
+PASS  animal-duels   91.9s
+
+10/10 passed in 161.8s wall time (393.6s if run one after another).
+
+After preserving retainer mounts:
+Running 3 suite(s), 3 at a time…
+PASS  duel-executions   42.0s
+PASS  realtime-campaign   84.1s
+PASS  duel-cold-playback   90.8s
+
+3/3 passed in 90.8s wall time (216.9s if run one after another).

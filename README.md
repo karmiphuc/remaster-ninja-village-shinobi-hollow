@@ -21,6 +21,10 @@ Choose **Village → Options → Battle: Classic / Real-time** before a battle. 
 
 The separate [Grand Battlefield HTML](prototypes/Shinobi%20Hollow%20-%20Grand%20Battlefield.html) remains an isolated demonstration that never accesses your village save. See [prototype notes](docs/battlefield-prototype.md).
 
+Real-time gunners fire by ranks, settle to aim/recoil and show flashes at their actual muzzles. Chain Strike and Rapid Shot produce real follow-ups, Countershot strengthens shots against approaching melee troops, and Vanguard officers push ahead. See the [skill audit, paired measurements and recorded sequence](docs/realtime-volleys-skills.md).
+
+The [Classic/real-time damage and performance comparison](docs/battle-balance-performance.md) records exact Classic ledgers, complete reload-cycle firearm samples, update/draw timings and measured canvas limits.
+
 **Auto-resolve** on a province card, hunt or land challenge skips loading the battlefield. It resolves the existing staged combat rules, including HP duels, tactics, wounds and rewards; it keeps army march time and your saved battle-mode choice. It uses your Auto Duel setting and does not hire siege engines. See [auto-resolve and Bugu-gura notes](docs/auto-resolve-armory.md).
 
 **Bugu-gura** (Build → Training, 750G) prepares six-slot equipment presets for new arrivals. Choose eight profiles, use available stock or opt into purchases of named researched gear, and keep spare kits ready. Its **Kit review** tab takes a snapshot of incomplete villagers for manual filling without replacing their existing gear. Automatic equipping and purchases are off by default. See [controls and validation](docs/auto-resolve-armory.md).
@@ -45,6 +49,8 @@ The separate [Grand Battlefield HTML](prototypes/Shinobi%20Hollow%20-%20Grand%20
 Equipped animal companions now have species-specific duel finishers, from bear slams and boar tosses to canine pounces and bird dives. Training starts at level 1 with 30 infantry, grows 10% or at least 25 troops per victory up to your current army power, and grants an extra reward for every tenth cleared level. See [progression, rewards and validation](docs/animal-duels-training.md). The recruit pool also adds **32 procedural workers and 16 fighters**, with rotating offers and saved identities; see [recruit rotation](docs/recruit-rotation.md).
 
 Workshop assignment now appears before recipes, with green Fine Craft and blue crafting-equipment badges. Assigned artisans continue useful batches while ingredients, output space and energy allow. Workshop Lv2/Lv3 inputs rise to 60/90 with 15G/20G monthly upkeep (Lv1 stays free); Lv3 shops hold 60 materials and 60 wares. Renovating the Clan Hall to the Kage Residence unlocks two permanent 5,000G policy choices. See [costs, policies and validation](docs/clan-crafting-progression.md).
+
+Porter assignments flag **Swift Feet**, **Tireless**, and **Move +50% or more**; rice, daikon and tea assignments flag **Green Thumb** and **Work 20+**. Green badges mark active skills and blue badges mark qualifying stats, on both candidates and assigned cards. Rideable equipment now appears mounted in every battle formation and the equipment battle preview, keeping the equipped weapon and original formation. See [assignment and mount checks](docs/assignment-mounts.md).
 
 ## Castle sieges
 
