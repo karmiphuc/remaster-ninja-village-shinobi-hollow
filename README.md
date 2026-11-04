@@ -46,6 +46,8 @@ Equipped animal companions now have species-specific duel finishers, from bear s
 
 Workshop assignment now appears before recipes, with green Fine Craft and blue crafting-equipment badges. Assigned artisans continue useful batches while ingredients, output space and energy allow. Workshop Lv2/Lv3 inputs rise to 60/90 with 15G/20G monthly upkeep (Lv1 stays free); Lv3 shops hold 60 materials and 60 wares. Renovating the Clan Hall to the Kage Residence unlocks two permanent 5,000G policy choices. See [costs, policies and validation](docs/clan-crafting-progression.md).
 
+Porter assignments flag **Swift Feet**, **Tireless**, and **Move +50% or more**; rice, daikon and tea assignments flag **Green Thumb** and **Work 20+**. Green badges mark active skills and blue badges mark qualifying stats, on both candidates and assigned cards. Rideable equipment now appears mounted in every battle formation and the equipment battle preview, keeping the equipped weapon and original formation. See [assignment and mount checks](docs/assignment-mounts.md).
+
 ## Castle sieges
 
 - Yamashiro’s gunners are reduced by 50% and archers by 70%; its infantry/cavalry and other castles keep their existing numbers. The infantry Ram also uses a larger procedural sprite.
