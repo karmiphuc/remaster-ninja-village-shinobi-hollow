@@ -1,0 +1,2931 @@
+{
+  "baseline": "c1bbb1529164c8e44214d303a231bf0d7702a9bf",
+  "environment": "Sequential Chromium software-rendered runs; 430×932 CSS px, DPR 3; not physical Safari",
+  "classic": [
+    {
+      "seed": 11,
+      "profile": "plain",
+      "before": {
+        "hash": 831781674,
+        "hits": 55,
+        "damage": 4173.231065452746,
+        "rounds": 4,
+        "result": "lose",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          0,
+          606.7689345472533
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 831781674,
+        "hits": 55,
+        "damage": 4173.231065452746,
+        "rounds": 4,
+        "result": "lose",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          0,
+          606.7689345472533
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    },
+    {
+      "seed": 11,
+      "profile": "skills",
+      "before": {
+        "hash": 3748920048,
+        "hits": 30,
+        "damage": 4435.4949522775705,
+        "rounds": 3,
+        "result": "lose",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          0,
+          344.5050477224295
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 3748920048,
+        "hits": 30,
+        "damage": 4435.4949522775705,
+        "rounds": 3,
+        "result": "lose",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          0,
+          344.5050477224295
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    },
+    {
+      "seed": 11,
+      "profile": "bursts-duels",
+      "before": {
+        "hash": 832469871,
+        "hits": 15,
+        "damage": 3536.188577110576,
+        "rounds": 2,
+        "result": "win",
+        "duels": 1,
+        "gate": null,
+        "totals": [
+          1243.8114228894253,
+          0
+        ],
+        "troops": {
+          "inf": 40,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 832469871,
+        "hits": 15,
+        "damage": 3536.188577110576,
+        "rounds": 2,
+        "result": "win",
+        "duels": 1,
+        "gate": null,
+        "totals": [
+          1243.8114228894253,
+          0
+        ],
+        "troops": {
+          "inf": 40,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    },
+    {
+      "seed": 11,
+      "profile": "siege",
+      "before": {
+        "hash": 3252294719,
+        "hits": 47,
+        "damage": 4285.03042230444,
+        "rounds": 11,
+        "result": "lose",
+        "duels": 0,
+        "gate": 0,
+        "totals": [
+          0,
+          494.9695776955582
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 3252294719,
+        "hits": 47,
+        "damage": 4285.03042230444,
+        "rounds": 11,
+        "result": "lose",
+        "duels": 0,
+        "gate": 0,
+        "totals": [
+          0,
+          494.9695776955582
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    },
+    {
+      "seed": 29,
+      "profile": "plain",
+      "before": {
+        "hash": 3757754707,
+        "hits": 62,
+        "damage": 4530.289395843545,
+        "rounds": 5,
+        "result": "win",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          249.71060415645454,
+          0
+        ],
+        "troops": {
+          "inf": 40,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 3757754707,
+        "hits": 62,
+        "damage": 4530.289395843545,
+        "rounds": 5,
+        "result": "win",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          249.71060415645454,
+          0
+        ],
+        "troops": {
+          "inf": 40,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    },
+    {
+      "seed": 29,
+      "profile": "skills",
+      "before": {
+        "hash": 57187812,
+        "hits": 26,
+        "damage": 4605.493590318842,
+        "rounds": 2,
+        "result": "lose",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          0,
+          174.50640968115852
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 57187812,
+        "hits": 26,
+        "damage": 4605.493590318842,
+        "rounds": 2,
+        "result": "lose",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          0,
+          174.50640968115852
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    },
+    {
+      "seed": 29,
+      "profile": "bursts-duels",
+      "before": {
+        "hash": 1486474583,
+        "hits": 32,
+        "damage": 4143.302386496131,
+        "rounds": 2,
+        "result": "lose",
+        "duels": 1,
+        "gate": null,
+        "totals": [
+          0,
+          636.6976135038691
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 1486474583,
+        "hits": 32,
+        "damage": 4143.302386496131,
+        "rounds": 2,
+        "result": "lose",
+        "duels": 1,
+        "gate": null,
+        "totals": [
+          0,
+          636.6976135038691
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    },
+    {
+      "seed": 29,
+      "profile": "siege",
+      "before": {
+        "hash": 1339957933,
+        "hits": 52,
+        "damage": 4359.072825697226,
+        "rounds": 12,
+        "result": "lose",
+        "duels": 0,
+        "gate": 0,
+        "totals": [
+          0,
+          420.92717430277384
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 1339957933,
+        "hits": 52,
+        "damage": 4359.072825697226,
+        "rounds": 12,
+        "result": "lose",
+        "duels": 0,
+        "gate": 0,
+        "totals": [
+          0,
+          420.92717430277384
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    },
+    {
+      "seed": 53,
+      "profile": "plain",
+      "before": {
+        "hash": 119631549,
+        "hits": 67,
+        "damage": 4497.7118170785125,
+        "rounds": 5,
+        "result": "lose",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          0,
+          282.2881829214858
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 119631549,
+        "hits": 67,
+        "damage": 4497.7118170785125,
+        "rounds": 5,
+        "result": "lose",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          0,
+          282.2881829214858
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    },
+    {
+      "seed": 53,
+      "profile": "skills",
+      "before": {
+        "hash": 4016726269,
+        "hits": 26,
+        "damage": 4302.46820297359,
+        "rounds": 2,
+        "result": "lose",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          0,
+          477.53179702641023
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 4016726269,
+        "hits": 26,
+        "damage": 4302.46820297359,
+        "rounds": 2,
+        "result": "lose",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          0,
+          477.53179702641023
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    },
+    {
+      "seed": 53,
+      "profile": "bursts-duels",
+      "before": {
+        "hash": 4267228335,
+        "hits": 26,
+        "damage": 4275.95457219588,
+        "rounds": 2,
+        "result": "lose",
+        "duels": 1,
+        "gate": null,
+        "totals": [
+          0,
+          504.0454278041207
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 4267228335,
+        "hits": 26,
+        "damage": 4275.95457219588,
+        "rounds": 2,
+        "result": "lose",
+        "duels": 1,
+        "gate": null,
+        "totals": [
+          0,
+          504.0454278041207
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    },
+    {
+      "seed": 53,
+      "profile": "siege",
+      "before": {
+        "hash": 755594433,
+        "hits": 46,
+        "damage": 4256.101298342686,
+        "rounds": 12,
+        "result": "lose",
+        "duels": 0,
+        "gate": 0,
+        "totals": [
+          0,
+          523.8987016573122
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 755594433,
+        "hits": 46,
+        "damage": 4256.101298342686,
+        "rounds": 12,
+        "result": "lose",
+        "duels": 0,
+        "gate": 0,
+        "totals": [
+          0,
+          523.8987016573122
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    },
+    {
+      "seed": 97,
+      "profile": "plain",
+      "before": {
+        "hash": 2296288549,
+        "hits": 70,
+        "damage": 4602.074171518079,
+        "rounds": 5,
+        "result": "win",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          177.92582848192006,
+          0
+        ],
+        "troops": {
+          "inf": 30,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 2296288549,
+        "hits": 70,
+        "damage": 4602.074171518079,
+        "rounds": 5,
+        "result": "win",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          177.92582848192006,
+          0
+        ],
+        "troops": {
+          "inf": 30,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    },
+    {
+      "seed": 97,
+      "profile": "skills",
+      "before": {
+        "hash": 1657794302,
+        "hits": 25,
+        "damage": 4361.3549755491495,
+        "rounds": 2,
+        "result": "lose",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          0,
+          418.6450244508498
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 1657794302,
+        "hits": 25,
+        "damage": 4361.3549755491495,
+        "rounds": 2,
+        "result": "lose",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          0,
+          418.6450244508498
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    },
+    {
+      "seed": 97,
+      "profile": "bursts-duels",
+      "before": {
+        "hash": 3895445597,
+        "hits": 26,
+        "damage": 3954.6070003626996,
+        "rounds": 2,
+        "result": "lose",
+        "duels": 1,
+        "gate": null,
+        "totals": [
+          0,
+          825.3929996373007
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 3895445597,
+        "hits": 26,
+        "damage": 3954.6070003626996,
+        "rounds": 2,
+        "result": "lose",
+        "duels": 1,
+        "gate": null,
+        "totals": [
+          0,
+          825.3929996373007
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    },
+    {
+      "seed": 97,
+      "profile": "siege",
+      "before": {
+        "hash": 421975577,
+        "hits": 46,
+        "damage": 3966.9590685320236,
+        "rounds": 10,
+        "result": "lose",
+        "duels": 0,
+        "gate": 0,
+        "totals": [
+          0,
+          813.0409314679765
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 421975577,
+        "hits": 46,
+        "damage": 3966.9590685320236,
+        "rounds": 10,
+        "result": "lose",
+        "duels": 0,
+        "gate": 0,
+        "totals": [
+          0,
+          813.0409314679765
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    },
+    {
+      "seed": 181,
+      "profile": "plain",
+      "before": {
+        "hash": 168772259,
+        "hits": 62,
+        "damage": 4511.7270894205785,
+        "rounds": 5,
+        "result": "lose",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          0,
+          268.2729105794243
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 168772259,
+        "hits": 62,
+        "damage": 4511.7270894205785,
+        "rounds": 5,
+        "result": "lose",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          0,
+          268.2729105794243
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    },
+    {
+      "seed": 181,
+      "profile": "skills",
+      "before": {
+        "hash": 4098003473,
+        "hits": 30,
+        "damage": 4572.817258781513,
+        "rounds": 3,
+        "result": "lose",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          0,
+          207.1827412184878
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 4098003473,
+        "hits": 30,
+        "damage": 4572.817258781513,
+        "rounds": 3,
+        "result": "lose",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          0,
+          207.1827412184878
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    },
+    {
+      "seed": 181,
+      "profile": "bursts-duels",
+      "before": {
+        "hash": 4014607191,
+        "hits": 31,
+        "damage": 4711.360032955937,
+        "rounds": 3,
+        "result": "lose",
+        "duels": 1,
+        "gate": null,
+        "totals": [
+          0,
+          68.6399670440653
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 4014607191,
+        "hits": 31,
+        "damage": 4711.360032955937,
+        "rounds": 3,
+        "result": "lose",
+        "duels": 1,
+        "gate": null,
+        "totals": [
+          0,
+          68.6399670440653
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    },
+    {
+      "seed": 181,
+      "profile": "siege",
+      "before": {
+        "hash": 2240568636,
+        "hits": 44,
+        "damage": 4124.713722304184,
+        "rounds": 11,
+        "result": "win",
+        "duels": 0,
+        "gate": 0,
+        "totals": [
+          655.286277695816,
+          0
+        ],
+        "troops": {
+          "inf": 40,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 2240568636,
+        "hits": 44,
+        "damage": 4124.713722304184,
+        "rounds": 11,
+        "result": "win",
+        "duels": 0,
+        "gate": 0,
+        "totals": [
+          655.286277695816,
+          0
+        ],
+        "troops": {
+          "inf": 40,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    }
+  ],
+  "realtime": [
+    {
+      "weapon": "tanegashima",
+      "distance": 180,
+      "seed": 11,
+      "before": {
+        "damage": 3252.303492325851,
+        "fired": 384,
+        "hits": 384,
+        "seconds": 37.733333333333334,
+        "cycleSeconds": 4.716666666666667,
+        "mrk": 19,
+        "dps": 86.19178866587944,
+        "residual": 1.609805622138083e-10
+      },
+      "after": {
+        "damage": 3254.7805810611208,
+        "fired": 384,
+        "hits": 384,
+        "seconds": 37.733333333333334,
+        "cycleSeconds": 4.716666666666667,
+        "mrk": 19,
+        "dps": 86.25743589384595,
+        "residual": 1.6825651982799172e-10
+      },
+      "ratio": 1.0007616413231775
+    },
+    {
+      "weapon": "tanegashima",
+      "distance": 180,
+      "seed": 53,
+      "before": {
+        "damage": 3248.78381513674,
+        "fired": 384,
+        "hits": 384,
+        "seconds": 37.733333333333334,
+        "cycleSeconds": 4.716666666666667,
+        "mrk": 19,
+        "dps": 86.09851100185706,
+        "residual": 4.092726157978177e-11
+      },
+      "after": {
+        "damage": 3251.704092633624,
+        "fired": 384,
+        "hits": 384,
+        "seconds": 37.733333333333334,
+        "cycleSeconds": 4.716666666666667,
+        "mrk": 19,
+        "dps": 86.17590351502537,
+        "residual": 2.3646862246096134e-11
+      },
+      "ratio": 1.0008988832938892
+    },
+    {
+      "weapon": "tanegashima",
+      "distance": 180,
+      "seed": 181,
+      "before": {
+        "damage": 3262.5921631784695,
+        "fired": 384,
+        "hits": 384,
+        "seconds": 37.733333333333334,
+        "cycleSeconds": 4.716666666666667,
+        "mrk": 19,
+        "dps": 86.46445662133753,
+        "residual": -8.185452315956354e-12
+      },
+      "after": {
+        "damage": 3263.60577594907,
+        "fired": 384,
+        "hits": 384,
+        "seconds": 37.733333333333334,
+        "cycleSeconds": 4.716666666666667,
+        "mrk": 19,
+        "dps": 86.49131915059372,
+        "residual": -6.093614501878619e-11
+      },
+      "ratio": 1.0003106771303014
+    },
+    {
+      "weapon": "tanegashima",
+      "distance": 380,
+      "seed": 11,
+      "before": {
+        "damage": 3252.0022099088274,
+        "fired": 384,
+        "hits": 384,
+        "seconds": 37.733333333333334,
+        "cycleSeconds": 4.716666666666667,
+        "mrk": 19,
+        "dps": 86.18380414952722,
+        "residual": 1.6007106751203537e-10
+      },
+      "after": {
+        "damage": 3254.2807220574,
+        "fired": 384,
+        "hits": 384,
+        "seconds": 37.733333333333334,
+        "cycleSeconds": 4.716666666666667,
+        "mrk": 19,
+        "dps": 86.24418874710423,
+        "residual": 1.6370904631912708e-10
+      },
+      "ratio": 1.0007006490160524
+    },
+    {
+      "weapon": "tanegashima",
+      "distance": 380,
+      "seed": 53,
+      "before": {
+        "damage": 3248.148981332057,
+        "fired": 384,
+        "hits": 384,
+        "seconds": 37.733333333333334,
+        "cycleSeconds": 4.716666666666667,
+        "mrk": 19,
+        "dps": 86.08168678441847,
+        "residual": 4.001776687800884e-11
+      },
+      "after": {
+        "damage": 3249.1995682849474,
+        "fired": 384,
+        "hits": 384,
+        "seconds": 37.733333333333334,
+        "cycleSeconds": 4.716666666666667,
+        "mrk": 19,
+        "dps": 86.10952919483076,
+        "residual": 5.002220859751105e-11
+      },
+      "ratio": 1.0003234417383342
+    },
+    {
+      "weapon": "tanegashima",
+      "distance": 380,
+      "seed": 181,
+      "before": {
+        "damage": 3261.2282588281505,
+        "fired": 384,
+        "hits": 384,
+        "seconds": 37.733333333333334,
+        "cycleSeconds": 4.716666666666667,
+        "mrk": 19,
+        "dps": 86.42831074632907,
+        "residual": -1.2732925824820995e-11
+      },
+      "after": {
+        "damage": 3261.8267577788356,
+        "fired": 384,
+        "hits": 384,
+        "seconds": 37.733333333333334,
+        "cycleSeconds": 4.716666666666667,
+        "mrk": 19,
+        "dps": 86.44417202594087,
+        "residual": -3.001332515850663e-11
+      },
+      "ratio": 1.000183519491181
+    },
+    {
+      "weapon": "tanegashima",
+      "distance": 580,
+      "seed": 11,
+      "before": {
+        "damage": 1836.667150670065,
+        "fired": 384,
+        "hits": 219,
+        "seconds": 37.733333333333334,
+        "cycleSeconds": 4.716666666666667,
+        "mrk": 19,
+        "dps": 48.67492448772257,
+        "residual": -8.094502845779061e-11
+      },
+      "after": {
+        "damage": 1753.30270944316,
+        "fired": 384,
+        "hits": 209,
+        "seconds": 37.733333333333334,
+        "cycleSeconds": 4.716666666666667,
+        "mrk": 19,
+        "dps": 46.46561950821095,
+        "residual": 6.59383658785373e-11
+      },
+      "ratio": 0.9546110239971943
+    },
+    {
+      "weapon": "tanegashima",
+      "distance": 580,
+      "seed": 53,
+      "before": {
+        "damage": 1854.3900196278546,
+        "fired": 384,
+        "hits": 220,
+        "seconds": 37.733333333333334,
+        "cycleSeconds": 4.716666666666667,
+        "mrk": 19,
+        "dps": 49.144611827593316,
+        "residual": 8.958522812463343e-11
+      },
+      "after": {
+        "damage": 1807.2702072211578,
+        "fired": 384,
+        "hits": 214,
+        "seconds": 37.733333333333334,
+        "cycleSeconds": 4.716666666666667,
+        "mrk": 19,
+        "dps": 47.895853548263894,
+        "residual": 4.501998773775995e-11
+      },
+      "ratio": 0.9745901283398014
+    },
+    {
+      "weapon": "tanegashima",
+      "distance": 580,
+      "seed": 181,
+      "before": {
+        "damage": 1916.6237877592716,
+        "fired": 384,
+        "hits": 225,
+        "seconds": 37.733333333333334,
+        "cycleSeconds": 4.716666666666667,
+        "mrk": 19,
+        "dps": 50.79391663672981,
+        "residual": -8.139977580867708e-11
+      },
+      "after": {
+        "damage": 1984.1643899521023,
+        "fired": 384,
+        "hits": 233,
+        "seconds": 37.733333333333334,
+        "cycleSeconds": 4.716666666666667,
+        "mrk": 19,
+        "dps": 52.58386192452568,
+        "residual": 7.639755494892597e-11
+      },
+      "ratio": 1.0352393634182075
+    },
+    {
+      "weapon": "repeater",
+      "distance": 180,
+      "seed": 11,
+      "before": {
+        "damage": 4438.758563268395,
+        "fired": 768,
+        "hits": 768,
+        "seconds": 72,
+        "cycleSeconds": 9,
+        "mrk": 26,
+        "dps": 61.64942448983882,
+        "residual": -3.3651303965598345e-11
+      },
+      "after": {
+        "damage": 4440.661124690969,
+        "fired": 768,
+        "hits": 768,
+        "seconds": 72,
+        "cycleSeconds": 9,
+        "mrk": 26,
+        "dps": 61.675848954041236,
+        "residual": -9.731593308970332e-11
+      },
+      "ratio": 1.0004286246695908
+    },
+    {
+      "weapon": "repeater",
+      "distance": 180,
+      "seed": 53,
+      "before": {
+        "damage": 4434.645787806927,
+        "fired": 768,
+        "hits": 768,
+        "seconds": 72,
+        "cycleSeconds": 9,
+        "mrk": 26,
+        "dps": 61.59230260842954,
+        "residual": -1.7189449863508344e-10
+      },
+      "after": {
+        "damage": 4428.031550792923,
+        "fired": 768,
+        "hits": 768,
+        "seconds": 72,
+        "cycleSeconds": 9,
+        "mrk": 26,
+        "dps": 61.50043820545726,
+        "residual": -2.4920154828578234e-10
+      },
+      "ratio": 0.9985085083836481
+    },
+    {
+      "weapon": "repeater",
+      "distance": 180,
+      "seed": 181,
+      "before": {
+        "damage": 4440.981566501676,
+        "fired": 768,
+        "hits": 768,
+        "seconds": 72,
+        "cycleSeconds": 9,
+        "mrk": 26,
+        "dps": 61.6802995347455,
+        "residual": -1.8917489796876907e-10
+      },
+      "after": {
+        "damage": 4448.123280701233,
+        "fired": 768,
+        "hits": 768,
+        "seconds": 72,
+        "cycleSeconds": 9,
+        "mrk": 26,
+        "dps": 61.77949000973935,
+        "residual": 1.0913936421275139e-11
+      },
+      "ratio": 1.0016081386721862
+    },
+    {
+      "weapon": "repeater",
+      "distance": 380,
+      "seed": 11,
+      "before": {
+        "damage": 4440.589726695984,
+        "fired": 768,
+        "hits": 768,
+        "seconds": 72,
+        "cycleSeconds": 9,
+        "mrk": 26,
+        "dps": 61.674857315222,
+        "residual": -7.821654435247183e-11
+      },
+      "after": {
+        "damage": 4439.672013530813,
+        "fired": 768,
+        "hits": 768,
+        "seconds": 72,
+        "cycleSeconds": 9,
+        "mrk": 26,
+        "dps": 61.662111299039076,
+        "residual": -9.549694368615746e-11
+      },
+      "ratio": 0.9997933352951629
+    },
+    {
+      "weapon": "repeater",
+      "distance": 380,
+      "seed": 53,
+      "before": {
+        "damage": 4436.6000234947305,
+        "fired": 768,
+        "hits": 768,
+        "seconds": 72,
+        "cycleSeconds": 9,
+        "mrk": 26,
+        "dps": 61.61944477076015,
+        "residual": -2.9740476747974753e-10
+      },
+      "after": {
+        "damage": 4432.909563187451,
+        "fired": 768,
+        "hits": 768,
+        "seconds": 72,
+        "cycleSeconds": 9,
+        "mrk": 26,
+        "dps": 61.568188377603484,
+        "residual": -2.219167072325945e-10
+      },
+      "ratio": 0.9991681782699057
+    },
+    {
+      "weapon": "repeater",
+      "distance": 380,
+      "seed": 181,
+      "before": {
+        "damage": 4441.424183041125,
+        "fired": 768,
+        "hits": 768,
+        "seconds": 72,
+        "cycleSeconds": 9,
+        "mrk": 26,
+        "dps": 61.686446986682284,
+        "residual": -1.673470251262188e-10
+      },
+      "after": {
+        "damage": 4447.80049295841,
+        "fired": 768,
+        "hits": 768,
+        "seconds": 72,
+        "cycleSeconds": 9,
+        "mrk": 26,
+        "dps": 61.77500684664459,
+        "residual": -2.7284841053187847e-11
+      },
+      "ratio": 1.0014356453368343
+    },
+    {
+      "weapon": "repeater",
+      "distance": 580,
+      "seed": 11,
+      "before": {
+        "damage": 2532.274266777589,
+        "fired": 768,
+        "hits": 440,
+        "seconds": 72,
+        "cycleSeconds": 9,
+        "mrk": 26,
+        "dps": 35.17047592746652,
+        "residual": 2.0463630789890885e-11
+      },
+      "after": {
+        "damage": 2625.2627566329093,
+        "fired": 768,
+        "hits": 455,
+        "seconds": 72,
+        "cycleSeconds": 9,
+        "mrk": 26,
+        "dps": 36.461982731012625,
+        "residual": 1.3869794202037156e-10
+      },
+      "ratio": 1.036721334286452
+    },
+    {
+      "weapon": "repeater",
+      "distance": 580,
+      "seed": 53,
+      "before": {
+        "damage": 2553.028824686824,
+        "fired": 768,
+        "hits": 441,
+        "seconds": 72,
+        "cycleSeconds": 9,
+        "mrk": 26,
+        "dps": 35.45873367620589,
+        "residual": 2.8194335754960775e-10
+      },
+      "after": {
+        "damage": 2517.793665954864,
+        "fired": 768,
+        "hits": 436,
+        "seconds": 72,
+        "cycleSeconds": 9,
+        "mrk": 26,
+        "dps": 34.96935647159533,
+        "residual": 1.0822986951097846e-10
+      },
+      "ratio": 0.9861986835435428
+    },
+    {
+      "weapon": "repeater",
+      "distance": 580,
+      "seed": 181,
+      "before": {
+        "damage": 2709.436474601839,
+        "fired": 768,
+        "hits": 470,
+        "seconds": 72,
+        "cycleSeconds": 9,
+        "mrk": 26,
+        "dps": 37.63106214724777,
+        "residual": -7.776179700158536e-11
+      },
+      "after": {
+        "damage": 2634.136265113547,
+        "fired": 768,
+        "hits": 457,
+        "seconds": 72,
+        "cycleSeconds": 9,
+        "mrk": 26,
+        "dps": 36.585225904354814,
+        "residual": 1.1004885891452432e-10
+      },
+      "ratio": 0.9722081657222253
+    },
+    {
+      "weapon": "rifle",
+      "distance": 180,
+      "seed": 11,
+      "before": {
+        "damage": 5886.665231032839,
+        "fired": 1152,
+        "hits": 1152,
+        "seconds": 105.6,
+        "cycleSeconds": 13.2,
+        "mrk": 30,
+        "dps": 55.744935899932194,
+        "residual": 6.002665031701326e-11
+      },
+      "after": {
+        "damage": 5884.128970696421,
+        "fired": 1152,
+        "hits": 1152,
+        "seconds": 105.6,
+        "cycleSeconds": 13.2,
+        "mrk": 30,
+        "dps": 55.720918283110045,
+        "residual": -5.638867150992155e-11
+      },
+      "ratio": 0.9995691515931553
+    },
+    {
+      "weapon": "rifle",
+      "distance": 180,
+      "seed": 53,
+      "before": {
+        "damage": 5860.759130574547,
+        "fired": 1152,
+        "hits": 1152,
+        "seconds": 105.6,
+        "cycleSeconds": 13.2,
+        "mrk": 30,
+        "dps": 55.49961297892564,
+        "residual": 3.5925040720030665e-10
+      },
+      "after": {
+        "damage": 5862.6485499914215,
+        "fired": 1152,
+        "hits": 1152,
+        "seconds": 105.6,
+        "cycleSeconds": 13.2,
+        "mrk": 30,
+        "dps": 55.5175052082521,
+        "residual": 2.8194335754960775e-10
+      },
+      "ratio": 1.0003223847584892
+    },
+    {
+      "weapon": "rifle",
+      "distance": 180,
+      "seed": 181,
+      "before": {
+        "damage": 5888.333473560535,
+        "fired": 1152,
+        "hits": 1152,
+        "seconds": 105.6,
+        "cycleSeconds": 13.2,
+        "mrk": 30,
+        "dps": 55.76073365114143,
+        "residual": 9.640643838793039e-11
+      },
+      "after": {
+        "damage": 5895.277907465238,
+        "fired": 1152,
+        "hits": 1152,
+        "seconds": 105.6,
+        "cycleSeconds": 13.2,
+        "mrk": 30,
+        "dps": 55.82649533584506,
+        "residual": 6.366462912410498e-11
+      },
+      "ratio": 1.0011793547250483
+    },
+    {
+      "weapon": "rifle",
+      "distance": 380,
+      "seed": 11,
+      "before": {
+        "damage": 5886.4222949014875,
+        "fired": 1152,
+        "hits": 1152,
+        "seconds": 105.6,
+        "cycleSeconds": 13.2,
+        "mrk": 30,
+        "dps": 55.7426353683853,
+        "residual": -4.9112713895738125e-11
+      },
+      "after": {
+        "damage": 5884.20080228824,
+        "fired": 1152,
+        "hits": 1152,
+        "seconds": 105.6,
+        "cycleSeconds": 13.2,
+        "mrk": 30,
+        "dps": 55.72159850651743,
+        "residual": -4.001776687800884e-11
+      },
+      "ratio": 0.9996226073322718
+    },
+    {
+      "weapon": "rifle",
+      "distance": 380,
+      "seed": 53,
+      "before": {
+        "damage": 5859.896284903275,
+        "fired": 1152,
+        "hits": 1152,
+        "seconds": 105.6,
+        "cycleSeconds": 13.2,
+        "mrk": 30,
+        "dps": 55.49144209188708,
+        "residual": 1.4279066817834973e-10
+      },
+      "after": {
+        "damage": 5863.144704648802,
+        "fired": 1152,
+        "hits": 1152,
+        "seconds": 105.6,
+        "cycleSeconds": 13.2,
+        "mrk": 30,
+        "dps": 55.5222036425076,
+        "residual": 2.892193151637912e-10
+      },
+      "ratio": 1.000554347651834
+    },
+    {
+      "weapon": "rifle",
+      "distance": 380,
+      "seed": 181,
+      "before": {
+        "damage": 5888.745625111812,
+        "fired": 1152,
+        "hits": 1152,
+        "seconds": 105.6,
+        "cycleSeconds": 13.2,
+        "mrk": 30,
+        "dps": 55.764636601437616,
+        "residual": 1.127773430198431e-10
+      },
+      "after": {
+        "damage": 5891.6036228816665,
+        "fired": 1152,
+        "hits": 1152,
+        "seconds": 105.6,
+        "cycleSeconds": 13.2,
+        "mrk": 30,
+        "dps": 55.791700974258205,
+        "residual": 6.184563972055912e-11
+      },
+      "ratio": 1.0004853321830827
+    },
+    {
+      "weapon": "rifle",
+      "distance": 580,
+      "seed": 11,
+      "before": {
+        "damage": 3499.3112370233825,
+        "fired": 1152,
+        "hits": 686,
+        "seconds": 105.6,
+        "cycleSeconds": 13.2,
+        "mrk": 30,
+        "dps": 33.137417017266884,
+        "residual": 1.4642864698544145e-10
+      },
+      "after": {
+        "damage": 3525.721369158446,
+        "fired": 1152,
+        "hits": 690,
+        "seconds": 105.6,
+        "cycleSeconds": 13.2,
+        "mrk": 30,
+        "dps": 33.38751296551559,
+        "residual": -6.093614501878619e-11
+      },
+      "ratio": 1.0075472372550458
+    },
+    {
+      "weapon": "rifle",
+      "distance": 580,
+      "seed": 53,
+      "before": {
+        "damage": 3365.513508272364,
+        "fired": 1152,
+        "hits": 662,
+        "seconds": 105.6,
+        "cycleSeconds": 13.2,
+        "mrk": 30,
+        "dps": 31.870393070761025,
+        "residual": 3.456079866737127e-11
+      },
+      "after": {
+        "damage": 3299.3560107876983,
+        "fired": 1152,
+        "hits": 650,
+        "seconds": 105.6,
+        "cycleSeconds": 13.2,
+        "mrk": 30,
+        "dps": 31.243901617307753,
+        "residual": 3.637978807091713e-11
+      },
+      "ratio": 0.980342525049431
+    },
+    {
+      "weapon": "rifle",
+      "distance": 580,
+      "seed": 181,
+      "before": {
+        "damage": 3542.0370756761376,
+        "fired": 1152,
+        "hits": 694,
+        "seconds": 105.6,
+        "cycleSeconds": 13.2,
+        "mrk": 30,
+        "dps": 33.54201776208464,
+        "residual": 5.547917680814862e-11
+      },
+      "after": {
+        "damage": 3567.4742473750475,
+        "fired": 1152,
+        "hits": 699,
+        "seconds": 105.6,
+        "cycleSeconds": 13.2,
+        "mrk": 30,
+        "dps": 33.782900069839464,
+        "residual": -1.8189894035458565e-11
+      },
+      "ratio": 1.0071815091585552
+    }
+  ],
+  "performance": [
+    {
+      "mode": "classic",
+      "profile": "ordinary",
+      "before": [
+        {
+          "updateMedian": 0.29999999701976776,
+          "renderMedian": 7.700000002980232,
+          "frameMedian": 8,
+          "frameP95": 19.5,
+          "drawCanvases": 0,
+          "updateCanvases": 0,
+          "memory": {
+            "canvases": 2606,
+            "mb": 146.29362869262695
+          },
+          "endMB": 146.29362869262695,
+          "startMB": 146.29362869262695,
+          "actors": 288
+        },
+        {
+          "updateMedian": 0.29999999701976776,
+          "renderMedian": 9.700000002980232,
+          "frameMedian": 10.100000001490116,
+          "frameP95": 19,
+          "drawCanvases": 0,
+          "updateCanvases": 0,
+          "memory": {
+            "canvases": 2606,
+            "mb": 146.29362869262695
+          },
+          "endMB": 146.29362869262695,
+          "startMB": 146.29362869262695,
+          "actors": 288
+        }
+      ],
+      "after": [
+        {
+          "updateMedian": 0.29999999701976776,
+          "renderMedian": 8.399999998509884,
+          "frameMedian": 8.799999997019768,
+          "frameP95": 17.399999998509884,
+          "drawCanvases": 0,
+          "updateCanvases": 0,
+          "memory": {
+            "canvases": 2606,
+            "mb": 146.29362869262695
+          },
+          "endMB": 146.29362869262695,
+          "startMB": 146.29362869262695,
+          "actors": 288
+        },
+        {
+          "updateMedian": 0.29999999701976776,
+          "renderMedian": 9.600000001490116,
+          "frameMedian": 10.199999995529652,
+          "frameP95": 21.600000001490116,
+          "drawCanvases": 0,
+          "updateCanvases": 0,
+          "memory": {
+            "canvases": 2606,
+            "mb": 146.29362869262695
+          },
+          "endMB": 146.29362869262695,
+          "startMB": 146.29362869262695,
+          "actors": 288
+        }
+      ]
+    },
+    {
+      "mode": "classic",
+      "profile": "officers",
+      "before": [
+        {
+          "updateMedian": 0.30000000447034836,
+          "renderMedian": 6.800000004470348,
+          "frameMedian": 7.199999995529652,
+          "frameP95": 13.5,
+          "drawCanvases": 24,
+          "updateCanvases": 0,
+          "memory": {
+            "canvases": 5395,
+            "mb": 288.1092720031738
+          },
+          "endMB": 288.1092720031738,
+          "startMB": 287.7270698547363,
+          "actors": 336
+        },
+        {
+          "updateMedian": 0.29999999701976776,
+          "renderMedian": 7.299999997019768,
+          "frameMedian": 7.799999997019768,
+          "frameP95": 23,
+          "drawCanvases": 24,
+          "updateCanvases": 0,
+          "memory": {
+            "canvases": 5395,
+            "mb": 288.1092720031738
+          },
+          "endMB": 288.1092720031738,
+          "startMB": 287.7270698547363,
+          "actors": 336
+        }
+      ],
+      "after": [
+        {
+          "updateMedian": 0.30000000447034836,
+          "renderMedian": 8.799999997019768,
+          "frameMedian": 9.200000002980232,
+          "frameP95": 18.899999998509884,
+          "drawCanvases": 24,
+          "updateCanvases": 0,
+          "memory": {
+            "canvases": 5395,
+            "mb": 288.1092720031738
+          },
+          "endMB": 288.1092720031738,
+          "startMB": 287.7270698547363,
+          "actors": 336
+        },
+        {
+          "updateMedian": 0.30000000447034836,
+          "renderMedian": 8.5,
+          "frameMedian": 8.899999998509884,
+          "frameP95": 25.600000001490116,
+          "drawCanvases": 24,
+          "updateCanvases": 0,
+          "memory": {
+            "canvases": 5395,
+            "mb": 288.1092720031738
+          },
+          "endMB": 288.1092720031738,
+          "startMB": 287.7270698547363,
+          "actors": 336
+        }
+      ]
+    },
+    {
+      "mode": "realtime",
+      "profile": "ordinary",
+      "before": [
+        {
+          "updateMedian": 0.29999999701976776,
+          "renderMedian": 1.7000000029802322,
+          "frameMedian": 2.3000000044703484,
+          "frameP95": 73.5,
+          "drawCanvases": 0,
+          "updateCanvases": 0,
+          "memory": {
+            "canvases": 1495,
+            "mb": 28.751808166503906
+          },
+          "endMB": 28.751808166503906,
+          "startMB": 28.751808166503906,
+          "actors": 384
+        },
+        {
+          "updateMedian": 0.29999999701976776,
+          "renderMedian": 2.100000001490116,
+          "frameMedian": 2.7000000029802322,
+          "frameP95": 83,
+          "drawCanvases": 0,
+          "updateCanvases": 0,
+          "memory": {
+            "canvases": 1495,
+            "mb": 28.751808166503906
+          },
+          "endMB": 28.751808166503906,
+          "startMB": 28.751808166503906,
+          "actors": 384
+        }
+      ],
+      "after": [
+        {
+          "updateMedian": 0.30000000447034836,
+          "renderMedian": 2.7999999970197678,
+          "frameMedian": 3.6999999955296516,
+          "frameP95": 103.60000000149012,
+          "drawCanvases": 0,
+          "updateCanvases": 6,
+          "memory": {
+            "canvases": 1499,
+            "mb": 28.76311492919922
+          },
+          "endMB": 28.76311492919922,
+          "startMB": 28.751808166503906,
+          "actors": 384
+        },
+        {
+          "updateMedian": 0.29999999701976776,
+          "renderMedian": 1.8000000044703484,
+          "frameMedian": 2.2000000029802322,
+          "frameP95": 64.30000000447035,
+          "drawCanvases": 0,
+          "updateCanvases": 6,
+          "memory": {
+            "canvases": 1499,
+            "mb": 28.76311492919922
+          },
+          "endMB": 28.76311492919922,
+          "startMB": 28.751808166503906,
+          "actors": 384
+        }
+      ]
+    },
+    {
+      "mode": "realtime",
+      "profile": "officers",
+      "before": [
+        {
+          "updateMedian": 0.4000000059604645,
+          "renderMedian": 2.3000000044703484,
+          "frameMedian": 2.899999998509884,
+          "frameP95": 70,
+          "drawCanvases": 0,
+          "updateCanvases": 0,
+          "memory": {
+            "canvases": 2983,
+            "mb": 47.954063415527344
+          },
+          "endMB": 47.954063415527344,
+          "startMB": 47.954063415527344,
+          "actors": 432
+        },
+        {
+          "updateMedian": 0.3999999985098839,
+          "renderMedian": 2.2999999970197678,
+          "frameMedian": 2.9000000059604645,
+          "frameP95": 63.80000000447035,
+          "drawCanvases": 0,
+          "updateCanvases": 0,
+          "memory": {
+            "canvases": 2983,
+            "mb": 47.954063415527344
+          },
+          "endMB": 47.954063415527344,
+          "startMB": 47.954063415527344,
+          "actors": 432
+        }
+      ],
+      "after": [
+        {
+          "updateMedian": 0.5,
+          "renderMedian": 3.100000001490116,
+          "frameMedian": 3.899999998509884,
+          "frameP95": 91.29999999701977,
+          "drawCanvases": 0,
+          "updateCanvases": 3,
+          "memory": {
+            "canvases": 2985,
+            "mb": 47.959617614746094
+          },
+          "endMB": 47.959617614746094,
+          "startMB": 47.954063415527344,
+          "actors": 432
+        },
+        {
+          "updateMedian": 0.3999999985098839,
+          "renderMedian": 2,
+          "frameMedian": 2.5,
+          "frameP95": 63.600000001490116,
+          "drawCanvases": 0,
+          "updateCanvases": 3,
+          "memory": {
+            "canvases": 2985,
+            "mb": 47.959617614746094
+          },
+          "endMB": 47.959617614746094,
+          "startMB": 47.954063415527344,
+          "actors": 432
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "fixedWindow": [
+    {
+      "weapon": "tanegashima",
+      "distance": 180,
+      "seed": 11,
+      "before": {
+        "damage": 5225.214368116805,
+        "fired": 616,
+        "hits": 616,
+        "seconds": 60,
+        "dps": 87.08690613528009,
+        "residual": 1.2096279533579946e-10
+      },
+      "after": {
+        "damage": 5191.236553698638,
+        "fired": 604,
+        "hits": 612,
+        "seconds": 60,
+        "dps": 86.52060922831063,
+        "residual": 1.3005774235352874e-10
+      },
+      "ratio": 0.9934973357982224
+    },
+    {
+      "weapon": "tanegashima",
+      "distance": 180,
+      "seed": 53,
+      "before": {
+        "damage": 5210.38335462894,
+        "fired": 616,
+        "hits": 616,
+        "seconds": 60,
+        "dps": 86.83972257714899,
+        "residual": 4.8203219193965197e-11
+      },
+      "after": {
+        "damage": 5179.067998402361,
+        "fired": 604,
+        "hits": 612,
+        "seconds": 60,
+        "dps": 86.31779997337269,
+        "residual": 5.002220859751105e-11
+      },
+      "ratio": 0.9939898172370065
+    },
+    {
+      "weapon": "tanegashima",
+      "distance": 180,
+      "seed": 181,
+      "before": {
+        "damage": 5241.985203281549,
+        "fired": 616,
+        "hits": 616,
+        "seconds": 60,
+        "dps": 87.36642005469248,
+        "residual": -2.9103830456733704e-11
+      },
+      "after": {
+        "damage": 5211.760212213557,
+        "fired": 604,
+        "hits": 612,
+        "seconds": 60,
+        "dps": 86.86267020355928,
+        "residual": -3.9108272176235914e-11
+      },
+      "ratio": 0.9942340563935451
+    },
+    {
+      "weapon": "tanegashima",
+      "distance": 380,
+      "seed": 11,
+      "before": {
+        "damage": 5234.6944004497855,
+        "fired": 616,
+        "hits": 617,
+        "seconds": 60,
+        "dps": 87.24490667416309,
+        "residual": 1.2096279533579946e-10
+      },
+      "after": {
+        "damage": 5292.631498673871,
+        "fired": 604,
+        "hits": 624,
+        "seconds": 60,
+        "dps": 88.21052497789785,
+        "residual": 1.3005774235352874e-10
+      },
+      "ratio": 1.0110679045980424
+    },
+    {
+      "weapon": "tanegashima",
+      "distance": 380,
+      "seed": 53,
+      "before": {
+        "damage": 5219.538373640778,
+        "fired": 616,
+        "hits": 617,
+        "seconds": 60,
+        "dps": 86.9923062273463,
+        "residual": 4.8203219193965197e-11
+      },
+      "after": {
+        "damage": 5281.952880725812,
+        "fired": 604,
+        "hits": 624,
+        "seconds": 60,
+        "dps": 88.03254801209687,
+        "residual": 5.002220859751105e-11
+      },
+      "ratio": 1.0119578596069403
+    },
+    {
+      "weapon": "tanegashima",
+      "distance": 380,
+      "seed": 181,
+      "before": {
+        "damage": 5249.45657636769,
+        "fired": 616,
+        "hits": 617,
+        "seconds": 60,
+        "dps": 87.4909429394615,
+        "residual": -2.9103830456733704e-11
+      },
+      "after": {
+        "damage": 5308.905569524801,
+        "fired": 604,
+        "hits": 624,
+        "seconds": 60,
+        "dps": 88.48175949208002,
+        "residual": -3.9108272176235914e-11
+      },
+      "ratio": 1.0113247899648778
+    },
+    {
+      "weapon": "tanegashima",
+      "distance": 580,
+      "seed": 11,
+      "before": {
+        "damage": 2995.9598717572994,
+        "fired": 616,
+        "hits": 355,
+        "seconds": 60,
+        "dps": 49.932664529288324,
+        "residual": -1.1641532182693481e-10
+      },
+      "after": {
+        "damage": 2987.282824298996,
+        "fired": 604,
+        "hits": 354,
+        "seconds": 60,
+        "dps": 49.78804707164993,
+        "residual": 3.774403012357652e-11
+      },
+      "ratio": 0.9971037504406847
+    },
+    {
+      "weapon": "tanegashima",
+      "distance": 580,
+      "seed": 53,
+      "before": {
+        "damage": 2892.5582637347256,
+        "fired": 616,
+        "hits": 343,
+        "seconds": 60,
+        "dps": 48.20930439557876,
+        "residual": 1.1550582712516189e-10
+      },
+      "after": {
+        "damage": 2999.686698450325,
+        "fired": 604,
+        "hits": 355,
+        "seconds": 60,
+        "dps": 49.99477830750541,
+        "residual": -1.3642420526593924e-12
+      },
+      "ratio": 1.0370358779142725
+    },
+    {
+      "weapon": "tanegashima",
+      "distance": 580,
+      "seed": 181,
+      "before": {
+        "damage": 3067.8354138796585,
+        "fired": 616,
+        "hits": 361,
+        "seconds": 60,
+        "dps": 51.130590231327645,
+        "residual": -4.5929482439532876e-11
+      },
+      "after": {
+        "damage": 3127.8372986675795,
+        "fired": 604,
+        "hits": 368,
+        "seconds": 60,
+        "dps": 52.13062164445966,
+        "residual": 3.774403012357652e-11
+      },
+      "ratio": 1.0195583780395967
+    },
+    {
+      "weapon": "repeater",
+      "distance": 180,
+      "seed": 11,
+      "before": {
+        "damage": 3662.203086265154,
+        "fired": 639,
+        "hits": 635,
+        "seconds": 60,
+        "dps": 61.036718104419236,
+        "residual": 8.276401786133647e-11
+      },
+      "after": {
+        "damage": 3873.9696607919013,
+        "fired": 672,
+        "hits": 672,
+        "seconds": 60,
+        "dps": 64.56616101319835,
+        "residual": 3.8198777474462986e-11
+      },
+      "ratio": 1.057824912911292
+    },
+    {
+      "weapon": "repeater",
+      "distance": 180,
+      "seed": 53,
+      "before": {
+        "damage": 3657.290220420452,
+        "fired": 639,
+        "hits": 635,
+        "seconds": 60,
+        "dps": 60.954837007007534,
+        "residual": -8.731149137020111e-11
+      },
+      "after": {
+        "damage": 3875.7986916232726,
+        "fired": 672,
+        "hits": 672,
+        "seconds": 60,
+        "dps": 64.59664486038788,
+        "residual": -9.367795428261161e-11
+      },
+      "ratio": 1.0597460026504815
+    },
+    {
+      "weapon": "repeater",
+      "distance": 180,
+      "seed": 181,
+      "before": {
+        "damage": 3673.905738478672,
+        "fired": 639,
+        "hits": 635,
+        "seconds": 60,
+        "dps": 61.23176230797787,
+        "residual": -1.5825207810848951e-10
+      },
+      "after": {
+        "damage": 3886.853241163117,
+        "fired": 672,
+        "hits": 672,
+        "seconds": 60,
+        "dps": 64.78088735271862,
+        "residual": -4.547473508864641e-12
+      },
+      "ratio": 1.0579621573994504
+    },
+    {
+      "weapon": "repeater",
+      "distance": 380,
+      "seed": 11,
+      "before": {
+        "damage": 3643.7794629368054,
+        "fired": 639,
+        "hits": 632,
+        "seconds": 60,
+        "dps": 60.72965771561342,
+        "residual": 7.003109203651547e-11
+      },
+      "after": {
+        "damage": 3873.9696607919013,
+        "fired": 672,
+        "hits": 672,
+        "seconds": 60,
+        "dps": 64.56616101319835,
+        "residual": 3.8198777474462986e-11
+      },
+      "ratio": 1.0631734714453789
+    },
+    {
+      "weapon": "repeater",
+      "distance": 380,
+      "seed": 53,
+      "before": {
+        "damage": 3640.5723607852924,
+        "fired": 639,
+        "hits": 632,
+        "seconds": 60,
+        "dps": 60.676206013088205,
+        "residual": -2.6648194761946797e-10
+      },
+      "after": {
+        "damage": 3875.7986916232726,
+        "fired": 672,
+        "hits": 672,
+        "seconds": 60,
+        "dps": 64.59664486038788,
+        "residual": -9.367795428261161e-11
+      },
+      "ratio": 1.0646124585715528
+    },
+    {
+      "weapon": "repeater",
+      "distance": 380,
+      "seed": 181,
+      "before": {
+        "damage": 3656.335320402364,
+        "fired": 639,
+        "hits": 632,
+        "seconds": 60,
+        "dps": 60.938922006706065,
+        "residual": -1.3369572116062045e-10
+      },
+      "after": {
+        "damage": 3886.853241163117,
+        "fired": 672,
+        "hits": 672,
+        "seconds": 60,
+        "dps": 64.78088735271862,
+        "residual": -4.547473508864641e-12
+      },
+      "ratio": 1.0630461652339331
+    },
+    {
+      "weapon": "repeater",
+      "distance": 580,
+      "seed": 11,
+      "before": {
+        "damage": 2054.926391948258,
+        "fired": 639,
+        "hits": 358,
+        "seconds": 60,
+        "dps": 34.24877319913763,
+        "residual": -6.45741238258779e-11
+      },
+      "after": {
+        "damage": 2283.5244895627916,
+        "fired": 672,
+        "hits": 398,
+        "seconds": 60,
+        "dps": 38.058741492713196,
+        "residual": 6.866684998385608e-11
+      },
+      "ratio": 1.111243934824255
+    },
+    {
+      "weapon": "repeater",
+      "distance": 580,
+      "seed": 53,
+      "before": {
+        "damage": 2102.491497347117,
+        "fired": 639,
+        "hits": 365,
+        "seconds": 60,
+        "dps": 35.04152495578528,
+        "residual": 2.523847797419876e-10
+      },
+      "after": {
+        "damage": 2184.5505608933177,
+        "fired": 672,
+        "hits": 379,
+        "seconds": 60,
+        "dps": 36.40917601488863,
+        "residual": 7.23048287909478e-11
+      },
+      "ratio": 1.0390294389536134
+    },
+    {
+      "weapon": "repeater",
+      "distance": 580,
+      "seed": 181,
+      "before": {
+        "damage": 2214.2737623655066,
+        "fired": 639,
+        "hits": 383,
+        "seconds": 60,
+        "dps": 36.904562706091774,
+        "residual": -6.957634468562901e-11
+      },
+      "after": {
+        "damage": 2262.943265413538,
+        "fired": 672,
+        "hits": 392,
+        "seconds": 60,
+        "dps": 37.715721090225635,
+        "residual": 6.366462912410498e-11
+      },
+      "ratio": 1.0219798942096654
+    },
+    {
+      "weapon": "rifle",
+      "distance": 180,
+      "seed": 11,
+      "before": {
+        "damage": 3477.7203637500793,
+        "fired": 678,
+        "hits": 684,
+        "seconds": 60,
+        "dps": 57.962006062501324,
+        "residual": 5.911715561524034e-11
+      },
+      "after": {
+        "damage": 2934.5757243678454,
+        "fired": 576,
+        "hits": 576,
+        "seconds": 60,
+        "dps": 48.909595406130755,
+        "residual": -3.54702933691442e-11
+      },
+      "ratio": 0.8438216467765244
+    },
+    {
+      "weapon": "rifle",
+      "distance": 180,
+      "seed": 53,
+      "before": {
+        "damage": 3478.4302787400684,
+        "fired": 678,
+        "hits": 684,
+        "seconds": 60,
+        "dps": 57.97383797900114,
+        "residual": 1.8735590856522322e-10
+      },
+      "after": {
+        "damage": 2936.396469743512,
+        "fired": 576,
+        "hits": 576,
+        "seconds": 60,
+        "dps": 48.93994116239187,
+        "residual": 2.355591277591884e-10
+      },
+      "ratio": 0.8441728694953495
+    },
+    {
+      "weapon": "rifle",
+      "distance": 180,
+      "seed": 181,
+      "before": {
+        "damage": 3490.247843993632,
+        "fired": 678,
+        "hits": 684,
+        "seconds": 60,
+        "dps": 58.17079739989387,
+        "residual": 1.5552359400317073e-10
+      },
+      "after": {
+        "damage": 2941.444219339596,
+        "fired": 576,
+        "hits": 576,
+        "seconds": 60,
+        "dps": 49.0240703223266,
+        "residual": 1.1459633242338896e-10
+      },
+      "ratio": 0.8427608441622643
+    },
+    {
+      "weapon": "rifle",
+      "distance": 380,
+      "seed": 11,
+      "before": {
+        "damage": 3502.7169256316965,
+        "fired": 678,
+        "hits": 689,
+        "seconds": 60,
+        "dps": 58.378615427194944,
+        "residual": -2.9103830456733704e-11
+      },
+      "after": {
+        "damage": 2995.129950869408,
+        "fired": 576,
+        "hits": 588,
+        "seconds": 60,
+        "dps": 49.91883251449013,
+        "residual": -3.54702933691442e-11
+      },
+      "ratio": 0.8550876403834009
+    },
+    {
+      "weapon": "rifle",
+      "distance": 380,
+      "seed": 53,
+      "before": {
+        "damage": 3501.9033112608913,
+        "fired": 678,
+        "hits": 689,
+        "seconds": 60,
+        "dps": 58.36505518768152,
+        "residual": 1.1095835361629725e-10
+      },
+      "after": {
+        "damage": 2996.755639840983,
+        "fired": 576,
+        "hits": 588,
+        "seconds": 60,
+        "dps": 49.94592733068305,
+        "residual": 2.355591277591884e-10
+      },
+      "ratio": 0.8557505372020036
+    },
+    {
+      "weapon": "rifle",
+      "distance": 380,
+      "seed": 181,
+      "before": {
+        "damage": 3516.4992979624258,
+        "fired": 678,
+        "hits": 689,
+        "seconds": 60,
+        "dps": 58.608321632707096,
+        "residual": 8.458300726488233e-11
+      },
+      "after": {
+        "damage": 3000.4364516466467,
+        "fired": 576,
+        "hits": 588,
+        "seconds": 60,
+        "dps": 50.00727419411078,
+        "residual": 1.1459633242338896e-10
+      },
+      "ratio": 0.8532452866932739
+    },
+    {
+      "weapon": "rifle",
+      "distance": 580,
+      "seed": 11,
+      "before": {
+        "damage": 2054.0163911700834,
+        "fired": 678,
+        "hits": 406,
+        "seconds": 60,
+        "dps": 34.233606519501386,
+        "residual": 1.1186784831807017e-10
+      },
+      "after": {
+        "damage": 1753.1366905448695,
+        "fired": 576,
+        "hits": 346,
+        "seconds": 60,
+        "dps": 29.21894484241449,
+        "residual": 5.3660187404602766e-11
+      },
+      "ratio": 0.8535164072114264
+    },
+    {
+      "weapon": "rifle",
+      "distance": 580,
+      "seed": 53,
+      "before": {
+        "damage": 1996.6633219266157,
+        "fired": 678,
+        "hits": 393,
+        "seconds": 60,
+        "dps": 33.27772203211026,
+        "residual": 8.503775461576879e-11
+      },
+      "after": {
+        "damage": 1797.77400787754,
+        "fired": 576,
+        "hits": 353,
+        "seconds": 60,
+        "dps": 29.962900131292333,
+        "residual": -3.183231456205249e-11
+      },
+      "ratio": 0.9003891583198094
+    },
+    {
+      "weapon": "rifle",
+      "distance": 580,
+      "seed": 181,
+      "before": {
+        "damage": 2103.1160935380517,
+        "fired": 678,
+        "hits": 414,
+        "seconds": 60,
+        "dps": 35.051934892300864,
+        "residual": -5.3660187404602766e-11
+      },
+      "after": {
+        "damage": 1886.4060931212618,
+        "fired": 576,
+        "hits": 370,
+        "seconds": 60,
+        "dps": 31.44010155202103,
+        "residual": 8.958522812463343e-11
+      },
+      "ratio": 0.8969576614992182
+    }
+  ],
+  "reloadCycleSampling": true,
+  "performanceRecheck": [
+    {
+      "mode": "classic",
+      "profile": "ordinary",
+      "before": [
+        {
+          "updateMedian": 0.29999999701976776,
+          "renderMedian": 7.799999997019768,
+          "frameMedian": 8.299999997019768,
+          "frameP95": 18.600000001490116,
+          "drawCanvases": 0,
+          "updateCanvases": 0,
+          "memory": {
+            "canvases": 2606,
+            "mb": 146.29362869262695
+          },
+          "endMB": 146.29362869262695,
+          "startMB": 146.29362869262695,
+          "actors": 288,
+          "sceneHash": 4182613459
+        },
+        {
+          "updateMedian": 0.29999999701976776,
+          "renderMedian": 8.200000002980232,
+          "frameMedian": 8.600000001490116,
+          "frameP95": 15.199999995529652,
+          "drawCanvases": 0,
+          "updateCanvases": 0,
+          "memory": {
+            "canvases": 2606,
+            "mb": 146.29362869262695
+          },
+          "endMB": 146.29362869262695,
+          "startMB": 146.29362869262695,
+          "actors": 288,
+          "sceneHash": 4182613459
+        }
+      ],
+      "after": [
+        {
+          "updateMedian": 0.29999999701976776,
+          "renderMedian": 9.299999997019768,
+          "frameMedian": 9.799999997019768,
+          "frameP95": 18.799999997019768,
+          "drawCanvases": 0,
+          "updateCanvases": 0,
+          "memory": {
+            "canvases": 2606,
+            "mb": 146.29362869262695
+          },
+          "endMB": 146.29362869262695,
+          "startMB": 146.29362869262695,
+          "actors": 288,
+          "sceneHash": 4182613459
+        },
+        {
+          "updateMedian": 0.29999999701976776,
+          "renderMedian": 9.899999998509884,
+          "frameMedian": 10.699999995529652,
+          "frameP95": 41.30000000447035,
+          "drawCanvases": 0,
+          "updateCanvases": 0,
+          "memory": {
+            "canvases": 2606,
+            "mb": 146.29362869262695
+          },
+          "endMB": 146.29362869262695,
+          "startMB": 146.29362869262695,
+          "actors": 288,
+          "sceneHash": 4182613459
+        }
+      ]
+    },
+    {
+      "mode": "classic",
+      "profile": "officers",
+      "before": [
+        {
+          "updateMedian": 0.30000000447034836,
+          "renderMedian": 10.5,
+          "frameMedian": 11,
+          "frameP95": 28.899999998509884,
+          "drawCanvases": 24,
+          "updateCanvases": 0,
+          "memory": {
+            "canvases": 5395,
+            "mb": 288.1092720031738
+          },
+          "endMB": 288.1092720031738,
+          "startMB": 287.7270698547363,
+          "actors": 336,
+          "sceneHash": 3730500111
+        },
+        {
+          "updateMedian": 0.29999999701976776,
+          "renderMedian": 7,
+          "frameMedian": 7.5,
+          "frameP95": 13.899999998509884,
+          "drawCanvases": 24,
+          "updateCanvases": 0,
+          "memory": {
+            "canvases": 5395,
+            "mb": 288.1092720031738
+          },
+          "endMB": 288.1092720031738,
+          "startMB": 287.7270698547363,
+          "actors": 336,
+          "sceneHash": 3730500111
+        }
+      ],
+      "after": [
+        {
+          "updateMedian": 0.29999999701976776,
+          "renderMedian": 6.5999999940395355,
+          "frameMedian": 6.899999998509884,
+          "frameP95": 13.099999994039536,
+          "drawCanvases": 24,
+          "updateCanvases": 0,
+          "memory": {
+            "canvases": 5395,
+            "mb": 288.1092720031738
+          },
+          "endMB": 288.1092720031738,
+          "startMB": 287.7270698547363,
+          "actors": 336,
+          "sceneHash": 3730500111
+        },
+        {
+          "updateMedian": 0.30000000447034836,
+          "renderMedian": 9.5,
+          "frameMedian": 10,
+          "frameP95": 29.200000002980232,
+          "drawCanvases": 24,
+          "updateCanvases": 0,
+          "memory": {
+            "canvases": 5395,
+            "mb": 288.1092720031738
+          },
+          "endMB": 288.1092720031738,
+          "startMB": 287.7270698547363,
+          "actors": 336,
+          "sceneHash": 3730500111
+        }
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "before": "9317fba48b441fb51003ee2a11cb59d0daf300f01c8ee88859e06972520fa560",
+    "after": "e9f7ac8f1626d54a89df58a3e939b8f621bfc93c15fb3a291cf5aa0b5eb0e8c7"
+  },
+  "classicHotPathIdentical": true,
+  "renderControl": [
+    {
+      "profile": "ordinary",
+      "before": [
+        {
+          "renderMedian": 6.5,
+          "renderP95": 10.600000001490116,
+          "drawCanvases": 0,
+          "sceneHash": 4182613459
+        },
+        {
+          "renderMedian": 10.400000005960464,
+          "renderP95": 104.19999999552965,
+          "drawCanvases": 0,
+          "sceneHash": 4182613459
+        }
+      ],
+      "after": [
+        {
+          "renderMedian": 7.899999998509884,
+          "renderP95": 12.5,
+          "drawCanvases": 0,
+          "sceneHash": 4182613459
+        },
+        {
+          "renderMedian": 7,
+          "renderP95": 14.700000002980232,
+          "drawCanvases": 0,
+          "sceneHash": 4182613459
+        }
+      ]
+    },
+    {
+      "profile": "officers",
+      "before": [
+        {
+          "renderMedian": 7.600000001490116,
+          "renderP95": 15.900000005960464,
+          "drawCanvases": 0,
+          "sceneHash": 3730500111
+        },
+        {
+          "renderMedian": 8.200000002980232,
+          "renderP95": 16.399999998509884,
+          "drawCanvases": 0,
+          "sceneHash": 3730500111
+        }
+      ],
+      "after": [
+        {
+          "renderMedian": 6.700000002980232,
+          "renderP95": 10.600000001490116,
+          "drawCanvases": 0,
+          "sceneHash": 3730500111
+        },
+        {
+          "renderMedian": 6.399999998509884,
+          "renderP95": 11.300000004470348,
+          "drawCanvases": 0,
+          "sceneHash": 3730500111
+        }
+      ]
+    }
+  ],
+  "realtimeAttackMath": {
+    "before": [
+      {
+        "kind": "inf",
+        "ward": 0,
+        "charged": false,
+        "damage": 24.157463779368186
+      },
+      {
+        "kind": "inf",
+        "ward": 0,
+        "charged": true,
+        "damage": 22.87252291576429
+      },
+      {
+        "kind": "inf",
+        "ward": 0,
+        "charged": false,
+        "damage": 19.83801661580801
+      },
+      {
+        "kind": "inf",
+        "ward": 0,
+        "charged": true,
+        "damage": 21.056095196306703
+      },
+      {
+        "kind": "inf",
+        "ward": 0,
+        "charged": false,
+        "damage": 22.13444570140405
+      },
+      {
+        "kind": "inf",
+        "ward": 0,
+        "charged": true,
+        "damage": 21.659654206850313
+      },
+      {
+        "kind": "gun",
+        "ward": 0,
+        "charged": false,
+        "damage": 65.67130562522196
+      },
+      {
+        "kind": "gun",
+        "ward": 0,
+        "charged": true,
+        "damage": 71.5485708436099
+      },
+      {
+        "kind": "gun",
+        "ward": 3,
+        "charged": false,
+        "damage": 52.98676481944864
+      },
+      {
+        "kind": "gun",
+        "ward": 3,
+        "charged": true,
+        "damage": 52.632971058628776
+      },
+      {
+        "kind": "gun",
+        "ward": 6,
+        "charged": false,
+        "damage": 30.160206721219147
+      },
+      {
+        "kind": "gun",
+        "ward": 6,
+        "charged": true,
+        "damage": 30.434329880801116
+      },
+      {
+        "kind": "arc",
+        "ward": 0,
+        "charged": false,
+        "damage": 30.93906279748137
+      },
+      {
+        "kind": "arc",
+        "ward": 0,
+        "charged": true,
+        "damage": 27.169344794750216
+      },
+      {
+        "kind": "arc",
+        "ward": 3,
+        "charged": false,
+        "damage": 22.80682723446326
+      },
+      {
+        "kind": "arc",
+        "ward": 3,
+        "charged": true,
+        "damage": 19.650168879465625
+      },
+      {
+        "kind": "arc",
+        "ward": 6,
+        "charged": false,
+        "damage": 12.853728515018117
+      },
+      {
+        "kind": "arc",
+        "ward": 6,
+        "charged": true,
+        "damage": 10.339434870156378
+      },
+      {
+        "kind": "cav",
+        "ward": 0,
+        "charged": false,
+        "damage": 24.63735635561699
+      },
+      {
+        "kind": "cav",
+        "ward": 0,
+        "charged": true,
+        "damage": 26.056428928605534
+      },
+      {
+        "kind": "cav",
+        "ward": 3,
+        "charged": false,
+        "damage": 18.59793479872698
+      },
+      {
+        "kind": "cav",
+        "ward": 3,
+        "charged": true,
+        "damage": 19.10963697528297
+      },
+      {
+        "kind": "cav",
+        "ward": 6,
+        "charged": false,
+        "damage": 11.284042516147547
+      },
+      {
+        "kind": "cav",
+        "ward": 6,
+        "charged": true,
+        "damage": 11.7000516097654
+      }
+    ],
+    "after": [
+      {
+        "kind": "inf",
+        "ward": 0,
+        "charged": false,
+        "damage": 24.157463779368186
+      },
+      {
+        "kind": "inf",
+        "ward": 0,
+        "charged": true,
+        "damage": 22.87252291576429
+      },
+      {
+        "kind": "inf",
+        "ward": 0,
+        "charged": false,
+        "damage": 19.83801661580801
+      },
+      {
+        "kind": "inf",
+        "ward": 0,
+        "charged": true,
+        "damage": 21.056095196306703
+      },
+      {
+        "kind": "inf",
+        "ward": 0,
+        "charged": false,
+        "damage": 22.13444570140405
+      },
+      {
+        "kind": "inf",
+        "ward": 0,
+        "charged": true,
+        "damage": 21.659654206850313
+      },
+      {
+        "kind": "gun",
+        "ward": 0,
+        "charged": false,
+        "damage": 65.67130562522196
+      },
+      {
+        "kind": "gun",
+        "ward": 0,
+        "charged": true,
+        "damage": 71.5485708436099
+      },
+      {
+        "kind": "gun",
+        "ward": 3,
+        "charged": false,
+        "damage": 52.98676481944864
+      },
+      {
+        "kind": "gun",
+        "ward": 3,
+        "charged": true,
+        "damage": 52.632971058628776
+      },
+      {
+        "kind": "gun",
+        "ward": 6,
+        "charged": false,
+        "damage": 30.160206721219147
+      },
+      {
+        "kind": "gun",
+        "ward": 6,
+        "charged": true,
+        "damage": 30.434329880801116
+      },
+      {
+        "kind": "arc",
+        "ward": 0,
+        "charged": false,
+        "damage": 30.93906279748137
+      },
+      {
+        "kind": "arc",
+        "ward": 0,
+        "charged": true,
+        "damage": 27.169344794750216
+      },
+      {
+        "kind": "arc",
+        "ward": 3,
+        "charged": false,
+        "damage": 22.80682723446326
+      },
+      {
+        "kind": "arc",
+        "ward": 3,
+        "charged": true,
+        "damage": 19.650168879465625
+      },
+      {
+        "kind": "arc",
+        "ward": 6,
+        "charged": false,
+        "damage": 12.853728515018117
+      },
+      {
+        "kind": "arc",
+        "ward": 6,
+        "charged": true,
+        "damage": 10.339434870156378
+      },
+      {
+        "kind": "cav",
+        "ward": 0,
+        "charged": false,
+        "damage": 24.63735635561699
+      },
+      {
+        "kind": "cav",
+        "ward": 0,
+        "charged": true,
+        "damage": 26.056428928605534
+      },
+      {
+        "kind": "cav",
+        "ward": 3,
+        "charged": false,
+        "damage": 18.59793479872698
+      },
+      {
+        "kind": "cav",
+        "ward": 3,
+        "charged": true,
+        "damage": 19.10963697528297
+      },
+      {
+        "kind": "cav",
+        "ward": 6,
+        "charged": false,
+        "damage": 11.284042516147547
+      },
+      {
+        "kind": "cav",
+        "ward": 6,
+        "charged": true,
+        "damage": 11.7000516097654
+      }
+    ]
+  }
+}
