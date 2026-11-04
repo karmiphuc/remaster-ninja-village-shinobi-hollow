@@ -1,5 +1,7 @@
 # Optional real-time campaign battles
 
+Gunners now use readable rank volleys with planted aim/recoil, actual muzzle sockets, lighter smoke and the existing firing sound. Chain Strike/Rapid Shot resolve real follow-ups, Countershot affects approaching foes, and Vanguard officers move forward. See the [complete skill audit, before/after measurements and captured firing sequence](realtime-volleys-skills.md).
+
 Choose **Village → Options → Battle: Real-time** before entering a battle. The choice and preferred shapes are saved in `G` with save version 1. Older saves default to Classic. Each battle captures its mode when it opens; changing the village preference cannot change a battle already underway.
 
 Infantry, gunners, archers and cavalry retain their original deployment order. Infantry advances into personal weapon reach. Bows shoot overhead with sampled landing points; only projectiles that hit an enemy footprint cause damage. Gunners can fire from behind friendly infantry. Allies are bypassed at release and throughout flight, with zero friendly damage. Each bullet aims at the target's current position when released, keeps that straight trajectory, and hits the first enemy footprint it crosses. Moving targets can evade, and another enemy can catch a stray bullet. Terrain rises still block sight; close/mid-range accuracy and long-range dispersion remain.

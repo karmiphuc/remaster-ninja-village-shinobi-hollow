@@ -16,8 +16,8 @@ function hash(x,y=0){let n=Math.imul(x+7919,374761393)^Math.imul(y+104729,668265
 function cadence(type,mrk){const training=Math.max(0,mrk)/(Math.max(0,mrk)+40);return (type==='gun'?6:3.25)/(1+.85*training);}
 function create(art,seed=7711,options={},ground=()=>0){
  const sim=art.battle(seed,options.troops),groups=[],models=[],bins=Array.from({length:COLS*ROWS},()=>[]);
- const effects=Array.from({length:220},()=>({on:false,t:0,dur:0,kind:'',x:0,y:0,size:1,face:1}));
- const shots=Array.from({length:160},()=>({on:false,start:0,dur:1,x0:0,y0:0,x1:0,y1:0,height:0,kind:'',side:0,from:null,force:0,power:0,lastU:0,counterFamily:null,counterPower:1}));
+ const effects=Array.from({length:220},()=>({on:false,t:0,dur:0,kind:'',x:0,y:0,size:1,face:1,muzzleX:0,muzzleY:17}));
+ const shots=Array.from({length:384},()=>({on:false,start:0,dur:1,x0:0,y0:0,x1:0,y1:0,height:0,kind:'',side:0,from:null,force:0,power:0,lastU:0,counterFamily:null,counterPower:1,ox:0,oy:0,face:1,muzzleX:12,muzzleY:17}));
  const impacts=Array.from({length:600},()=>({from:null,to:null,amount:0,kind:''}));
  let time=0,acc=0,applied=0,outcome=null,nextThink=0,joined=false,externalLoss=0,externalRecovery=0;
  const initial=sim.A.reduce((n,a)=>n+a.groups.reduce((v,g)=>v+g.troops,0),0);
@@ -29,7 +29,7 @@ function create(art,seed=7711,options={},ground=()=>0){
    depthStep:type==='cav'?39:23,speed:type==='cav'?145:type==='inf'?34:24,members:[],order:type==='cav'?'cycle':'advance',engaged:false,
    bannerFall:-1,bx:-1000,by:-1000,state:type==='cav'?'regroup':'advance',stateAt:0,target:null,pathAt:0,pathN:0,
    pathX:new Float64Array(3),pathY:new Float64Array(3),charges:0,withdrawals:0,regroups:0,firstChargeTarget:null,
-   fired:0,landed:0,missed:0,blocked:0,intercepted:0,strikes:0,impacts:0,damage:0,lastShotAt:0,stance:'line',stanceAt:-100,priorityTarget:null,pinned:0,intent:'advance',laneSign:side?-1:1,flankY:Y,planAt:0,approachAt:0,direct:false,impactBase:0};
+   fired:0,landed:0,missed:0,blocked:0,intercepted:0,strikes:0,impacts:0,damage:0,lastShotAt:0,lastStrikeAt:-100,lastSkillAt:-100,rapidProcs:0,chainProcs:0,counterShots:0,stance:'line',stanceAt:-100,priorityTarget:null,pinned:0,intent:'advance',laneSign:side?-1:1,flankY:Y,planAt:0,approachAt:0,direct:false,impactBase:0};
   if(options.mrk?.[id]!=null)g.mrk=Math.max(0,options.mrk[id]);
   if(options.orders?.[id])f.order=options.orders[id];
   const selected=options.stances?.[id]||options.stanceOf?.(g,side)||'line';if(STANCES[type][selected])f.stance=selected;f.baseStride=f.stride;f.stride*=stance(f).gap;
@@ -38,13 +38,14 @@ function create(art,seed=7711,options={},ground=()=>0){
    const row=i%rows,rank=Math.floor(i/rows),style=art.style(type,side,type==='inf'?rank%2:0,g,i),hp=g.troops/num;
    const m={id:models.length,f,style,row,rank,phase:hash(i+side*100,index)*6.28,face,x:0,y:0,vx:0,vy:0,alive:hp>0,hp,maxHp:g.start/num,
     fate:null,fateAt:0,hurtUntil:0,actionAt:-100,shotAt:-100,windAt:-100,aimUntil:-100,reloadUntil:-100,
-    target:null,attackTarget:null,pendingAt:0,nextStrike:.3+hash(i,side+21)*.6,nextFire:.4+hash(i,side+41)*cadence(type,g.mrk),burstLeft:0,burstAt:0,
-    candidates:new Array(8).fill(null),scores:new Float64Array(8),blocked:false,lane:0,fireLane:false,laneX:0,laneY:0,blockedAt:0,tiedUntil:0,chargeHit:false,moving:false,dropX:0,dropY:0,dropAngle:0,sx:0,sy:0,depth:0};
+    target:null,attackTarget:null,pendingAt:0,nextStrike:.3+hash(i,side+21)*.6,nextFire:type==='gun'?.6+rank*.22+hash(row,side+41)*.06:.4+hash(i,side+41)*cadence(type,g.mrk),burstLeft:0,burstAt:0,burstUntil:0,rapidAt:0,rapidScale:0,rapidUntil:0,followAt:0,followTarget:null,followScale:0,plantUntil:0,smokeAt:-100,
+    candidates:new Array(8).fill(null),scores:new Float64Array(8),blocked:false,lane:0,fireLane:false,laneX:0,laneY:0,blockedAt:0,tiedUntil:0,chargeHit:false,vanguard:false,moving:false,dropX:0,dropY:0,dropAngle:0,sx:0,sy:0,depth:0};
    m.x=f.x-face*rank*f.depthStep;m.y=f.y+(row-(rows-1)/2)*f.stride+(type==='gun'?rank%2*9:0);if(options.attach)options.attach(m,g,i);f.members.push(m);models.push(m);
   }
   groups.push(f);
  }}
- function emit(kind,x,y,size=1,face=1){for(const e of effects)if(!e.on){e.on=true;e.kind=kind;e.x=x;e.y=y;e.t=0;e.size=size;e.face=face;e.dur=kind==='smoke'?1.6:kind==='dust'?.65:.28;return;}}
+ function emit(kind,x,y,size=1,face=1,muzzleX=0,muzzleY=17){for(const e of effects)if(!e.on){e.on=true;e.kind=kind;e.x=x;e.y=y;e.t=0;e.size=size;e.face=face;e.muzzleX=muzzleX;e.muzzleY=muzzleY;e.dur=kind==='smoke'?1.6:kind==='dust'?.65:kind==='flash'?.12:.28;return;}}
+ function skillCue(m,kind){const f=m.f;if(time-f.lastSkillAt<.35)return;f.lastSkillAt=time;emit(kind,m.x,m.y,1,m.face);if(options.onSkill)options.onSkill(m,kind);}
  function rebuildGrid(){for(const b of bins)b.length=0;for(const m of models)if(m.alive){const x=clamp(Math.floor(m.x/CELL),0,COLS-1),y=clamp(Math.floor(m.y/CELL),0,ROWS-1);bins[y*COLS+x].push(m);}}
  // Cached living footprints keep pursuit and flank decisions tied to soldiers, not empty formation slots.
  function refreshBodies(){for(const f of groups){let n=0,x=0,y=0,minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
@@ -65,9 +66,9 @@ function create(art,seed=7711,options={},ground=()=>0){
  function closestFormation(f){if(f.type==='cav'&&f.priorityTarget!=null){const p=groups[f.priorityTarget];if(p?.g.troops>0&&p.side!==f.side)return p;f.priorityTarget=null;}
   let best=null,score=Infinity;for(const e of groups)if(e.side!==f.side&&e.g.troops>0){const value=targetScore(f,e);if(value<score){score=value;best=e;}}return best;
  }
- function nearest(m,radius,side=1-m.f.side,hitTest=false,type=null){let best=null,bestD=radius*radius;
+ function nearest(m,radius,side=1-m.f.side,hitTest=false,type=null,forward=0){let best=null,bestD=radius*radius;
   const x0=clamp(Math.floor((m.x-radius)/CELL),0,COLS-1),x1=clamp(Math.floor((m.x+radius)/CELL),0,COLS-1),y0=clamp(Math.floor((m.y-radius)/CELL),0,ROWS-1),y1=clamp(Math.floor((m.y+radius)/CELL),0,ROWS-1);
-  for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)for(const e of bins[y*COLS+x])if(e.alive&&e.f.side===side&&(!type||e.f.type===type)){const dx=e.x-m.x,dy=e.y-m.y,d=dx*dx+dy*dy;if(d<bestD&&(!hitTest||d<=(e.f.type==='cav'?169:64))){bestD=d;best=e;}}return best;
+  for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)for(const e of bins[y*COLS+x])if(e.alive&&e.f.side===side&&(!type||e.f.type===type)&&(!forward||(e.x-m.x)*forward>=-20)){const dx=e.x-m.x,dy=e.y-m.y,d=dx*dx+dy*dy;if(d<bestD&&(!hitTest||d<=(e.f.type==='cav'?169:64))){bestD=d;best=e;}}return best;
  }
  // Earliest enemy swept-circle intersection: allies are bypassed at release and during flight.
  function rayHit(x0,y0,x1,y1,exclude){const dx=x1-x0,dy=y1-y0,len=dx*dx+dy*dy;if(len<1e-9)return null;let best=null,bestU=Infinity;
@@ -164,6 +165,7 @@ function create(art,seed=7711,options={},ground=()=>0){
  function moveModel(m){const f=m.f;if(!m.alive){if(m.fate==='rout'&&time-m.fateAt>.48&&time-m.fateAt<7){m.x-=f.face*80*STEP;m.y+=(hash(m.id,42)-.5)*14*STEP;}return;}
   const charging=f.type==='cav'&&(f.state==='charge'||f.state==='impact'),march=f.type==='cav'&&(f.state==='approach'||f.state==='withdraw'),gap=march?Math.min(f.stride,24):charging&&f.target?Math.min(f.stride,Math.max(10,(f.target.maxY-f.target.minY+40)/Math.max(1,f.rows-1))):f.stride;
   let tx=f.x-f.face*(m.rank*(charging?8:f.depthStep)+(f.stance==='skein'?Math.abs(m.row-(f.rows-1)/2)*10:0)),ty=f.y+(m.row-(f.rows-1)/2)*gap+(f.type==='gun'?m.rank%2*9+m.lane:0),velocity=(f.speed+25)*stance(f).speed;if(f.type==='cav'&&f.state==='withdraw'&&m.tiedUntil>time)velocity*=.35;
+  if(m.vanguard&&f.order!=='hold'&&f.stance!=='pikewall'&&!(f.type==='cav'&&(f.state==='withdraw'||f.state==='regroup'))){tx+=f.face*28;velocity*=1.15;}
   const melee=f.type==='inf'||f.type==='cav',canFight=f.type==='inf'||f.order==='hold'||f.state==='charge'||f.state==='impact'||m.tiedUntil>time;
   if(melee&&canFight&&m.target?.alive&&!(f.type==='cav'&&f.state==='withdraw')){const e=m.target,dx=e.x-m.x,dy=e.y-m.y,d=Math.hypot(dx,dy),r=reach(m);
    if(d<r+62){
@@ -179,9 +181,11 @@ function create(art,seed=7711,options={},ground=()=>0){
    }
    if(m.fireLane){tx=m.laneX;ty=clamp(m.laneY,60,960);if(front&&Math.abs(m.y-ty)>18&&(m.x-front.x)*f.face<0)tx=front.x-f.face*(front.cols*front.depthStep+30);}
   }
+  // Plant the feet for the aimed release/recoil; reloading can continue on the march.
+  if(f.type==='gun'&&(m.plantUntil>time||m.aimUntil>time&&m.target?.alive&&Math.hypot(m.target.x-m.x,m.target.y-m.y)<=range(m))){tx=m.x;ty=m.y;if(m.target?.alive)m.face=m.target.x>=m.x?1:-1;}
   const dx=tx-m.x,dy=ty-m.y,d=Math.hypot(dx,dy),step=velocity*STEP;let nx=m.x,ny=m.y;
   if(d>.15&&!outcome){nx+=dx/d*Math.min(d,step);ny+=dy/d*Math.min(d,step);}
-  m.vx=(nx-m.x)/STEP;m.vy=(ny-m.y)/STEP;m.moving=d>.7&&!outcome;m.x=nx;m.y=ny;
+  m.vx=(nx-m.x)/STEP;m.vy=(ny-m.y)/STEP;m.moving=Math.abs(nx-m.x)+Math.abs(ny-m.y)>.02&&!outcome;m.x=nx;m.y=ny;
   if(m.moving&&Math.abs(dx)>2&&!(melee&&canFight&&m.target&&Math.hypot(m.target.x-m.x,m.target.y-m.y)<reach(m)+6))m.face=dx>0?1:-1;
  }
  function repack(f){let row=0,n=0,cols=0;
@@ -191,7 +195,7 @@ function create(art,seed=7711,options={},ground=()=>0){
  }
  function casualty(m){m.alive=false;m.hp=0;const f=m.f;
   m.fate=f.g.troops>0&&f.g.troops/f.g.start<.45&&sim.random()<.18?'rout':'death';m.fateAt=time;m.dropX=m.x+m.face*9;m.dropY=m.y+8;m.dropAngle=(hash(m.id,73)-.5)*2.5;
-  m.pendingAt=0;m.attackTarget=null;if(options.casualty){const kind=options.casualty(m);if(kind)m.fate=kind;}emit('blood',m.x,m.y);repack(f);
+  m.pendingAt=m.followAt=m.rapidAt=0;m.burstLeft=0;m.followTarget=m.attackTarget=null;if(options.casualty){const kind=options.casualty(m);if(kind)m.fate=kind;}emit('blood',m.x,m.y);repack(f);
   if(f.g.troops<=1e-7){f.g.troops=0;f.bannerFall=time;f.engaged=false;}
  }
  function hit(from,to,damage,kind){if(!to?.alive||from.f.side===to.f.side||!(damage>0))return false;
@@ -200,30 +204,41 @@ function create(art,seed=7711,options={},ground=()=>0){
   if(kind==='inf'||kind==='cav')emit('spark',(from.x+to.x)/2,(from.y+to.y)/2);else emit('blood',to.x,to.y,.7);
   return true;
  }
- function launch(m,target,extra=false){const f=m.f,type=f.type,max=range(m);let p=null;for(const q of shots)if(!q.on){p=q;break;}if(!p)return false;
+ function launch(m,target,extra=false,powerScale=1){const f=m.f,type=f.type,max=range(m);let p=null;for(const q of shots)if(!q.on){p=q;break;}if(!p)return false;
   const dx=target.x-m.x,dy=target.y-m.y,d=Math.hypot(dx,dy);if(d>max)return false;
   const flight=type==='arc'?clamp(d/440,.7,1.8):d/1400,lead=type==='arc'?Math.min(flight,.65):0,lx=target.x+clamp(target.vx*lead,-38,38),ly=target.y+clamp(target.vy*lead,-38,38);
   let ax=lx,ay=ly;if(type==='arc'){const mrk=f.g.mrk,spread=(14+d*.035)*(1-.65*mrk/(mrk+40))*(stance(f).accuracy||1),angle=sim.random()*Math.PI*2,r=Math.sqrt(sim.random())*spread;ax+=Math.cos(angle)*r;ay+=Math.sin(angle)*r;}
   if(type==='gun'){const spread=gunSpread(d,f.g.mrk,stance(f).accuracy||1),angle=sim.random()*Math.PI*2,r=Math.sqrt(sim.random())*spread;ax+=Math.cos(angle)*r;ay+=Math.sin(angle)*r;aimPoint.x=ax;aimPoint.y=ay;if(!terrainClear(m,aimPoint)){f.blocked++;m.blocked=true;return false;}}
   const len=Math.hypot(ax-m.x,ay-m.y)||1,ux=(ax-m.x)/len,uy=(ay-m.y)/len;
-  p.on=true;p.start=time;p.lastU=0;p.from=m;p.force=Math.max(1,m.hp);p.kind=type;p.side=f.side;p.power=sim.power(f.g,p.force,type,.17*stance(f).attack*(m.style.shotPower??1));if(sim.prepareShot)sim.prepareShot(p,f.g);p.x0=m.x+ux*12;p.y0=m.y+uy*12;
-  p.x1=type==='gun'?m.x+ux*max:ax;p.y1=type==='gun'?m.y+uy*max:ay;p.dur=type==='gun'?(max-12)/1400:flight;p.height=type==='arc'?Math.min(125,d*.17):0;
-  m.face=dx>=0?1:-1;m.shotAt=time;m.actionAt=time;if(!extra){const reload=m.style.reload||1;m.nextFire=time+cadence(type,f.g.mrk)*reload;m.reloadUntil=time+cadence(type,f.g.mrk)*reload*.68;m.burstLeft=Math.max(0,(m.style.burst||1)-1);m.burstAt=time+.14;}m.blocked=false;f.fired++;f.lastShotAt=time;
-  if(type==='gun'){emit('flash',p.x0,p.y0,1,m.face);emit('smoke',p.x0,p.y0,1,m.face);}return true;
+  const counter=f.g.mods?.counter||0,incoming=counter>0&&d<=260&&(target.f.type==='inf'||target.f.type==='cav')&&(target.vx*(m.x-target.x)+target.vy*(m.y-target.y)>1||target.f.engaged);
+  const start=Math.min(12,Math.max(0,d-2));p.on=true;p.start=time;p.lastU=0;p.from=m;p.force=Math.max(1,m.hp);p.kind=type;p.side=f.side;p.power=sim.power(f.g,p.force,type,.17*stance(f).attack*(m.style.shotPower??1)*powerScale)*(incoming?1+.3*counter:1);if(sim.prepareShot)sim.prepareShot(p,f.g);p.x0=m.x+ux*start;p.y0=m.y+uy*start;
+  p.ox=m.x;p.oy=m.y;p.face=dx>=0?1:-1;p.muzzleX=m.style.muzzleX||12;p.muzzleY=m.style.muzzleHeight||17;
+  p.x1=type==='gun'?m.x+ux*max:ax;p.y1=type==='gun'?m.y+uy*max:ay;p.dur=type==='gun'?(max-start)/1400:flight;p.height=type==='arc'?Math.min(125,d*.17):0;
+  m.face=dx>=0?1:-1;m.shotAt=time;m.actionAt=time;m.plantUntil=time+.34;if(!extra){const reload=m.style.reload||1;m.nextFire=time+cadence(type,f.g.mrk)*reload;m.reloadUntil=time+cadence(type,f.g.mrk)*reload*.68;m.burstLeft=Math.max(0,(m.style.burst||1)-1);m.burstAt=time+.14;m.burstUntil=time+1.25;
+   const rapid=f.g.mods?.rapid||0;if(rapid>0&&sim.random()<Math.min(.85,.35+.1*rapid)){m.rapidAt=time+.14*(m.style.burst||1)+.06;m.rapidUntil=time+1.5;m.rapidScale=(m.style.burst||1)*(.25+.08*rapid);}
+  }m.blocked=false;f.fired++;f.lastShotAt=time;
+  if(incoming){f.counterShots++;skillCue(m,'counter');}if(extra==='rapid'){f.rapidProcs++;skillCue(m,'rapid');}
+  if(type==='gun'){emit('flash',m.x,m.y,1,m.face,p.muzzleX,p.muzzleY);if(time-m.smokeAt>.35){emit('smoke',m.x,m.y,1,m.face,p.muzzleX,p.muzzleY);m.smokeAt=time;}}if(options.onShot)options.onShot(m);return true;
  }
  function combat(){let n=0;for(const f of groups)f.engaged=false;
   for(const m of models)if(m.alive){const f=m.f,type=f.type;
    if(type==='inf'||type==='cav'){
     const ready=type==='inf'||f.order==='hold'||f.state==='charge'||f.state==='impact'||m.tiedUntil>time;
+    if(m.followAt&&time>=m.followAt){let target=m.followTarget;m.followAt=0;m.followTarget=null;
+     if(!target?.alive)target=m.target;if(ready&&target?.alive&&Math.hypot(target.x-m.x,target.y-m.y)<=reach(m)+3){const q=impacts[n++];q.from=m;q.to=target;q.kind=type;q.amount=sim.damage(f.g,target.f.g,Math.max(1,m.hp),type,.05*stance(f).attack*m.followScale,false);m.actionAt=f.lastStrikeAt=time;f.strikes++;f.chainProcs++;skillCue(m,'chain');}
+    }
     if(m.pendingAt&&time>=m.pendingAt){const target=m.attackTarget;m.pendingAt=0;m.attackTarget=null;m.actionAt=time;
-     if(target?.alive&&ready&&Math.hypot(target.x-m.x,target.y-m.y)<=reach(m)+3){const q=impacts[n++];q.from=m;q.to=target;q.kind=type;const charged=type==='cav'&&(f.state==='charge'||f.state==='impact')&&!m.chargeHit;q.amount=sim.damage(f.g,target.f.g,Math.max(1,m.hp),type,(type==='cav'?(charged?.24:.08):.05)*stance(f).attack*(charged?(stance(f).charge||1):1));f.strikes++;if(charged){m.chargeHit=true;f.impacts++;}}
+     if(target?.alive&&ready&&Math.hypot(target.x-m.x,target.y-m.y)<=reach(m)+3){const q=impacts[n++];q.from=m;q.to=target;q.kind=type;const charged=type==='cav'&&(f.state==='charge'||f.state==='impact')&&!m.chargeHit;q.amount=sim.damage(f.g,target.f.g,Math.max(1,m.hp),type,(type==='cav'?(charged?.24:.08):.05)*stance(f).attack*(charged?(stance(f).charge||1):1),charged);f.lastStrikeAt=time;f.strikes++;if(charged){m.chargeHit=true;f.impacts++;}
+      const chain=type==='inf'?(f.g.mods?.chain||0):0;if(chain>0&&sim.random()<Math.min(.85,.35+.1*chain)){m.followAt=time+.18;m.followTarget=target;m.followScale=.25+.08*chain;}
+     }
     }
     if(ready&&m.target?.alive){const d=Math.hypot(m.target.x-m.x,m.target.y-m.y);if(d<=reach(m)){f.engaged=true;if(time>=m.nextStrike&&!m.pendingAt&&(type==='inf'||f.order==='hold'||m.tiedUntil>time||!m.chargeHit)){
       m.windAt=time;m.pendingAt=time+(type==='cav'?.23:.19+hash(m.id,12)*.08);m.attackTarget=m.target;m.nextStrike=time+(type==='cav'?1.5:1.05+hash(m.id,8)*.22);
     }}}
    }else{
-    if(m.burstLeft&&time>=m.burstAt){if(!m.target?.alive)m.target=rangedTarget(m);if(m.target?.alive)launch(m,m.target,true);m.burstLeft--;m.burstAt=time+.14;}
-    if(m.target?.alive&&time>=m.nextFire-.2)m.aimUntil=time+.15;
+    if(m.burstLeft&&time>=m.burstAt){if(!m.target?.alive)m.target=rangedTarget(m);if(time>m.burstUntil||!m.target?.alive)m.burstLeft=0;else if(launch(m,m.target,true)){m.burstLeft--;m.burstAt=time+.14;}else m.burstAt=time+.05;}
+    if(m.rapidAt&&time>=m.rapidAt){if(!m.target?.alive)m.target=rangedTarget(m);if(time>m.rapidUntil||!m.target?.alive)m.rapidAt=0;else if(launch(m,m.target,'rapid',m.rapidScale))m.rapidAt=0;else m.rapidAt=time+.05;}
+    if(m.target?.alive&&time>=m.nextFire-.2){m.aimUntil=time+.15;if(type==='gun'){m.moving=false;m.vx=m.vy=0;}}
     if(time>=m.nextFire){if(!m.target?.alive||!launch(m,m.target))m.nextFire=time+.18;}
    }
   }
@@ -242,7 +257,7 @@ function create(art,seed=7711,options={},ground=()=>0){
    p.lastU=u;if(p.on)active++;
   }return active;
  }
- const impactPoint={x:0,y:0,f:{side:0}},aimPoint={x:0,y:0};
+ const impactPoint={x:0,y:0,f:{side:0}},aimPoint={x:0,y:0},queryPoint={x:0,y:0,f:{side:0}};
  function finish(){const a=sim.A[0].groups,b=sim.A[1].groups;let n0=0,n1=0;for(const g of a)n0+=g.troops;for(const g of b)n1+=g.troops;
   if(n0>0&&n1>0)return;outcome={winner:n0>0?'Kage Clan':n1>0?'Kurogane':'Neither army',at:time};
   for(const f of groups){f.engaged=false;for(const m of f.members){m.pendingAt=0;m.moving=false;}}
@@ -268,12 +283,13 @@ function create(art,seed=7711,options={},ground=()=>0){
  }
  function snapshot(){let hp=0,living=0,fallen=0,routed=0,projectiles=0;for(const m of models){hp+=m.hp;if(m.alive)living++;else if(m.fate==='rout')routed++;else fallen++;}for(const p of shots)if(p.on)projectiles++;
   const totals=sim.totals();return {time,mode:'realtime',totals,applied,initial,hp,externalLoss,externalRecovery,residual:initial+externalRecovery-externalLoss-totals[0]-totals[1]-applied,living,fallen,routed,projectiles,joined,winner:outcome?.winner||null,
-   groups:groups.map(f=>({id:f.id,type:f.type,side:f.side,troops:f.g.troops,mrk:f.g.mrk,cadence:f.type==='gun'||f.type==='arc'?cadence(f.type,f.g.mrk):null,x:f.x,y:f.y,order:f.order,stance:f.stance,state:f.state,intent:f.intent,target:f.target?.id??null,laneSign:f.laneSign,liveN:f.liveN,priorityTarget:f.priorityTarget,pinned:f.pinned,charges:f.charges,withdrawals:f.withdrawals,regroups:f.regroups,firstChargeTarget:f.firstChargeTarget,fired:f.fired,landed:f.landed,missed:f.missed,blocked:f.blocked,intercepted:f.intercepted,strikes:f.strikes,impacts:f.impacts,damage:f.damage}))};
+   groups:groups.map(f=>({id:f.id,type:f.type,side:f.side,troops:f.g.troops,mrk:f.g.mrk,cadence:f.type==='gun'||f.type==='arc'?cadence(f.type,f.g.mrk):null,x:f.x,y:f.y,order:f.order,stance:f.stance,state:f.state,intent:f.intent,target:f.target?.id??null,laneSign:f.laneSign,liveN:f.liveN,priorityTarget:f.priorityTarget,pinned:f.pinned,charges:f.charges,withdrawals:f.withdrawals,regroups:f.regroups,firstChargeTarget:f.firstChargeTarget,fired:f.fired,landed:f.landed,missed:f.missed,blocked:f.blocked,intercepted:f.intercepted,strikes:f.strikes,impacts:f.impacts,damage:f.damage,rapidProcs:f.rapidProcs,chainProcs:f.chainProcs,counterShots:f.counterShots}))};
  }
  refreshBodies();rebuildGrid();
  return {sim,groups,models,shots,effects,advance,order,setStance,target,reconcile,snapshot,cadence,
   get time(){return time;},get applied(){return applied;},get outcome(){return outcome;},get joined(){return joined;},
   // Read-only geometry probes support targeted deterministic browser checks without new gameplay UI.
+  enemyNear:(x,y,side,radius=900)=>{queryPoint.x=x;queryPoint.y=y;queryPoint.f.side=side;return nearest(queryPoint,radius,1-side,false,null,side?-1:1)||nearest(queryPoint,radius);},
   clearShot:(from,to)=>clearShot(models[from],models[to]),rayHit:(x0,y0,x1,y1,from)=>rayHit(x0,y0,x1,y1,models[from])?.id??null};
 }
 window.GrandCombat={create,cadence,stances:STANCES,gunSpread};

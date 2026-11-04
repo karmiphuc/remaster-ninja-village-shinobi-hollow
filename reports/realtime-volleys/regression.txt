@@ -1,0 +1,16 @@
+Running 11 suite(s), 3 at a time…
+PASS  field-combat   53.4s
+PASS  tactics        58.3s
+PASS  equipment      12.7s
+PASS  siege          72.8s
+PASS  realtime-review   25.0s
+PASS  battle-auto-resolve    5.3s
+PASS  armory-presets    5.3s
+PASS  realtime-campaign   67.9s
+PASS  assignment-mounts   28.5s
+PASS  duel-cold-playback   79.7s
+PASS  realtime-volley-skills   63.6s
+
+11/11 passed in 197.7s wall time (472.5s if run one after another).
+
+Standalone prototype: 245 checks, zero browser errors; current canonical model included.
