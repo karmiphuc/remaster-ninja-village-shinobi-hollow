@@ -1,7 +1,7 @@
 {
   "realtime": {
     "firingLane": {
-      "blockedAttempts": 39,
+      "blockedAttempts": 0,
       "shotsAfterClearing": 3,
       "hits": 3
     },
@@ -9,14 +9,14 @@
       {
         "mrk": 0,
         "cadence": 6,
-        "shots": 144,
-        "hits": 144
+        "shots": 150,
+        "hits": 149
       },
       {
         "mrk": 80,
         "cadence": 3.8297872340425534,
-        "shots": 226,
-        "hits": 223
+        "shots": 234,
+        "hits": 231
       }
     ],
     "arrows": {
@@ -29,73 +29,73 @@
     "cavalry": [
       {
         "side": 0,
-        "charges": 4,
+        "charges": 3,
         "withdrawals": 3,
         "regroups": 3,
         "firstTarget": "inf",
-        "strikes": 48,
-        "impacts": 35
+        "strikes": 34,
+        "impacts": 22
       },
       {
         "side": 1,
-        "charges": 4,
-        "withdrawals": 4,
+        "charges": 3,
+        "withdrawals": 3,
         "regroups": 3,
         "firstTarget": "inf",
-        "strikes": 46,
-        "impacts": 31
+        "strikes": 42,
+        "impacts": 26
       }
     ],
     "concurrent": {
-      "gun": 32,
+      "gun": 85,
       "arrows": 139,
-      "melee": 104
+      "melee": 151
     },
     "seeds": [
       {
         "seed": 11,
         "totals": [
-          868.1344414738863,
+          843.6377139574892,
           0
         ],
-        "fallen": 211,
-        "routed": 29
+        "fallen": 207,
+        "routed": 27
       },
       {
         "seed": 79,
         "totals": [
-          719.5935266137299,
+          782.6642351014192,
           0
         ],
-        "fallen": 230,
-        "routed": 20
+        "fallen": 212,
+        "routed": 26
       },
       {
         "seed": 7711,
         "totals": [
-          784.9504402691718,
+          991.137223323128,
           0
         ],
-        "fallen": 229,
-        "routed": 17
+        "fallen": 196,
+        "routed": 28
       },
       {
         "seed": 9441,
         "totals": [
-          841.3473709325706,
+          941.0874925793396,
           0
         ],
-        "fallen": 228,
-        "routed": 15
+        "fallen": 204,
+        "routed": 23
       },
       {
         "seed": 18937,
         "totals": [
-          829.5637857573402,
+          861.5191609670724,
           0
         ],
-        "fallen": 227,
-        "routed": 16
+        "fallen": 197,
+        "routed": 29
       }
     ],
     "checks": 113,
@@ -103,10 +103,10 @@
   },
   "tactics": {
     "flank": {
-      "shots": 4,
+      "shots": 7,
       "position": [
-        535,
-        237.89999999999998
+        309.1999999999995,
+        500
       ]
     },
     "accuracy": [
@@ -162,20 +162,68 @@
     "checks": 20,
     "failures": []
   },
+  "flow": {
+    "evade": {
+      "fired": 1,
+      "landed": 0,
+      "missed": 1,
+      "enemyHP": 1,
+      "allyHP": 1
+    },
+    "stray": {
+      "fired": 1,
+      "landed": 1,
+      "missed": 0,
+      "enemyHP": 1,
+      "allyHP": 1
+    },
+    "flank": {
+      "damage": 3125,
+      "charges": 2,
+      "impacts": 7
+    },
+    "relief": {
+      "damage": 1250,
+      "charges": 2,
+      "impacts": 5
+    },
+    "mounted": [
+      {
+        "seed": 11,
+        "winner": "Kurogane",
+        "time": 300.0000000000558,
+        "damage": 196.0000554205195
+      },
+      {
+        "seed": 79,
+        "winner": "Kage Clan",
+        "time": 300.0000000000558,
+        "damage": 192.85238048181753
+      },
+      {
+        "seed": 181,
+        "winner": "Kage Clan",
+        "time": 300.0000000000558,
+        "damage": 196.52110704384978
+      }
+    ],
+    "checks": 68,
+    "failures": []
+  },
   "desktop": {
     "canvasMB": 31.582664489746094,
     "canvases": 468,
     "renderCanvasAllocations": 0,
     "at40Seconds": [
-      1466.139922166182,
-      1123.8878668126158
+      1024.026915471776,
+      313.646939379189
     ],
     "final": [
-      784.9504402691718,
+      977.9427488427798,
       0
     ],
-    "fallen": 229,
-    "routed": 17,
+    "fallen": 200,
+    "routed": 25,
     "deterministic30and60": true
   },
   "mobile": {
@@ -198,8 +246,8 @@
   },
   "live": {
     "advancedSeconds": 4.016666666666658,
-    "hud": "60 fps · p95 16.7 ms\n300 figures · 30.2 canvas MB\n10 shared rigs"
+    "hud": "50 fps · p95 50.0 ms\n300 figures · 30.2 canvas MB\n10 shared rigs"
   },
-  "checks": 176,
+  "checks": 245,
   "errors": []
 }

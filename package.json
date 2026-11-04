@@ -7,6 +7,7 @@
     "test:prototype": "node tests/battlefield-prototype.cjs",
     "test:realtime": "node tests/realtime-campaign.cjs",
     "test:realtime-review": "node tests/realtime-review.cjs",
+    "test:realtime-perf": "node tests/realtime-flow-performance.cjs",
     "test:duel-cold": "node tests/duel-cold-playback.cjs"
   },
   "devDependencies": {

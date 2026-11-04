@@ -99,10 +99,10 @@
   "credit": [
     {
       "skirmish": false,
-      "damage": 27.77777777777778,
-      "kills": 27.77777777777778,
-      "personal": 27.77777777777778,
-      "residual": 2.1316282072803006e-14
+      "damage": 20.833333333333332,
+      "kills": 20.833333333333332,
+      "personal": 20.833333333333332,
+      "residual": 5.3290705182007514e-14
     },
     {
       "skirmish": true,
@@ -114,8 +114,8 @@
   ],
   "resize": {
     "before": {
-      "canvases": 2949,
-      "mb": 46.391197204589844
+      "canvases": 2901,
+      "mb": 46.40080261230469
     },
     "steps": [
       {
@@ -148,8 +148,8 @@
     ],
     "after": {
       "memory": {
-        "canvases": 2949,
-        "mb": 46.391197204589844
+        "canvases": 2901,
+        "mb": 46.40080261230469
       },
       "released": true
     }
@@ -157,8 +157,8 @@
   "duel": {
     "painted": 9,
     "ended": true,
-    "committed": 12,
-    "expected": 12,
+    "committed": 9,
+    "expected": 9,
     "sky": 433,
     "view": 433,
     "modelPaused": true,
