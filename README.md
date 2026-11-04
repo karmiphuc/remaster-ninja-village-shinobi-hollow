@@ -21,6 +21,10 @@ Choose **Village → Options → Battle: Classic / Real-time** before a battle. 
 
 The separate [Grand Battlefield HTML](prototypes/Shinobi%20Hollow%20-%20Grand%20Battlefield.html) remains an isolated demonstration that never accesses your village save. See [prototype notes](docs/battlefield-prototype.md).
 
+**Auto-resolve** on a province card, hunt or land challenge skips loading the battlefield. It resolves the existing staged combat rules, including HP duels, tactics, wounds and rewards; it keeps army march time and your saved battle-mode choice. It uses your Auto Duel setting and does not hire siege engines. See [auto-resolve and Bugu-gura notes](docs/auto-resolve-armory.md).
+
+**Bugu-gura** (Build → Training, 750G) prepares six-slot equipment presets for new arrivals. Choose eight profiles, use available stock or opt into purchases of named researched gear, and keep spare kits ready. Its **Kit review** tab takes a snapshot of incomplete villagers for manual filling without replacing their existing gear. Automatic equipping and purchases are off by default. See [controls and validation](docs/auto-resolve-armory.md).
+
 ## Battlefield density and formations
 
 - **Classic density** (Village → Options, saved per device): **Standard** 25, **Dense** 36 (default) or **Epic** 48 soldiers at most per formation. Real-time uses a fixed 48-figure cap per formation so this visual setting cannot affect physical targeting or outcomes.
@@ -48,7 +52,7 @@ Workshop assignment now appears before recipes, with green Fine Craft and blue c
 - **While the gate stands:**
   - Your infantry ram it and your cavalry hack at it; they never strike the troops sheltered behind it.
   - The defenders' infantry and cavalry remain sheltered behind the gate and don't attack.
-  - Your archers and gunners can hit only the exposed wall archers and gunners. Once those defenders are cleared, the next volley targets the gate. Wall defenders also fire on charging infantry and cavalry.
+  - Your archers and gunners first target the exposed wall archers and gunners. Once those defenders are cleared, subsequent gun volleys target the gate; archers lob over the wall into the sheltered infantry and cavalry at reduced effectiveness, never damaging the gate. Wall defenders also fire on charging infantry and cavalry.
   - Commanders can still be called out to duel.
 - **When the gate falls:** the breach plays out, the rest of that round is skipped, and open combat starts again at **Round 1** with the survivors. Casualties, commanders' wounds and KOs, and Ki carry over.
 - **Siege engines** (research the Tier-4 *Siege Battery* in the Armory) are bought one at a time in the pre-battle deployment panel, for that siege only:

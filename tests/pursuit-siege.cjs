@@ -44,9 +44,8 @@ const root=path.resolve(__dirname,'..');
     ok(own.length&&own.every(e=>e.h.to.type==='gun'||e.h.to.type==='arc'),'Ranged fire hit sheltered melee');ok(!script.gateFire&&!script.ev.some(e=>e.gateVolley),'Gate was attacked while ranged defenders were exposed');
     drain(script);near(ea.groups[0].troops,2000,'Sheltered infantry lost troops');near(ea.groups[3].troops,500,'Sheltered cavalry lost troops');near(BT.siege.hp,hp,'Same volley damaged gate too');ok(!wallRangedAlive(),'Strong volley failed to clear ramparts');
     const next=phase(type),gateShots=next.ev.filter(e=>e.k==='shot'&&e.gate),gate=next.ev.find(e=>e.gateVolley);
-    ok(next.gateFire&&gateShots.length&&gate,'No switch to actual gate fire');drain(next);ok(BT.siege.hp<hp,'Cleared ramparts did not allow gate damage');
-    const after=BT.siege.hp;doEvent(gate);near(BT.siege.hp,after,'Repeated gate impact duplicated damage');near(ea.groups[0].troops,2000,'Gate fire hit hidden infantry');near(ea.groups[3].troops,500,'Gate fire hit hidden cavalry');
-    targets.push({type,targets:own.map(e=>e.h.to.type),gateShots:gateShots.length,gateDamage:hp-after});closeBattle();
+    if(type==='gun'){ok(next.gateFire&&gateShots.length&&gate,'No switch to actual gate fire');drain(next);ok(BT.siege.hp<hp,'Cleared ramparts did not allow gun damage to gate');const after=BT.siege.hp;doEvent(gate);near(BT.siege.hp,after,'Repeated gate impact duplicated damage');near(ea.groups[0].troops,2000,'Gun gate fire hit hidden infantry');near(ea.groups[3].troops,500,'Gun gate fire hit hidden cavalry');targets.push({type,gateShots:gateShots.length,gateDamage:hp-after});}
+    else{const lob=next.ev.filter(e=>e.k==='hit'&&sideOf(e.h.from)===0);ok(!next.gateFire&&!gate&&lob.length&&lob.every(e=>e.h.wallLob&&['inf','cav'].includes(e.h.to.type)),'Archers did not lob into the courtyard');ok(next.ev.some(e=>e.k==='shot'&&e.lob&&!e.gate),'No high lob projectiles');drain(next);near(BT.siege.hp,hp,'Lob volley damaged gate');ok(ea.groups[0].troops<2000||ea.groups[3].troops<500,'Lobs did not damage sheltered troops');targets.push({type,lobHits:lob.length,gateDamage:0});}closeBattle();
    }out.wallTargets=targets;
 
    // The ram has real infantry beside it; wall troops can shoot the charging soldiers.

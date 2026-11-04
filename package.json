@@ -5,6 +5,8 @@
   "scripts": {
     "test": "node tests/run-all.cjs",
     "test:prototype": "node tests/battlefield-prototype.cjs",
+    "test:auto-resolve": "node tests/battle-auto-resolve.cjs",
+    "test:armory": "node tests/armory-presets.cjs",
     "test:realtime": "node tests/realtime-campaign.cjs",
     "test:realtime-review": "node tests/realtime-review.cjs",
     "test:realtime-perf": "node tests/realtime-flow-performance.cjs",

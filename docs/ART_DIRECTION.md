@@ -122,6 +122,14 @@ The infantry Ram now has a 48×28 native drawing (50×30 outlined), a low hide/b
 
 Building levels are normalized before sprite cache lookup. The Hall has two visual levels and the Workshop three; existing finite variants remain finite. No extra canvases are created per map frame. Compare the [native art sheet](clan-crafting-preview.png) at a common 4× scale; generate it with `node tools/preview-clan-progression.cjs`.
 
+## Bugu-gura equipment store
+
+The 3×2 Bugu-gura uses native `PB` pixels, shared charcoal-violet `roofTiles()`, warm oak `wallFront()`, plaster and the common edge-shading/outline pass. An open armor bay and spear rack identify its purpose; the indigo door cloth is a small accent. These displays are permanent decoration, not equipment stock, clickable targets or worker markers. Keep the doorway, stone step and right-side spears legible without adding fine character-scale detail to the building.
+
+Compare the [Bugu-gura / Kura / Workshop / Ton'ya sheet](../reports/armory-presets/buildings.png) at its common 6× and native scales. The armory's one cached visual variant must keep the standard world ground anchor and 3×2 footprint. Repeated map and panel drawing must not create canvases. The building is under **Build → Training**, with no housing or worker assignment; its functional panel has Equipment presets and Kit review tabs. `node tests/armory-presets.cjs` regenerates the art comparison and mobile panel screenshots while testing real menu placement and save/reload.
+
+This particular building's roof suits the equipment store; it does not change the rule that future buildings can be roofless.
+
 ## Review before handing off
 
 1. Compare the new asset with the reference family at the same zoom, checking pixel density, outline weight, warmth, contrast and light direction.

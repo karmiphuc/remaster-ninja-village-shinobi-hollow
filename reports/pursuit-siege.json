@@ -26,26 +26,18 @@
   "wallTargets": [
     {
       "type": "gun",
-      "targets": [
-        "gun",
-        "arc"
-      ],
       "gateShots": 11,
       "gateDamage": 1048.3199999999488
     },
     {
       "type": "arc",
-      "targets": [
-        "gun",
-        "arc"
-      ],
-      "gateShots": 11,
-      "gateDamage": 149.7600000000093
+      "lobHits": 2,
+      "gateDamage": 0
     }
   ],
   "ram": {
     "crewLoss": 22.713599999999985,
     "gateDamage": 124.09446399996523
   },
-  "checks": 57
+  "checks": 56
 }
