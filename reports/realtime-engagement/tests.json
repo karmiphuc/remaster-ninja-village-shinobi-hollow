@@ -1,0 +1,127 @@
+{
+  "heldScreen": [
+    {
+      "side": 0,
+      "actors": 48,
+      "active": 48,
+      "shots": 144,
+      "hits": 89
+    },
+    {
+      "side": 1,
+      "actors": 48,
+      "active": 48,
+      "shots": 144,
+      "hits": 94
+    }
+  ],
+  "pursuit": {
+    "firstShot": 3.9166666666666576,
+    "x": 583.5,
+    "shots": 244,
+    "hits": 119
+  },
+  "range": [
+    {
+      "type": "gun",
+      "shots": 0,
+      "x": 80
+    },
+    {
+      "type": "arc",
+      "shots": 0,
+      "x": 80
+    }
+  ],
+  "terrain": [
+    {
+      "held": true,
+      "x": 300,
+      "y": 510,
+      "shots": 0,
+      "blocked": 67
+    },
+    {
+      "held": false,
+      "x": 484.8596153022092,
+      "y": 464.0155442635855,
+      "shots": 2,
+      "blocked": 28
+    }
+  ],
+  "arrows": [
+    {
+      "distance": 180,
+      "mrk": 0,
+      "fired": 222,
+      "hits": 32,
+      "misses": 190,
+      "hitRate": 0.14414414414414414,
+      "rms": 14.06354165231827
+    },
+    {
+      "distance": 180,
+      "mrk": 80,
+      "fired": 345,
+      "hits": 171,
+      "misses": 174,
+      "hitRate": 0.4956521739130435,
+      "rms": 8.025349562050245
+    },
+    {
+      "distance": 420,
+      "mrk": 0,
+      "fired": 222,
+      "hits": 19,
+      "misses": 203,
+      "hitRate": 0.08558558558558559,
+      "rms": 19.88293819810515
+    },
+    {
+      "distance": 420,
+      "mrk": 80,
+      "fired": 345,
+      "hits": 82,
+      "misses": 263,
+      "hitRate": 0.23768115942028986,
+      "rms": 11.346183863588283
+    },
+    {
+      "distance": 760,
+      "mrk": 0,
+      "fired": 222,
+      "hits": 10,
+      "misses": 209,
+      "hitRate": 0.045662100456621,
+      "rms": 28.127083304636542
+    },
+    {
+      "distance": 760,
+      "mrk": 80,
+      "fired": 345,
+      "hits": 40,
+      "misses": 302,
+      "hitRate": 0.11695906432748537,
+      "rms": 16.05069912410049
+    }
+  ],
+  "render": {
+    "canvasesDuringWarmDraw": 0,
+    "mb": 47.24530792236328,
+    "models": 384,
+    "extras": 48
+  },
+  "checks": 109,
+  "errors": [],
+  "sourceSha256": "a6f3abd59ffbecb4aa762b006ee60b0d406b8639f202b62adc454ea9f085a76a",
+  "regressions": [
+    "realtime-volley-skills",
+    "realtime-campaign",
+    "realtime-review",
+    "siege",
+    "field-combat",
+    "battle-auto-resolve",
+    "battlefield-prototype"
+  ],
+  "prototypeChecks": 245
+}

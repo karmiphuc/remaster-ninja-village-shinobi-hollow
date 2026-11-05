@@ -90,14 +90,16 @@
       "mounted": false,
       "speed": 1,
       "fps": 60,
-      "hits": 10,
+      "hits": 9,
       "finishers": 1,
       "helpers": 0,
       "rescues": 0
     }
   ],
   "cinematicSeconds": 1.18,
-  "checks": 347,
+  "checks": 344,
   "ledgerCases": 120,
-  "unchangedHPDamage": true
+  "exactBaselineCases": 96,
+  "burstCadenceCases": 24,
+  "unchangedNonBurstHPDamage": true
 }

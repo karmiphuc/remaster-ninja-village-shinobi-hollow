@@ -8,6 +8,8 @@ const { spawn } = require('child_process'), os = require('os'), path = require('
 const ALL = ['density', 'siege', 'battle-end', 'battle-heraldry', 'field-combat', 'pursuit-siege', 'tate', 'tactics', 'dialogs', 'campaign', 'economy-flow', 'clan-crafting', 'equipment', 'integration', 'porter-menu', 'market-collectors', 'building-move', 'carry-duel', 'duel-executions', 'duel-randomization', 'duel-cavalry', 'duel-cold-playback', 'realtime-campaign', 'realtime-review', 'battle-auto-resolve', 'armory-presets', 'infantry-executions', 'animal-duels', 'training-ladder', 'recruit-pool', 'resident-recall', 'seasonal-landscape', 'roads', 'stock-caps', 'tonya-merchant', 'melee-rebels', 'ranged-spill', 'omens', 'logistics', 'forge']; // slowest first, so it starts first
 ALL.push('assignment-mounts');
 ALL.push('realtime-volley-skills');
+ALL.push('realtime-engagement');
+ALL.push('realtime-heroes');
 const pick = process.argv.slice(2), suites = pick.length ? ALL.filter(s => pick.includes(s)) : ALL;
 const unknown = pick.filter(s => !ALL.includes(s));
 if (unknown.length) { console.error('Unknown suite(s): ' + unknown.join(', ') + '. Known: ' + ALL.join(', ')); process.exit(2); }

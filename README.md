@@ -23,6 +23,10 @@ The separate [Grand Battlefield HTML](prototypes/Shinobi%20Hollow%20-%20Grand%20
 
 Real-time gunners fire by ranks, settle to aim/recoil and show flashes at their actual muzzles. Chain Strike and Rapid Shot produce real follow-ups, Countershot strengthens shots against approaching melee troops, and Vanguard officers push ahead. See the [skill audit, paired measurements and recorded sequence](docs/realtime-volleys-skills.md).
 
+Gun reach now matches bows at 840 units, with stronger long-range dispersion. Supporting ranged formations move into range even behind held infantry, and all gun ranks can participate. Bow scatter is modestly wider. See the [engagement fixes and paired field tests](docs/realtime-engagement.md).
+
+Field officers now fight with their own weapons and HP. Vanguard stays engaged through cavalry regrouping, ranged heroes seek targets, and surviving officers can fight on after their soldiers fall. Repeater/Rifle fire every turn with one normal live burst interval. See [officer combat and validation](docs/realtime-heroes.md).
+
 The [Classic/real-time damage and performance comparison](docs/battle-balance-performance.md) records exact Classic ledgers, complete reload-cycle firearm samples, update/draw timings and measured canvas limits.
 
 **Auto-resolve** on a province card, hunt or land challenge skips loading the battlefield. It resolves the existing staged combat rules, including HP duels, tactics, wounds and rewards; it keeps army march time and your saved battle-mode choice. It uses your Auto Duel setting and does not hire siege engines. See [auto-resolve and Bugu-gura notes](docs/auto-resolve-armory.md).

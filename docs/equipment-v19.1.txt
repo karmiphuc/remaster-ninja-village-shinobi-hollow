@@ -28,11 +28,11 @@ T4 Zanbato — ATK +21, STR +2.
   Personal infantry equipment.
 
 T3 Two-shot Repeater — MRK +14.
-  Two separately resolved shots at 68% power each, then one reload turn.
+  Two separately resolved shots at 68% power each on every attack, with no skipped reload turns.
   In field combat its owner fires on gun phases 1, 3, 5, etc.
 
 T4 Three-shot Rifle — MRK +18.
-  Three separately resolved shots at 60% power each, then two reload turns.
+  Three separately resolved shots at 60% power each on every attack, with no skipped reload turns.
   In field combat its owner fires on gun phases 1, 4, 7, etc.
   Both burst guns trade sustained fire for an opening burst. Ordinary
   matchlocks, Thunder Cannon and Kunitomo remain distinct choices.

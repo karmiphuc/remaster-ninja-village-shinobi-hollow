@@ -5,9 +5,9 @@ module.exports=async function install(page){await page.evaluate(()=>{
   const types=['inf','gun','arc','cav'],counts=o.counts||[720,720,720,720];
   function army(side){const groups=types.map((type,i)=>{const troops=(side?o.enemyCounts:o.counts)?.[i]??counts[i];if(!troops)return null;
    const weapon=type==='gun'?(o.weapon||'tanegashima'):type==='arc'?'yumi':type==='inf'?'yari':'naginata',cmds=[];
-   for(let k=0;k<(o.officers||0);k++){const skill=o.skills?(type==='inf'?'chain':type==='gun'||type==='arc'?'rapid':'cavmaster'):'attackup',s={atk:30,def:20,hp:160,str:24,mrk:35,wrk:10},level=o.skills?3:0,
-     gear={w:weapon,a:o.heavy?'kokuyo_gusoku':'domaru',h:o.heavy?'eboshi_samurai':'kabuto',m:type==='cav'?'nanbu':null},look=artTroopLook(type,side,k+i*3,gear),
-     c={id:`balance-${side}-${type}-${k}`,name:`Officer ${side}-${type}-${k}`,s,look,hp:s.hp,hpMax:s.hp,skill,slv:level,sk:{[skill]:level,...(k===1?{counter:2}:null)},post:k===1?'van':'line',guard:o.retainers||0,kills:0};
+   for(let k=0;k<(side?(o.enemyOfficers??o.officers)||0:o.officers||0);k++){const skill=o.skills?(type==='inf'?'chain':type==='gun'||type==='arc'?'rapid':'cavmaster'):'attackup',s={atk:30,def:20,hp:160,str:24,mrk:35,wrk:10,...o.heroStats},level=o.skills?3:0,
+     gear={w:o.heroWeapons?.[type]||weapon,a:o.heavy?'kokuyo_gusoku':'domaru',h:o.heavy?'eboshi_samurai':'kabuto',m:o.heroMount||(type==='cav'?'nanbu':null)},look=artTroopLook(type,side,k+i*3,gear),
+     c={id:`balance-${side}-${type}-${k}`,name:`Officer ${side}-${type}-${k}`,s,look,hp:s.hp,hpMax:s.hp,skill,slv:level,sk:{[skill]:level,...(k===1?{counter:2}:null)},post:o.posts?.[k]||(k===1?'van':'line'),guard:o.retainers||0,kills:0};
     if(o.retainers)c.retF=Array.from({length:o.retainers},(_,n)=>retFighter({_i:n,w:weapon,a:'lamellar',h:'jingasa',m:type==='cav'?'jiba':null}));cmds.push(c);
    }
    return {type,troops,atkMul:o.attack??1.2,defMul:o.defense??1.1,guards:cmds.reduce((n,c)=>n+c.guard,0),cmds,mods:modsOf(cmds),kitDist:{w:[[weapon,1]],a:[['lamellar',1]],h:[['jingasa',1]]}};

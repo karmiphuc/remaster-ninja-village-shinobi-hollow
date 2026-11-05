@@ -1,0 +1,81 @@
+{
+  "baseline": "4c438d6425f25cbab66bf219a5ca886e1ec90220",
+  "sourceHashes": {
+    "before": "a6f3abd59ffbecb4aa762b006ee60b0d406b8639f202b62adc454ea9f085a76a",
+    "after": "8faa9f9f0f94a839a6b3b4a520d017c9c4555fc59463c3dfb77859a4c20ac7df"
+  },
+  "method": "Sequential ABBA; 430x932 CSS px / device DPR 3; eight 720-troop groups, 16 officers and 32 guards; 120 warm + 360 measured frames; software Chromium, not physical Safari",
+  "before": [
+    {
+      "updateMedian": 0.3999999985098839,
+      "renderMedian": 3.100000001490116,
+      "frameMedian": 3.8000000044703484,
+      "frameP95": 74,
+      "drawCanvases": 0,
+      "updateCanvases": 3,
+      "memory": {
+        "canvases": 2985,
+        "mb": 47.959617614746094
+      },
+      "startMB": 47.954063415527344,
+      "endMB": 47.959617614746094
+    },
+    {
+      "updateMedian": 0.5,
+      "renderMedian": 4.300000004470348,
+      "frameMedian": 5.399999998509884,
+      "frameP95": 109.20000000298023,
+      "drawCanvases": 0,
+      "updateCanvases": 3,
+      "memory": {
+        "canvases": 2985,
+        "mb": 47.959617614746094
+      },
+      "startMB": 47.954063415527344,
+      "endMB": 47.959617614746094
+    }
+  ],
+  "after": [
+    {
+      "updateMedian": 0.5,
+      "renderMedian": 3.100000001490116,
+      "frameMedian": 4,
+      "frameP95": 71.89999999850988,
+      "drawCanvases": 0,
+      "updateCanvases": 0,
+      "memory": {
+        "canvases": 2983,
+        "mb": 47.954063415527344
+      },
+      "startMB": 47.954063415527344,
+      "endMB": 47.954063415527344
+    },
+    {
+      "updateMedian": 0.6999999955296516,
+      "renderMedian": 4.200000002980232,
+      "frameMedian": 5.5,
+      "frameP95": 92.80000000447035,
+      "drawCanvases": 0,
+      "updateCanvases": 0,
+      "memory": {
+        "canvases": 2983,
+        "mb": 47.954063415527344
+      },
+      "startMB": 47.954063415527344,
+      "endMB": 47.954063415527344
+    }
+  ],
+  "mountedMemory": [
+    {
+      "version": "before",
+      "canvases": 3073,
+      "mb": 50.84942626953125
+    },
+    {
+      "version": "after",
+      "canvases": 3073,
+      "mb": 50.84942626953125
+    }
+  ],
+  "errors": []
+}
