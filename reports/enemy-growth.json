@@ -53,6 +53,50 @@
       "fieldPercent": 26
     }
   ],
+  "uncapped": [
+    {
+      "growth": 2.7,
+      "scale": 6.4,
+      "mode": "army",
+      "power": 1031,
+      "troops": 510
+    },
+    {
+      "growth": 2.7,
+      "scale": 6.4,
+      "mode": "skirmish",
+      "power": 385,
+      "troops": 74
+    },
+    {
+      "growth": 20,
+      "scale": 41,
+      "mode": "army",
+      "power": 6665,
+      "troops": 4479
+    },
+    {
+      "growth": 20,
+      "scale": 41,
+      "mode": "skirmish",
+      "power": 2451,
+      "troops": 186
+    },
+    {
+      "growth": 100,
+      "scale": 201,
+      "mode": "army",
+      "power": 32321,
+      "troops": 22554
+    },
+    {
+      "growth": 100,
+      "scale": 201,
+      "mode": "skirmish",
+      "power": 11964,
+      "troops": 410
+    }
+  ],
   "retakes": [
     {
       "id": "settsu",
@@ -75,7 +119,7 @@
     "rebelsScaleOnce": true,
     "rawHistoryUnchanged": true
   },
-  "checks": 56,
+  "checks": 76,
   "functionalFieldEncounters": 90,
   "functionalHuntEncounters": 65,
   "beforeAfter": [
@@ -152,15 +196,15 @@
       "wins": 40,
       "growth": 2.7,
       "castleScale": 3.43,
-      "fieldScale": 3.86,
+      "fieldScale": 7.26,
       "bandBefore": {
         "power": 162,
         "troops": 46,
         "mode": "army"
       },
       "bandAfter": {
-        "power": 615,
-        "troops": 244,
+        "power": 1163,
+        "troops": 610,
         "mode": "army"
       }
     }

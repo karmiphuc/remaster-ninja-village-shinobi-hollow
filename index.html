@@ -10286,15 +10286,15 @@ const CLAN_MIX = {
   kani: { inf: .35, gun: .4, cav: .25 }, shishi: { inf: .4, gun: .45, arc: .15 }, fukuro: { inf: .35, gun: .25, cav: .4 },
 };
 const ENEMY_NAMES = { hebi: ['Lord Hebimaru', 'Shimada'], taka: ['Lord Takanori', 'Ōba'], kuma: ['Lord Kumagai', 'Big Bunta'], kitsune: ['Lady Kitsuko', 'Inari'], ookami: ['Lord Ōgami', 'Kiba'], karasu: ['Lord Karasuma', 'Kokuyō'], tora: ['Lord Torajirō', 'Kogarashi'], kurogane: ['Shogun Kurogane', 'Tetsuya'], bandit: ['Bandit Chief', 'Thug'], ronin: ['Sensei Mugen', 'Ronin'], ikki: ['Gonbei the Agitator', 'Rebel'], wako: ['Captain Kurohige', 'Pirate'], ryu: ['Lord Ryūgen', 'Akayama'], saru: ['Lord Sarutobi', 'Kagekatsu'], shika: ['Lord Shikamoto', 'Kobayakawa'], kame: ['Lord Kamenosuke', 'Motochika'], kani: ['Lord Kanimaru', 'Sōrin'], shishi: ['Lord Shishimaru', 'Yoshihiro'], fukuro: ['Lord Fukurō', 'Masamune-no-Ko'], dojo: ['Sensei Mugen', 'Pupil'] };
-// Castles retain their existing growth. Field forces use twice the capture/year increments,
-// with the same 3x conquest ceiling. Keep the saved conquest history in castle-rate units.
+// Castles retain their existing capped growth. Field forces use twice the capture/year increments
+// with no conquest ceiling. Keep the saved conquest history in castle-rate units.
 // Yearly growth is +1% through year 4, +2% through year 10, then +3% (fields: +2/4/6%).
 function timeCreep(y = G.year) { let t = 0; for (let k = 1; k < y; k++) t += k < 5 ? .01 : k <= 10 ? .02 : .03; return t; }
 // each conquest adds (2 + year)% to every clan's strength — 3% in year 1, 4% in year 2, 5% in year 3… — capped at 3×, plus the yearly creep
 const DIFF_CAP = 3;
 function conquestGrowth() { return G.dGrowth ?? .03 * (G.wins || 0); }
 function diffScale() { return (Math.min(DIFF_CAP, 1 + conquestGrowth()) + timeCreep()) * foeMul(); }
-function fieldScale() { return (Math.min(DIFF_CAP, 1 + 2 * conquestGrowth()) + 2 * timeCreep()) * foeMul(); }
+function fieldScale() { return (1 + 2 * conquestGrowth() + 2 * timeCreep()) * foeMul(); }
 // every province has its own garrison pride: a fixed +10–50% for this campaign (the Iron Keep excepted)
 function siteBoost(P0) { return P0.boss || P0.type !== 'clan' ? 1 : 1.1 + .4 * hash2(P0.x | 0, (P0.y | 0) + (G.vseed || 7)); }
 const SIEGE_FLOOR = 500; // a clan seat holds at least this many foot, bows and horse (before growth)

@@ -32,7 +32,15 @@ async function collect(page){return page.evaluate(()=>{
     G.wins=0;G.dGrowth=0;
     out.annual=[];for(const [year,creep]of [[1,0],[2,.01],[5,.04],[6,.06],[11,.16],[12,.19]]){G.year=year;near(diffScale(),1+creep,'Castle annual rate');near(fieldScale(),1+2*creep,'Field annual rate');out.annual.push({year,castle:diffScale(),field:fieldScale()});}
     out.captures=[];for(const year of [1,2,5,11]){G.year=year;G.dGrowth=0;const c=diffScale(),f=fieldScale();G.dGrowth=(2+year)/100;near(diffScale()-c,(2+year)/100,'Castle capture rate');near(fieldScale()-f,(2+year)/50,'Field capture rate');out.captures.push({year,castlePercent:year+2,fieldPercent:(year+2)*2});}
-    G.year=1;G.dGrowth=20;near(diffScale(),3,'Castle conquest ceiling');near(fieldScale(),3,'Field conquest ceiling');
+    G.year=1;G.dGrowth=20;near(diffScale(),3,'Castle conquest ceiling');near(fieldScale(),41,'Field growth still capped');
+    G.dGrowth+=.03;near(fieldScale(),41.06,'Further captures stop growing fields');near(diffScale(),3,'Field cap removal changed castles');
+    out.uncapped=[];for(const growth of [2.7,20,100]){G.dGrowth=growth;const scale=1+growth*2;
+     for(const site of [{id:'uncapped_band',type:'camp',clan:'bandit',mode:'army',x:65,y:90,power:120,expires:11,reward:{}},landSite(Object.keys(LAND_FIGHT)[0])]){
+      G.dGrowth=0;Math.random=seeded(1921);const base=armyPower(enemyArmy(site));G.dGrowth=growth;Math.random=seeded(1921);const a=enemyArmy(site),power=armyPower(a);
+      ok(Number.isFinite(power)&&power>base*3,'Late field strength capped/invalid');ok(a.groups.every(g=>Number.isFinite(g.troops)&&g.troops>0&&Number.isFinite(g.atkMul)&&g.atkMul>0),'Uncapped growth invalidates formations');
+      ok(Math.abs(power/(base*scale)-1)<.13,'Uncapped strength lost in normalization');out.uncapped.push({growth,scale,mode:a.mode,power,troops:totalOf(a)});
+     }
+    }
     delete G.dGrowth;G.wins=6;near(fieldScale(),1.36,'Legacy wins fallback');near(diffScale(),1.18,'Legacy castle fallback');
     G.year=5;G.wins=4;G.dGrowth=.2;
     const camp={id:'test_band',type:'camp',clan:'bandit',mode:'army',x:65,y:90,power:200,expires:monthIdx()+4,reward:{}};
@@ -42,9 +50,9 @@ async function collect(page){return page.evaluate(()=>{
     const local=(province.power||80)*diffScale()*siteBoost(province)*(province.capital&&!province.boss?SIEGE_MUL:1);
     near(rebellionBase(province)/local,fieldScale()/diffScale(),'Rebel growth applied more than once');
     Math.random=seeded(919);const r1=armyPower(enemyArmy(rebel));G.boons.raid=3;Math.random=seeded(919);near(armyPower(enemyArmy(rebel)),r1,'Raider omen affects rebels');G.boons.raid=1;
-    G.year=12;G.dGrowth=.8;Math.random=seeded(919);near(armyPower(enemyArmy(rebel)),r1,'Spawned revolt scaled twice/changed while waiting');
+    G.year=12;G.dGrowth=2.7;Math.random=seeded(919);near(armyPower(enemyArmy(rebel)),r1,'Spawned revolt scaled twice/changed while waiting');
     const rewards=JSON.stringify(rebel.reward),until=rebel.expires;G.camps=[camp,rebel];economyBeforeSave();const saved=JSON.stringify(G);G=JSON.parse(saved);resetRT();afterLoad();
-    ok(G.v===1&&G.dGrowth===.8&&G.wins===4,'v1 growth history lost');const loaded=G.camps.find(c=>c.id===rebel.id);ok(loaded.power===power&&loaded.expires===until&&JSON.stringify(loaded.reward)===rewards,'Save/load rerolled uprising');
+    ok(G.v===1&&G.dGrowth===2.7&&G.wins===4,'v1 growth history lost');const loaded=G.camps.find(c=>c.id===rebel.id);ok(loaded.power===power&&loaded.expires===until&&JSON.stringify(loaded.reward)===rewards,'Save/load rerolled uprising');
     Math.random=seeded(919);near(armyPower(enemyArmy(loaded)),r1,'Loaded revolt grew again');
     const oldGoods=JSON.stringify({stock:G.stock,wares:G.wares,items:G.items});delete G.dGrowth;const legacy=fieldScale();afterLoad();near(fieldScale(),legacy,'Migration changed legacy scaling');ok(JSON.stringify({stock:G.stock,wares:G.wares,items:G.items})===oldGoods,'Migration changed goods');
     out.retakes=[];for(const p of [province,PROVINCES.find(p=>p.type==='bandit')]){
