@@ -1,0 +1,223 @@
+{
+  "annual": [
+    {
+      "year": 1,
+      "castle": 1,
+      "field": 1
+    },
+    {
+      "year": 2,
+      "castle": 1.01,
+      "field": 1.02
+    },
+    {
+      "year": 5,
+      "castle": 1.04,
+      "field": 1.08
+    },
+    {
+      "year": 6,
+      "castle": 1.06,
+      "field": 1.12
+    },
+    {
+      "year": 11,
+      "castle": 1.16,
+      "field": 1.32
+    },
+    {
+      "year": 12,
+      "castle": 1.19,
+      "field": 1.38
+    }
+  ],
+  "captures": [
+    {
+      "year": 1,
+      "castlePercent": 3,
+      "fieldPercent": 6
+    },
+    {
+      "year": 2,
+      "castlePercent": 4,
+      "fieldPercent": 8
+    },
+    {
+      "year": 5,
+      "castlePercent": 7,
+      "fieldPercent": 14
+    },
+    {
+      "year": 11,
+      "castlePercent": 13,
+      "fieldPercent": 26
+    }
+  ],
+  "uncapped": [
+    {
+      "growth": 2.7,
+      "scale": 6.4,
+      "mode": "army",
+      "power": 1031,
+      "troops": 510
+    },
+    {
+      "growth": 2.7,
+      "scale": 6.4,
+      "mode": "skirmish",
+      "power": 385,
+      "troops": 74
+    },
+    {
+      "growth": 20,
+      "scale": 41,
+      "mode": "army",
+      "power": 6665,
+      "troops": 4479
+    },
+    {
+      "growth": 20,
+      "scale": 41,
+      "mode": "skirmish",
+      "power": 2451,
+      "troops": 186
+    },
+    {
+      "growth": 100,
+      "scale": 201,
+      "mode": "army",
+      "power": 32321,
+      "troops": 22554
+    },
+    {
+      "growth": 100,
+      "scale": 201,
+      "mode": "skirmish",
+      "power": 11964,
+      "troops": 410
+    }
+  ],
+  "retakes": [
+    {
+      "id": "settsu",
+      "original": 280,
+      "uprising": 382,
+      "restored": 280,
+      "scale": 1.4513497195634992
+    },
+    {
+      "id": "mistwood",
+      "original": 70,
+      "uprising": 86,
+      "restored": 70,
+      "scale": 1.62
+    }
+  ],
+  "saves": {
+    "version": 1,
+    "legacyWins": true,
+    "rebelsScaleOnce": true,
+    "rawHistoryUnchanged": true
+  },
+  "checks": 76,
+  "functionalFieldEncounters": 90,
+  "functionalHuntEncounters": 65,
+  "beforeAfter": [
+    {
+      "year": 1,
+      "wins": 0,
+      "growth": 0,
+      "castleScale": 1,
+      "fieldScale": 1,
+      "bandBefore": {
+        "power": 162,
+        "troops": 46,
+        "mode": "army"
+      },
+      "bandAfter": {
+        "power": 162,
+        "troops": 46,
+        "mode": "army"
+      }
+    },
+    {
+      "year": 1,
+      "wins": 5,
+      "growth": 0.15,
+      "castleScale": 1.15,
+      "fieldScale": 1.3,
+      "bandBefore": {
+        "power": 162,
+        "troops": 46,
+        "mode": "army"
+      },
+      "bandAfter": {
+        "power": 212,
+        "troops": 60,
+        "mode": "army"
+      }
+    },
+    {
+      "year": 5,
+      "wins": 4,
+      "growth": 0.2,
+      "castleScale": 1.24,
+      "fieldScale": 1.48,
+      "bandBefore": {
+        "power": 162,
+        "troops": 46,
+        "mode": "army"
+      },
+      "bandAfter": {
+        "power": 240,
+        "troops": 68,
+        "mode": "army"
+      }
+    },
+    {
+      "year": 12,
+      "wins": 10,
+      "growth": 0.64,
+      "castleScale": 1.83,
+      "fieldScale": 2.66,
+      "bandBefore": {
+        "power": 162,
+        "troops": 46,
+        "mode": "army"
+      },
+      "bandAfter": {
+        "power": 425,
+        "troops": 148,
+        "mode": "army"
+      }
+    },
+    {
+      "year": 20,
+      "wins": 40,
+      "growth": 2.7,
+      "castleScale": 3.43,
+      "fieldScale": 7.26,
+      "bandBefore": {
+        "power": 162,
+        "troops": 46,
+        "mode": "army"
+      },
+      "bandAfter": {
+        "power": 1163,
+        "troops": 610,
+        "mode": "army"
+      }
+    }
+  ],
+  "comparison": {
+    "unchangedCastleAndTrainingSnapshots": 210,
+    "fieldEncounters": 90,
+    "hunts": 65
+  },
+  "map": {
+    "cached": true,
+    "selectable": true,
+    "canMarch": true,
+    "noGrowthAfter120Draws": true
+  }
+}

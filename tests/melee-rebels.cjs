@@ -74,7 +74,9 @@ const root=path.resolve(__dirname,'..');
    ok(G.v===1&&loaded.power===c.power&&loaded.expires===until&&JSON.stringify(loaded.reward)===items,'Rebellion save/reload altered event');
    const state=G.prov[early.id],before=state.power;loaded.expires=monthIdx();Math.random=()=>.99;rebelTick();Math.random=r;
    ok(state.owner===early.clan&&state.power>=before&&state.power*sitePowerScale(early)>=loaded.power*1.05,'Lost fort ignored uprising strength/double-scaled');
-   ok(state.power<=Math.max(before,(early.power||80)*1.11)+1,'Lost fort recursively balloons');
+   // Field uprisings now grow twice as fast as castle garrisons; converting the local budget back
+   // retains that premium, while the fixed original province budget still prevents recursive inflation.
+   ok(state.power<=Math.max(before,(early.power||80)*1.11*fieldScale()/diffScale())+1,'Lost fort recursively balloons');
    out.rebellion={earlyPower:pw,latePower:revolt(late).power,earlyTroops:totalOf(a3),playerGearAndCountIndependent:true,lawlessOnlyRoamers:true,legacyCapped:true,rewardsAndCaptivePreserved:true,expiryAndRetakeConsistent:true,saveVersion:1};
    out.checks=checks;return out;
   }finally{Math.random=S.random;if(BT)closeBattle();simRestore(S);}
