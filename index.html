@@ -9654,7 +9654,7 @@ const HUNTS = [
   { k: 'gyrfalcon', w: .8, n: 1, type: 'cav', name: 'White Gyrfalcon', where: 'the snowfields', s: [17, 7, 40, 8], line: "A white gyrfalcon hunts over the snowfields — a lord's bird, if it can be taken." },
   { k: 'kiso', w: .7, n: 1, type: 'cav', name: 'Kiso Runaway', where: 'the Kiso valley road', s: [18, 15, 95, 18], line: 'Horse thieves were scattered on the Kiso road; their best mount runs loose and kicks like thunder.' },
 ];
-function huntLevel() { return 1 + (G.year - 1) * .35 + G.wins * .28; }
+function huntLevel() { return 1 + (G.year - 1) * .7 + G.wins * .56; }
 function huntArmy(H) {
   const lvl = huntLevel(), f = 1 + (lvl - 1) * .12, A = { side: 1, clan: 'wild', name: H.n > 1 ? H.name + ' pack' : H.name, groups: [], ki: 0, strat: 0, mode: 'skirmish' };
   for (let i = 0; i < H.n; i++) { const lead = i === 0, m = lead && H.n > 1 ? 1.25 : 1;
@@ -10286,14 +10286,15 @@ const CLAN_MIX = {
   kani: { inf: .35, gun: .4, cav: .25 }, shishi: { inf: .4, gun: .45, arc: .15 }, fukuro: { inf: .35, gun: .25, cav: .4 },
 };
 const ENEMY_NAMES = { hebi: ['Lord Hebimaru', 'Shimada'], taka: ['Lord Takanori', 'Ōba'], kuma: ['Lord Kumagai', 'Big Bunta'], kitsune: ['Lady Kitsuko', 'Inari'], ookami: ['Lord Ōgami', 'Kiba'], karasu: ['Lord Karasuma', 'Kokuyō'], tora: ['Lord Torajirō', 'Kogarashi'], kurogane: ['Shogun Kurogane', 'Tetsuya'], bandit: ['Bandit Chief', 'Thug'], ronin: ['Sensei Mugen', 'Ronin'], ikki: ['Gonbei the Agitator', 'Rebel'], wako: ['Captain Kurohige', 'Pirate'], ryu: ['Lord Ryūgen', 'Akayama'], saru: ['Lord Sarutobi', 'Kagekatsu'], shika: ['Lord Shikamoto', 'Kobayakawa'], kame: ['Lord Kamenosuke', 'Motochika'], kani: ['Lord Kanimaru', 'Sōrin'], shishi: ['Lord Shishimaru', 'Yoshihiro'], fukuro: ['Lord Fukurō', 'Masamune-no-Ko'], dojo: ['Sensei Mugen', 'Pupil'] };
-// each castle taken hardens the rest a little; with 40+ castles on the map this is gentler and capped
-// clan castles harden with every castle taken (+2% each, up to +100%) and with the years: garrisons grow +1% a year
-// through year 4, +2% a year from year 5 to 10, +3% a year from year 11 on
+// Castles retain their existing growth. Field forces use twice the capture/year increments,
+// with the same 3x conquest ceiling. Keep the saved conquest history in castle-rate units.
+// Yearly growth is +1% through year 4, +2% through year 10, then +3% (fields: +2/4/6%).
 function timeCreep(y = G.year) { let t = 0; for (let k = 1; k < y; k++) t += k < 5 ? .01 : k <= 10 ? .02 : .03; return t; }
 // each conquest adds (2 + year)% to every clan's strength — 3% in year 1, 4% in year 2, 5% in year 3… — capped at 3×, plus the yearly creep
 const DIFF_CAP = 3;
 function conquestGrowth() { return G.dGrowth ?? .03 * (G.wins || 0); }
 function diffScale() { return (Math.min(DIFF_CAP, 1 + conquestGrowth()) + timeCreep()) * foeMul(); }
+function fieldScale() { return (Math.min(DIFF_CAP, 1 + 2 * conquestGrowth()) + 2 * timeCreep()) * foeMul(); }
 // every province has its own garrison pride: a fixed +10–50% for this campaign (the Iron Keep excepted)
 function siteBoost(P0) { return P0.boss || P0.type !== 'clan' ? 1 : 1.1 + .4 * hash2(P0.x | 0, (P0.y | 0) + (G.vseed || 7)); }
 const SIEGE_FLOOR = 500; // a clan seat holds at least this many foot, bows and horse (before growth)
@@ -10423,14 +10424,18 @@ const OFFICERS = ['Ōba', 'Shimada', 'Kiba', 'Gonta', 'Rokurō', 'Hanzō', 'Tōt
 function officerName(clan, i) { const off = [...clan].reduce((n, ch) => n + ch.charCodeAt(0), 0); return OFFICERS[(off + i * 7) % OFFICERS.length]; }
 function siteById(id) { return PROVINCES.find(p => p.id === id) || (G.camps || []).find(c => c.id === id); }
 function siteState(P) { return G.prov[P.id] || P; }
-function sitePowerScale(P){return P.type==='clan'?diffScale()*siteBoost(P)*(P.capital&&!P.boss?SIEGE_MUL:1):1;}
+function sitePowerScale(P){
+  if(P.type==='clan')return diffScale()*siteBoost(P)*(P.capital&&!P.boss?SIEGE_MUL:1);
+  return P.rebel||P.type==='dojo'||P.type==='home'?1:fieldScale();
+}
 // every site on the map is fought with the army; only hunts and outlaw-held village plots are villager skirmishes
 function siteMode(P) { return P.type === 'land' || P.type === 'hunt' ? 'skirmish' : 'army'; }
 function enemyArmy(site) {
   const P0 = typeof site === 'string' ? siteById(site) : site, st = siteState(P0);
   const clan = P0.clan, skirm = siteMode(P0) === 'skirmish';
   if(P0.type==='dojo')return trainingArmy(P0);
-  let P = (st.power || 60) * sitePowerScale(P0);
+  // Field growth is applied to the completed army below, after opening-force normalization.
+  let P = (st.power || 60) * (P0.type === 'clan' ? sitePowerScale(P0) : 1);
   const A = { side: 1, clan, name: P0.type === 'dojo' ? 'Sparring Partners' : CLANS[clan].name, groups: [], ki: P0.boss ? 2 : 0, strat: 0, mode: skirm ? 'skirmish' : 'army', boss: P0.boss };
   const tier = Math.log2(1 + P / 100);
   const names = ENEMY_NAMES[P0.type === 'dojo' ? 'dojo' : clan] || ENEMY_NAMES.bandit;
@@ -10476,12 +10481,15 @@ function enemyArmy(site) {
       A.groups.forEach(g => g.troops = Math.max(4, Math.round(g.troops * want / tot))); }
     A.strat = clan === 'kurogane' ? 3 : clan === 'tora' ? 2 : tier >= 2.2 ? 1 : 0;
   }
-  // Lawless Coasts: roaming camps field m times the strength (a field force: m times the men; a band: each fighter
-  // tougher and harder-hitting by the square root, as the skirmish scaling above does). Their spoils are unchanged.
+  // Apply field growth AFTER the 40–60-man opening force is normalized, so the cap cannot erase it.
+  // Uprisings already store their grown local budget in power: do not grow them a second time.
+  // Roaming camps keep their existing spawn-time gear/reward budget; growth changes combat strength only.
+  // Lawless Coasts stacks once with field growth; neither effect changes spoils or castle garrisons.
   const raid = P0.type === 'camp' && !P0.rebel ? boonOf('raid') : 1;
-  if (raid !== 1) { const p0 = armyPower(A), grow = m => A.groups.forEach(g => { if (skirm) { const k = Math.sqrt(m); g.troops *= k; g.atkMul *= k; } else g.troops *= m; });
+  const growth = (P0.type !== 'clan' ? sitePowerScale(P0) : 1) * raid;
+  if (growth !== 1) { const p0 = armyPower(A), grow = m => A.groups.forEach(g => { if (skirm) { const k = Math.sqrt(m); g.troops *= k; g.atkMul *= k; } else g.troops *= m; });
     // officers' own blows don't grow with their men, so correct toward the rolled multiple of the army's power
-    grow(raid); for (let i = 0; i < 4; i++) { const r = armyPower(A) / Math.max(1, p0); if (Math.abs(r / raid - 1) < .02) break; grow(raid / r); }
+    grow(growth); for (let i = 0; i < 4; i++) { const r = armyPower(A) / Math.max(1, p0); if (Math.abs(r / growth - 1) < .02) break; grow(growth / r); }
     A.groups.forEach(g => g.troops = Math.max(1, Math.round(g.troops))); }
   if(P0.id==='yamashiro')for(const g of A.groups){if(g.type==='gun')g.troops=Math.max(1,Math.round(g.troops*.5));else if(g.type==='arc')g.troops=Math.max(1,Math.round(g.troops*.3));}
   return finishArmy(A);
@@ -13878,7 +13886,7 @@ function clampMap() { const z = MAPV.cam.z, hw = MAPV.w / 2 / z, hh = MAPV.h / 2
 function m2s(mx, my) { const [rx, ry] = rotW(mx, my); return [(rx - MAPV.cam.x) * MAPV.cam.z + MAPV.w / 2, (ry - MAPV.cam.y) * MAPV.cam.z + MAPV.h / 2]; }
 
 /* ----- map icons: what kind of fight waits there, at a glance -----
-   castle = siege (clan seat) · fort = field battle · campfire = bandits, rebels and other small fights ·
+   castle = siege (clan seat) · fort = clan/rebel stronghold · indigo bivouac = roaming band · campfire = small fights ·
    green fort = training ground · the Iron Keep = a great glowing fortress · home grows with research (camp → fort → castle).
    Taken places turn Kage blue and fly the hinomaru. */
 const _micon = {};
@@ -13917,12 +13925,32 @@ function firePB(f, ring = '#6e6a64') {
   pb.poly(fl, '#e8602a'); pb.poly(f ? [[9, 5], [11, 9], [11, 11], [7, 11], [7, 8]] : [[8, 4], [10, 8], [10, 11], [6, 11], [6, 8]], '#f2c84a'); pb.rect(8, 9, 2, 2, '#fff2c0');
   return pb;
 }
+// A travelling band's cloth shelter, spear and packed baggage. No rebel palisade/war banner.
+function bandPB(col) {
+  const pb = new PB(26, 22);
+  pb.ellipse(13, 20, 12, 2, '#8a6a3a');
+  pb.line(21, 4, 18, 20, WOODC); pb.poly([[21, 0], [23, 5], [20, 6]], '#8d93a3'); pb.line(21, 1, 21, 4, '#d8dce6');
+  pb.poly([[1, 15], [7, 5], [14, 15]], '#4a4a52'); pb.poly([[1, 15], [7, 5], [7, 15]], '#7a6952');
+  pb.hline(1, 15, 13, '#2a1a14');
+  pb.line(5, 19, 12, 4, WOODL); pb.line(12, 4, 22, 19, WOODC);
+  pb.poly([[4, 18], [12, 3], [23, 18]], '#3b4a7a');
+  pb.poly([[4, 18], [12, 3], [12, 18]], '#65779a');
+  pb.line(5, 17, 12, 4, '#8d9bb5'); pb.line(12, 4, 22, 18, '#2e344d');
+  pb.poly([[9, 18], [13, 10], [18, 19]], '#211d2a');
+  pb.line(13, 10, 13, 18, '#7c8ba6'); pb.hline(4, 19, 20, WOODC);
+  pb.line(4, 17, 1, 20, '#c8945f'); pb.line(22, 17, 25, 20, '#c8945f');
+  pb.rect(18, 15, 6, 5, '#a8743f'); pb.hline(19, 15, 4, '#e0b884');
+  pb.vline(20, 16, 4, '#4a321e'); pb.hline(18, 18, 6, '#6b4a2e'); pb.rect(22, 16, 2, 2, col);
+  pb.rect(2, 18, 5, 3, '#8a7861'); pb.hline(3, 18, 3, '#b9a27e'); pb.vline(4, 18, 3, '#4a321e');
+  pb.shadeEdges(.88, 1.06); return pb;
+}
 function mapIcon(kind, own, col, f = 0, home = false) {
   const key = kind + own + col + f + home; if (_micon[key]) return _micon[key];
   const blue = '#3b4a7a', roof = own ? blue : shade(col, -.35); let pb;
   if (kind === 'castle' || kind === 'keep') pb = castlePB(kind === 'keep' ? (own ? blue : '#5a1a1a') : roof, kind === 'keep');
   else if (kind === 'fort') pb = own ? fortPB('#5a6a9a', '#3b4a7a', blue) : fortPB(WOODL, WOODC, col);
   else if (kind === 'dojo') pb = fortPB('#6f9e4e', '#4f7a3a', '#5f9e3e');
+  else if (kind === 'band') pb = bandPB(col);
   else pb = firePB(f, own ? '#4a5c9a' : undefined);
   let out = pb;
   if (own || home) { const W = pb.w + 14, H = Math.max(pb.h + 6, 20), q = new PB(W, H); q.draw(pb, 6, H - pb.h);
@@ -13935,7 +13963,7 @@ function nodeKind(p) {
   if (p.type === 'dojo') return 'dojo';
   if (p.boss) return 'keep';
   if (p.type === 'clan') return p.capital ? 'castle' : 'fort';
-  if (p.type === 'camp') return p.mode === 'army' ? 'fort' : 'fire';
+  if (p.type === 'camp') return p.rebel ? (p.mode === 'army' ? 'fort' : 'fire') : 'band';
   return 'fire';
 }
 function drawNodeIcon(x, p, sx, sy, z, own, col) {
@@ -14007,12 +14035,12 @@ function drawMarch(x, z) {
 function drawCampNode(x, c, z) {
   const [sx, sy] = m2s(c.x, c.y), C = CLANS[c.clan], left = c.expires - monthIdx(), r = 11 * z;
   const pulse = (Math.sin(MAPV.t * 5 + c.x) + 1) / 2;
-  x.strokeStyle = `rgba(200,69,44,${.45 + pulse * .5})`; x.lineWidth = 2; x.setLineDash([4, 3]); x.beginPath(); x.arc(sx, sy, r + 5 + pulse * 2, 0, 7); x.stroke(); x.setLineDash([]);
+  x.strokeStyle = c.rebel ? `rgba(200,69,44,${.45 + pulse * .5})` : `rgba(87,111,157,${.45 + pulse * .5})`; x.lineWidth = 2; x.setLineDash([4, 3]); x.beginPath(); x.arc(sx, sy, r + 5 + pulse * 2, 0, 7); x.stroke(); x.setLineDash([]);
   drawNodeIcon(x, c, sx, sy, z, false, C.banner);
   if (nodeKind(c) === 'fire') for (let i = 0; i < 3; i++) { const u = (MAPV.t * .5 + i / 3) % 1; x.fillStyle = `rgba(90,80,80,${.35 * (1 - u)})`; x.beginPath(); x.arc(sx + 2, sy - 14 * z - u * 18, 2 + u * 3, 0, 7); x.fill(); }
   x.font = `${Math.round(11 * clamp(z, .8, 1.3))}px DotGothic16, monospace`; x.textAlign = 'center';
   const label = c.name, tw = x.measureText(label).width + 10, ly = sy + r + 15 * z;
-  x.fillStyle = 'rgba(122,32,24,.92)'; x.fillRect(sx - tw / 2, ly - 11, tw, 15); x.fillStyle = '#fff4dc'; x.fillText(label, sx, ly);
+  x.fillStyle = c.rebel ? 'rgba(122,32,24,.92)' : 'rgba(46,58,90,.92)'; x.fillRect(sx - tw / 2, ly - 11, tw, 15); x.fillStyle = '#fff4dc'; x.fillText(label, sx, ly);
   const badge = c.rebel ? (left <= 1 ? '⚑ last month!' : '⚑ ' + left + ' mo') : left <= 1 ? 'leaving!' : left + ' mo'; x.font = `${Math.round(9 * clamp(z, .8, 1.3))}px DotGothic16, monospace`; const bw = x.measureText(badge).width + 8;
   x.fillStyle = left <= 1 ? '#c8452c' : '#2a1d1a'; x.fillRect(sx + r - 2, sy - r - 4, bw, 12); x.fillStyle = '#f2d27a'; x.fillText(badge, sx + r - 2 + bw / 2, sy - r + 5);
   if (MAPV.sel === c.id) { x.strokeStyle = '#fff'; x.lineWidth = 2; x.beginPath(); x.arc(sx, sy, r + 4, 0, 7); x.stroke(); }
@@ -14283,7 +14311,7 @@ function rebelTick() {
   if (!G.camps) G.camps = []; const m = monthIdx();
   G.camps.filter(c => c.rebel && c.expires <= m).forEach(c => { const P = PROVINCES.find(p => p.id === c.rebel);
     if (P && G.prov[P.id].owner === 'kage') { const st = G.prov[P.id]; st.owner = P.clan;
-      // Camp power is already battle-scaled; clan garrisons store unscaled province power.
+      // Camp power is already battle-scaled; restored garrisons store unscaled province power.
       st.power=Math.max(st.power||P.power||0,Math.ceil(c.power*(P.type==='clan'?1.05:1.2)/sitePowerScale(P)));
       st.retake = rollRetake(P, Math.max(st.power || 0, c.power), c); Sound.play('alert'); announce('Province lost', `The rebels of <b>${esc(P.name)}</b> threw out your governor. It falls back to the ${esc(CLANS[P.clan].name)} — retake it.`, 'scroll'); } });
   G.camps = G.camps.filter(c => !(c.rebel && c.expires <= m));
@@ -14292,9 +14320,9 @@ function rebelTick() {
   if (owned.length < 3 || Math.random() > Math.min(.22, .04 + owned.length * .006)) return;
   spawnRebellion(pick(owned));
 }
-// Local unrest follows the province's original strength and existing world growth, never the player's equipment
-// or an earlier uprising's inflated power. Lawless Coasts applies to roaming raiders, not held-province unrest.
-function rebellionBase(P){return Math.max(80,(P.power||80)*sitePowerScale(P));}
+// Uprisings are field encounters: double world-growth increments, retaining the province's original local pride.
+// Their power stores this scaling once, never the player's army or an earlier revolt. Castle growth is unchanged.
+function rebellionBase(P){return Math.max(80,(P.power||80)*fieldScale()*siteBoost(P)*(P.type==='clan'&&P.capital&&!P.boss?SIEGE_MUL:1));}
 function migrateRebellions(){
   for(const c of G.camps||[])if(c.rebel&&!c.rebelV){const P=PROVINCES.find(p=>p.id===c.rebel);if(!P)continue;
     const ceiling=Math.round(rebellionBase(P)*1.05);c.power=Math.max(1,Math.min(c.power||ceiling,ceiling));c.rebelV=1;}

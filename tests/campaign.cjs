@@ -94,7 +94,7 @@ const ignorable = t => /Failed to load resource: net::ERR_(TUNNEL_CONNECTION_FAI
       [lair, castle].forEach(q => G.prov[q.id].owner = 'kage');
       const lose = (q, r) => { spawnRebellion(q); clearModals(); const c = G.camps.find(x => x.rebel === q.id); c.expires = monthIdx(); const R = Math.random; if (r) Math.random = () => r; try { rebelTick(); } finally { Math.random = R; } clearModals(); return c; };
       const p0 = G.prov[lair.id].power, c1 = lose(lair), st = G.prov[lair.id];
-      check(st.owner === lair.clan && st.power >= Math.round(c1.power * 1.2) && st.power >= p0, `Lair came back weak: ${p0} -> ${st.power} (uprising ${c1.power})`);
+      check(st.owner === lair.clan && st.power * sitePowerScale(lair) >= c1.power * 1.2 && st.power >= p0, `Lair came back weak: ${p0} -> ${st.power} (uprising ${c1.power})`);
       check(st.retake && (st.retake.items.length + st.retake.recruits.length) > 0, 'No rerolled spoils');
       { openMap(); showProvCard(lair); const txt = $('#prov-card').textContent; st.retake.items.forEach(k => check(txt.includes(ITEMS[k].name), 'Card lacks rolled item ' + ITEMS[k].name));
         st.retake.recruits.forEach(id => check(txt.includes(vData(id).name), 'Card lacks rolled recruit')); (lair.reward && lair.reward.item && !st.retake.items.includes(lair.reward.item)) && check(!txt.includes(ITEMS[lair.reward.item].name), 'Card still shows the one-time item'); $('#prov-card').hidden = true; closeMap(); }

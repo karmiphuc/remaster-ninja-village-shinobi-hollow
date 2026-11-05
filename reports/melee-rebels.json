@@ -31,14 +31,14 @@
   "playback": {
     "frontEnd": 3.450579078054306,
     "rearContact": 4.7005790780543055,
-    "firstRearDamage": 4.830000000000017,
-    "gapAtDamage": 0.8802909073024807,
+    "firstRearDamage": 4.831166666666683,
+    "gapAtDamage": 1.6022194659562956,
     "archersLeft": 300
   },
   "rebellion": {
-    "earlyPower": 292,
-    "latePower": 3141,
-    "earlyTroops": 71,
+    "earlyPower": 349,
+    "latePower": 3749,
+    "earlyTroops": 80,
     "playerGearAndCountIndependent": true,
     "lawlessOnlyRoamers": true,
     "legacyCapped": true,

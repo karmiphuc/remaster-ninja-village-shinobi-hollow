@@ -18,7 +18,7 @@ The separate [ranged targeting refinement](ranged-spill.md) restores front-to-ba
 
 ## Province-based uprisings
 
-`rebellionBase()` uses the province's **original** power with its normal world growth and site/capital modifiers. A new uprising rolls **75–105%** of that local budget, with a small minimum for early sites. Recruiting more troops or equipping a powerful commander no longer inflates a peasant uprising. Repeated revolts do not compound their previous power. Later provinces still support stronger uprisings.
+`rebellionBase()` uses the province's **original** power with its field growth and site/capital modifiers. Field encounters now receive double the capture/year increments, while castle garrison rates remain unchanged; see [enemy growth](enemy-growth.md). A new uprising rolls **75–105%** of that local budget, with a small minimum for early sites. Recruiting more troops or equipping a powerful commander no longer inflates a peasant uprising. Repeated revolts do not compound their previous power. Later provinces still support stronger uprisings.
 
 Lawless Coasts continues to multiply roaming bandit/pirate/rōnin camps; held-province uprisings are excluded. Their two-month deadline, rolled rewards and guaranteed worker captive remain intact.
 
