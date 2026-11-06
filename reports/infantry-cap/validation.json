@@ -1,0 +1,24 @@
+{
+  "sha256": "455e0bb9b93acbaab78f026494690c6fc93c8b3fd4ac1bd6fee4aaf1484587ca",
+  "capsPerSide": {
+    "inf": 192,
+    "arc": 96,
+    "gun": 96,
+    "cav": 96
+  },
+  "fullRegularActors": 960,
+  "checks": {
+    "results": 73,
+    "cumulative": 41,
+    "deployment": 36,
+    "deployment-review": 14,
+    "campaign": 30,
+    "performance": 25
+  },
+  "totalChecks": 219,
+  "classicLedgerPairs": 6,
+  "damageWardCases": 24,
+  "offlineTouch": true,
+  "environment": "Chromium, 430x932 CSS px, DPR 3 device / DPR 2 battlefield; software rendering, not physical Safari",
+  "physicalSafariTested": false
+}

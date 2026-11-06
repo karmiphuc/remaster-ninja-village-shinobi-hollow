@@ -9879,7 +9879,7 @@ function formGeom(type, n, onWall, tight = 1, spanOverride = 0) {
   const maxR = Math.max(1, Math.floor(span / (F.rMin * sc * tight)) + 1);
   let C = Math.min(FORM_MAX_COLS, Math.max(Math.ceil(n / maxR), n >= 30 ? 3 : n >= 8 ? 2 : 1)); C = Math.max(1, Math.min(C, n || 1));
   let R = Math.ceil(Math.max(1, n) / C); if (R > maxR) { R = maxR; C = Math.ceil(n / R); }
-  const rankScale=rtBattleChosen()?48/RT_ACTOR_CAP:1;
+  const rankScale=rtBattleChosen()?48/rtActorCap(type):1;
   return { R, C, rowStep: R > 1 ? Math.min(F.rMax * sc, span / (R - 1)) : 0, colStep: (onWall ? 4 : F.col * sc)*rankScale, stag: onWall ? 0 : F.stag };
 }
 function formRows(g, n) { return Math.max(1, Math.min(g.R || BT.rows || 5, n)); }
@@ -10307,8 +10307,8 @@ function regroup(types) {
 }
 // a unit down to its last handful still shows that handful: at least min(3, troops) soldiers stand while it lives
 function visibleCount(g) { if(g.heroOnly)return g.troops>0?1:0;if(g.troops<TROOP_EPS)return 0;
- const n=Math.max(Math.ceil(g.troops/BT.per),Math.min(3,Math.ceil(g.troops))),scale=rtBattleChosen()?RT_ACTOR_CAP/48:1;
- return clamp(Math.ceil(n*scale),1,Math.min(BT.maxVis||20,Math.ceil(g.troops)));
+ const n=Math.max(Math.ceil(g.troops/BT.per),Math.min(3,Math.ceil(g.troops))),cap=rtBattleChosen()?rtActorCap(g.type):BT.maxVis||20,scale=rtBattleChosen()?cap/48:1;
+ return clamp(Math.ceil(n*scale),1,Math.min(cap,Math.ceil(g.troops)));
 }
 function syncSprites(g, kind = 'burn') {
   independentDamage(g,null);
@@ -14077,17 +14077,17 @@ function create(art,seed=7711,options={},ground=()=>0){
  const sim=art.battle(seed,options.troops),groups=[],models=[],officers=[],fighters=[],bins=Array.from({length:COLS*ROWS},()=>[]),populationScale=clamp(options.populationScale||1,1,2);
  const effects=Array.from({length:220*Math.ceil(populationScale)},()=>({on:false,t:0,dur:0,kind:'',x:0,y:0,size:1,face:1,muzzleX:0,muzzleY:17}));
  const shots=Array.from({length:384*Math.ceil(populationScale)},()=>({on:false,start:0,dur:1,x0:0,y0:0,x1:0,y1:0,height:0,kind:'',side:0,from:null,force:0,power:0,lastU:0,counterFamily:null,counterPower:1,ox:0,oy:0,face:1,muzzleX:12,muzzleY:17}));
- const impacts=Array.from({length:600*Math.ceil(populationScale)},()=>({from:null,to:null,amount:0,kind:''}));
+ const impacts=Array.from({length:600*Math.ceil(clamp(options.meleeScale||populationScale,1,4))},()=>({from:null,to:null,amount:0,kind:''}));
  let time=0,acc=0,applied=0,outcome=null,nextThink=0,joined=false,externalLoss=0,externalRecovery=0;
  const initial=sim.A.reduce((n,a)=>n+a.groups.reduce((v,g)=>v+g.troops,0),0);
  for(let side=0;side<2;side++){const entries=sim.A[side].groups.slice().sort((a,b)=>TYPES.indexOf(a.type)-TYPES.indexOf(b.type));for(const g of entries){
-  const type=g.type,index=TYPES.indexOf(type),id=groups.length,num=options.count?options.count(g):Math.min(FIGURES[index],Math.ceil(g.troops));
+  const type=g.type,index=TYPES.indexOf(type),id=groups.length,num=options.count?options.count(g):Math.min(FIGURES[index],Math.ceil(g.troops)),spacingScale=clamp(options.spacingOf?.(g)||populationScale,1,4);
   const rows=Math.min(num,options.compact?({inf:12,gun:8,arc:10,cav:8}[type]):type==='inf'?20:type==='cav'?8:12),face=side?-1:1,
    homeX=options.compact?(side?1400-[560,420,230,275][index]:[560,420,230,275][index]):(side?[920,1080,1220,1290]:[480,320,180,110])[index],
    homeY=options.compact?[420,390,400,780][index]:Y,position=options.positions?.[id];
   const f={id,type,index,side,g,face,x:position?.[0]??homeX,y:position?.[1]??homeY,homeX:position?.[0]??homeX,homeY:position?.[1]??homeY,
    goalX:position?.[0]??homeX,goalY:position?.[1]??homeY,rows,baseRows:rows,liveN:0,bodyX:0,bodyY:0,minX:0,maxX:0,minY:0,maxY:0,cols:rows?Math.ceil(num/rows):0,stride:type==='gun'?54:type==='cav'?37:28,
-   depthStep:(type==='cav'?(options.compact?32:39):23)/populationScale,rankStagger:populationScale>1&&type!=='gun'?.25:0,mountRadius:type==='cav'?38:30,speed:type==='cav'?145:type==='inf'?34:24,members:[],officers:[],officerN:0,order:type==='cav'?'cycle':'advance',engaged:false,
+   depthStep:(type==='cav'?(options.compact?32:39):23)/spacingScale,rankStagger:populationScale>1&&type!=='gun'?.25:0,mountRadius:type==='cav'?38:30,speed:type==='cav'?145:type==='inf'?34:24,members:[],officers:[],officerN:0,order:type==='cav'?'cycle':'advance',engaged:false,
    fallbackX:homeX,fallbackY:homeY,fallbackAt:-100,reserve:false,deployBox:{left:0,right:0,top:0,bottom:0},
    bannerFall:-1,bx:-1000,by:-1000,state:type==='cav'?'regroup':'advance',stateAt:0,target:null,pathAt:0,pathN:0,
    pathX:new Float64Array(3),pathY:new Float64Array(3),charges:0,withdrawals:0,regroups:0,firstChargeTarget:null,

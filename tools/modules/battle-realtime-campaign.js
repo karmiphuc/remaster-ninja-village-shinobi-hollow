@@ -1,6 +1,7 @@
 /* Campaign adapter: Classic remains the default. Realtime owns open-field hits only;
    the existing deployment, duels, wall siege, rewards, retreats and save version remain authoritative. */
 const RT_ACTOR_CAP=96;
+function rtActorCap(type){return type==='inf'?RT_ACTOR_CAP*2:RT_ACTOR_CAP;}
 const RT_GUN_SOUND={vol:.38};
 const RT_STANCE_TEXT={
  inf:{line:'Line: 18% less melee damage.',loose:'Loose: wider spacing and 10% less ranged damage.',pikewall:'Pikewall: stationary; 45% less melee damage.'},
@@ -67,7 +68,7 @@ function rtMakeCampaignModel(){const session=BT,styleCache=new WeakMap(),sources
   return battleDamage(power,battleResistance(to),mult,force);
  },totals:()=>session.A.map(totalOf)};sim.damage=(g,to,force,kind,scale,charged=kind==='cav',actor=null)=>sim.impact(sim.power(g,force,kind,scale,charged,actor),to,force,kind,g,actor);
  const art={battle:()=>sim,style:(type,side,variant,g,i)=>rtNormalizeStyle(sources.get(g)[i],g,side,styleCache),building:id=>buildingSprite(id),prop:(id,side=0)=>propImg(id,side),teamColor:side=>CLANS[session.A[side].clan||'kage']?.banner||'#3b4a7a',emblem:side=>IMG['mon_'+(session.A[side].clan||'kage')]};
- rt.model=GrandCombat.create(art,session.seed,{compact:!!session.deploy,populationScale:RT_ACTOR_CAP/48,count:g=>g.troops>0||g.heroOnly?sources.get(g).length:0,
+ rt.model=GrandCombat.create(art,session.seed,{compact:!!session.deploy,populationScale:RT_ACTOR_CAP/48,meleeScale:rtActorCap('inf')/48,spacingOf:g=>rtActorCap(g.type)/48,count:g=>g.troops>0||g.heroOnly?sources.get(g).length:0,
   stanceOf:(g,side)=>side===0?G.battleStances?.[g.type]||'line':g.type==='cav'?'skein':g.type==='arc'?'loose':'line',
   attach:(m,g,i)=>{m.source=sources.get(g)[i];if(m.source.hero&&!m.source.hero.beast)rtBindHero(m,g);if(!m.alive){m.fate=m.source.duelCorpse?'death':'rout';m.fateAt=-20;}mapped.add(m.source);},
   beforeThink:()=>{rtRefreshHeroBudgets(rt);rtTickBattleTactics(rt);},

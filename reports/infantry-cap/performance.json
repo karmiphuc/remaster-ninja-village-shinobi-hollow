@@ -1,0 +1,402 @@
+{
+  "environment": "Chromium, 430x932 CSS px, DPR 3 device / DPR 2 battlefield; software rendering, not physical Safari",
+  "samples": [
+    {
+      "cap": 96,
+      "officers": 0,
+      "models": 768,
+      "extras": 0,
+      "artSets": 16,
+      "rigFamilies": {
+        "[\"inf\",0,null,null]": [
+          1,
+          0
+        ],
+        "[\"gun\",0,null,null]": [
+          1,
+          0
+        ],
+        "[\"arc\",0,null,null]": [
+          1,
+          0
+        ],
+        "[\"cav\",0,null,null]": [
+          1,
+          0
+        ],
+        "[\"inf\",1,null,null]": [
+          0,
+          1
+        ],
+        "[\"gun\",1,null,null]": [
+          0,
+          1
+        ],
+        "[\"arc\",1,null,null]": [
+          0,
+          1
+        ],
+        "[\"cav\",1,null,null]": [
+          0,
+          1
+        ]
+      },
+      "atlasMB": 4.8330078125,
+      "canvas": [
+        860,
+        1864
+      ],
+      "startMB": 20.865989685058594,
+      "endMB": 20.89415740966797,
+      "seconds": 8.400000000000103,
+      "updateMedian": 0.4000000022351742,
+      "updateP95": 4.400000002235174,
+      "renderMedian": 6.299999997019768,
+      "renderP95": 40.900000002235174,
+      "canvasesCreated": 15,
+      "renderCanvases": 0,
+      "setsBefore": 16,
+      "setsAfter": 16,
+      "maxMB": 20.89415740966797,
+      "residual": -9.094947017729282e-13
+    },
+    {
+      "cap": 96,
+      "officers": 16,
+      "models": 768,
+      "extras": 48,
+      "artSets": 47,
+      "rigFamilies": {
+        "[\"inf\",0,null,null]": [
+          1,
+          0
+        ],
+        "[\"inf\",0,\"{\\\"faceSeed\\\":822475626,\\\"hair\\\":\\\"topknot\\\",\\\"hc\\\":\\\"#3c2a22\\\",\\\"sex\\\":\\\"m\\\",\\\"skin\\\":\\\"#d9a77a\\\",\\\"cloth\\\":\\\"#3f62c0\\\",\\\"band\\\":\\\"#d84a3a\\\",\\\"hat\\\":\\\"#3a6a5a\\\",\\\"dou\\\":\\\"#28407e\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"naginata\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":null,\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#3f62c0\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"inf\",0,\"{\\\"faceSeed\\\":839253245,\\\"hair\\\":\\\"bun\\\",\\\"hc\\\":\\\"#574537\\\",\\\"sex\\\":\\\"m\\\",\\\"skin\\\":\\\"#eec39a\\\",\\\"cloth\\\":\\\"#3f62c0\\\",\\\"band\\\":\\\"#d84a3a\\\",\\\"hat\\\":\\\"#3a6a5a\\\",\\\"dou\\\":\\\"#28407e\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"naginata\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":null,\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#3f62c0\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"inf\",0,null,{\"w\":\"yari\",\"a\":\"lamellar\",\"h\":\"kabuto\",\"horo\":\"#c8452c\"}]": [
+          0,
+          1
+        ],
+        "[\"gun\",0,null,null]": [
+          1,
+          0
+        ],
+        "[\"gun\",0,\"{\\\"faceSeed\\\":1731604922,\\\"hair\\\":\\\"long\\\",\\\"hc\\\":\\\"#574537\\\",\\\"sex\\\":\\\"f\\\",\\\"skin\\\":\\\"#b98057\\\",\\\"cloth\\\":\\\"#3f62c0\\\",\\\"band\\\":\\\"#d84a3a\\\",\\\"hat\\\":\\\"#3a6a5a\\\",\\\"dou\\\":\\\"#28407e\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"rifle\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":null,\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#3f62c0\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"gun\",0,\"{\\\"faceSeed\\\":1647716827,\\\"hair\\\":\\\"bob\\\",\\\"hc\\\":\\\"#574537\\\",\\\"sex\\\":\\\"m\\\",\\\"skin\\\":\\\"#b98057\\\",\\\"cloth\\\":\\\"#3f62c0\\\",\\\"band\\\":\\\"#d84a3a\\\",\\\"hat\\\":\\\"#3a6a5a\\\",\\\"dou\\\":\\\"#28407e\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"rifle\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":null,\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#3f62c0\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"gun\",0,null,{\"w\":\"sakaizutsu\",\"a\":\"lamellar\",\"h\":\"kabuto\",\"horo\":\"#c8452c\"}]": [
+          0,
+          1
+        ],
+        "[\"arc\",0,null,null]": [
+          1,
+          0
+        ],
+        "[\"arc\",0,\"{\\\"faceSeed\\\":2115500323,\\\"hair\\\":\\\"twin\\\",\\\"hc\\\":\\\"#241e1b\\\",\\\"sex\\\":\\\"m\\\",\\\"skin\\\":\\\"#d9a77a\\\",\\\"cloth\\\":\\\"#3f62c0\\\",\\\"band\\\":\\\"#d84a3a\\\",\\\"hat\\\":\\\"#3a6a5a\\\",\\\"dou\\\":\\\"#28407e\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"yumi\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":null,\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#3f62c0\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"arc\",0,\"{\\\"faceSeed\\\":2098722704,\\\"hair\\\":\\\"bald\\\",\\\"hc\\\":\\\"#25262a\\\",\\\"sex\\\":\\\"f\\\",\\\"skin\\\":\\\"#b98057\\\",\\\"cloth\\\":\\\"#3f62c0\\\",\\\"band\\\":\\\"#d84a3a\\\",\\\"hat\\\":\\\"#3a6a5a\\\",\\\"dou\\\":\\\"#28407e\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"yumi\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":null,\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#3f62c0\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"arc\",0,null,{\"w\":\"yumi\",\"a\":\"lamellar\",\"h\":\"kabuto\",\"horo\":\"#c8452c\"}]": [
+          0
+        ],
+        "[\"cav\",0,null,null]": [
+          1,
+          0
+        ],
+        "[\"cav\",0,\"{\\\"faceSeed\\\":2218822044,\\\"hair\\\":\\\"cropped\\\",\\\"hc\\\":\\\"#574537\\\",\\\"sex\\\":\\\"m\\\",\\\"skin\\\":\\\"#b98057\\\",\\\"cloth\\\":\\\"#3f62c0\\\",\\\"band\\\":\\\"#d84a3a\\\",\\\"hat\\\":\\\"#3a6a5a\\\",\\\"dou\\\":\\\"#28407e\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"naginata\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":\\\"nanbu\\\",\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#3f62c0\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"cav\",0,\"{\\\"faceSeed\\\":3450611788,\\\"hair\\\":\\\"topknot\\\",\\\"hc\\\":\\\"#3c2a22\\\",\\\"sex\\\":\\\"m\\\",\\\"skin\\\":\\\"#f6d2b0\\\",\\\"cloth\\\":\\\"#3f62c0\\\",\\\"band\\\":\\\"#d84a3a\\\",\\\"hat\\\":\\\"#3a6a5a\\\",\\\"dou\\\":\\\"#28407e\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"naginata\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":\\\"nanbu\\\",\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#3f62c0\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"cav\",0,null,{\"w\":\"yari\",\"a\":\"lamellar\",\"h\":\"kabuto\",\"horo\":\"#c8452c\"}]": [
+          0,
+          1
+        ],
+        "[\"inf\",1,null,null]": [
+          0,
+          1
+        ],
+        "[\"inf\",1,\"{\\\"faceSeed\\\":395540465,\\\"hair\\\":\\\"topknot\\\",\\\"hc\\\":\\\"#25262a\\\",\\\"sex\\\":\\\"m\\\",\\\"skin\\\":\\\"#b98057\\\",\\\"cloth\\\":\\\"#c0392e\\\",\\\"band\\\":\\\"#e8c050\\\",\\\"hat\\\":\\\"#7a3a2a\\\",\\\"dou\\\":\\\"#7e2420\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"naginata\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":null,\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#c0392e\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"inf\",1,\"{\\\"faceSeed\\\":378762846,\\\"hair\\\":\\\"bun\\\",\\\"hc\\\":\\\"#574537\\\",\\\"sex\\\":\\\"m\\\",\\\"skin\\\":\\\"#f6d2b0\\\",\\\"cloth\\\":\\\"#c0392e\\\",\\\"band\\\":\\\"#e8c050\\\",\\\"hat\\\":\\\"#7a3a2a\\\",\\\"dou\\\":\\\"#7e2420\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"naginata\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":null,\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#c0392e\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"inf\",1,null,{\"w\":\"yari\",\"a\":\"lamellar\",\"h\":\"kabuto\",\"horo\":\"#1c1a24\"}]": [
+          1,
+          0
+        ],
+        "[\"gun\",1,null,null]": [
+          0,
+          1
+        ],
+        "[\"gun\",1,\"{\\\"faceSeed\\\":1901585137,\\\"hair\\\":\\\"long\\\",\\\"hc\\\":\\\"#25262a\\\",\\\"sex\\\":\\\"f\\\",\\\"skin\\\":\\\"#eec39a\\\",\\\"cloth\\\":\\\"#c0392e\\\",\\\"band\\\":\\\"#e8c050\\\",\\\"hat\\\":\\\"#7a3a2a\\\",\\\"dou\\\":\\\"#7e2420\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"rifle\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":null,\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#c0392e\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"gun\",1,\"{\\\"faceSeed\\\":1918362756,\\\"hair\\\":\\\"bob\\\",\\\"hc\\\":\\\"#241e1b\\\",\\\"sex\\\":\\\"m\\\",\\\"skin\\\":\\\"#eec39a\\\",\\\"cloth\\\":\\\"#c0392e\\\",\\\"band\\\":\\\"#e8c050\\\",\\\"hat\\\":\\\"#7a3a2a\\\",\\\"dou\\\":\\\"#7e2420\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"rifle\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":null,\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#c0392e\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"gun\",1,null,{\"w\":\"sakaizutsu\",\"a\":\"lamellar\",\"h\":\"kabuto\",\"horo\":\"#1c1a24\"}]": [
+          0,
+          1
+        ],
+        "[\"arc\",1,null,null]": [
+          0,
+          1
+        ],
+        "[\"arc\",1,\"{\\\"faceSeed\\\":2655868084,\\\"hair\\\":\\\"twin\\\",\\\"hc\\\":\\\"#25262a\\\",\\\"sex\\\":\\\"m\\\",\\\"skin\\\":\\\"#eec39a\\\",\\\"cloth\\\":\\\"#c0392e\\\",\\\"band\\\":\\\"#e8c050\\\",\\\"hat\\\":\\\"#7a3a2a\\\",\\\"dou\\\":\\\"#7e2420\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"yumi\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":null,\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#c0392e\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"arc\",1,\"{\\\"faceSeed\\\":2672645703,\\\"hair\\\":\\\"bald\\\",\\\"hc\\\":\\\"#241e1b\\\",\\\"sex\\\":\\\"f\\\",\\\"skin\\\":\\\"#f6d2b0\\\",\\\"cloth\\\":\\\"#c0392e\\\",\\\"band\\\":\\\"#e8c050\\\",\\\"hat\\\":\\\"#7a3a2a\\\",\\\"dou\\\":\\\"#7e2420\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"yumi\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":null,\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#c0392e\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"arc\",1,null,{\"w\":\"yumi\",\"a\":\"lamellar\",\"h\":\"kabuto\",\"horo\":\"#1c1a24\"}]": [
+          1,
+          0
+        ],
+        "[\"cav\",1,null,null]": [
+          0,
+          1
+        ],
+        "[\"cav\",1,\"{\\\"faceSeed\\\":262055379,\\\"hair\\\":\\\"cropped\\\",\\\"hc\\\":\\\"#25262a\\\",\\\"sex\\\":\\\"m\\\",\\\"skin\\\":\\\"#b98057\\\",\\\"cloth\\\":\\\"#c0392e\\\",\\\"band\\\":\\\"#e8c050\\\",\\\"hat\\\":\\\"#7a3a2a\\\",\\\"dou\\\":\\\"#7e2420\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"naginata\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":\\\"nanbu\\\",\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#c0392e\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"cav\",1,\"{\\\"faceSeed\\\":2312291649,\\\"hair\\\":\\\"topknot\\\",\\\"hc\\\":\\\"#241e1b\\\",\\\"sex\\\":\\\"m\\\",\\\"skin\\\":\\\"#d9a77a\\\",\\\"cloth\\\":\\\"#c0392e\\\",\\\"band\\\":\\\"#e8c050\\\",\\\"hat\\\":\\\"#7a3a2a\\\",\\\"dou\\\":\\\"#7e2420\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"naginata\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":\\\"nanbu\\\",\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#c0392e\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"cav\",1,null,{\"w\":\"yari\",\"a\":\"lamellar\",\"h\":\"kabuto\",\"horo\":\"#1c1a24\"}]": [
+          0,
+          1
+        ]
+      },
+      "atlasMB": 18.978775024414062,
+      "canvas": [
+        860,
+        1864
+      ],
+      "startMB": 39.3031005859375,
+      "endMB": 39.336822509765625,
+      "seconds": 8.400000000000103,
+      "updateMedian": 0.5,
+      "updateP95": 5.800000000745058,
+      "renderMedian": 7.800000000745058,
+      "renderP95": 41.30000000074506,
+      "canvasesCreated": 18,
+      "renderCanvases": 0,
+      "setsBefore": 47,
+      "setsAfter": 47,
+      "maxMB": 39.336822509765625,
+      "residual": -6.821210263296962e-13
+    },
+    {
+      "cap": 192,
+      "officers": 0,
+      "models": 960,
+      "extras": 0,
+      "artSets": 16,
+      "rigFamilies": {
+        "[\"inf\",0,null,null]": [
+          1,
+          0
+        ],
+        "[\"gun\",0,null,null]": [
+          1,
+          0
+        ],
+        "[\"arc\",0,null,null]": [
+          1,
+          0
+        ],
+        "[\"cav\",0,null,null]": [
+          1,
+          0
+        ],
+        "[\"inf\",1,null,null]": [
+          0,
+          1
+        ],
+        "[\"gun\",1,null,null]": [
+          0,
+          1
+        ],
+        "[\"arc\",1,null,null]": [
+          0,
+          1
+        ],
+        "[\"cav\",1,null,null]": [
+          0,
+          1
+        ]
+      },
+      "atlasMB": 4.8330078125,
+      "canvas": [
+        860,
+        1864
+      ],
+      "startMB": 20.892173767089844,
+      "endMB": 20.92609405517578,
+      "seconds": 8.400000000000103,
+      "updateMedian": 0.4000000022351742,
+      "updateP95": 3.5,
+      "renderMedian": 8.100000001490116,
+      "renderP95": 34.599999997764826,
+      "canvasesCreated": 18,
+      "renderCanvases": 0,
+      "setsBefore": 16,
+      "setsAfter": 16,
+      "maxMB": 20.92034149169922,
+      "residual": -4.547473508864641e-13
+    },
+    {
+      "cap": 192,
+      "officers": 16,
+      "models": 960,
+      "extras": 48,
+      "artSets": 48,
+      "rigFamilies": {
+        "[\"inf\",0,null,null]": [
+          1,
+          0
+        ],
+        "[\"inf\",0,\"{\\\"faceSeed\\\":822475626,\\\"hair\\\":\\\"topknot\\\",\\\"hc\\\":\\\"#3c2a22\\\",\\\"sex\\\":\\\"m\\\",\\\"skin\\\":\\\"#d9a77a\\\",\\\"cloth\\\":\\\"#3f62c0\\\",\\\"band\\\":\\\"#d84a3a\\\",\\\"hat\\\":\\\"#3a6a5a\\\",\\\"dou\\\":\\\"#28407e\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"naginata\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":null,\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#3f62c0\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"inf\",0,\"{\\\"faceSeed\\\":839253245,\\\"hair\\\":\\\"bun\\\",\\\"hc\\\":\\\"#574537\\\",\\\"sex\\\":\\\"m\\\",\\\"skin\\\":\\\"#eec39a\\\",\\\"cloth\\\":\\\"#3f62c0\\\",\\\"band\\\":\\\"#d84a3a\\\",\\\"hat\\\":\\\"#3a6a5a\\\",\\\"dou\\\":\\\"#28407e\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"naginata\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":null,\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#3f62c0\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"inf\",0,null,{\"w\":\"yari\",\"a\":\"lamellar\",\"h\":\"kabuto\",\"horo\":\"#c8452c\"}]": [
+          0,
+          1
+        ],
+        "[\"gun\",0,null,null]": [
+          1,
+          0
+        ],
+        "[\"gun\",0,\"{\\\"faceSeed\\\":1731604922,\\\"hair\\\":\\\"long\\\",\\\"hc\\\":\\\"#574537\\\",\\\"sex\\\":\\\"f\\\",\\\"skin\\\":\\\"#b98057\\\",\\\"cloth\\\":\\\"#3f62c0\\\",\\\"band\\\":\\\"#d84a3a\\\",\\\"hat\\\":\\\"#3a6a5a\\\",\\\"dou\\\":\\\"#28407e\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"rifle\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":null,\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#3f62c0\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"gun\",0,\"{\\\"faceSeed\\\":1647716827,\\\"hair\\\":\\\"bob\\\",\\\"hc\\\":\\\"#574537\\\",\\\"sex\\\":\\\"m\\\",\\\"skin\\\":\\\"#b98057\\\",\\\"cloth\\\":\\\"#3f62c0\\\",\\\"band\\\":\\\"#d84a3a\\\",\\\"hat\\\":\\\"#3a6a5a\\\",\\\"dou\\\":\\\"#28407e\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"rifle\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":null,\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#3f62c0\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"gun\",0,null,{\"w\":\"sakaizutsu\",\"a\":\"lamellar\",\"h\":\"kabuto\",\"horo\":\"#c8452c\"}]": [
+          1,
+          0
+        ],
+        "[\"arc\",0,null,null]": [
+          1,
+          0
+        ],
+        "[\"arc\",0,\"{\\\"faceSeed\\\":2115500323,\\\"hair\\\":\\\"twin\\\",\\\"hc\\\":\\\"#241e1b\\\",\\\"sex\\\":\\\"m\\\",\\\"skin\\\":\\\"#d9a77a\\\",\\\"cloth\\\":\\\"#3f62c0\\\",\\\"band\\\":\\\"#d84a3a\\\",\\\"hat\\\":\\\"#3a6a5a\\\",\\\"dou\\\":\\\"#28407e\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"yumi\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":null,\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#3f62c0\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"arc\",0,\"{\\\"faceSeed\\\":2098722704,\\\"hair\\\":\\\"bald\\\",\\\"hc\\\":\\\"#25262a\\\",\\\"sex\\\":\\\"f\\\",\\\"skin\\\":\\\"#b98057\\\",\\\"cloth\\\":\\\"#3f62c0\\\",\\\"band\\\":\\\"#d84a3a\\\",\\\"hat\\\":\\\"#3a6a5a\\\",\\\"dou\\\":\\\"#28407e\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"yumi\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":null,\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#3f62c0\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"arc\",0,null,{\"w\":\"yumi\",\"a\":\"lamellar\",\"h\":\"kabuto\",\"horo\":\"#c8452c\"}]": [
+          1,
+          0
+        ],
+        "[\"cav\",0,null,null]": [
+          1,
+          0
+        ],
+        "[\"cav\",0,\"{\\\"faceSeed\\\":2218822044,\\\"hair\\\":\\\"cropped\\\",\\\"hc\\\":\\\"#574537\\\",\\\"sex\\\":\\\"m\\\",\\\"skin\\\":\\\"#b98057\\\",\\\"cloth\\\":\\\"#3f62c0\\\",\\\"band\\\":\\\"#d84a3a\\\",\\\"hat\\\":\\\"#3a6a5a\\\",\\\"dou\\\":\\\"#28407e\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"naginata\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":\\\"nanbu\\\",\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#3f62c0\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"cav\",0,\"{\\\"faceSeed\\\":3450611788,\\\"hair\\\":\\\"topknot\\\",\\\"hc\\\":\\\"#3c2a22\\\",\\\"sex\\\":\\\"m\\\",\\\"skin\\\":\\\"#f6d2b0\\\",\\\"cloth\\\":\\\"#3f62c0\\\",\\\"band\\\":\\\"#d84a3a\\\",\\\"hat\\\":\\\"#3a6a5a\\\",\\\"dou\\\":\\\"#28407e\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"naginata\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":\\\"nanbu\\\",\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#3f62c0\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"cav\",0,null,{\"w\":\"yari\",\"a\":\"lamellar\",\"h\":\"kabuto\",\"horo\":\"#c8452c\"}]": [
+          1,
+          0
+        ],
+        "[\"inf\",1,null,null]": [
+          0,
+          1
+        ],
+        "[\"inf\",1,\"{\\\"faceSeed\\\":395540465,\\\"hair\\\":\\\"topknot\\\",\\\"hc\\\":\\\"#25262a\\\",\\\"sex\\\":\\\"m\\\",\\\"skin\\\":\\\"#b98057\\\",\\\"cloth\\\":\\\"#c0392e\\\",\\\"band\\\":\\\"#e8c050\\\",\\\"hat\\\":\\\"#7a3a2a\\\",\\\"dou\\\":\\\"#7e2420\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"naginata\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":null,\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#c0392e\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"inf\",1,\"{\\\"faceSeed\\\":378762846,\\\"hair\\\":\\\"bun\\\",\\\"hc\\\":\\\"#574537\\\",\\\"sex\\\":\\\"m\\\",\\\"skin\\\":\\\"#f6d2b0\\\",\\\"cloth\\\":\\\"#c0392e\\\",\\\"band\\\":\\\"#e8c050\\\",\\\"hat\\\":\\\"#7a3a2a\\\",\\\"dou\\\":\\\"#7e2420\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"naginata\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":null,\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#c0392e\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"inf\",1,null,{\"w\":\"yari\",\"a\":\"lamellar\",\"h\":\"kabuto\",\"horo\":\"#1c1a24\"}]": [
+          0,
+          1
+        ],
+        "[\"gun\",1,null,null]": [
+          0,
+          1
+        ],
+        "[\"gun\",1,\"{\\\"faceSeed\\\":1901585137,\\\"hair\\\":\\\"long\\\",\\\"hc\\\":\\\"#25262a\\\",\\\"sex\\\":\\\"f\\\",\\\"skin\\\":\\\"#eec39a\\\",\\\"cloth\\\":\\\"#c0392e\\\",\\\"band\\\":\\\"#e8c050\\\",\\\"hat\\\":\\\"#7a3a2a\\\",\\\"dou\\\":\\\"#7e2420\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"rifle\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":null,\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#c0392e\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"gun\",1,\"{\\\"faceSeed\\\":1918362756,\\\"hair\\\":\\\"bob\\\",\\\"hc\\\":\\\"#241e1b\\\",\\\"sex\\\":\\\"m\\\",\\\"skin\\\":\\\"#eec39a\\\",\\\"cloth\\\":\\\"#c0392e\\\",\\\"band\\\":\\\"#e8c050\\\",\\\"hat\\\":\\\"#7a3a2a\\\",\\\"dou\\\":\\\"#7e2420\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"rifle\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":null,\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#c0392e\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"gun\",1,null,{\"w\":\"sakaizutsu\",\"a\":\"lamellar\",\"h\":\"kabuto\",\"horo\":\"#1c1a24\"}]": [
+          1,
+          0
+        ],
+        "[\"arc\",1,null,null]": [
+          0,
+          1
+        ],
+        "[\"arc\",1,\"{\\\"faceSeed\\\":2655868084,\\\"hair\\\":\\\"twin\\\",\\\"hc\\\":\\\"#25262a\\\",\\\"sex\\\":\\\"m\\\",\\\"skin\\\":\\\"#eec39a\\\",\\\"cloth\\\":\\\"#c0392e\\\",\\\"band\\\":\\\"#e8c050\\\",\\\"hat\\\":\\\"#7a3a2a\\\",\\\"dou\\\":\\\"#7e2420\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"yumi\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":null,\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#c0392e\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"arc\",1,\"{\\\"faceSeed\\\":2672645703,\\\"hair\\\":\\\"bald\\\",\\\"hc\\\":\\\"#241e1b\\\",\\\"sex\\\":\\\"f\\\",\\\"skin\\\":\\\"#f6d2b0\\\",\\\"cloth\\\":\\\"#c0392e\\\",\\\"band\\\":\\\"#e8c050\\\",\\\"hat\\\":\\\"#7a3a2a\\\",\\\"dou\\\":\\\"#7e2420\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"yumi\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":null,\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#c0392e\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"arc\",1,null,{\"w\":\"yumi\",\"a\":\"lamellar\",\"h\":\"kabuto\",\"horo\":\"#1c1a24\"}]": [
+          1,
+          0
+        ],
+        "[\"cav\",1,null,null]": [
+          0,
+          1
+        ],
+        "[\"cav\",1,\"{\\\"faceSeed\\\":262055379,\\\"hair\\\":\\\"cropped\\\",\\\"hc\\\":\\\"#25262a\\\",\\\"sex\\\":\\\"m\\\",\\\"skin\\\":\\\"#b98057\\\",\\\"cloth\\\":\\\"#c0392e\\\",\\\"band\\\":\\\"#e8c050\\\",\\\"hat\\\":\\\"#7a3a2a\\\",\\\"dou\\\":\\\"#7e2420\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"naginata\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":\\\"nanbu\\\",\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#c0392e\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"cav\",1,\"{\\\"faceSeed\\\":2312291649,\\\"hair\\\":\\\"topknot\\\",\\\"hc\\\":\\\"#241e1b\\\",\\\"sex\\\":\\\"m\\\",\\\"skin\\\":\\\"#d9a77a\\\",\\\"cloth\\\":\\\"#c0392e\\\",\\\"band\\\":\\\"#e8c050\\\",\\\"hat\\\":\\\"#7a3a2a\\\",\\\"dou\\\":\\\"#7e2420\\\",\\\"lace\\\":\\\"#d5ac62\\\",\\\"mask\\\":false,\\\"sashi\\\":null,\\\"gear\\\":{\\\"w\\\":\\\"naginata\\\",\\\"a\\\":\\\"kokuyo_gusoku\\\",\\\"h\\\":\\\"eboshi_samurai\\\",\\\"m\\\":\\\"nanbu\\\",\\\"s\\\":null,\\\"s2\\\":null},\\\"baseCloth\\\":\\\"#c0392e\\\",\\\"baseMask\\\":false}\",null]": [
+          0
+        ],
+        "[\"cav\",1,null,{\"w\":\"yari\",\"a\":\"lamellar\",\"h\":\"kabuto\",\"horo\":\"#1c1a24\"}]": [
+          1,
+          0
+        ]
+      },
+      "atlasMB": 19.146621704101562,
+      "canvas": [
+        860,
+        1864
+      ],
+      "startMB": 39.54693603515625,
+      "endMB": 39.57530212402344,
+      "seconds": 8.400000000000103,
+      "updateMedian": 0.6999999992549419,
+      "updateP95": 7.799999997019768,
+      "renderMedian": 13.700000002980232,
+      "renderP95": 51.69999999925494,
+      "canvasesCreated": 15,
+      "renderCanvases": 0,
+      "setsBefore": 48,
+      "setsAfter": 48,
+      "maxMB": 39.57530212402344,
+      "residual": -4.547473508864641e-13
+    }
+  ],
+  "errors": [],
+  "checks": 25
+}

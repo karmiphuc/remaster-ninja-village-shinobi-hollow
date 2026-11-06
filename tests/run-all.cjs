@@ -14,6 +14,7 @@ ALL.push('enemy-growth');
 ALL.push('battle-deployment');
 ALL.push('battle-deployment-review');
 ALL.push('doubled-armies');
+ALL.push('infantry-cap');
 const pick = process.argv.slice(2), suites = pick.length ? ALL.filter(s => pick.includes(s)) : ALL;
 const unknown = pick.filter(s => !ALL.includes(s));
 if (unknown.length) { console.error('Unknown suite(s): ' + unknown.join(', ') + '. Known: ' + ALL.join(', ')); process.exit(2); }

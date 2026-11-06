@@ -1,0 +1,603 @@
+{
+  "baseline": "1d583913b04fbea4b31fc0afcb9305c803a8f3f0",
+  "cases": [
+    {
+      "name": "full",
+      "before": {
+        "models": 768,
+        "extras": 0,
+        "groups": [
+          {
+            "type": "inf",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "gun",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "arc",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "cav",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "inf",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "gun",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "arc",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "cav",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          }
+        ],
+        "valid": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "pools": [
+          768,
+          440
+        ],
+        "residual": 0
+      },
+      "after": {
+        "models": 960,
+        "extras": 0,
+        "groups": [
+          {
+            "type": "inf",
+            "n": 192,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "gun",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "arc",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "cav",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "inf",
+            "n": 192,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "gun",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "arc",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "cav",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          }
+        ],
+        "valid": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "pools": [
+          768,
+          440
+        ],
+        "residual": 0
+      }
+    },
+    {
+      "name": "mixed",
+      "before": {
+        "models": 226,
+        "extras": 0,
+        "groups": [
+          {
+            "type": "inf",
+            "n": 48,
+            "troops": 2000,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "gun",
+            "n": 20,
+            "troops": 800,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "arc",
+            "n": 8,
+            "troops": 300,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "cav",
+            "n": 6,
+            "troops": 100,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "inf",
+            "n": 96,
+            "troops": 4000,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "gun",
+            "n": 30,
+            "troops": 1200,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "arc",
+            "n": 12,
+            "troops": 500,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "cav",
+            "n": 6,
+            "troops": 200,
+            "atk": 0.01,
+            "def": 30
+          }
+        ],
+        "valid": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "pools": [
+          768,
+          440
+        ],
+        "residual": 0
+      },
+      "after": {
+        "models": 370,
+        "extras": 0,
+        "groups": [
+          {
+            "type": "inf",
+            "n": 96,
+            "troops": 2000,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "gun",
+            "n": 20,
+            "troops": 800,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "arc",
+            "n": 8,
+            "troops": 300,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "cav",
+            "n": 6,
+            "troops": 100,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "inf",
+            "n": 192,
+            "troops": 4000,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "gun",
+            "n": 30,
+            "troops": 1200,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "arc",
+            "n": 12,
+            "troops": 500,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "cav",
+            "n": 6,
+            "troops": 200,
+            "atk": 0.01,
+            "def": 30
+          }
+        ],
+        "valid": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "pools": [
+          768,
+          440
+        ],
+        "residual": 0
+      }
+    },
+    {
+      "name": "tiny",
+      "before": {
+        "models": 12,
+        "extras": 0,
+        "groups": [
+          {
+            "type": "inf",
+            "n": 3,
+            "troops": 3,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "gun",
+            "n": 1,
+            "troops": 1,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "arc",
+            "n": 2,
+            "troops": 2,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "inf",
+            "n": 3,
+            "troops": 3,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "gun",
+            "n": 1,
+            "troops": 1,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "arc",
+            "n": 2,
+            "troops": 2,
+            "atk": 0.01,
+            "def": 30
+          }
+        ],
+        "valid": [
+          "",
+          "",
+          ""
+        ],
+        "pools": [
+          768,
+          440
+        ],
+        "residual": 0
+      },
+      "after": {
+        "models": 12,
+        "extras": 0,
+        "groups": [
+          {
+            "type": "inf",
+            "n": 3,
+            "troops": 3,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "gun",
+            "n": 1,
+            "troops": 1,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "arc",
+            "n": 2,
+            "troops": 2,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "inf",
+            "n": 3,
+            "troops": 3,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "gun",
+            "n": 1,
+            "troops": 1,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "arc",
+            "n": 2,
+            "troops": 2,
+            "atk": 0.01,
+            "def": 30
+          }
+        ],
+        "valid": [
+          "",
+          "",
+          ""
+        ],
+        "pools": [
+          768,
+          440
+        ],
+        "residual": 0
+      }
+    },
+    {
+      "name": "mounted",
+      "before": {
+        "models": 768,
+        "extras": 48,
+        "groups": [
+          {
+            "type": "inf",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "gun",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "arc",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "cav",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "inf",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "gun",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "arc",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "cav",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          }
+        ],
+        "valid": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "pools": [
+          768,
+          440
+        ],
+        "residual": 0
+      },
+      "after": {
+        "models": 960,
+        "extras": 48,
+        "groups": [
+          {
+            "type": "inf",
+            "n": 192,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "gun",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "arc",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "cav",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "inf",
+            "n": 192,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "gun",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "arc",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          },
+          {
+            "type": "cav",
+            "n": 96,
+            "troops": 720,
+            "atk": 0.01,
+            "def": 30
+          }
+        ],
+        "valid": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "pools": [
+          768,
+          440
+        ],
+        "residual": 0
+      }
+    }
+  ],
+  "errors": [],
+  "shapes": [
+    {
+      "inf": "loose",
+      "valid": true,
+      "models": 960
+    },
+    {
+      "inf": "pikewall",
+      "valid": true,
+      "models": 960
+    }
+  ],
+  "stress": {
+    "models": 960,
+    "extras": 48,
+    "unique": 1008,
+    "time": 4.19999999999999,
+    "residual": -1.5780710072021975e-12
+  },
+  "memory": {
+    "start": {
+      "canvases": 3110,
+      "mb": 43.62586975097656
+    },
+    "end": {
+      "canvases": 3110,
+      "mb": 43.62586975097656
+    },
+    "drawCanvases": 0
+  },
+  "checks": 73
+}
