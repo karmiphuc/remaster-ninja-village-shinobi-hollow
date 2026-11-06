@@ -1,0 +1,1663 @@
+{
+  "baseline": "1c92ede4d34b5f90a36063e7f6f8b76aa8640954",
+  "cases": [
+    {
+      "name": "full",
+      "before": {
+        "models": 384,
+        "extras": 0,
+        "counts": [
+          48,
+          48,
+          48,
+          48,
+          48,
+          48,
+          48,
+          48
+        ],
+        "troops": [
+          720,
+          720,
+          720,
+          720,
+          720,
+          720,
+          720,
+          720
+        ],
+        "stats": [
+          [
+            0.01,
+            30,
+            720
+          ],
+          [
+            0.01,
+            30,
+            720
+          ],
+          [
+            0.01,
+            30,
+            720
+          ],
+          [
+            0.01,
+            30,
+            720
+          ],
+          [
+            0.01,
+            30,
+            720
+          ],
+          [
+            0.01,
+            30,
+            720
+          ],
+          [
+            0.01,
+            30,
+            720
+          ],
+          [
+            0.01,
+            30,
+            720
+          ]
+        ],
+        "valid": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "boxes": [
+          {
+            "side": 0,
+            "left": 461,
+            "right": 590,
+            "top": 243.70000000000002,
+            "bottom": 596.3
+          },
+          {
+            "side": 0,
+            "left": 275,
+            "right": 450,
+            "top": 180.9,
+            "bottom": 599.1
+          },
+          {
+            "side": 0,
+            "left": 108,
+            "right": 260,
+            "top": 256.6,
+            "bottom": 543.4
+          },
+          {
+            "side": 0,
+            "left": 77,
+            "right": 313,
+            "top": 612.5,
+            "bottom": 947.5
+          },
+          {
+            "side": 1,
+            "left": 810,
+            "right": 939,
+            "top": 243.70000000000002,
+            "bottom": 596.3
+          },
+          {
+            "side": 1,
+            "left": 950,
+            "right": 1125,
+            "top": 180.9,
+            "bottom": 599.1
+          },
+          {
+            "side": 1,
+            "left": 1140,
+            "right": 1292,
+            "top": 212.5,
+            "bottom": 587.5
+          },
+          {
+            "side": 1,
+            "left": 1087,
+            "right": 1358,
+            "top": 635.81,
+            "bottom": 924.19
+          }
+        ],
+        "pools": [
+          384,
+          220
+        ],
+        "residual": 0,
+        "version": 1
+      },
+      "after": {
+        "models": 768,
+        "extras": 0,
+        "counts": [
+          96,
+          96,
+          96,
+          96,
+          96,
+          96,
+          96,
+          96
+        ],
+        "troops": [
+          720,
+          720,
+          720,
+          720,
+          720,
+          720,
+          720,
+          720
+        ],
+        "stats": [
+          [
+            0.01,
+            30,
+            720
+          ],
+          [
+            0.01,
+            30,
+            720
+          ],
+          [
+            0.01,
+            30,
+            720
+          ],
+          [
+            0.01,
+            30,
+            720
+          ],
+          [
+            0.01,
+            30,
+            720
+          ],
+          [
+            0.01,
+            30,
+            720
+          ],
+          [
+            0.01,
+            30,
+            720
+          ],
+          [
+            0.01,
+            30,
+            720
+          ]
+        ],
+        "valid": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "boxes": [
+          {
+            "side": 0,
+            "left": 461.5,
+            "right": 602,
+            "top": 231.70000000000002,
+            "bottom": 590.95
+          },
+          {
+            "side": 0,
+            "left": 263.5,
+            "right": 450,
+            "top": 177.9,
+            "bottom": 587.1
+          },
+          {
+            "side": 0,
+            "left": 84.5,
+            "right": 248,
+            "top": 244.60000000000002,
+            "bottom": 537.7
+          },
+          {
+            "side": 0,
+            "left": 61,
+            "right": 313,
+            "top": 605.75,
+            "bottom": 950
+          },
+          {
+            "side": 1,
+            "left": 810,
+            "right": 950.5,
+            "top": 243.70000000000002,
+            "bottom": 602.95
+          },
+          {
+            "side": 1,
+            "left": 950,
+            "right": 1136.5,
+            "top": 189.9,
+            "bottom": 599.1
+          },
+          {
+            "side": 1,
+            "left": 1140,
+            "right": 1303.5,
+            "top": 212.5,
+            "bottom": 596.25
+          },
+          {
+            "side": 1,
+            "left": 1068,
+            "right": 1355,
+            "top": 635.81,
+            "bottom": 931.775
+          }
+        ],
+        "pools": [
+          768,
+          440
+        ],
+        "residual": 0,
+        "version": 1
+      }
+    },
+    {
+      "name": "mixed",
+      "before": {
+        "models": 180,
+        "extras": 0,
+        "counts": [
+          48,
+          24,
+          16,
+          4,
+          40,
+          20,
+          20,
+          8
+        ],
+        "troops": [
+          1200,
+          600,
+          400,
+          100,
+          1000,
+          500,
+          500,
+          200
+        ],
+        "stats": [
+          [
+            0.01,
+            30,
+            1200
+          ],
+          [
+            0.01,
+            30,
+            600
+          ],
+          [
+            0.01,
+            30,
+            400
+          ],
+          [
+            0.01,
+            30,
+            100
+          ],
+          [
+            0.01,
+            30,
+            1000
+          ],
+          [
+            0.01,
+            30,
+            500
+          ],
+          [
+            0.01,
+            30,
+            500
+          ],
+          [
+            0.01,
+            30,
+            200
+          ]
+        ],
+        "valid": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "boxes": [
+          {
+            "side": 0,
+            "left": 461,
+            "right": 590,
+            "top": 243.70000000000002,
+            "bottom": 596.3
+          },
+          {
+            "side": 0,
+            "left": 344,
+            "right": 450,
+            "top": 180.9,
+            "bottom": 599.1
+          },
+          {
+            "side": 0,
+            "left": 177,
+            "right": 260,
+            "top": 256.6,
+            "bottom": 543.4
+          },
+          {
+            "side": 0,
+            "left": 237,
+            "right": 313,
+            "top": 686.5,
+            "bottom": 873.5
+          },
+          {
+            "side": 1,
+            "left": 810,
+            "right": 939,
+            "top": 243.70000000000002,
+            "bottom": 596.3
+          },
+          {
+            "side": 1,
+            "left": 950,
+            "right": 1056,
+            "top": 180.9,
+            "bottom": 599.1
+          },
+          {
+            "side": 1,
+            "left": 1140,
+            "right": 1223,
+            "top": 212.5,
+            "bottom": 587.5
+          },
+          {
+            "side": 1,
+            "left": 1087,
+            "right": 1198,
+            "top": 635.81,
+            "bottom": 924.19
+          }
+        ],
+        "pools": [
+          384,
+          220
+        ],
+        "residual": 0,
+        "version": 1
+      },
+      "after": {
+        "models": 360,
+        "extras": 0,
+        "counts": [
+          96,
+          48,
+          32,
+          8,
+          80,
+          40,
+          40,
+          16
+        ],
+        "troops": [
+          1200,
+          600,
+          400,
+          100,
+          1000,
+          500,
+          500,
+          200
+        ],
+        "stats": [
+          [
+            0.01,
+            30,
+            1200
+          ],
+          [
+            0.01,
+            30,
+            600
+          ],
+          [
+            0.01,
+            30,
+            400
+          ],
+          [
+            0.01,
+            30,
+            100
+          ],
+          [
+            0.01,
+            30,
+            1000
+          ],
+          [
+            0.01,
+            30,
+            500
+          ],
+          [
+            0.01,
+            30,
+            500
+          ],
+          [
+            0.01,
+            30,
+            200
+          ]
+        ],
+        "valid": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "boxes": [
+          {
+            "side": 0,
+            "left": 449.5,
+            "right": 590,
+            "top": 243.70000000000002,
+            "bottom": 602.95
+          },
+          {
+            "side": 0,
+            "left": 320.5,
+            "right": 438,
+            "top": 177.9,
+            "bottom": 587.1
+          },
+          {
+            "side": 0,
+            "left": 165.5,
+            "right": 260,
+            "top": 256.6,
+            "bottom": 549.7
+          },
+          {
+            "side": 0,
+            "left": 237,
+            "right": 313,
+            "top": 612.5,
+            "bottom": 947.5
+          },
+          {
+            "side": 1,
+            "left": 810,
+            "right": 939,
+            "top": 243.70000000000002,
+            "bottom": 602.95
+          },
+          {
+            "side": 1,
+            "left": 950,
+            "right": 1056,
+            "top": 189.9,
+            "bottom": 599.1
+          },
+          {
+            "side": 1,
+            "left": 1140,
+            "right": 1234.5,
+            "top": 212.5,
+            "bottom": 596.25
+          },
+          {
+            "side": 1,
+            "left": 1087,
+            "right": 1214,
+            "top": 635.81,
+            "bottom": 931.775
+          }
+        ],
+        "pools": [
+          768,
+          440
+        ],
+        "residual": 0,
+        "version": 1
+      }
+    },
+    {
+      "name": "tiny",
+      "before": {
+        "models": 12,
+        "extras": 0,
+        "counts": [
+          3,
+          1,
+          2,
+          3,
+          1,
+          2
+        ],
+        "troops": [
+          3,
+          1,
+          2,
+          3,
+          1,
+          2
+        ],
+        "stats": [
+          [
+            0.01,
+            30,
+            3
+          ],
+          [
+            0.01,
+            30,
+            1
+          ],
+          [
+            0.01,
+            30,
+            2
+          ],
+          [
+            0.01,
+            30,
+            3
+          ],
+          [
+            0.01,
+            30,
+            1
+          ],
+          [
+            0.01,
+            30,
+            2
+          ]
+        ],
+        "valid": [
+          "",
+          "",
+          ""
+        ],
+        "boxes": [
+          {
+            "side": 0,
+            "left": 530,
+            "right": 590,
+            "top": 363.4,
+            "bottom": 476.6
+          },
+          {
+            "side": 0,
+            "left": 390,
+            "right": 450,
+            "top": 360,
+            "bottom": 420
+          },
+          {
+            "side": 0,
+            "left": 200,
+            "right": 260,
+            "top": 357.4,
+            "bottom": 442.6
+          },
+          {
+            "side": 1,
+            "left": 810,
+            "right": 870,
+            "top": 363.4,
+            "bottom": 476.6
+          },
+          {
+            "side": 1,
+            "left": 950,
+            "right": 1010,
+            "top": 360,
+            "bottom": 420
+          },
+          {
+            "side": 1,
+            "left": 1140,
+            "right": 1200,
+            "top": 352.5,
+            "bottom": 447.5
+          }
+        ],
+        "pools": [
+          384,
+          220
+        ],
+        "residual": 0,
+        "version": 1
+      },
+      "after": {
+        "models": 12,
+        "extras": 0,
+        "counts": [
+          3,
+          1,
+          2,
+          3,
+          1,
+          2
+        ],
+        "troops": [
+          3,
+          1,
+          2,
+          3,
+          1,
+          2
+        ],
+        "stats": [
+          [
+            0.01,
+            30,
+            3
+          ],
+          [
+            0.01,
+            30,
+            1
+          ],
+          [
+            0.01,
+            30,
+            2
+          ],
+          [
+            0.01,
+            30,
+            3
+          ],
+          [
+            0.01,
+            30,
+            1
+          ],
+          [
+            0.01,
+            30,
+            2
+          ]
+        ],
+        "valid": [
+          "",
+          "",
+          ""
+        ],
+        "boxes": [
+          {
+            "side": 0,
+            "left": 530,
+            "right": 590,
+            "top": 363.4,
+            "bottom": 476.6
+          },
+          {
+            "side": 0,
+            "left": 390,
+            "right": 450,
+            "top": 360,
+            "bottom": 420
+          },
+          {
+            "side": 0,
+            "left": 200,
+            "right": 260,
+            "top": 357.4,
+            "bottom": 442.6
+          },
+          {
+            "side": 1,
+            "left": 810,
+            "right": 870,
+            "top": 363.4,
+            "bottom": 476.6
+          },
+          {
+            "side": 1,
+            "left": 950,
+            "right": 1010,
+            "top": 360,
+            "bottom": 420
+          },
+          {
+            "side": 1,
+            "left": 1140,
+            "right": 1200,
+            "top": 352.5,
+            "bottom": 447.5
+          }
+        ],
+        "pools": [
+          768,
+          440
+        ],
+        "residual": 0,
+        "version": 1
+      }
+    },
+    {
+      "name": "mounted",
+      "before": {
+        "models": 376,
+        "extras": 48,
+        "counts": [
+          47,
+          47,
+          47,
+          47,
+          47,
+          47,
+          47,
+          47
+        ],
+        "troops": [
+          750,
+          750,
+          750,
+          750,
+          750,
+          750,
+          750,
+          750
+        ],
+        "stats": [
+          [
+            0.01,
+            30,
+            750
+          ],
+          [
+            0.01,
+            30,
+            750
+          ],
+          [
+            0.01,
+            30,
+            750
+          ],
+          [
+            0.01,
+            30,
+            750
+          ],
+          [
+            0.01,
+            30,
+            750
+          ],
+          [
+            0.01,
+            30,
+            750
+          ],
+          [
+            0.01,
+            30,
+            750
+          ],
+          [
+            0.01,
+            30,
+            750
+          ]
+        ],
+        "valid": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "boxes": [
+          {
+            "side": 0,
+            "left": 477,
+            "right": 622,
+            "top": 211.70000000000002,
+            "bottom": 580.3
+          },
+          {
+            "side": 0,
+            "left": 267,
+            "right": 458,
+            "top": 160.9,
+            "bottom": 595.1
+          },
+          {
+            "side": 0,
+            "left": 88,
+            "right": 256,
+            "top": 236.60000000000002,
+            "bottom": 539.4
+          },
+          {
+            "side": 0,
+            "left": 77,
+            "right": 313,
+            "top": 612.5,
+            "bottom": 947.5
+          },
+          {
+            "side": 1,
+            "left": 802,
+            "right": 947,
+            "top": 235.70000000000002,
+            "bottom": 604.3
+          },
+          {
+            "side": 1,
+            "left": 942,
+            "right": 1133,
+            "top": 172.9,
+            "bottom": 607.1
+          },
+          {
+            "side": 1,
+            "left": 1132,
+            "right": 1300,
+            "top": 204.5,
+            "bottom": 595.5
+          },
+          {
+            "side": 1,
+            "left": 1087,
+            "right": 1358,
+            "top": 635.81,
+            "bottom": 924.19
+          }
+        ],
+        "pools": [
+          384,
+          220
+        ],
+        "residual": 0,
+        "version": 1
+      },
+      "after": {
+        "models": 752,
+        "extras": 48,
+        "counts": [
+          94,
+          94,
+          94,
+          94,
+          94,
+          94,
+          94,
+          94
+        ],
+        "troops": [
+          750,
+          750,
+          750,
+          750,
+          750,
+          750,
+          750,
+          750
+        ],
+        "stats": [
+          [
+            0.01,
+            30,
+            750
+          ],
+          [
+            0.01,
+            30,
+            750
+          ],
+          [
+            0.01,
+            30,
+            750
+          ],
+          [
+            0.01,
+            30,
+            750
+          ],
+          [
+            0.01,
+            30,
+            750
+          ],
+          [
+            0.01,
+            30,
+            750
+          ],
+          [
+            0.01,
+            30,
+            750
+          ],
+          [
+            0.01,
+            30,
+            750
+          ]
+        ],
+        "valid": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "boxes": [
+          {
+            "side": 0,
+            "left": 477.5,
+            "right": 634,
+            "top": 199.70000000000002,
+            "bottom": 574.95
+          },
+          {
+            "side": 0,
+            "left": 255.5,
+            "right": 458,
+            "top": 169.9,
+            "bottom": 595.1
+          },
+          {
+            "side": 0,
+            "left": 64.5,
+            "right": 244,
+            "top": 224.60000000000002,
+            "bottom": 533.7
+          },
+          {
+            "side": 0,
+            "left": 61,
+            "right": 313,
+            "top": 605.75,
+            "bottom": 950
+          },
+          {
+            "side": 1,
+            "left": 802,
+            "right": 958.5,
+            "top": 235.70000000000002,
+            "bottom": 610.95
+          },
+          {
+            "side": 1,
+            "left": 942,
+            "right": 1144.5,
+            "top": 181.9,
+            "bottom": 607.1
+          },
+          {
+            "side": 1,
+            "left": 1132,
+            "right": 1311.5,
+            "top": 204.5,
+            "bottom": 604.25
+          },
+          {
+            "side": 1,
+            "left": 1068,
+            "right": 1355,
+            "top": 635.81,
+            "bottom": 931.775
+          }
+        ],
+        "pools": [
+          768,
+          440
+        ],
+        "residual": 0,
+        "version": 1
+      }
+    }
+  ],
+  "math": {
+    "before": [
+      {
+        "kind": "inf",
+        "ward": 0,
+        "charged": false,
+        "damage": 24.157463779368186
+      },
+      {
+        "kind": "inf",
+        "ward": 0,
+        "charged": true,
+        "damage": 22.87252291576429
+      },
+      {
+        "kind": "inf",
+        "ward": 0,
+        "charged": false,
+        "damage": 19.83801661580801
+      },
+      {
+        "kind": "inf",
+        "ward": 0,
+        "charged": true,
+        "damage": 21.056095196306703
+      },
+      {
+        "kind": "inf",
+        "ward": 0,
+        "charged": false,
+        "damage": 22.13444570140405
+      },
+      {
+        "kind": "inf",
+        "ward": 0,
+        "charged": true,
+        "damage": 21.659654206850313
+      },
+      {
+        "kind": "gun",
+        "ward": 0,
+        "charged": false,
+        "damage": 65.67130562522196
+      },
+      {
+        "kind": "gun",
+        "ward": 0,
+        "charged": true,
+        "damage": 71.5485708436099
+      },
+      {
+        "kind": "gun",
+        "ward": 3,
+        "charged": false,
+        "damage": 52.98676481944864
+      },
+      {
+        "kind": "gun",
+        "ward": 3,
+        "charged": true,
+        "damage": 52.632971058628776
+      },
+      {
+        "kind": "gun",
+        "ward": 6,
+        "charged": false,
+        "damage": 30.160206721219147
+      },
+      {
+        "kind": "gun",
+        "ward": 6,
+        "charged": true,
+        "damage": 30.434329880801116
+      },
+      {
+        "kind": "arc",
+        "ward": 0,
+        "charged": false,
+        "damage": 30.93906279748137
+      },
+      {
+        "kind": "arc",
+        "ward": 0,
+        "charged": true,
+        "damage": 27.169344794750216
+      },
+      {
+        "kind": "arc",
+        "ward": 3,
+        "charged": false,
+        "damage": 22.80682723446326
+      },
+      {
+        "kind": "arc",
+        "ward": 3,
+        "charged": true,
+        "damage": 19.650168879465625
+      },
+      {
+        "kind": "arc",
+        "ward": 6,
+        "charged": false,
+        "damage": 12.853728515018117
+      },
+      {
+        "kind": "arc",
+        "ward": 6,
+        "charged": true,
+        "damage": 10.339434870156378
+      },
+      {
+        "kind": "cav",
+        "ward": 0,
+        "charged": false,
+        "damage": 24.63735635561699
+      },
+      {
+        "kind": "cav",
+        "ward": 0,
+        "charged": true,
+        "damage": 26.056428928605534
+      },
+      {
+        "kind": "cav",
+        "ward": 3,
+        "charged": false,
+        "damage": 18.59793479872698
+      },
+      {
+        "kind": "cav",
+        "ward": 3,
+        "charged": true,
+        "damage": 19.10963697528297
+      },
+      {
+        "kind": "cav",
+        "ward": 6,
+        "charged": false,
+        "damage": 11.284042516147547
+      },
+      {
+        "kind": "cav",
+        "ward": 6,
+        "charged": true,
+        "damage": 11.7000516097654
+      }
+    ],
+    "after": [
+      {
+        "kind": "inf",
+        "ward": 0,
+        "charged": false,
+        "damage": 24.157463779368186
+      },
+      {
+        "kind": "inf",
+        "ward": 0,
+        "charged": true,
+        "damage": 22.87252291576429
+      },
+      {
+        "kind": "inf",
+        "ward": 0,
+        "charged": false,
+        "damage": 19.83801661580801
+      },
+      {
+        "kind": "inf",
+        "ward": 0,
+        "charged": true,
+        "damage": 21.056095196306703
+      },
+      {
+        "kind": "inf",
+        "ward": 0,
+        "charged": false,
+        "damage": 22.13444570140405
+      },
+      {
+        "kind": "inf",
+        "ward": 0,
+        "charged": true,
+        "damage": 21.659654206850313
+      },
+      {
+        "kind": "gun",
+        "ward": 0,
+        "charged": false,
+        "damage": 65.67130562522196
+      },
+      {
+        "kind": "gun",
+        "ward": 0,
+        "charged": true,
+        "damage": 71.5485708436099
+      },
+      {
+        "kind": "gun",
+        "ward": 3,
+        "charged": false,
+        "damage": 52.98676481944864
+      },
+      {
+        "kind": "gun",
+        "ward": 3,
+        "charged": true,
+        "damage": 52.632971058628776
+      },
+      {
+        "kind": "gun",
+        "ward": 6,
+        "charged": false,
+        "damage": 30.160206721219147
+      },
+      {
+        "kind": "gun",
+        "ward": 6,
+        "charged": true,
+        "damage": 30.434329880801116
+      },
+      {
+        "kind": "arc",
+        "ward": 0,
+        "charged": false,
+        "damage": 30.93906279748137
+      },
+      {
+        "kind": "arc",
+        "ward": 0,
+        "charged": true,
+        "damage": 27.169344794750216
+      },
+      {
+        "kind": "arc",
+        "ward": 3,
+        "charged": false,
+        "damage": 22.80682723446326
+      },
+      {
+        "kind": "arc",
+        "ward": 3,
+        "charged": true,
+        "damage": 19.650168879465625
+      },
+      {
+        "kind": "arc",
+        "ward": 6,
+        "charged": false,
+        "damage": 12.853728515018117
+      },
+      {
+        "kind": "arc",
+        "ward": 6,
+        "charged": true,
+        "damage": 10.339434870156378
+      },
+      {
+        "kind": "cav",
+        "ward": 0,
+        "charged": false,
+        "damage": 24.63735635561699
+      },
+      {
+        "kind": "cav",
+        "ward": 0,
+        "charged": true,
+        "damage": 26.056428928605534
+      },
+      {
+        "kind": "cav",
+        "ward": 3,
+        "charged": false,
+        "damage": 18.59793479872698
+      },
+      {
+        "kind": "cav",
+        "ward": 3,
+        "charged": true,
+        "damage": 19.10963697528297
+      },
+      {
+        "kind": "cav",
+        "ward": 6,
+        "charged": false,
+        "damage": 11.284042516147547
+      },
+      {
+        "kind": "cav",
+        "ward": 6,
+        "charged": true,
+        "damage": 11.7000516097654
+      }
+    ]
+  },
+  "classic": [
+    {
+      "seed": 11,
+      "profile": "ordinary",
+      "before": {
+        "hash": 831781674,
+        "hits": 55,
+        "damage": 4173.231065452746,
+        "rounds": 4,
+        "result": "lose",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          0,
+          606.7689345472533
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 831781674,
+        "hits": 55,
+        "damage": 4173.231065452746,
+        "rounds": 4,
+        "result": "lose",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          0,
+          606.7689345472533
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    },
+    {
+      "seed": 11,
+      "profile": "skills",
+      "before": {
+        "hash": 637742589,
+        "hits": 23,
+        "damage": 4327.951953191168,
+        "rounds": 2,
+        "result": "win",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          452.0480468088307,
+          0
+        ],
+        "troops": {
+          "inf": 40,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 637742589,
+        "hits": 23,
+        "damage": 4327.951953191168,
+        "rounds": 2,
+        "result": "win",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          452.0480468088307,
+          0
+        ],
+        "troops": {
+          "inf": 40,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    },
+    {
+      "seed": 11,
+      "profile": "siege",
+      "before": {
+        "hash": 3532526022,
+        "hits": 31,
+        "damage": 3298.3282206819335,
+        "rounds": 7,
+        "result": "lose",
+        "duels": 0,
+        "gate": 1145.424176515643,
+        "totals": [
+          0,
+          1481.6717793180678
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 3532526022,
+        "hits": 31,
+        "damage": 3298.3282206819335,
+        "rounds": 7,
+        "result": "lose",
+        "duels": 0,
+        "gate": 1145.424176515643,
+        "totals": [
+          0,
+          1481.6717793180678
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    },
+    {
+      "seed": 53,
+      "profile": "ordinary",
+      "before": {
+        "hash": 119631549,
+        "hits": 67,
+        "damage": 4497.7118170785125,
+        "rounds": 5,
+        "result": "lose",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          0,
+          282.2881829214858
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 119631549,
+        "hits": 67,
+        "damage": 4497.7118170785125,
+        "rounds": 5,
+        "result": "lose",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          0,
+          282.2881829214858
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    },
+    {
+      "seed": 53,
+      "profile": "skills",
+      "before": {
+        "hash": 1804309091,
+        "hits": 32,
+        "damage": 4556.327365030959,
+        "rounds": 3,
+        "result": "win",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          223.6726349690431,
+          0
+        ],
+        "troops": {
+          "inf": 30,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 1804309091,
+        "hits": 32,
+        "damage": 4556.327365030959,
+        "rounds": 3,
+        "result": "win",
+        "duels": 0,
+        "gate": null,
+        "totals": [
+          223.6726349690431,
+          0
+        ],
+        "troops": {
+          "inf": 30,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    },
+    {
+      "seed": 53,
+      "profile": "siege",
+      "before": {
+        "hash": 2161525551,
+        "hits": 44,
+        "damage": 4375.8417501830845,
+        "rounds": 11,
+        "result": "lose",
+        "duels": 0,
+        "gate": 0,
+        "totals": [
+          0,
+          404.15824981691685
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      },
+      "after": {
+        "hash": 2161525551,
+        "hits": 44,
+        "damage": 4375.8417501830845,
+        "rounds": 11,
+        "result": "lose",
+        "duels": 0,
+        "gate": 0,
+        "totals": [
+          0,
+          404.15824981691685
+        ],
+        "troops": {
+          "inf": 35,
+          "arc": 0,
+          "gun": 0,
+          "cav": 0
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "shapes": [
+    {
+      "inf": "loose",
+      "initial": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "packed": true,
+      "valid": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "rejected": true,
+      "untouched": true,
+      "time": 0,
+      "residual": 0
+    },
+    {
+      "inf": "pikewall",
+      "initial": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "packed": true,
+      "valid": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "rejected": true,
+      "untouched": true,
+      "time": 0,
+      "residual": 0
+    }
+  ],
+  "mass": {
+    "models": 768,
+    "capacity": 768,
+    "peak": 445,
+    "released": 192,
+    "drained": true,
+    "residual": 7.913272814796812e-11
+  },
+  "fixedStep": [
+    {
+      "dt": 0.016666666666666666,
+      "time": 5.599999999999985,
+      "residual": -5.870859354217828e-13
+    },
+    {
+      "dt": 0.03333333333333333,
+      "time": 5.599999999999985,
+      "residual": -5.870859354217828e-13
+    }
+  ],
+  "entry": {
+    "models": 768,
+    "valid": true
+  },
+  "checks": 41
+}

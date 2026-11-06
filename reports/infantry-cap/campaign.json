@@ -1,0 +1,174 @@
+{
+  "migration": {
+    "mode": "classic",
+    "stances": {
+      "inf": "line",
+      "gun": "line",
+      "arc": "line",
+      "cav": "line"
+    },
+    "gold": true,
+    "v": true
+  },
+  "save": {
+    "mode": "realtime",
+    "stance": "pikewall",
+    "v": 1,
+    "kb": 49.1279296875,
+    "ms": 0.6000000014901161
+  },
+  "pikewall": {
+    "x0": 560,
+    "x1": 560,
+    "y0": 420,
+    "y1": 420,
+    "stance": "pikewall",
+    "mode": "realtime"
+  },
+  "continuity": {
+    "sameModel": true,
+    "state": "realtime",
+    "round": 4,
+    "previous": 3,
+    "smooth": true,
+    "healed": 60,
+    "expected": 60,
+    "once": true,
+    "residual": -4.547473508864641e-12
+  },
+  "full": {
+    "state": "done",
+    "round": 3,
+    "result": "win",
+    "steps": 2500,
+    "actual": {
+      "inf": 102,
+      "gun": 96,
+      "arc": 119,
+      "cav": 44
+    },
+    "expected": {
+      "inf": 102,
+      "gun": 96,
+      "arc": 119,
+      "cav": 44
+    },
+    "residual": -1.3642420526593924e-12,
+    "hp": 299.04053419156077,
+    "total": 299.04053419156025,
+    "goldBefore": 1200,
+    "goldAfter": 1217,
+    "paidOnce": true,
+    "body": 394
+  },
+  "retreat": {
+    "done": true,
+    "result": "lose",
+    "requested": true,
+    "both": true
+  },
+  "classic": {
+    "mode": "classic",
+    "rt": false,
+    "phase": "arc",
+    "script": true
+  },
+  "density": [
+    {
+      "setting": "standard",
+      "n": 532,
+      "totals": [
+        461.84256989413313,
+        368.5606682344403
+      ]
+    },
+    {
+      "setting": "dense",
+      "n": 532,
+      "totals": [
+        461.84256989413313,
+        368.5606682344403
+      ]
+    },
+    {
+      "setting": "epic",
+      "n": 532,
+      "totals": [
+        461.84256989413313,
+        368.5606682344403
+      ]
+    }
+  ],
+  "siege": {
+    "held": true,
+    "stayed": true,
+    "breached": true,
+    "state": "realtime",
+    "restarts": 1,
+    "rt": true,
+    "residual": -4.547473508864641e-13
+  },
+  "grenade": {
+    "visible": true,
+    "used": true,
+    "state": "realtime",
+    "paused": true,
+    "residual": -1.4210854715202004e-14,
+    "cleared": true
+  },
+  "duels": [
+    {
+      "save": null,
+      "state": "realtime",
+      "frozen": true,
+      "residual": 0,
+      "ended": 1,
+      "HP": [
+        [
+          21,
+          0
+        ]
+      ],
+      "ward": false,
+      "guards": 0
+    },
+    {
+      "save": "guard",
+      "state": "realtime",
+      "frozen": true,
+      "residual": 0,
+      "ended": 1,
+      "HP": [
+        [
+          0,
+          3
+        ]
+      ],
+      "ward": false,
+      "guards": 1
+    },
+    {
+      "save": "ward",
+      "state": "realtime",
+      "frozen": true,
+      "residual": 0,
+      "ended": 1,
+      "HP": [
+        [
+          55,
+          27
+        ]
+      ],
+      "ward": true,
+      "guards": 0
+    }
+  ],
+  "cleanup": {
+    "before": 208,
+    "after": 214,
+    "hidden": true,
+    "children": 0
+  },
+  "checks": 30,
+  "errors": []
+}

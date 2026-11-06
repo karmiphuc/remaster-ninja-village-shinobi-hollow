@@ -17,14 +17,25 @@ function rtDeployAt(f,x,y){const R=BT?.rt;if(!R||!BT.deploy?.active||f.side!==0)
  if(!R.model.deploy(f.id,x,y))return false;rtSyncDeploymentExtras(R,old);BT.deploy.ghost.show=false;BT.deploy.tapArmed=false;BT.deploy.notice='';Sound.play('tap');rtRenderDeployment();return true;
 }
 function rtPreviewDeployment(f,x,y){if(!BT?.deploy?.active)return;const g=BT.deploy.ghost;g.show=true;g.x=x;g.y=y;g.valid=!BT.rt.model.placement(f.id,x,y);}
+// Four rectangles at most. Prefer nearby moves; only crowded saved shapes need this startup-only search.
+function rtPackInitialDeployment(R,primary){const shapes=primary.map(f=>{const b=R.model.deploymentBounds(f.id,f.x,f.y,{});return{id:f.id,w:b.right-b.left,h:b.bottom-b.top,dx:f.x-b.left,dy:f.y-b.top};}),placed=[],answer=[];let nodes=0;
+ function pack(mask){if(++nodes>4096)return false;if(placed.length===shapes.length){for(const p of placed)answer.push({id:p.s.id,x:p.x+p.s.dx,y:p.y+p.s.dy});return true;}
+  const xs=[45.01],ys=[70.01];for(const p of placed){xs.push(p.x+p.s.w+8.01);ys.push(p.y+p.s.h+8.01);}
+  for(let i=0;i<shapes.length;i++)if(!(mask&(1<<i))){const s=shapes[i];for(const y of ys)for(const x of xs){if(x+s.w>639.99||y+s.h>949.99)continue;let clear=true;for(const p of placed)if(x<p.x+p.s.w+8&&x+s.w>p.x-8&&y<p.y+p.s.h+8&&y+s.h>p.y-8){clear=false;break;}if(!clear)continue;
+    placed.push({s,x,y});if(pack(mask|(1<<i)))return true;placed.pop();
+  }}return false;
+ }
+ return pack(0)&&R.model.arrangeDeployment(answer);
+}
 function rtFitInitialDeployment(R){if(R.deployFitted)return;R.deployFitted=true;const old=new Map();for(const f of R.model.groups)old.set(f,{x:f.x,y:f.y});
  const primary=rtPrimaryGroups(R).sort((a,b)=>['gun','cav','arc','inf'].indexOf(a.type)-['gun','cav','arc','inf'].indexOf(b.type));
- for(let pass=0;pass<2;pass++)for(const f of primary)if(R.model.placement(f.id,f.x,f.y)){
-  const ox=f.x,oy=f.y;let found=false;for(let radius=1;radius<=72&&!found;radius++)for(let i=-radius;i<=radius&&!found;i++)for(let edge=0;edge<4&&!found;edge++){
+ for(let pass=0;pass<3;pass++)for(const f of primary)if(R.model.placement(f.id,f.x,f.y)){
+  const ox=f.x,oy=f.y;let found=false;const limit=pass===0?6:pass===1?12:72;for(let radius=1;radius<=limit&&!found;radius++)for(let i=-radius;i<=radius&&!found;i++)for(let edge=0;edge<4&&!found;edge++){
    const x=ox+(edge<2?i:edge===2?-radius:radius)*12,y=oy+(edge<2?(edge===0?-radius:radius):i)*12;
    if(!R.model.placement(f.id,x,y)){R.model.deploy(f.id,x,y);found=true;}
   }
  }
+ if(primary.some(f=>R.model.placement(f.id,f.x,f.y)))rtPackInitialDeployment(R,primary);
  rtSyncDeploymentExtras(R,old);for(const f of R.model.groups){f.spawnX=f.x;f.spawnY=f.y;f.spawnStance=f.stance;}
 }
 function rtShowDeployment(){if(!rtCanDeploy())return false;

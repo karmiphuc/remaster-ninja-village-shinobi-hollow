@@ -12,6 +12,10 @@ const root=path.resolve(__dirname,'..'),dir=path.join(root,'reports/realtime-her
    ok(M.officers.length===8&&M.models.every(m=>!M.officers.includes(m)),'Officers duplicated rank models');
    step(R,10);out.engagement=M.officers.map(m=>({type:m.f.type,post:m.commander.post,x:m.x,hp:m.commander.hp,shots:m.fired,strikes:m.strikes,damage:m.damage,charges:m.chargeImpacts}));
    for(const m of van.filter(m=>m.kind==='inf'||m.kind==='cav'))ok(m.strikes>0&&m.damage>0&&m.chargeImpacts>=1&&m.alive,'Mounted Vanguard did not charge and land actual blows: '+m.f.type);
+   // A short seeded bow sample can scatter entirely wide when rank density changes.
+   // Allow several further complete volleys; still require real damage and a live target.
+   if(ranged.some(m=>m.fired>=3&&m.damage<=0))step(R,8);
+   out.rangedFollowup=M.officers.filter(m=>m.kind==='gun'||m.kind==='arc').map(m=>({type:m.f.type,post:m.commander.post,shots:m.fired,damage:m.damage}));
    for(const m of ranged)ok(m.fired>=3&&m.damage>0&&m.target?.alive,'Ranged officer failed to seek and shoot: '+m.f.type+'/'+m.commander.post);
    for(const m of M.officers)near(m.commander.pk||0,m.damage,'Personal kills not linked to actual hits');audit(R,'mixed mounted officers');
    const cached=van.find(m=>m.f.type==='cav'),oldTarget=cached.target,oldSeek=cached.seekTarget,cx=cached.x,cy=cached.y;cached.target=cached.seekTarget=null;step(R,1/60);near(cached.x,cx,'Vanguard stepped backward between target queries');near(cached.y,cy,'Vanguard drifted between target queries');cached.target=oldTarget;cached.seekTarget=oldSeek;

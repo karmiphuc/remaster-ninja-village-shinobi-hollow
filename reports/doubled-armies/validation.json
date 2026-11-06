@@ -1,0 +1,26 @@
+{
+  "htmlSha256": "e9318da634e495878b707680dcba62646a4a54420d291f240bcbc17810ca25d1",
+  "baseline": "1c92ede4d34b5f90a36063e7f6f8b76aa8640954",
+  "checks": {
+    "doubledArmies": 41,
+    "deployment": 36,
+    "deploymentReview": 14,
+    "campaign": 30,
+    "performance": 23
+  },
+  "passedSuites": [
+    "doubled-armies",
+    "battle-deployment",
+    "battle-deployment-review",
+    "realtime-campaign",
+    "realtime-volley-skills",
+    "realtime-engagement",
+    "realtime-heroes",
+    "siege",
+    "battle-auto-resolve"
+  ],
+  "classicPairedLedgers": 6,
+  "exactDamageWardCases": 24,
+  "physicalSafariTested": false,
+  "warmDrawingCanvasAllocations": 0
+}

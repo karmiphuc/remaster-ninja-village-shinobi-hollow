@@ -10,6 +10,8 @@ Field officers now resolve their own weapon attacks and use their existing HP. V
 
 Infantry, gunners, archers and cavalry retain their original deployment order. Infantry advances into personal weapon reach. Bows shoot overhead with sampled landing points; only projectiles that hit an enemy footprint cause damage. Gunners can fire from behind friendly infantry. Allies are bypassed at release and throughout flight, with zero friendly damage. Each bullet aims at the target's current position when released, keeps that straight trajectory, and hits the first enemy footprint it crosses. Moving targets can evade, and another enemy can catch a stray bullet. Terrain rises still block sight; close/mid-range accuracy and long-range dispersion remain.
 
+The current real-time population is **up to 192 Infantry and 96 each of Archers, Gunners and Cavalry per side: 960 soldiers across two full armies, plus existing officers/retainers**. See [doubled armies, bounds, pools and verification](doubled-armies.md).
+
 ## Controls and balance
 
 - Tap a blue formation label, or its top strength row, for **Hold / Advance / Fall Back** and shapes. Fall Back is a local withdrawal ending in Hold; campaign Retreat remains separate. Shapes have a 1.5-second change cooldown after combat begins.
@@ -30,7 +32,7 @@ Gun cadence is **20% slower** than the initial prototype: the base interval rise
 
 The existing round lifecycle remains as 25-game-second field windows for duels, Ki, medicine and bounded overtime pressure. Bookkeeping runs without pausing ordinary marching or reloading. A duel, duel choice or grenade prelude still suspends the field. These boundaries do not automatically kill, route or defeat an army. Existing 18% casualty-rout presentation below 45% remaining strength is retained. Grenades use the existing infantry script before the live field window. Castle walls use Classic siege targeting until the breach; the surviving armies then enter Real-time. Cinematic duels suspend the live model and resume it after its real HP/rescue events settle.
 
-Real-time uses up to 48 figures per formation independently of the Classic density preference, two shared rank-and-file/guard variants per kit, and original hero identities. Rendered detail caches are compacted for the wider camera; the procedural painters and equipment definitions are unchanged. Hidden village display/rig caches and the unused Classic drawing buffer are released, then rebuilt on return. The display backing is capped at DPR 2 / 2.3 million pixels. Rendering allocates no actor canvases; targeting runs every .18 seconds over reused spatial bins. There is no individual collision solver, traffic queue or tactical terrain obstacle planner. Tree/castle props remain scenery; gun sight checks cover the terrain height field; swept bullet collisions consider enemies only. Real-time balance deliberately differs from staged Classic outcomes.
+Real-time uses up to 192 Infantry figures and 96 for each other formation independently of the Classic density preference, two shared rank-and-file/guard variants per kit, and original hero identities. Rendered detail caches are compacted for the wider camera; the procedural painters and equipment definitions are unchanged. Hidden village display/rig caches and the unused Classic drawing buffer are released, then rebuilt on return. The display backing is capped at DPR 2 / 2.3 million pixels. Rendering allocates no actor canvases; targeting runs every .18 seconds over reused spatial bins. There is no individual collision solver, traffic queue or tactical terrain obstacle planner. Tree/castle props remain scenery; gun sight checks cover the terrain height field; swept bullet collisions consider enemies only. Real-time balance deliberately differs from staged Classic outcomes.
 
 ## Duel execution playback fix
 
@@ -64,7 +66,7 @@ The follow-up review fixes keep the covered village canvas suspended across brow
 
 ## Bullet paths, cavalry and larger forces
 
-The follow-up flow change raises the campaign cap from 36 to 48 physical actors per formation (+33%, up to 384 rank-and-file models across eight full formations, plus officers/retainers). All share the same finite equipment/frame sets; Classic density cannot change live physical targeting. The isolated demo retains its 300-model population.
+An earlier flow change raised the campaign cap from 36 to 48 physical actors per formation (+33%, up to 384 rank-and-file models across eight full formations, plus officers/retainers). All share the same finite equipment/frame sets; Classic density cannot change live physical targeting. The isolated demo retains its 300-model population.
 
 Formation footprints are cached at the existing 0.18-second think interval. Cavalry scores nearby opponents, prioritises riders threatening its main infantry, and seeks exposed ranged flanks once the infantry is engaged. Player-selected targets remain authoritative. Approach plans refresh at most once per 0.9 seconds with hysteresis. Riders narrow their marching width to clear the full infantry screen, choose an upper or lower flank, and turn in from its side. In a mounted-only fight they intercept directly. Route waypoints use the same bounds as formation movement, including near the field edge.
 
@@ -72,9 +74,9 @@ A charge enters its impact state only at actual local contact. Rear riders close
 
 The two-bullet/three-bullet styles retain their per-bullet power and reload delays. A burst can reacquire a target that fell between targeting ticks. The selected gun formation now shows the actual burst reload interval. Cavalry controls show its intent and current cycle state.
 
-Local checks cover rear gunfire and crossing allies, evasion and lethal strays, actual ranged flanks and infantry relief, player targets, aborted charges, mounted-only elimination, separated infantry survivors, fixed-step determinism, seamless recovery windows, and real campaign rewards/saves/retreat/siege/duel rescue integration. `tests/realtime-flow-performance.cjs` compares 36/48-model campaign caps using actual officer equipment on a phone-sized backing. It records canvas allocation separately for rendering and first-use casualty cache entries. These are Chromium measurements; sustained physical iPhone Safari frame rate remains unverified.
+Local checks cover rear gunfire and crossing allies, evasion and lethal strays, actual ranged flanks and infantry relief, player targets, aborted charges, mounted-only elimination, separated infantry survivors, fixed-step determinism, seamless recovery windows, and real campaign rewards/saves/retreat/siege/duel rescue integration. The original performance run compared 36/48-model campaign caps using actual officer equipment on a phone-sized backing; the current `tests/realtime-flow-performance.cjs` compares 96/192 Infantry with other formations fixed at 96 (see [current results](doubled-armies.md)). It records canvas allocation separately for rendering and first-use casualty cache entries. These are Chromium measurements; sustained physical iPhone Safari frame rate remains unverified.
 
-### Flow verification measurements
+### Earlier flow verification measurements
 
 The final focused runs pass 245 prototype/model/render checks, 30 actual campaign integration checks, 41 review regressions, and 23 actor/memory checks. HP conservation errors remain below 1e-6, including medicine and duel reconciliation.
 
