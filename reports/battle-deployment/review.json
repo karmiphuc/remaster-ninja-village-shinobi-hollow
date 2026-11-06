@@ -1,0 +1,86 @@
+{
+  "errors": [],
+  "failures": [],
+  "scenery": {
+    "sameCanvas": true,
+    "linked": true,
+    "same": true,
+    "painted": true,
+    "randomCalls": 0
+  },
+  "reset": {
+    "id": 3,
+    "moved": true,
+    "changed": true,
+    "validBefore": true,
+    "initial": 780,
+    "validAfter": true,
+    "stance": "line",
+    "saved": "line",
+    "y": 780
+  },
+  "power": {
+    "expected": "Power 181",
+    "shown": "Power 181"
+  },
+  "edges": [
+    {
+      "side": 0,
+      "x": 150,
+      "y": 780,
+      "left": 45,
+      "right": 188,
+      "top": 635.81,
+      "bottom": 924.19
+    },
+    {
+      "side": 1,
+      "x": 1250,
+      "y": 780,
+      "left": 1212,
+      "right": 1355,
+      "top": 635.81,
+      "bottom": 924.19
+    }
+  ],
+  "landscape": {
+    "top": 77,
+    "bottom": 263,
+    "min": 113.63588780771468,
+    "max": 227.46145111380036,
+    "zoom": 0.20072032635329926
+  },
+  "duel": {
+    "wasShown": true,
+    "hiddenImmediately": true,
+    "hiddenDuring": true,
+    "resumed": true,
+    "modelPaused": true,
+    "shownAfter": true,
+    "residual": -5.968003868872529e-13
+  },
+  "eliminated": {
+    "hadIntercept": true,
+    "selected": null,
+    "hasOrders": false,
+    "hasIntercept": false,
+    "residual": -5.968003868872529e-13
+  },
+  "layout": {
+    "expected": 85,
+    "actual": 85
+  },
+  "result": {
+    "state": "done",
+    "retreated": true,
+    "hidden": true
+  },
+  "independent": {
+    "chargeCleared": true,
+    "held": true,
+    "fallen": true,
+    "winner": 1,
+    "residual": 0
+  },
+  "checks": 14
+}

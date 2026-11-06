@@ -9763,7 +9763,7 @@ function onBattleResize() {
   if(BT.cine)BT.cine.y=m(BT.cine.y);releaseDuelBackdrop(BT.duelShot);
   for(const pr of BT.props||[])if(pr.k==='nobori'||pr.k==='maku')pr.y=m(pr.y);
   if (ob) refitFormations();prepareCommandDecorations();
-  if(liveField){BT.rt.view.resize();rtUpdateExtras(0);rtReleaseClassicBuffer();if(BT.deploy?.active){rtRenderDeployment();BT.rt.view.overview(true);}}
+  if(liveField){BT.rt.view.resize();rtUpdateExtras(0);rtReleaseClassicBuffer();if(BT.deploy?.active){rtRenderDeployment();BT.rt.view.overview(true);}else rtRenderControls(true);}
 }
 // after a resize: re-space each formation's ranks for the new band (sprite size and files stay as they were). At rest the
 // men step straight into the new ranks; mid-phase they keep their place and re-form at the next regroup.
@@ -12163,7 +12163,7 @@ function spriteScale() { return BT.A[0].mode === 'skirmish' ? ((BT.fy1Base || BT
 const _draws = [];
 function drawBattle() {
   if (!BT||BT.headless) return;
-  if(BT.rt){$('#rt-controls').hidden=BT.state!=='realtime';if(rtIsFieldView()){BT.rt.view.render();return;}}
+  if(BT.rt){const field=rtIsFieldView();$('#rt-controls').hidden=BT.state!=='realtime'||!field;$('#rt-battle-layers').hidden=BT.state!=='realtime'||!field||!BT.rt.tactics?.begun;if(field){BT.rt.view.render();return;}}
   const x = BT.bx, W = BT.vw, H = BT.vh; x.imageSmoothingEnabled = false;
   const shx=battleShakeOffset(0),shy=battleShakeOffset(1);
   artTransform(x, 1, 0, 0, 1, 0, 0);
@@ -14095,7 +14095,7 @@ function create(art,seed=7711,options={},ground=()=>0){
    if(options.compact&&g.heroOnly){f.x=f.homeX=homeX-face*(20+peer*5);f.y=f.homeY=homeY+((peer%3)-1)*24;}
    else if(!options.compact)f.y=f.homeY=Y+(peer-(peers.length-1)/2)*Math.min(70,420/(peers.length-1));
   }
-  f.spawnX=f.x;f.spawnY=f.y;f.goalX=f.x;f.goalY=f.y;
+  f.spawnX=f.x;f.spawnY=f.y;f.spawnStance=f.stance;f.goalX=f.x;f.goalY=f.y;
   for(let i=0;i<num;i++){
    const row=i%rows,rank=Math.floor(i/rows),style=art.style(type,side,type==='inf'?rank%2:0,g,i),hp=g.troops/num;
    const m={id:models.length,f,style,row,rank,phase:hash(i+side*100,index)*6.28,face,x:0,y:0,vx:0,vy:0,alive:hp>0,hp,maxHp:g.start/num,
@@ -14402,21 +14402,23 @@ function create(art,seed=7711,options={},ground=()=>0){
   if(f.order==='fallback'&&type==='fallback')return true; // Repeated taps cannot reset withdrawal/pinning.
   if(type==='fallback'){
    if(f.stance==='pikewall'){f.stance='line';f.stride=f.baseStride*stance(f).gap;if(options.onStance)options.onStance(f);}
-   f.fallbackX=clamp(f.x-f.face*170,55+Math.max(0,f.cols-1)*f.depthStep,1345-Math.max(0,f.cols-1)*f.depthStep);
-   f.fallbackY=f.y;f.fallbackAt=time;
+   const b=deploymentBounds(f.id,f.x,f.y),left=f.x+45-b.left,right=f.x+1355-b.right,top=f.y+70-b.top,bottom=f.y+950-b.bottom;
+   f.fallbackX=left<=right?clamp(f.x-f.face*170,left,right):clamp(f.x-f.face*170,45,1355);
+   f.fallbackY=top<=bottom?clamp(f.y,top,bottom):clamp(f.y,70,950);f.fallbackAt=time;
   }
   if(f.type==='cav'&&f.order==='cycle'&&(type==='advance'||type==='cycle'))return true;
   f.order=f.type==='cav'&&type==='advance'?'cycle':type;
   if(f.type!=='cav')f.state=type;for(const m of f.members)m.fireLane=false;
   if(f.type==='cav'){f.state=type==='hold'?'hold':type==='fallback'?'fallback':'regroup';f.stateAt=time;f.pathAt=f.pathN=0;}
-  if(type==='fallback')for(const m of f.officers){m.holdX=m.holdY=null;m.chargeReady=false;m.chargeTravel=0;}
+  if(type==='fallback'){for(const m of f.officers){m.holdX=m.holdY=null;m.chargeReady=false;m.chargeTravel=0;}
+   for(const m of f.members)if(m.heroActor){m.holdX=m.holdY=null;m.chargeReady=false;m.chargeTravel=0;}}
   return true;
  }
  // Deployment moves whole corps, including independent fighters of that arm. It never changes HP or time.
  function deploymentBounds(id,x,y,out){const f=groups[id];if(!f)return null;out=out||f.deployBox;
   out.left=Infinity;out.right=-Infinity;out.top=Infinity;out.bottom=-Infinity;
   const dx=x-f.x,dy=y-f.y;
-  for(const p of groups)if(p.side===f.side&&p.type===f.type){let mounted=p.type==='cav';for(const m of p.members)if(m.style.mounted)mounted=true;
+  for(const p of groups)if(p.side===f.side&&p.type===f.type&&fielded(p)){let mounted=p.type==='cav';for(const m of p.members)if(m.style.mounted)mounted=true;for(const m of p.officers)if(m.alive&&m.style.mounted)mounted=true;
    const r=mounted?38:30,rear=Math.max(0,p.cols-1)*p.depthStep+r+(p.stance==='skein'?Math.max(0,p.rows-1)*5:0),px=p.x+dx,py=p.y+dy;
    let half=Math.max(0,p.rows-1)*p.stride/2+r+(p.type==='gun'&&p.cols>1?9:0);for(const m of p.officers)if(m.alive)half=Math.max(half,Math.abs(m.heroSlot||0)+(m.commander.guard?14:0)+r);
    out.left=Math.min(out.left,px-(p.face>0?rear:r));out.right=Math.max(out.right,px+(p.face>0?r:rear));out.top=Math.min(out.top,py-half);out.bottom=Math.max(out.bottom,py+half);
@@ -14434,7 +14436,7 @@ function create(art,seed=7711,options={},ground=()=>0){
  function deploy(id,x,y){const reason=placement(id,x,y);if(reason)return false;const f=groups[id],dx=x-f.x,dy=y-f.y;
   for(const p of groups)if(p.side===0&&p.type===f.type)shiftFormation(p,dx,dy);refreshBodies();rebuildGrid();return true;
  }
- function resetDeployment(){if(time>0||outcome)return false;for(const f of groups)shiftFormation(f,f.spawnX-f.x,f.spawnY-f.y);refreshBodies();rebuildGrid();return true;}
+ function resetDeployment(){if(time>0||outcome)return false;for(const f of groups){setStance(f.id,f.spawnStance,true);shiftFormation(f,f.spawnX-f.x,f.spawnY-f.y);}refreshBodies();rebuildGrid();return true;}
  function snapshot(){let hp=0,living=0,fallen=0,routed=0,projectiles=0;for(const m of models){hp+=m.hp;if(m.alive)living++;else if(m.fate==='rout')routed++;else fallen++;}for(const p of shots)if(p.on)projectiles++;
   const totals=sim.totals();return {time,mode:'realtime',totals,applied,initial,hp,externalLoss,externalRecovery,residual:initial+externalRecovery-externalLoss-totals[0]-totals[1]-applied,living,fallen,routed,projectiles,joined,winner:outcome?.winner||null,
    groups:groups.map(f=>({id:f.id,type:f.type,side:f.side,troops:f.g.troops,mrk:f.g.mrk,cadence:f.type==='gun'||f.type==='arc'?cadence(f.type,f.g.mrk):null,x:f.x,y:f.y,order:f.order,stance:f.stance,state:f.state,intent:f.intent,target:f.target?.id??null,laneSign:f.laneSign,liveN:f.liveN,priorityTarget:f.priorityTarget,pinned:f.pinned,charges:f.charges,withdrawals:f.withdrawals,regroups:f.regroups,firstChargeTarget:f.firstChargeTarget,fired:f.fired,landed:f.landed,missed:f.missed,blocked:f.blocked,intercepted:f.intercepted,strikes:f.strikes,impacts:f.impacts,damage:f.damage,rapidProcs:f.rapidProcs,chainProcs:f.chainProcs,counterShots:f.counterShots}))};

@@ -53,7 +53,7 @@ function create(cv,art,model,options={}){
   const mon=art.emblem?.(f.side);if(mon?.width)img(mon,px+5,py-61,12,12);else{ctx.fillStyle='#f0dfb3';ctx.fillRect(px+8,py-59,5,9);}
   ctx.fillStyle='#4a321e';ctx.fillRect(px-7,py,14,2);ctx.restore();
  }
- function standards(){if(!options.standards)return;for(const f of groups)if(f.standard){const up=f.g.troops>0||f.officerN;if(up)f.standardFall=-1;else if(f.standardFall<0)f.standardFall=time;
+ function standards(){if(!options.standards)return;for(const f of groups)if(f.standard){let up=false;for(const p of groups)if(p.side===f.side&&p.type===f.type&&(p.g.troops>0||p.officerN)){up=true;break;}if(up)f.standardFall=-1;else if(f.standardFall<0)f.standardFall=time;
    plantedFlag(f,f.homeX+f.face*23,f.homeY-(f.baseRows-1)*f.stride/2-10,false,up?0:f.face*1.48*clamp((time-f.standardFall)/.65,0,1));
   }}
  function deployment(){const d=options.deployment;if(!d?.active)return;ctx.save();deployBox.left=45;deployBox.right=640;deployBox.top=70;deployBox.bottom=950;

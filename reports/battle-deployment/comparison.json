@@ -1,5 +1,9 @@
 {
   "baseline": "ae131c15dc9f5bcbc558d4990a13f588517a73fb",
+  "sourceHashes": {
+    "before": "58b0513f643aaa043e478dfb0f5756cc5b8d574bc72304c2376eea442afdc199",
+    "after": "bed3e95ed66e40caf7d1276ed070386ead7a05942ef53fc482628f115d0ce514"
+  },
   "environment": "Sequential Chromium software rendering; 430x932 CSS pixels, DPR 3 device / DPR 2 battlefield. Not physical Safari.",
   "classic": [
     {
@@ -1091,10 +1095,10 @@
       "actors": 432,
       "startMB": 48.97557830810547,
       "endMB": 48.98113250732422,
-      "updateMedian": 0.40000000037252903,
-      "renderMedian": 2.700000001117587,
-      "frameMedian": 3.600000001490116,
-      "frameP95": 70.5,
+      "updateMedian": 0.3999999985098839,
+      "renderMedian": 2.5,
+      "frameMedian": 3.199999999254942,
+      "frameP95": 60,
       "drawCanvases": 0,
       "updateCanvases": 3,
       "memory": {
@@ -1107,10 +1111,10 @@
       "actors": 432,
       "startMB": 40.9744873046875,
       "endMB": 40.98004150390625,
-      "updateMedian": 0.5,
-      "renderMedian": 3,
-      "frameMedian": 4.099999999627471,
-      "frameP95": 73.5,
+      "updateMedian": 0.4000000022351742,
+      "renderMedian": 2.300000000745058,
+      "frameMedian": 3,
+      "frameP95": 55.100000001490116,
       "drawCanvases": 0,
       "updateCanvases": 3,
       "memory": {
@@ -1123,10 +1127,10 @@
       "actors": 432,
       "startMB": 40.9744873046875,
       "endMB": 40.98004150390625,
-      "updateMedian": 0.40000000037252903,
-      "renderMedian": 2.400000000372529,
-      "frameMedian": 3.199999999254942,
-      "frameP95": 66.09999999962747,
+      "updateMedian": 0.3999999985098839,
+      "renderMedian": 2.399999998509884,
+      "frameMedian": 2.800000000745058,
+      "frameP95": 56.600000001490116,
       "drawCanvases": 0,
       "updateCanvases": 3,
       "memory": {
@@ -1139,10 +1143,10 @@
       "actors": 432,
       "startMB": 48.97557830810547,
       "endMB": 48.98113250732422,
-      "updateMedian": 0.40000000037252903,
+      "updateMedian": 0.5,
       "renderMedian": 2.5,
-      "frameMedian": 3.300000000745058,
-      "frameP95": 73.5,
+      "frameMedian": 3.199999999254942,
+      "frameP95": 66.19999999925494,
       "drawCanvases": 0,
       "updateCanvases": 3,
       "memory": {
@@ -1151,9 +1155,5 @@
       }
     }
   ],
-  "errors": [],
-  "sourceHashes": {
-    "before": "58b0513f643aaa043e478dfb0f5756cc5b8d574bc72304c2376eea442afdc199",
-    "after": "a04d8301dab01f197246be1f409d7b93047c14967c420f1cf479c3e5ab6e1def"
-  }
+  "errors": []
 }

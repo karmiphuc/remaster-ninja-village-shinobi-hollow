@@ -25,7 +25,7 @@ function rtFitInitialDeployment(R){if(R.deployFitted)return;R.deployFitted=true;
    if(!R.model.placement(f.id,x,y)){R.model.deploy(f.id,x,y);found=true;}
   }
  }
- rtSyncDeploymentExtras(R,old);for(const f of R.model.groups){f.spawnX=f.x;f.spawnY=f.y;}
+ rtSyncDeploymentExtras(R,old);for(const f of R.model.groups){f.spawnX=f.x;f.spawnY=f.y;f.spawnStance=f.stance;}
 }
 function rtShowDeployment(){if(!rtCanDeploy())return false;
  BT.deploy||={active:true,ghost:{show:false,x:0,y:0,valid:false}};BT.deploy.active=true;BT.rtTactics=true;
@@ -36,7 +36,7 @@ function rtShowDeployment(){if(!rtCanDeploy())return false;
 }
 function rtRenderDeployment(){const R=BT?.rt;if(!R||!BT.deploy?.active)return;const groups=rtPrimaryGroups(R),selected=R.selected;
  const cards=groups.map(f=>{let troops=0;const same=BT.A[0].groups.filter(g=>g.type===f.type);for(const g of same)troops+=g.heroOnly?(g.troops>0?1:0):Math.ceil(Math.max(0,g.troops));
-  const power=armyPower({groups:same,mode:BT.A[0].mode,strat:BT.A[0].strat});return `<button class="rt-company${selected?.type===f.type?' selected':''}" data-rt-company="${f.id}" aria-pressed="${selected?.type===f.type}">${icon('u_'+f.type)}<span>${UNITS[f.type].name}<small>${fmt(troops)} combatants</small><small>Power ${fmt(power)}</small></span></button>`;}).join('');
+  const power=armyPower({...BT.A[0],groups:same});return `<button class="rt-company${selected?.type===f.type?' selected':''}" data-rt-company="${f.id}" aria-pressed="${selected?.type===f.type}">${icon('u_'+f.type)}<span>${UNITS[f.type].name}<small>${fmt(troops)} combatants</small><small>Power ${fmt(power)}</small></span></button>`;}).join('');
  const selectedType=selected?.type,shapes=selected?Object.entries(GrandCombat.stances[selectedType]).map(([key,v])=>`<option value="${key}"${selected.stance===key?' selected':''}>${v.name}</option>`).join(''):'';
  $('#btac').innerHTML=`<div class="rt-muster"><div class="rt-muster-head"><div><b>布陣 · Plant your banners</b><small>${esc(BT.prov.name)} · ${fmt(combatCount(BT.A[0]))} combatants · ${groups.length} formations</small></div><button class="btn ghost" data-rt-reset>Reset ranks</button></div><div class="rt-companies">${cards}</div><div class="rt-deploy-hint${BT.deploy.notice?' warning':''}" aria-live="polite">${BT.deploy.notice?esc(BT.deploy.notice):'Drag a formation or its banner. Or select a card, then tap the field. Keep the whole formation behind the ivory line.'}</div><div class="rt-muster-foot"><button class="btn ghost" id="bt-retreat">Withdraw</button><label>${selected?icon('u_'+selectedType):''}<select data-rt-shape aria-label="Deployment formation">${shapes}</select></label><button class="btn ghost" data-rt-angle>2.5D / Iso</button><span class="sp"></span><button class="btn gold" id="bt-go">Raise the banners</button></div></div>`;
  for(const el of $$('[data-rt-company]'))el.onclick=()=>rtSelectFormation(+el.dataset.rtCompany,true);
@@ -45,7 +45,7 @@ function rtRenderDeployment(){const R=BT?.rt;if(!R||!BT.deploy?.active)return;co
  $('[data-rt-shape]').onchange=e=>{const old=selected.stance;
   for(const f of R.model.groups)if(f.side===0&&f.type===selected.type)R.model.setStance(f.id,e.target.value,true);
   const reason=R.model.placement(selected.id,selected.x,selected.y);if(reason){for(const f of R.model.groups)if(f.side===0&&f.type===selected.type)R.model.setStance(f.id,old,true);BT.deploy.notice=reason;}
-  rtRenderDeployment();
+  if(!reason)BT.deploy.notice='';rtRenderDeployment();
  };
  $('#bt-retreat').onclick=()=>{closeBattle();openMap();};$('#bt-go').onclick=rtLaunchDeployment;
  R.view.insets($('#bformations').getBoundingClientRect().bottom-$('#battle-cv').getBoundingClientRect().top+8,$('#btac').getBoundingClientRect().height+18);
@@ -97,18 +97,18 @@ function rtBeginBattleTactics(R){if(!BT.rtTactics)return;const T=rtInitBattleTac
 }
 function rtBattleImpact(R,kind){const T=R.tactics;if(!T||R.model.time-T.impactAt<.24)return;T.impactAt=R.model.time;T.impact=kind==='cav'?1:kind==='inf'?.48:.28;}
 function rtShakeAmount(R){const T=R.tactics;return T?Math.max(0,1-(R.model.time-T.impactAt)/.18)*T.impact*battleShakeScale():0;}
-function rtRenderBattleLayers(R){const root=$('#rt-battle-layers'),T=R?.tactics;if(!root||!T)return;
- root.hidden=BT.state!=='realtime'||!T.begun;if(root.hidden)return;const t=R.model.time,d=T.decision,active=d&&!d.closed&&t<d.until,title=T.titleUntil>t&&!active;
- const key=[T.log.length,T.log.at(-1)?.text,T.open,!!active,!!title].join('|');if(T.lastUI===key){const timer=$('[data-rt-countdown]',root);if(timer)timer.textContent=Math.ceil(d.until-t)+'s · No order needed to continue';return;}T.lastUI=key;
+function rtRenderBattleLayers(R,force=false){const root=$('#rt-battle-layers'),T=R?.tactics;if(!root)return;if(!T){root.hidden=true;return;}
+ root.hidden=BT.state!=='realtime'||!rtIsFieldView()||!T.begun;if(root.hidden)return;const t=R.model.time,d=T.decision,active=d&&!d.closed&&t<d.until,title=T.titleUntil>t&&!active;
+ let horse=false;for(const f of R.model.groups)if(f.side===0&&f.type==='cav'&&rtFormationActive(f))horse=true;
+ const key=[T.log.length,T.log.at(-1)?.text,T.open,!!active,!!title,horse].join('|');if(!force&&T.lastUI===key){const timer=$('[data-rt-countdown]',root);if(timer)timer.textContent=Math.ceil(d.until-t)+'s · No order needed to continue';return;}T.lastUI=key;
  root.style.setProperty('--rt-layer-top',($('#bformations').getBoundingClientRect().bottom-$('#battle-cv').getBoundingClientRect().top+8)+'px');root.style.setProperty('--rt-orders-height',$('#rt-controls').getBoundingClientRect().height+'px');
  let log='';const count=T.open?8:1,from=Math.max(0,T.log.length-count);for(let i=from;i<T.log.length;i++){const e=T.log[i];log+=`<li><time>${Math.floor(e.at/60)}:${String(Math.floor(e.at%60)).padStart(2,'0')}</time>${esc(e.text)}</li>`;}
- let horse=false;for(const f of R.model.groups)if(f.side===0&&f.type==='cav'&&rtFormationActive(f))horse=true;
  root.innerHTML=`<div class="rt-journal"><button class="rt-journal-toggle" aria-expanded="${T.open}">戦記 · Field reports <span>${T.open?'−':'+'}</span></button><ol>${log}</ol></div>${title?`<div class="rt-feature-title"><b>${esc(T.title)}</b><span>${esc(T.subtitle)}</span></div>`:''}${active?`<div class="rt-field-decision"><b>${d.kind==='reserve'?'Enemy reserve on the flank':'The lines are closing'}</b><span data-rt-countdown>${Math.ceil(d.until-t)}s · No order needed to continue</span><div>${d.kind==='reserve'&&horse&&T.reserve&&rtFormationActive(T.reserve)?'<button data-rt-decision="intercept">Intercept</button>':''}<button data-rt-decision="hold">Hold front</button><button data-rt-decision="advance">Press on</button><button data-rt-decision="keep">Keep orders</button></div></div>`:''}`;
  $('.rt-journal-toggle',root).onclick=()=>{T.open=!T.open;T.lastUI='';rtRenderBattleLayers(R);};
  for(const b of root.querySelectorAll('[data-rt-decision]'))b.onclick=()=>rtFieldDecision(b.dataset.rtDecision);
 }
 // Covered Classic scenery is rebuilt for its duels/preludes; persistent corpses/decals are retained.
 function rtTrimClassicScenery(force=false){if(!BT||!force&&!rtIsFieldView())return;for(const k of ['far','mid','gnd'])if(BT[k]){perfRelease(BT[k]);BT[k]=null;BT.rtSceneryTrimmed=true;}}
-function rtRestoreClassicScenery(){if(!BT?.rtSceneryTrimmed)return;const decal=BT.decal;BT.decal=null;
- try{buildBattleBG();perfRelease(BT.decal);}finally{BT.decal=decal;BT.rtSceneryTrimmed=false;}
+function rtRestoreClassicScenery(){if(!BT?.rtSceneryTrimmed)return;const decal=BT.decal,dx=BT.dx,random=Math.random;BT.decal=null;Math.random=seeded(BT.seed^0x4f1bbcdc);
+ try{buildBattleBG();perfRelease(BT.decal);}finally{Math.random=random;BT.decal=decal;BT.dx=dx;BT.rtSceneryTrimmed=false;}
 }

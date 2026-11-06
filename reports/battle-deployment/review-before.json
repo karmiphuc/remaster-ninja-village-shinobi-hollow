@@ -1,0 +1,78 @@
+{
+  "errors": [],
+  "failures": [
+    "Scenery restore detaches the persistent aftermath drawing context",
+    "Cosmetic scenery restore consumes combat/reward randomness",
+    "Reset ranks can strand changed shapes outside the deployment area",
+    "Fall Back ignores a mounted/Skein footprint at the field edge",
+    "Field reports/orders cover a cinematic duel",
+    "Field reports retain stale portrait HUD offsets after rotation",
+    "Field reports persist over battle results",
+    "Independent mounted heroes retain charge damage while falling back",
+    "The shared corps standard falls before its final independent hero"
+  ],
+  "scenery": {
+    "sameCanvas": true,
+    "linked": false,
+    "same": false,
+    "painted": false,
+    "randomCalls": 103
+  },
+  "reset": {
+    "id": 3,
+    "moved": true,
+    "changed": true,
+    "validBefore": true,
+    "initial": 780,
+    "validAfter": false,
+    "stance": "loose",
+    "saved": "loose",
+    "y": 780
+  },
+  "edges": [
+    {
+      "side": 0,
+      "x": 105,
+      "y": 780,
+      "left": 0,
+      "right": 143,
+      "top": 635.81,
+      "bottom": 924.19
+    },
+    {
+      "side": 1,
+      "x": 1295,
+      "y": 780,
+      "left": 1257,
+      "right": 1400,
+      "top": 635.81,
+      "bottom": 924.19
+    }
+  ],
+  "duel": {
+    "wasShown": true,
+    "hiddenImmediately": false,
+    "hiddenDuring": false,
+    "resumed": true,
+    "modelPaused": true,
+    "shownAfter": true,
+    "residual": -6.306066779870889e-14
+  },
+  "layout": {
+    "expected": 85,
+    "actual": 122
+  },
+  "result": {
+    "state": "done",
+    "retreated": true,
+    "hidden": false
+  },
+  "independent": {
+    "chargeCleared": false,
+    "held": false,
+    "fallen": true,
+    "winner": 1,
+    "residual": 0
+  },
+  "checks": 11
+}

@@ -2,7 +2,7 @@
 
 Choose **Village → Options → Battle: Real-time**, then enter an army field battle. Before the fight, **Plant your banners** shows the actual Infantry, Gunners, Archers and Cavalry available, with combatant counts and Power. Drag a formation or its planted standard, or select its card and tap the ground. Select a shape, then **Raise the banners**. Reset ranks restores the accepted starting positions. The camera supports 2.5D/isometric, pan and pinch throughout.
 
-The ivory boundary is enforced against the whole footprint, including mounts, wide shapes, independent fighters of the same arm, commanders and their guards. Formations cannot overlap another arm or cross the boundary. Invalid drops retain the previous placement. Preparation advances neither combat time nor HP. Saved Loose/Skein preferences are fitted once before interaction; ordinary placement never invokes a pathfinder. There is no new army cap, purchase screen or saved deployment ledger.
+The ivory boundary is enforced against the whole footprint, including mounts, wide shapes, independent fighters of the same arm, commanders and their guards. Formations cannot overlap another arm or cross the boundary. Invalid drops retain the previous placement. Reset ranks restores both the opening positions and shapes so a later width change cannot leave the reset army outside the field. Preparation advances neither combat time nor HP. Saved Loose/Skein preferences are fitted once before interaction; ordinary placement never invokes a pathfinder. There is no new army cap, purchase screen or saved deployment ledger.
 
 ## The three layers
 
@@ -41,10 +41,22 @@ Eight Classic ledger pairs (ordinary, skilled, burst/duel and siege), eighteen s
 | Paired fixture | Main before | Updated |
 |---|---:|---:|
 | Canvas MiB, start → end | 48.98 → 48.98 | 40.97 → 40.98 |
-| Median update / draw, ms | 0.40 / 2.60 | 0.45 / 2.70 |
-| Frame p95, ms | 72.0 | 69.8 |
+| Median update / draw, ms | 0.45 / 2.50 | 0.40 / 2.35 |
+| Frame p95, ms | 63.10 | 55.85 |
 | Canvases created by 360 warm draws | 0 | 0 |
 
 The software-rendered p95 has long stalls in both versions and is not a device frame-rate claim. Three first-use casualty canvases are allocated during updates in each version; they use the existing finite reaction cache. Reproduce the focused checks with `node tests/battle-deployment.cjs`; run the slower paired check separately with `node tools/probe-battle-deployment.cjs` so other browser suites cannot distort timing.
 
 The exact exported **Shinobi Hollow.html** also passes touch card/tap placement, launch and timed-decision playback with external requests blocked and the network subsequently disabled, with zero runtime errors. [`offline.json`](../reports/battle-deployment/offline.json) records its SHA-256. Managed Chromium blocks direct `file://` navigation, so this check uses local HTTP; a physical Safari downloaded-file session remains to be checked.
+
+## Review corrections before merge
+
+The follow-up review reproduces nine failures on the initial PR head in [`review-before.json`](../reports/battle-deployment/review-before.json), then checks the final fixes through the same actual campaign adapter in `tests/battle-deployment-review.cjs`:
+
+- Restoring covered Classic scenery preserves both the persistent decal canvas and its original `BT.dx` context. Blood, embedded arrows and aftermath stamps can still draw after a duel. Scenery rebuilding uses an isolated visual random stream and restores `Math.random` in `finally`, so cosmetic restores cannot consume subsequent combat/reward randomness.
+- Field reports and decisions hide immediately on a duel/grenade transition and on results, then return when the live field resumes. The model and decision clocks stay paused. Rotating the phone forces overlay geometry to update even when the report contents are unchanged. Eliminated selected corps lose their controls, and Intercept disappears when no friendly cavalry survives.
+- Reset restores the initial shape with the initial position. Withdrawal destinations account for full living footprints, including mounted officers and Skein spread, on both sides of the field. Both ordinary commanders and independent mounted heroes clear their stored charge bonus when ordered to withdraw.
+- A shared standard stays upright while any independent hero of its corps can still fight. Its collapse represents the final active group, rather than the first hero's fall.
+- Deployment Power uses the complete army context, including companion attack bonuses, when measuring each corps.
+
+Short landscape screens use a compact preparation panel; the 932×430 fixture leaves at least 180 CSS pixels of unobscured field and keeps both armies inside that area. All 14 review checks pass, alongside the 36 deployment checks, 245 prototype checks and 13 broader combat suites. Review results, the validation summary and the captured landscape are in [`reports/battle-deployment`](../reports/battle-deployment). Run the review checks with `node tests/battle-deployment-review.cjs`.
