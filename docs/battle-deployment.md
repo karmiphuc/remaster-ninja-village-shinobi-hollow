@@ -26,6 +26,8 @@ This release covers field staging and the first battle layers. Classic battles r
 
 Run `python3 tools/apply-battle-realtime.py` after module edits, then `python3 tools/build-battlefield-prototype.py` to keep the standalone demonstration synchronized. No network asset or new runtime library is added. `G.v` stays 1; the only new persistent field is the optional shake preference. Deployment, decisions, logs and reserve state live in `BT`, and are discarded on close.
 
+Current population and memory figures after the later doubling are documented in [Doubled real-time armies](doubled-armies.md). The measurements below record the original staging release.
+
 ## Memory and verification
 
 The live field releases the covered Classic ground/scenery buffers as well as its unused drawing buffer. Before a Classic duel/prelude, scenery is rebuilt while preserving the exact aftermath decal. Terrain is rendered once at half backing resolution, snapped to the same coarse pixel grid and drawn with nearest-neighbour scaling; equipment and character frames retain their existing resolution. This reduces the cached field ground from about 7.1 MiB to 1.8 MiB. Rotation rebuilds that single cache and teardown releases it.

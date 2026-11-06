@@ -63,7 +63,7 @@ const root=path.resolve(__dirname,'..'),dir=path.join(root,'reports/realtime-vol
    const mass=volleyFixture({counts:[100000,100000,100000,100000],weapon:'rifle',skill:'rapid',hold:true,attack:.0001,defense:100}),M=mass.model;
    let peak=0;for(let i=0;i<180;i++){step(mass,1/60);let active=0;for(const p of M.shots)if(p.on)active++;peak=Math.max(peak,active);}
    const gunMembers=M.models.filter(m=>m.f.type==='gun'),released=gunMembers.filter(m=>m.nextFire>M.time+1);
-   ok(released.length>=48&&released.every(m=>m.burstLeft===0),'Live triple-barrel bursts silently lost projectiles');ok(M.shots.length<=384&&peak>100,'Projectile state grew or stress did not exercise volleys');near(M.snapshot().residual,0,'Mass volley ledger');
+   ok(released.length>=RT_ACTOR_CAP&&released.every(m=>m.burstLeft===0),'Live triple-barrel bursts silently lost projectiles');ok(M.shots.length===384*Math.ceil(RT_ACTOR_CAP/48)&&peak>100,'Projectile state grew or stress did not exercise volleys');near(M.snapshot().residual,0,'Mass volley ledger');
    // Nothing pending can hit after the actor becomes a casualty.
    const victim=released[0];victim.followAt=victim.rapidAt=M.time+.1;victim.burstLeft=2;victim.source.alive=false;victim.f.g.troops-=victim.hp;M.reconcile();ok(!victim.alive&&victim.followAt===0&&victim.rapidAt===0&&victim.burstLeft===0,'Casualty kept follow-ups');
    const audit={battle:['chain','rapid','strategy','arrowres','bulletres','horseres','attackup','shadow','medic','vanguard','ironwall','marksman','cavmaster','duelist','laststand','siegecraft','counter','quartermaster'],village:['strongback','greenthumb','artisan','swift','tireless','haggler']};
