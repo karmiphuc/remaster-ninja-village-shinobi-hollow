@@ -1,0 +1,29 @@
+{
+  "htmlSha256": "bed3e95ed66e40caf7d1276ed070386ead7a05942ef53fc482628f115d0ce514",
+  "broadCombatSuites": [
+    "siege",
+    "density",
+    "battle-end",
+    "tactics",
+    "duel-cold-playback",
+    "realtime-campaign",
+    "battle-auto-resolve",
+    "realtime-review",
+    "realtime-engagement",
+    "realtime-volley-skills",
+    "realtime-heroes",
+    "battle-deployment-review",
+    "battle-deployment"
+  ],
+  "broadPassCount": 13,
+  "finalFocused": {
+    "deploymentChecks": 36,
+    "reviewChecks": 14,
+    "errors": [],
+    "failures": []
+  },
+  "prototypeChecks": 245,
+  "pairedComparison": "comparison.json",
+  "offlineContentAndTouch": "offline.json",
+  "physicalIPhoneSafariTested": false
+}

@@ -13,7 +13,7 @@ const root=path.resolve(__dirname,'..');
      else if(skirmish)groups=[fighterGroup('inf',makeHero('inf',side,0))];
      else groups=(full?['inf','gun','arc','cav']:[side&&solo?'inf':type]).map((t,i)=>{const cmds=[];for(let k=0;k<heroes;k++)cmds.push(makeHero(t,side,i*3+k));return {type:t,troops:side&&solo?(type==='gun'?1000000:1000):750,atkMul:1.2,defMul:1.1,guards:0,cmds,mods:modsOf(cmds)};});
      return finishArmy({side,clan:side?'kurogane':'kage',name:'Review army',mode:skirmish?'skirmish':'army',ki:0,strat:0,groups});};
-    startBattle(null,{site:{id:'review',type:'dojo',power:2000,clan:'kurogane',reward:{}},pa:army(0),ea:army(1)});BT.seed=73117;BT.round=BT.roundSeq=1;BT.phase=0;BT.state='run';rtStartWindow();return BT.rt;
+    startBattle(null,{site:{id:'review',type:'dojo',power:2000,clan:'kurogane',reward:{}},pa:army(0),ea:army(1),skipDeployment:true});BT.seed=73117;BT.round=BT.roundSeq=1;BT.phase=0;BT.state='run';rtStartWindow();return BT.rt;
    };
    window.reviewRTMove=function(f,x,y){const dx=x-f.x,dy=y-f.y;f.x=f.homeX=x;f.y=f.homeY=y;for(const m of f.members){m.x+=dx;m.y+=dy;}};
   });

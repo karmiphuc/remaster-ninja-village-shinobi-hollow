@@ -10,7 +10,7 @@ module.exports=async function install(page){await page.evaluate(()=>{
      cmds=opts.heroes===false?[]:[make(opts.post||'line',opts.skill||'attackup'),...(type==='inf'?[make('van','vanguard')]:[])];
     return {type,troops:(side?opts.enemyCounts:opts.counts)?.[i]??counts[i],atkMul:opts.attack??1,defMul:opts.defense??2,guards:0,cmds,mods:modsOf(cmds),kitDist:{w:[[weapon,1]],a:[['domaru',1]],h:[['jingasa',1]]}};
    }).filter(g=>g.troops>0)});}
-  startBattle(null,{site:{id:'volley-review',name:'Volley review',type:'dojo',clan:'kurogane',power:2000,reward:{}},pa:army(0),ea:army(1)});
+  startBattle(null,{site:{id:'volley-review',name:'Volley review',type:'dojo',clan:'kurogane',power:2000,reward:{}},pa:army(0),ea:army(1),skipDeployment:true});
   BT.seed=11731;BT.autoKi.on=false;BT.round=BT.roundSeq=1;BT.phase=0;BT.state='run';rtStartWindow();
   if(opts.hold)for(const f of BT.rt.model.groups)BT.rt.model.order(f.id,'hold');
   return BT.rt;

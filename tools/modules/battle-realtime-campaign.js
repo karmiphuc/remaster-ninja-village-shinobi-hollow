@@ -16,8 +16,9 @@ function rtTrimVillageFrames(){for(const c of _villageRigCache.values())perfRele
  if(VIEW.cv){VIEW.cv.width=VIEW.cv.height=0;BT.rtVillageSuspended=true;}if(RT.ground){perfRelease(RT.ground);RT.ground=null;RT.groundDirty=true;}
 }
 function rtFieldAllowed(){return rtBattleChosen()&&!siegeHold();}
-function rtRestoreClassicBuffer(){if(BT?.buf&&!BT.buf.width){BT.buf.width=BT.vw*ART_DENSITY;BT.buf.height=BT.vh*ART_DENSITY;BT.bx=BT.buf.getContext('2d',{alpha:false});BT.bx._artDensity=ART_DENSITY;}}
-function rtReleaseClassicBuffer(){if(BT?.rt&&rtIsFieldView()&&BT.buf)BT.buf.width=BT.buf.height=0;}
+function rtRestoreClassicBuffer(){for(const id of ['#rt-controls','#rt-battle-layers'])$(id).hidden=true;
+ rtRestoreClassicScenery();if(BT?.buf&&!BT.buf.width){BT.buf.width=BT.vw*ART_DENSITY;BT.buf.height=BT.vh*ART_DENSITY;BT.bx=BT.buf.getContext('2d',{alpha:false});BT.bx._artDensity=ART_DENSITY;}}
+function rtReleaseClassicBuffer(){if(BT?.rt&&rtIsFieldView()&&BT.buf){BT.buf.width=BT.buf.height=0;rtTrimClassicScenery();}}
 // Classic resolves a whole burst in one hit; the live model resolves each bullet.
 function rtPersonalFactor(c,to,kind){return kind==='gun'&&ITEMS[commanderWeapon(c)]?.burst?1:personalWeaponFactor(c,to,kind);}
 function rtCounterPower(g){const side=sideOf(g),lv=side===0&&BT.flv?BT.flv[g.type]||0:BT.A[side].strat||0;return 1+counterBonus(lv);}
@@ -65,11 +66,11 @@ function rtMakeCampaignModel(){const session=BT,styleCache=new WeakMap(),sources
     mult=(1-Math.min(.6,(ward||0)*.1))*(1-Math.min(.3,(to.mods.shadow||0)*.05))*TACTICS[tacFam(to)].mod.take*counter*personalDamageGuard(to,kind)*(owner?rtPersonalFactor(owner,to,kind):1)*tateTake(to,kind)*mask;
   return battleDamage(power,battleResistance(to),mult,force);
  },totals:()=>session.A.map(totalOf)};sim.damage=(g,to,force,kind,scale,charged=kind==='cav',actor=null)=>sim.impact(sim.power(g,force,kind,scale,charged,actor),to,force,kind,g,actor);
- const art={battle:()=>sim,style:(type,side,variant,g,i)=>rtNormalizeStyle(sources.get(g)[i],g,side,styleCache),building:id=>buildingSprite(id),prop:(id,side=0)=>propImg(id,side)};
- rt.model=GrandCombat.create(art,session.seed,{count:g=>g.troops>0||g.heroOnly?sources.get(g).length:0,
+ const art={battle:()=>sim,style:(type,side,variant,g,i)=>rtNormalizeStyle(sources.get(g)[i],g,side,styleCache),building:id=>buildingSprite(id),prop:(id,side=0)=>propImg(id,side),teamColor:side=>CLANS[session.A[side].clan||'kage']?.banner||'#3b4a7a',emblem:side=>IMG['mon_'+(session.A[side].clan||'kage')]};
+ rt.model=GrandCombat.create(art,session.seed,{compact:!!session.deploy,count:g=>g.troops>0||g.heroOnly?sources.get(g).length:0,
   stanceOf:(g,side)=>side===0?G.battleStances?.[g.type]||'line':g.type==='cav'?'skein':g.type==='arc'?'loose':'line',
   attach:(m,g,i)=>{m.source=sources.get(g)[i];if(m.source.hero&&!m.source.hero.beast)rtBindHero(m,g);if(!m.alive){m.fate=m.source.duelCorpse?'death':'rout';m.fateAt=-20;}mapped.add(m.source);},
-  beforeThink:()=>rtRefreshHeroBudgets(rt),
+  beforeThink:()=>{rtRefreshHeroBudgets(rt);rtTickBattleTactics(rt);},
   officerAlive:m=>!m.commander.ko&&m.commander.hp>0&&m.source.alive&&!m.source.out&&!m.source.fate,
   officerHit:(from,to,n,kind)=>{const c=to.commander,g=to.f.g;if(c.ko||!(c.hp>0))return 0;const before=c.hp,old=Math.random;Math.random=rng;
    try{let guards=0;for(const r of c.retF||[])if(!r.out&&!r.dead)guards++;
@@ -86,7 +87,7 @@ function rtMakeCampaignModel(){const session=BT,styleCache=new WeakMap(),sources
     if(h.from.solo){h.from.solo.kills=(h.from.solo.kills||0)+n;if(h.from.heroOnly)h.from.solo.pk=(h.from.solo.pk||0)+n;}
     else if(from.personal){const c=from.commander;c.kills=(c.kills||0)+n;c.pk=(c.pk||0)+n;}
    });}finally{rt.hooking=false;}},
-  afterHit:(from,to,n,kind)=>{const g=to.f.g;independentDamage(g,from.f.g);if(g.solo&&!g.heroOnly&&session.A[sideOf(g)].mode==='skirmish')g.solo.hp=Math.min(g.solo.hpMax||g.solo.s.hp,g.troops*3);cohesionDamage(g,n,from.f.g);session.hudDirty=true;},
+  afterHit:(from,to,n,kind)=>{const g=to.f.g;independentDamage(g,from.f.g);if(g.solo&&!g.heroOnly&&session.A[sideOf(g)].mode==='skirmish')g.solo.hp=Math.min(g.solo.hpMax||g.solo.s.hp,g.troops*3);cohesionDamage(g,n,from.f.g);session.hudDirty=true;rtBattleImpact(rt,kind);},
   casualty:m=>{const s=m.source;rtMapSource(m);if(s.alive&&!s.fate)randomCall(()=>exitSprite(m.f.g,s,m.f.type,m.face));if(m.f.g.troops<=0)unitBreak(m.f.g);return s.fate?.kind==='rout'?'rout':'death';},
   externallyDead:m=>!m.source.alive||!!m.source.fate,
   revive:m=>{recoverVisual(m.source);m.source.alive=true;}
@@ -98,7 +99,7 @@ function rtMakeCampaignModel(){const session=BT,styleCache=new WeakMap(),sources
   }
  }
  for(let side=0;side<2;side++){const A=session.A[side];for(const g of A.groups){for(const s of g.spr)if(!mapped.has(s))addExtra(s,g,side);for(const s of g.heroes||[]){addExtra(s,g,side);for(const q of s.guards||[])addExtra(q,g,side,s);if(s.pet)addExtra(s.pet,g,side,s);}}for(const s of A.hqSpr||[])addExtra(s,s.g,side,null,true);}
- rt.view=GrandFieldView.create($('#battle-cv'),art,rt.model,{ground:rtGround,canvasFactory:gameCanvas,castle:!!session.siege,top:$('#bformations').getBoundingClientRect().bottom-$('#battle-cv').getBoundingClientRect().top+8,bottom:100,extras:()=>extras,enabled:()=>!!BT&&BT===session&&rtIsFieldView(),select:f=>rtSelectFormation(f.id)});
+ rt.view=GrandFieldView.create($('#battle-cv'),art,rt.model,{ground:rtGround,canvasFactory:gameCanvas,castle:!!session.siege,terrainScale:.5,framing:!!session.deploy,standards:!!session.deploy,deployment:session.deploy,shake:()=>rtShakeAmount(rt),top:$('#bformations').getBoundingClientRect().bottom-$('#battle-cv').getBoundingClientRect().top+8,bottom:100,extras:()=>extras,enabled:()=>!!BT&&BT===session&&rtIsFieldView(),select:f=>rtSelectFormation(f.id),preview:rtPreviewDeployment,place:rtDeployAt});
  rtRefreshHeroBudgets(rt);rt.model.syncOfficers();rtUpdateExtras(0);return rt;
 }
 function rtUpdateExtras(dt){const R=BT.rt,t=R.model.time;for(const f of R.model.groups){f.g.front=f.x/1400*BT.WW;f.g.hx=f.g.front;f.g.hy=BT.fy0+f.y/1020*(BT.fy1-BT.fy0);for(const m of f.members){if(m.alive)rtMapSource(m);else if(m.source.fate)updateLifeState(m.source,dt,f.g,f.side);}}
@@ -120,19 +121,22 @@ function rtUpdateExtras(dt){const R=BT.rt,t=R.model.time;for(const f of R.model.
 }
 function rtStartWindow(){if(!rtFieldAllowed())return false;
  if(BT.rtGadgetRound!==BT.roundSeq){BT.rtGadgetRound=BT.roundSeq;const hits=[];equipmentGrenades('inf',hits,{siege:false});if(hits.length){BT.rtGadgetAnimating=true;rtRestoreClassicBuffer();BT.phaseName='inf';BT.pt0=BT.t;BT.script=buildPhaseScript('inf',hits);BT.next=Math.max(.6,BT.script.dur-.25);return false;}}
-const R=BT.rt||rtMakeCampaignModel();BT.rtGadgetAnimating=false;R.model.reconcile();R.windowAt=R.model.time;R.paused=false;releaseDuelCinema();BT.cine=BT.focus=null;R.view.resizeIfNeeded();BT.state='realtime';BT.phaseName='realtime';rtReleaseClassicBuffer();BT.script=null;BT.next=Infinity;$('#bcall').innerHTML='';$('#bcut').innerHTML='';$('#btac').innerHTML='';clearCamKeys();renderBHUD();rtRenderControls(true);return true;}
+const R=BT.rt||rtMakeCampaignModel();BT.rtGadgetAnimating=false;R.model.reconcile();R.windowAt=R.model.time;R.paused=false;releaseDuelCinema();BT.cine=BT.focus=null;R.view.resizeIfNeeded();BT.state='realtime';BT.phaseName='realtime';rtReleaseClassicBuffer();BT.script=null;BT.next=Infinity;$('#bcall').innerHTML='';$('#bcut').innerHTML='';$('#btac').innerHTML='';clearCamKeys();rtBeginBattleTactics(R);renderBHUD();rtRenderControls(true);return true;}
 function rtIsFieldView(){return !!(BT?.rt&&!siegeHold()&&!BT.rtGadgetAnimating&&BT.phaseName!=='duel'&&!BT.cine&&!BT.duelShot);}
-function rtSelectFormation(id){const R=BT?.rt;if(!R)return;const f=R.model.groups[id];if(!f||!rtFormationActive(f))return;
+function rtSelectFormation(id,fromCard=false){const R=BT?.rt;if(!R)return;const f=R.model.groups[id];if(!f||!rtFormationActive(f))return;
+ if(BT.deploy?.active){if(f.side===0){R.selected=f;R.view.select(f);BT.deploy.tapArmed=fromCard;BT.deploy.notice='';rtRenderDeployment();}return;}
  if(f.side===0){R.selected=f;R.view.select(f);}else if(R.selected?.type==='cav'){R.model.target(R.selected.id,id);Sound.play('tap');}rtRenderControls(true);
 }
-function rtRenderControls(force=false){const root=$('#rt-controls');if(!root||!BT?.rt)return;const R=BT.rt;root.hidden=!rtIsFieldView()||BT.state==='done';if(root.hidden)return;const f=R.selected,
+function rtRenderControls(force=false){const root=$('#rt-controls');if(!root||!BT?.rt)return;const R=BT.rt;root.hidden=!rtIsFieldView()||BT.state==='done'||BT.deploy?.active;rtRenderBattleLayers(R,force);if(root.hidden)return;
+ if(R.selected&&!rtFormationActive(R.selected)){R.selected=null;R.view.select(null);}const f=R.selected,
   enemies=f?.type==='cav'?R.model.groups.filter(g=>g.side!==f.side&&rtFormationActive(g)):[],key=[f?.id,f?.stance,f?.order,f?.priorityTarget,f?.state,f?.intent,R.paused,...enemies.map(e=>e.id)].join(':');
  if(!force&&key===R.panelKey)return;R.panelKey=key;
- root.innerHTML=`<div class="rt-tools"><button class="btn ghost" data-rt-action="pause">${R.paused?'▶ Play':'Ⅱ Pause'}</button><button class="btn ghost" data-rt-action="overview">Overview</button><button class="btn ghost" data-rt-action="follow">Follow</button><button class="btn ghost" data-rt-action="angle">2.5D / Iso</button>${f?`<button class="btn ghost" data-rt-action="close" aria-label="Close formation controls">×</button>`:''}</div>${f?`<div class="rt-orders"><b>${icon('u_'+f.type)} ${UNITS[f.type].name}</b><button class="btn ${f.order==='hold'?'gold':'ghost'}" data-rt-order="hold">Hold</button><button class="btn ${f.order!=='hold'?'gold':'ghost'}" data-rt-order="advance"${f.stance==='pikewall'?' disabled':''}>${f.type==='cav'?'Charge cycle':'Advance'}</button><span class="rt-choices">${Object.entries(GrandCombat.stances[f.type]).map(([k,v])=>`<button class="btn ${f.stance===k?'gold':'ghost'}" data-rt-stance="${k}"${tipAttr(RT_STANCE_TEXT[f.type][k])}>${v.name}</button>`).join('')}</span>${f.type==='cav'?`<span class="rt-targets"><small>Target</small><button class="btn ${f.priorityTarget==null?'gold':'ghost'}" data-rt-target="auto">Auto</button>${enemies.map(e=>`<button class="btn ${f.priorityTarget===e.id?'gold':'ghost'}" data-rt-target="${e.id}" aria-label="Target enemy ${UNITS[e.type].name}">${icon('u_'+e.type)}${e.g.heroOnly?' '+esc(e.g.solo?.name||''):''}</button>`).join('')}</span>`:''}<small class="rt-detail">${f.type==='gun'||f.type==='arc'?`MRK ${Math.round(f.g.mrk)} · ${(GrandCombat.cadence(f.type,f.g.mrk)*(f.members[0]?.style.reload||1)).toFixed(1)}s / ${f.members[0]?.style.burst>1?'burst':'shot'}`:f.type==='cav'?`${f.intent==='relieve'?'Relieve infantry':f.intent==='flank'?'Flank':f.intent==='ordered'?'Ordered target':'Engage'} · ${f.state}${f.pinned?' · tied up in infantry':''}`:RT_STANCE_TEXT.inf[f.stance]}</small></div>`:'<small>Tap a blue formation to set its shape. Select cavalry, then tap an enemy formation to name its target.</small>'}`;
- for(const b of root.querySelectorAll('[data-rt-action]'))b.onclick=()=>{const a=b.dataset.rtAction;if(a==='pause')R.paused=!R.paused;else if(a==='overview')R.view.overview();else if(a==='follow')R.view.follow();else if(a==='angle')R.view.angle();else{R.selected=null;R.view.select(null);}rtRenderControls(true);};
- for(const b of root.querySelectorAll('[data-rt-order]'))b.onclick=()=>{R.model.order(f.id,b.dataset.rtOrder);rtRenderControls(true);};
+ root.innerHTML=`<div class="rt-tools"><button class="btn ghost" data-rt-action="pause">${R.paused?'▶ Play':'Ⅱ Pause'}</button><button class="btn ghost" data-rt-action="overview">Overview</button><button class="btn ghost" data-rt-action="follow">Follow</button><button class="btn ghost" data-rt-action="angle">2.5D / Iso</button>${f?`<button class="btn ghost" data-rt-action="close" aria-label="Close formation controls">×</button>`:''}</div>${f?`<div class="rt-orders"><b>${icon('u_'+f.type)} ${UNITS[f.type].name}</b><button class="btn ${f.order==='hold'?'gold':'ghost'}" data-rt-order="hold">Hold</button><button class="btn ${f.order!=='hold'&&f.order!=='fallback'?'gold':'ghost'}" data-rt-order="advance"${f.stance==='pikewall'?' disabled':''}>${f.type==='cav'?'Charge cycle':'Advance'}</button><button class="btn ${f.order==='fallback'?'gold':'ghost'}" data-rt-order="fallback">Fall Back</button><span class="rt-choices">${Object.entries(GrandCombat.stances[f.type]).map(([k,v])=>`<button class="btn ${f.stance===k?'gold':'ghost'}" data-rt-stance="${k}"${tipAttr(RT_STANCE_TEXT[f.type][k])}>${v.name}</button>`).join('')}</span>${f.type==='cav'?`<span class="rt-targets"><small>Target</small><button class="btn ${f.priorityTarget==null?'gold':'ghost'}" data-rt-target="auto">Auto</button>${enemies.map(e=>`<button class="btn ${f.priorityTarget===e.id?'gold':'ghost'}" data-rt-target="${e.id}" aria-label="Target enemy ${UNITS[e.type].name}">${icon('u_'+e.type)}${e.g.heroOnly?' '+esc(e.g.solo?.name||''):''}</button>`).join('')}</span>`:''}<small class="rt-detail">${f.type==='gun'||f.type==='arc'?`MRK ${Math.round(f.g.mrk)} · ${(GrandCombat.cadence(f.type,f.g.mrk)*(f.members[0]?.style.reload||1)).toFixed(1)}s / ${f.members[0]?.style.burst>1?'burst':'shot'}`:f.type==='cav'?`${f.intent==='relieve'?'Relieve infantry':f.intent==='flank'?'Flank':f.intent==='ordered'?'Ordered target':'Engage'} · ${f.state}${f.pinned?' · tied up in infantry':''}`:RT_STANCE_TEXT.inf[f.stance]}</small></div>`:'<small>Tap a blue formation to set its shape. Select cavalry, then tap an enemy formation to name its target.</small>'}`;
+ for(const b of root.querySelectorAll('[data-rt-action]'))b.onclick=()=>{const a=b.dataset.rtAction;if(a==='pause')R.paused=!R.paused;else if(a==='overview'){R.view.cancelAutoFocus();R.view.overview();}else if(a==='follow')R.view.follow();else if(a==='angle')R.view.angle();else{R.selected=null;R.view.select(null);}rtRenderControls(true);};
+ for(const b of root.querySelectorAll('[data-rt-order]'))b.onclick=()=>rtIssueOrder(f.id,b.dataset.rtOrder);
  for(const b of root.querySelectorAll('[data-rt-stance]'))b.onclick=()=>{if(!R.model.setStance(f.id,b.dataset.rtStance)){toast('Hold the new shape for a moment before changing again.');return;}rtRenderControls(true);};
  for(const b of root.querySelectorAll('[data-rt-target]'))b.onclick=()=>{R.model.target(f.id,b.dataset.rtTarget==='auto'?null:+b.dataset.rtTarget);rtRenderControls(true);};
+ const layer=$('#rt-battle-layers');if(layer)layer.style.setProperty('--rt-orders-height',root.getBoundingClientRect().height+'px');
 }
 function rtUpdateBattle(rdt){const R=BT.rt;if(!R)return;const dt=R.paused?0:rdt*battlePlaybackRate();BT.t+=dt;BT.anim=(BT.anim||0)+dt;
  if(BT.retreatReq&&BT.state!=='done'){BT.playerRetreat=true;for(const p of R.model.shots)p.on=false;finishBattle('lose','You sounded the retreat.');rtRenderControls(true);return;}
@@ -145,7 +149,7 @@ function rtUpdateBattle(rdt){const R=BT.rt;if(!R)return;const dt=R.paused?0:rdt*
 function rtNextWindow(){endRound();if(BT.state==='autowait')beginRound();
  if(BT.state==='run'&&BT.phaseName!=='duel'&&!BT.cine&&!BT.duelShot){BT.phase=0;rtStartWindow();}
 }
-function rtReleaseBattle(){if(BT?.rt){BT.rt.view.destroy();BT.rt.model.shots.forEach(p=>p.on=false);BT.rt=null;}if(BT?.rtVillageSuspended)resizeView();const root=$('#rt-controls');if(root){root.hidden=true;root.innerHTML='';}}
+function rtReleaseBattle(){if(BT?.rt){BT.rt.view.destroy();BT.rt.model.shots.forEach(p=>p.on=false);BT.rt=null;}if(BT?.rtVillageSuspended)resizeView();for(const id of ['#rt-controls','#rt-battle-layers']){const root=$(id);if(root){root.hidden=true;root.innerHTML='';}}}
 
 // Realtime keeps a finite set of poses and avoids retaining the legacy flying/spinning frames.
 // Compress rendered detail only; logical sockets, gear, identity and procedural painters are unchanged.

@@ -4,13 +4,15 @@ Gunners now use readable rank volleys with planted aim/recoil, actual muzzle soc
 
 Choose **Village → Options → Battle: Real-time** before entering a battle. The choice and preferred shapes are saved in `G` with save version 1. Older saves default to Classic. Each battle captures its mode when it opens; changing the village preference cannot change a battle already underway.
 
+Army field battles now open with **Plant your banners**: drag/tap whole formations behind the deployment boundary, choose shapes, then raise the banners. Live orders include **Fall Back**. Existing enemy cavalry can wait in reserve or feint, with optional timed orders and a bounded field journal. See [deployment, battle layers, memory changes and verification](battle-deployment.md).
+
 Field officers now resolve their own weapon attacks and use their existing HP. Vanguard pursues through cavalry regrouping; ranged officers seek firing positions independently. Healthy officers fight on after their troops are gone, with reduced personal power. Double/triple guns no longer skip reload turns. See [hero behavior, accounting and recorded battles](realtime-heroes.md).
 
 Infantry, gunners, archers and cavalry retain their original deployment order. Infantry advances into personal weapon reach. Bows shoot overhead with sampled landing points; only projectiles that hit an enemy footprint cause damage. Gunners can fire from behind friendly infantry. Allies are bypassed at release and throughout flight, with zero friendly damage. Each bullet aims at the target's current position when released, keeps that straight trajectory, and hits the first enemy footprint it crosses. Moving targets can evade, and another enemy can catch a stray bullet. Terrain rises still block sight; close/mid-range accuracy and long-range dispersion remain.
 
 ## Controls and balance
 
-- Tap a blue formation label, or its top strength row, for **Hold / Advance** and shapes. Shapes have a 1.5-second change cooldown.
+- Tap a blue formation label, or its top strength row, for **Hold / Advance / Fall Back** and shapes. Fall Back is a local withdrawal ending in Hold; campaign Retreat remains separate. Shapes have a 1.5-second change cooldown after combat begins.
 - Select cavalry, then tap an enemy field label or target icon. **Auto** chooses useful targets: enemy riders engaging friendly infantry receive priority; exposed ranged formations become attractive once the foot lines clash. Otherwise cavalry engages a nearby opponent. This is a persistent preference: committed charges finish their current cycle, and riders still have to reach the target. Infantry contact slows withdrawal and regrouping; repeating an order cannot reset that delay.
 - **Overview**, **Follow**, dragging, pinching and the **2.5D / Iso** button control the view. Pause allows orders. Retreat remains explicit and takes effect immediately in the live field.
 
