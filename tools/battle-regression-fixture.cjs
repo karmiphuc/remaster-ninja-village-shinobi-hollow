@@ -13,7 +13,8 @@ module.exports=async function install(page){await page.evaluate(()=>{
    return {type,troops,atkMul:o.attack??1.2,defMul:o.defense??1.1,guards:cmds.reduce((n,c)=>n+c.guard,0),cmds,mods:modsOf(cmds),kitDist:{w:[[weapon,1]],a:[['lamellar',1]],h:[['jingasa',1]]}};
   }).filter(Boolean);return finishArmy({side,clan:side?'kurogane':'kage',name:side?'Rivals':'Kage Clan',mode:'army',strat:0,ki:0,groups});}
   const pa=army(0),ea=army(1),site={id:'balance-review',name:'Balance review',type:'dojo',clan:'kurogane',power:2000,reward:{}};
-  const auto=runAutoResolve;try{if(o.fast)runAutoResolve=()=>{};startBattle(null,{site,pa,ea},!!o.fast);}finally{runAutoResolve=auto;}
+  const auto=runAutoResolve;try{if(o.fast)runAutoResolve=()=>{};startBattle(null,{site,pa,ea,skipDeployment:!o.deployment,seed:o.deployment?(o.seed||11731):undefined},!!o.fast);}finally{runAutoResolve=auto;}
+  if(o.deployment){BT.autoKi.on=false;return BT;}
   BT.seed=o.seed||11731;BT.autoKi.on=false;BT.round=0;BT.roundSeq=0;BT.phase=-1;BT.state='run';BT.speed=1;
   if(o.siege){const hp=Math.round(totalOf(ea)*.75);BT.siege={hp,max:hp,breached:false};BT.maxR=4;}
   if(o.fast)return BT;

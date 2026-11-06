@@ -18,8 +18,8 @@ const root=path.resolve(__dirname,'..');
  result.save=await p.evaluate(()=>{G.battleStances.inf='pikewall';const raw=JSON.stringify(G),t=performance.now();JSON.stringify(G);const ms=performance.now()-t;saveGame();G.battleMode='classic';loadGame();afterLoad();MQ.length=0;$('#modal').hidden=true;closeSheet();return {mode:G.battleMode,stance:G.battleStances.inf,v:G.v,kb:raw.length/1024,ms};});
  ok(result.save.mode==='realtime'&&result.save.stance==='pikewall'&&result.save.v===1,'Config did not survive save/load');ok(result.save.ms<30,'Save stringify regressed');
  // Pre-battle stance config, per-battle mode snapshot and actual controls.
- ok(await p.evaluate(()=>{G.battleStances.inf='line';return rtTestStart();})==='realtime','Battle did not capture chosen mode');ok((await p.textContent('#btac')).includes('Real-time field combat'),'Deployment omits selected mode');
- await p.selectOption('[data-rt-deploy="arc"]','loose');ok(await p.evaluate(()=>G.battleStances.arc)==='loose','Deployment stance did not bind');
+ ok(await p.evaluate(()=>{G.battleStances.inf='line';return rtTestStart();})==='realtime','Battle did not capture chosen mode');ok((await p.textContent('#btac')).includes('Plant your banners'),'Deployment missing');
+ const archer=await p.evaluate(()=>BT.rt.model.groups.find(f=>f.side===0&&f.type==='arc').id);await p.click('[data-rt-company="'+archer+'"]');await p.selectOption('[data-rt-shape]','loose');ok(await p.evaluate(()=>G.battleStances.arc)==='loose','Deployment stance did not bind');
  ok(await p.evaluate(()=>{G.battleMode='classic';const mode=BT.combatMode;G.battleMode='realtime';return mode==='realtime'&&rtTestEnter()==='realtime';}),'Mode changed during battle / failed to enter field');
  await p.evaluate(()=>{BT.speed=0;drawBattle();});await p.click('#bformations [data-formation="cav"]');
  const target=await p.evaluate(()=>BT.rt.model.groups.find(f=>f.side===1&&f.type==='arc').id);await p.click('[data-rt-target="'+target+'"]');

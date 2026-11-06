@@ -1,0 +1,24 @@
+{
+  "file": "Shinobi Hollow.html",
+  "sha256": "a04d8301dab01f197246be1f409d7b93047c14967c420f1cf479c3e5ab6e1def",
+  "environment": "Exact HTML over local HTTP with external requests blocked, then network offline; 430x932 touch viewport. Direct file:// is blocked by managed Chromium policy; not physical Safari.",
+  "initial": {
+    "state": "prep",
+    "active": true,
+    "time": 0
+  },
+  "touchPlacedY": 420.60885350828954,
+  "battle": {
+    "state": "realtime",
+    "time": 4.016666666666658,
+    "version": 1,
+    "decision": true,
+    "residual": -4.971023592759138e-13,
+    "active": false,
+    "notice": "",
+    "paused": false
+  },
+  "errors": [],
+  "externalAssetsLoaded": 0,
+  "optionalFontRequests": 1
+}
